@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "231323160206",
+    "firebase_url": "https://gemu-app.firebaseio.com",
+    "project_id": "gemu-app",
+    "storage_bucket": "gemu-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231323160206:android:5a466d138e141defa743df",
+        "android_client_info": {
+          "package_name": "gemu.apppackage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "231323160206-73j05ecpunncgqheoa51mb01bl2cq53c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOrcHltujl8YYOW8Og4nDiyMB7rJbUfUE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "231323160206-73j05ecpunncgqheoa51mb01bl2cq53c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

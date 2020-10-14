@@ -1,0 +1,10 @@
+export 'splash_screen.dart';
+export 'principal_screen.dart';
+export 'nav_screen.dart';
+export 'home_screen.dart';
+export 'profil_screen.dart';
+export 'messagerie_screen.dart';
+export 'clans_screen.dart';
+export 'games_screen.dart';
+export 'search_screen.dart';
+export 'mix_screen.dart';
