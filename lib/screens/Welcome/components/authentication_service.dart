@@ -48,4 +48,17 @@ class AuthenticationService {
       return e.message;
     }
   }
+
+  Future signInorUpEmailLink({String email}) async {
+    return await _firebaseAuth.sendSignInLinkToEmail(
+      email: email,
+      actionCodeSettings: ActionCodeSettings(
+          url: "https://gemu.page.link/",
+          androidPackageName: "com.gemu_app",
+          iOSBundleId: "com.gemu_app",
+          handleCodeInApp: true,
+          androidMinimumVersion: "21",
+          androidInstallApp: true),
+    );
+  }
 }

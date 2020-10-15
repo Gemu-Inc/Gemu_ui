@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/models/models.dart';
 
 class ProfilButton extends StatelessWidget {
-  final User currentUser;
+  final UserLogin currentUser;
   final double width, height;
   final Color colorFond, colorBorder;
   final Function onPress;

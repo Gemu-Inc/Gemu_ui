@@ -1,12 +1,12 @@
 import 'package:meta/meta.dart';
 
-class User {
+class UserLogin {
   final String name;
   final String imageProfil;
   final String imageBanniere;
   final String uid;
 
-  const User({
+  const UserLogin({
     @required this.name,
     @required this.imageProfil,
     @required this.imageBanniere,

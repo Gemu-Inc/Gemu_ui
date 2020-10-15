@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 import 'package:Gemu/models/models.dart';
 
 class Post {
-  final User user;
+  final UserLogin user;
   final String caption;
   final String timeAgo;
   final String imageUrl;

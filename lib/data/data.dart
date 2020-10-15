@@ -2,7 +2,7 @@ import 'package:Gemu/models/clan_model.dart';
 import 'package:Gemu/models/models.dart';
 import 'package:Gemu/screens/screens.dart';
 
-final User currentUser = User(
+final UserLogin currentUser = UserLogin(
   name: '0ruj',
   imageProfil: 'img/Lelouch.png',
   imageBanniere: 'img/Lelouch_appbar.png',

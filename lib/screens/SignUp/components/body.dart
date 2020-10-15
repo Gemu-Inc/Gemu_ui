@@ -8,8 +8,11 @@ import 'package:Gemu/components/rounded_button.dart';
 import 'package:Gemu/components/rounded_input_field.dart';
 import 'package:Gemu/components/rounded_password_field.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:Gemu/screens/Welcome/components/authentication_service.dart';
+import 'package:provider/provider.dart';
 
 class Body extends StatelessWidget {
+  String emailController = '';
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -29,14 +32,18 @@ class Body extends StatelessWidget {
             ),
             RoundedInputField(
               hintText: "Your Email",
-              onChanged: (value) {},
+              onChanged: (value) {
+                emailController = value;
+              },
             ),
             RoundedPasswordField(
               onChanged: (value) {},
             ),
             RoundedButton(
               text: "SIGNUP",
-              press: () {},
+              press: () async {
+                  await context.read<AuthenticationService>().signInorUpEmailLink(email: emailController);
+              },
             ),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(

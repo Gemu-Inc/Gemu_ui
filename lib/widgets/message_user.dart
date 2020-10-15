@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/models/models.dart';
 
 class MessageUser extends StatelessWidget {
-  final User currentUser;
+  final UserLogin currentUser;
 
   const MessageUser({
     Key key,

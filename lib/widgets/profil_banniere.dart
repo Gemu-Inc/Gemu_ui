@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/models/models.dart';
 
 class ProfilBanniere extends StatelessWidget {
-  final User currentUser;
+  final UserLogin currentUser;
 
   const ProfilBanniere({
     Key key,
