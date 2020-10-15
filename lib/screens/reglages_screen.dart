@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/config/config.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 class ReglagesScreen extends StatefulWidget {
@@ -13,331 +14,275 @@ class ReglagesScreen extends StatefulWidget {
 }
 
 class _ReglagesScreenState extends State<ReglagesScreen> {
-  /*List<ThemeItem> _themeItems = ThemeItem.getThemeItems();
-
-  List<DropdownMenuItem<ThemeItem>> _dropDownMenuItems;
-
-  ThemeItem _selectedItem;
-
-  List<DropdownMenuItem<ThemeItem>> buildDropdownMenuItems() {
-    List<DropdownMenuItem<ThemeItem>> items = List();
-    for (ThemeItem themeItem in _themeItems) {
-      items
-          .add(DropdownMenuItem(value: themeItem, child: Text(themeItem.name)));
-    }
-    return items;
-  }
+  int selectedPosition = 0;
+  List themes = Constants.themes;
+  SharedPreferences prefs;
+  ThemeNotifier themeNotifier;
 
   @override
   void initState() {
-    _dropDownMenuItems = buildDropdownMenuItems();
-    _selectedItem = _dropDownMenuItems[0].value;
     super.initState();
-  }
-
-  void changeColor() {
-    DynamicTheme.of(context).setThemeData(this._selectedItem.themeData);
-  }
-
-  setSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('dynTheme', _selectedItem.slug);
-  }
-
-  onChangeDropdownItem(ThemeItem selectedItem) {
-    setState(() {
-      this._selectedItem = selectedItem;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getSavedTheme();
     });
-    changeColor();
-    setSharedPrefs();
-  }*/
+  }
 
-  ThemeData _customThemeDark = ThemeData(
-    brightness: Brightness.dark,
-    primaryColor:
-        Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-    accentColor:
-        Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-    scaffoldBackgroundColor: Colors.grey[1000],
-    secondaryHeaderColor: Colors.black,
-    splashColor: Colors.grey[1000],
-    iconTheme: IconThemeData(
-      color: Colors.black,
-    ),
-    primaryTextTheme: TextTheme(
-      headline6: TextStyle(color: Colors.black),
-      bodyText1: TextStyle(color: Colors.black),
-      bodyText2: TextStyle(color: Colors.black),
-    ),
-    appBarTheme: AppBarTheme(
-      color: Colors.black45,
-      iconTheme: IconThemeData(
-        color: Colors.black,
-      ),
-    ),
-    cardTheme: CardTheme(color: Colors.black),
-    cardColor: Colors.black45,
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: Color(0xFFDC804F),
-    ),
-    bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black),
-    bottomAppBarTheme: BottomAppBarTheme(
-      color: Colors.black45,
-    ),
-    /*tabBarTheme: TabBarTheme(
-      unselectedLabelColor: Colors.grey[400],
-      labelColor: Color(0xFFDC804F),
-    ),*/
-    indicatorColor: Color(0xFFDC804F),
-  );
-
-  ThemeData _customThemeLight = ThemeData(
-    brightness: Brightness.light,
-    primaryColor:
-        Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-    accentColor:
-        Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-    scaffoldBackgroundColor: Colors.grey[200],
-    secondaryHeaderColor: Colors.white,
-    splashColor: Colors.grey[200],
-    iconTheme: IconThemeData(
-      color: Colors.black,
-    ),
-    primaryTextTheme: TextTheme(
-      headline6: TextStyle(color: Colors.black),
-      bodyText1: TextStyle(color: Colors.black),
-      bodyText2: TextStyle(color: Colors.black),
-    ),
-    appBarTheme: AppBarTheme(
-      color: Colors.white,
-      iconTheme: IconThemeData(
-        color: Colors.black,
-      ),
-    ),
-    cardTheme: CardTheme(color: Colors.white),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: Color(0xFFDC804F),
-    ),
-    bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.white),
-    bottomAppBarTheme: BottomAppBarTheme(
-      color: Colors.white,
-    ),
-    /*tabBarTheme: TabBarTheme(
-      unselectedLabelColor: Colors.black,
-      labelColor: Color(0xFFDC804F),
-    ),
-    indicatorColor: Color(0xFFDC804F),*/
-  );
-
-  bool isSwitched = false;
+  _getSavedTheme() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedPosition = themes
+          .indexOf(prefs.getString(Constants.appTheme) ?? 'darkThemeOrange');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      appBar: GradientAppBar(
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () => Navigator.pop(context)),
-        title: Text('Design'),
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).primaryColor,
-            Theme.of(context).accentColor
-          ],
+        appBar: GradientAppBar(
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios),
+              onPressed: () => Navigator.pop(context)),
+          title: Text('Design'),
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).primaryColor,
+              Theme.of(context).accentColor
+            ],
+          ),
         ),
-      ),
-      body: Container(
-        alignment: Alignment.center,
-        margin: EdgeInsets.all(16),
-        child: Column(
+        body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Spacer(),
+          children: [
             Text(
               "Current Theme Colors",
               style: Theme.of(context).textTheme.headline5,
             ),
-            SizedBox(height: 8),
-            _themeColorContainer(
-                "Primary Color", Theme.of(context).primaryColor),
-            _themeColorContainer("Accent Color", Theme.of(context).accentColor),
-            Spacer(),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Select Pre-defined Themes",
-                style: Theme.of(context).textTheme.headline5,
-              ),
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        RawMaterialButton(
+                          onPressed: () => _updateState(0),
+                          child: AnimatedSwitcher(
+                              duration: Duration(milliseconds: 400),
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) =>
+                                      ScaleTransition(
+                                          child: child, scale: animation),
+                              child: _getIcon(themeNotifier, lightThemeOrange)),
+                          shape: CircleBorder(),
+                          elevation: 2.0,
+                          fillColor: lightThemeOrange.scaffoldBackgroundColor,
+                          padding: EdgeInsets.all(5.0),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(themes[0]),
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      children: [
+                        RawMaterialButton(
+                          onPressed: () => _updateState(1),
+                          child: AnimatedSwitcher(
+                              duration: Duration(milliseconds: 400),
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) =>
+                                      ScaleTransition(
+                                          child: child, scale: animation),
+                              child: _getIcon(themeNotifier, lightThemePurple)),
+                          shape: CircleBorder(),
+                          elevation: 2.0,
+                          fillColor: lightThemePurple.scaffoldBackgroundColor,
+                          padding: EdgeInsets.all(5.0),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(themes[1]),
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      children: [
+                        RawMaterialButton(
+                          onPressed: () => _updateState(2),
+                          child: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 400),
+                            transitionBuilder: (Widget child,
+                                    Animation<double> animation) =>
+                                ScaleTransition(child: child, scale: animation),
+                            child: _getIcon(themeNotifier, darkThemeOrange),
+                          ),
+                          shape: CircleBorder(),
+                          elevation: 2.0,
+                          fillColor: darkThemeOrange.scaffoldBackgroundColor,
+                          padding: EdgeInsets.all(5.0),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(themes[2]),
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      children: [
+                        RawMaterialButton(
+                          onPressed: () => _updateState(3),
+                          child: AnimatedSwitcher(
+                              duration: Duration(milliseconds: 400),
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) =>
+                                      ScaleTransition(
+                                          child: child, scale: animation),
+                              child: _getIcon(themeNotifier, darkThemePurple)),
+                          shape: CircleBorder(),
+                          elevation: 2.0,
+                          fillColor: darkThemePurple.scaffoldBackgroundColor,
+                          padding: EdgeInsets.all(5.0),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(themes[3]),
+                      ],
+                    ),
+                  ],
+                )),
+            SizedBox(
+              height: 20,
             ),
-            SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ThemeButton(buttonThemeData: dOrangeTheme),
-                ThemeButton(buttonThemeData: dPurpleTheme),
-                ThemeButton(buttonThemeData: lOrangeTheme),
-                ThemeButton(buttonThemeData: lPurpleTheme),
-              ],
-            ),
-            Spacer(),
             Text(
-              "Select Custom Theme",
+              "Select Pre-defined Themes",
               style: Theme.of(context).textTheme.headline5,
             ),
-            SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Column(
               children: [
-                isSwitched
-                    ? SizedBox()
-                    : Icon(
-                        Feather.sun,
-                        color: Colors.yellow,
-                      ),
-                SizedBox(
-                  width: 10.0,
+                Container(
+                  margin: EdgeInsets.all(5.0),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: FlatButton(
+                      onPressed: () => _openDialogLight(
+                          "Primary Color", lightThemeCustom.primaryColor, true),
+                      color: lightThemeCustom.primaryColor,
+                      child: Text("Choose Primary Color",
+                          textAlign: TextAlign.center,
+                          style: lightThemeCustom.primaryTextTheme.button)),
                 ),
-                Text('Light'),
-                Switch(
-                  value: isSwitched,
-                  inactiveThumbColor: Colors.yellow,
-                  inactiveTrackColor: Theme.of(context).primaryColor,
-                  activeTrackColor: Theme.of(context).accentColor,
-                  activeColor: Colors.yellow,
-                  onChanged: (value) {
-                    setState(() {
-                      isSwitched = value;
-                    });
+                Container(
+                  margin: EdgeInsets.all(5.0),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: FlatButton(
+                      onPressed: () => _openDialogLight(
+                          "AccentColor", lightThemeCustom.accentColor, false),
+                      color: lightThemeCustom.accentColor,
+                      child: Text("Choose Accent Color",
+                          textAlign: TextAlign.center,
+                          style: lightThemeCustom.primaryTextTheme.button)),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                RawMaterialButton(
+                  onPressed: () {
+                    _updateState(4);
+                    colorChangedPrimary(lightThemeCustom.primaryColor.value);
+                    colorChangedAccent(lightThemeCustom.accentColor.value);
                   },
+                  child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: 400),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) =>
+                              ScaleTransition(child: child, scale: animation),
+                      child: _getIcon(themeNotifier, lightThemeCustom)),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: lightThemeCustom.scaffoldBackgroundColor,
+                  padding: EdgeInsets.all(5.0),
                 ),
-                Text('Dark'),
                 SizedBox(
-                  width: 10.0,
+                  height: 5,
                 ),
-                isSwitched
-                    ? Icon(
-                        Feather.moon,
-                        color: Colors.yellow,
-                      )
-                    : SizedBox()
+                Text(themes[4]),
               ],
             ),
-            Container(
-              width: double.infinity,
-              child: FlatButton(
-                  onPressed: () => _openDialog(
-                      "Primary Color",
-                      isSwitched
-                          ? _customThemeDark.primaryColor
-                          : _customThemeLight.primaryColor,
-                      true),
-                  color: isSwitched
-                      ? _customThemeDark.primaryColor
-                      : _customThemeLight.primaryColor,
-                  child: Text("Choose Primary Color",
-                      textAlign: TextAlign.center,
-                      style: isSwitched
-                          ? _customThemeDark.primaryTextTheme.button
-                          : _customThemeLight.primaryTextTheme.button)),
+            SizedBox(
+              height: 20,
             ),
-            Spacer(),
-            Container(
-              width: double.infinity,
-              child: FlatButton(
-                  onPressed: () => _openDialog(
-                      "Accent Color",
-                      isSwitched
-                          ? _customThemeDark.accentColor
-                          : _customThemeLight.accentColor,
-                      false),
-                  color: isSwitched
-                      ? _customThemeDark.accentColor
-                      : _customThemeLight.accentColor,
-                  child: Text("Choose Accent Color",
-                      textAlign: TextAlign.center,
-                      style: isSwitched
-                          ? _customThemeDark.primaryTextTheme.button
-                          : _customThemeLight.primaryTextTheme.button)),
+            Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(5.0),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: FlatButton(
+                      onPressed: () => _openDialogDark(
+                          "Primary Color", darkThemeCustom.primaryColor, true),
+                      color: darkThemeCustom.primaryColor,
+                      child: Text("Choose Primary Color",
+                          textAlign: TextAlign.center,
+                          style: darkThemeCustom.primaryTextTheme.button)),
+                ),
+                Container(
+                  margin: EdgeInsets.all(5.0),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: FlatButton(
+                      onPressed: () => _openDialogDark(
+                          "AccentColor", darkThemeCustom.accentColor, false),
+                      color: darkThemeCustom.accentColor,
+                      child: Text("Choose Accent Color",
+                          textAlign: TextAlign.center,
+                          style: darkThemeCustom.primaryTextTheme.button)),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                RawMaterialButton(
+                  onPressed: () {
+                    _updateState(5);
+                    colorChangedPrimary(darkThemeCustom.primaryColor.value);
+                    colorChangedAccent(darkThemeCustom.accentColor.value);
+                  },
+                  child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: 400),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) =>
+                              ScaleTransition(child: child, scale: animation),
+                      child: _getIcon(themeNotifier, darkThemeCustom)),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: darkThemeCustom.scaffoldBackgroundColor,
+                  padding: EdgeInsets.all(5.0),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(themes[5]),
+              ],
             ),
-            Spacer(),
-            ThemeButton(
-                buttonThemeData:
-                    isSwitched ? _customThemeDark : _customThemeLight),
-            Spacer(),
           ],
-        ),
-      ),
-
-      /*CustomScrollView(
-        slivers: [
-          SliverGradientAppBar(
-            leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios),
-                onPressed: () => Navigator.pop(context)),
-            title: Text('Réglages'),
-            gradient: LinearGradient(
-              colors: [Color(0xFF7C79A5), Color(0xFFDC804F)],
-            ),
-          ),
-          SliverToBoxAdapter(child: ,),
-          SliverList(
-              delegate: SliverChildListDelegate([
-            /*Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                  margin: EdgeInsets.only(top: 10.0, bottom: 30.0),
-                  color: Theme.of(context).cardColor,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        top: 15.0,
-                        left: 15.0,
-                        child: Text(
-                          'Thème',
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ),
-                      DropdownButton(
-                        items: _dropDownMenuItems,
-                        onChanged: onChangeDropdownItem,
-                        underline: SizedBox(),
-                      ),
-                    ],
-                  )),
-            ),
-            Wrap(
-              direction: Axis.horizontal,
-              children: color
-                  .map((e) => GestureDetector(
-                        child: Container(
-                          margin: EdgeInsets.all(10.0),
-                          height: 80,
-                          width: 80,
-                          color: e.color,
-                        ),
-                      ))
-                  .toList(),
-            )*/
-          ]))
-        ],
-      ),*/
-    );
+        ));
   }
 
-  Widget _themeColorContainer(String colorName, Color color) {
-    return Container(
-      width: double.infinity,
-      height: 50,
-      alignment: Alignment.center,
-      margin: EdgeInsets.symmetric(vertical: 16),
-      color: color,
-      child: Text(colorName,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).primaryTextTheme.button),
-    );
-  }
-
-  void _openDialog(String title, Color currentColor, bool primaryColor) {
+  void _openDialogLight(String title, Color currentColor, bool primaryColor) {
     showDialog(
       context: context,
       builder: (_) {
@@ -345,25 +290,18 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
           contentPadding: const EdgeInsets.all(6.0),
           title: Text(title),
           content: Container(
-            height: 250,
-            child: MaterialColorPicker(
-              selectedColor: currentColor,
-              onColorChange: (color) => setState(() => isSwitched
-                  ? _customThemeDark = (primaryColor)
-                      ? _customThemeDark.copyWith(primaryColor: color)
-                      : _customThemeDark.copyWith(accentColor: color)
-                  : _customThemeLight = (primaryColor)
-                      ? _customThemeLight.copyWith(primaryColor: color)
-                      : _customThemeLight.copyWith(accentColor: color)),
-              onMainColorChange: (color) => setState(() => isSwitched
-                  ? _customThemeDark = (primaryColor)
-                      ? _customThemeDark.copyWith(primaryColor: color)
-                      : _customThemeDark.copyWith(accentColor: color)
-                  : _customThemeLight = (primaryColor)
-                      ? _customThemeLight.copyWith(primaryColor: color)
-                      : _customThemeLight.copyWith(accentColor: color)),
-            ),
-          ),
+              height: 250,
+              child: MaterialColorPicker(
+                selectedColor: currentColor,
+                onColorChange: (color) => setState(() => lightThemeCustom =
+                    (primaryColor)
+                        ? lightThemeCustom.copyWith(primaryColor: color)
+                        : lightThemeCustom.copyWith(accentColor: color)),
+                onMainColorChange: (color) => setState(() => lightThemeCustom =
+                    (primaryColor)
+                        ? lightThemeCustom.copyWith(primaryColor: color)
+                        : lightThemeCustom.copyWith(accentColor: color)),
+              )),
           actions: <Widget>[
             FlatButton(
               onPressed: () {
@@ -379,18 +317,98 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
       },
     );
   }
+
+  void _openDialogDark(String title, Color currentColor, bool primaryColor) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(6.0),
+          title: Text(title),
+          content: Container(
+              height: 250,
+              child: MaterialColorPicker(
+                selectedColor: currentColor,
+                onColorChange: (color) => setState(() => darkThemeCustom =
+                    (primaryColor)
+                        ? darkThemeCustom.copyWith(primaryColor: color)
+                        : darkThemeCustom.copyWith(accentColor: color)),
+                onMainColorChange: (color) => setState(() => darkThemeCustom =
+                    (primaryColor)
+                        ? darkThemeCustom.copyWith(primaryColor: color)
+                        : darkThemeCustom.copyWith(accentColor: color)),
+              )),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Done",
+                style: Theme.of(context).textTheme.button,
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _getIcon(ThemeNotifier themeNotifier, ThemeData themeData) {
+    bool selected = (themeNotifier.getTheme() == themeData);
+
+    return Container(
+      height: 50,
+      width: 50,
+      key: Key((selected) ? "ON" : "OFF"),
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                themeData.primaryColor,
+                themeData.accentColor,
+              ]),
+          borderRadius: BorderRadius.circular(40)),
+      child: Icon(
+        (selected) ? Icons.done : Icons.close,
+        size: 20.0,
+      ),
+    );
+  }
+
+  _updateState(int position) {
+    setState(() {
+      selectedPosition = position;
+    });
+    onThemeChanged(themes[position]);
+  }
+
+  void onThemeChanged(String value) async {
+    var prefs = await SharedPreferences.getInstance();
+    if (value == 'LightOrange') {
+      themeNotifier.setTheme(lightThemeOrange);
+    } else if (value == 'LightPurple') {
+      themeNotifier.setTheme(lightThemePurple);
+    } else if (value == 'DarkOrange') {
+      themeNotifier.setTheme(darkThemeOrange);
+    } else if (value == 'DarkPurple') {
+      themeNotifier.setTheme(darkThemePurple);
+    } else if (value == 'LightCustom') {
+      themeNotifier.setTheme(lightThemeCustom);
+    } else if (value == 'DarkCustom') {
+      themeNotifier.setTheme(darkThemeCustom);
+    }
+    prefs.setString(Constants.appTheme, value);
+  }
+
+  void colorChangedPrimary(int value) async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setInt('color_primary', value);
+  }
+
+  void colorChangedAccent(int value) async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setInt('color_accent', value);
+  }
 }
-
-/*class ChoixColor {
-  int id;
-  Color color;
-
-  ChoixColor({@required this.id, @required this.color});
-}
-
-final List<ChoixColor> color = [
-  ChoixColor(id: 01, color: Colors.blue),
-  ChoixColor(id: 02, color: Colors.red),
-  ChoixColor(id: 03, color: Colors.green),
-  ChoixColor(id: 04, color: Colors.yellow)
-];*/

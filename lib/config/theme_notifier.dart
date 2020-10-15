@@ -2,14 +2,14 @@ import 'package:Gemu/config/theme_values.dart';
 import 'package:flutter/material.dart';
 
 class ThemeNotifier with ChangeNotifier {
-  ThemeData _themeData;
+  ThemeData _themeMode;
 
-  ThemeNotifier(this._themeData);
+  ThemeNotifier(this._themeMode);
 
-  getTheme() => _themeData;
+  getTheme() => _themeMode;
 
-  setTheme(ThemeData themeData) async {
-    _themeData = themeData;
+  setTheme(ThemeData mode) async {
+    _themeMode = mode;
     notifyListeners();
   }
 }

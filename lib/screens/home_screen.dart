@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final List<Game> games = panelGames;
 
-  TabController _tabController;
+  /*TabController _tabController;
 
   @override
   void initState() {
@@ -27,21 +27,37 @@ class _HomeScreenState extends State<HomeScreen>
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        /*SliverPersistentHeader(
-            pinned: true,
-            delegate: StickyTabBarDelegate(
-                child: TabBar(
-              controller: _tabController,
-              tabs: games.map((e) => Text(e.nameGame)).toList(),
-            ))),*/
-      ],
-    );
+    return DefaultTabController(
+        length: games.length,
+        child: NestedScrollView(
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: StickyTabBarDelegate(
+                    child: TabBar(
+                      isScrollable: true,
+                      labelColor: Colors.black,
+                      tabs: games.map((e) => Tab(text: e.nameGame)).toList(),
+                    ),
+                  ),
+                ),
+              ];
+            },
+            body: TabBarView(
+                physics: AlwaysScrollableScrollPhysics(),
+                children: games
+                    .map((e) => Container(
+                        height: 3000,
+                        child: Center(
+                          child: Text(e.nameGame),
+                        )))
+                    .toList())));
   }
 }
 

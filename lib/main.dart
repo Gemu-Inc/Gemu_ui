@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/config/config.dart';
 import 'package:Gemu/screens/screens.dart';
 import 'package:Gemu/screens/Welcome/welcome_screen.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,20 +13,55 @@ import 'package:Gemu/screens/Welcome/components/authentication_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(ChangeNotifierProvider<ThemeNotifier>(
-      create: (_) => ThemeNotifier(dPurpleTheme), child: MyApp()));
+  Future<SharedPreferences> prefs = SharedPreferences.getInstance();
+  prefs.then((value) {
+    runApp(
+      ChangeNotifierProvider<ThemeNotifier>(
+        create: (_) {
+          String theme = value.getString(Constants.appTheme);
+          ThemeData themeData;
+          if (theme == 'DarkPurple') {
+            themeData = darkThemePurple;
+            return ThemeNotifier(themeData);
+          } else if (theme == 'LightOrange') {
+            themeData = lightThemeOrange;
+            return ThemeNotifier(themeData);
+          } else if (theme == 'LightPurple') {
+            themeData = lightThemePurple;
+            return ThemeNotifier(themeData);
+          } else if (theme == 'DarkOrange') {
+            themeData = darkThemeOrange;
+            return ThemeNotifier(themeData);
+          } else if (theme == 'LightCustom') {
+            themeData = ThemeData(
+                brightness: lightThemeCustom.brightness,
+                primaryColor:
+                    Color(value.getInt('color_primary') ?? Colors.blue.value),
+                accentColor:
+                    Color(value.getInt('color_accent') ?? Colors.blue.value),
+                scaffoldBackgroundColor:
+                    lightThemeCustom.scaffoldBackgroundColor);
+            return ThemeNotifier(themeData);
+          } else if (theme == 'DarkCustom') {
+            themeData = ThemeData(
+                brightness: darkThemeCustom.brightness,
+                primaryColor:
+                    Color(value.getInt('color_primary') ?? Colors.blue.value),
+                accentColor:
+                    Color(value.getInt('color_accent') ?? Colors.blue.value),
+                scaffoldBackgroundColor:
+                    darkThemeCustom.scaffoldBackgroundColor);
+            return ThemeNotifier(themeData);
+          }
+          return ThemeNotifier(darkThemeCustom);
+        },
+        child: MyApp(),
+      ),
+    );
+  });
 }
 
 class MyApp extends StatelessWidget {
-  /*List<ThemeItem> data = List();
-  String dynTheme;
-https://gemu.page.link
-  Future<void> getDefault() async {
-    data = ThemeItem.getThemeItems();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    dynTheme = prefs.getString("dynTheme");
-  }*/
-
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
@@ -53,30 +86,7 @@ https://gemu.page.link
           },
           initialRoute: '/',
         ));
-
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   title: 'Gemu',
-    //   theme: themeNotifier.getTheme(),
-    //   routes: {
-    //     '/': (context) => MySplashScreen(),
-    //     '/reglagesScreen': (context) => ReglagesScreen(),
-    //     '/searchBar': (context) => SearchBar()
-    //   },
-    //   initialRoute: '/',
-    // );
-    //});
   }
-  /*getDefault();
-    return DynamicTheme(data: (Brightness brightness) {
-      getDefault();
-      for (int i = 0; i < data.length; i++) {
-        if (data[i].slug == this.dynTheme) {
-          return data[i].themeData;
-        }
-      }
-      return data[0].themeData;
-    }, themedWidgetBuilder: (context, theme) {*/
 }
 
 class AuthenticationWrapper extends StatelessWidget {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'dart:math';
 
 /// --- Dark Orange Theme ---
-final dOrangeTheme = ThemeData(
+final darkThemeOrange = ThemeData(
   brightness: Brightness.dark,
   primaryColor: Color(0xFFDC804F),
   accentColor: Color(0xFF7C79A5),
@@ -40,7 +41,7 @@ final dOrangeTheme = ThemeData(
 );
 
 /// --- Dark Purple Theme ---
-final dPurpleTheme = ThemeData(
+final darkThemePurple = ThemeData(
   brightness: Brightness.dark,
   primaryColor: Color(0xFF7C79A5),
   accentColor: Color(0xFFDC804F),
@@ -78,7 +79,7 @@ final dPurpleTheme = ThemeData(
 );
 
 /// --- Light Orange Theme ---
-final lOrangeTheme = ThemeData(
+final lightThemeOrange = ThemeData(
   brightness: Brightness.light,
   primaryColor: Color(0xFFDC804F),
   accentColor: Color(0xFF7C79A5),
@@ -115,7 +116,7 @@ final lOrangeTheme = ThemeData(
 );
 
 /// --- Light Purple Theme ---
-final lPurpleTheme = ThemeData(
+final lightThemePurple = ThemeData(
   brightness: Brightness.light,
   primaryColor: Color(0xFF7C79A5),
   accentColor: Color(0xFFDC804F),
@@ -149,4 +150,22 @@ final lPurpleTheme = ThemeData(
     labelColor: Color(0xFF7C79A5),
   ),
   indicatorColor: Color(0xFF7C79A5),
+);
+
+ThemeData lightThemeCustom = ThemeData(
+  brightness: Brightness.light,
+  primaryColor:
+      Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
+  accentColor:
+      Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
+  scaffoldBackgroundColor: Colors.grey[200],
+);
+
+ThemeData darkThemeCustom = ThemeData(
+  brightness: Brightness.dark,
+  primaryColor:
+      Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
+  accentColor:
+      Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
+  scaffoldBackgroundColor: Colors.grey[1000],
 );
