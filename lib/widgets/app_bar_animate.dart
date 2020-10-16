@@ -1,8 +1,5 @@
-import 'package:Gemu/models/categorie_model.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/widgets/widgets.dart';
-import 'package:Gemu/data/data.dart';
-import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 
 class AppBarAnimate extends StatefulWidget {
   AppBarAnimate({Key key}) : super(key: key);
@@ -12,50 +9,18 @@ class AppBarAnimate extends StatefulWidget {
 }
 
 class _AppBarAnimateState extends State<AppBarAnimate>
-    with SingleTickerProviderStateMixin {
-  _AppBarAnimateState() {
-    controller = new AnimationController(
-        duration: new Duration(milliseconds: 500), vsync: this);
-    animation = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
-  }
-
+    with TickerProviderStateMixin {
+  AnimationController controllerRotate;
+  Animation animationRotate;
   AnimationController controller;
   Animation animation;
   bool expanded = false;
-  Function onPress;
-
-  bool _animateAppBar() {
-    expanded ? controller.reverse() : controller.forward();
-    expanded = !expanded;
-    //print(expanded);
-    return expanded;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBarAnimateSize(
-      animation: animation,
-      onPress: _animateAppBar,
-    );
-  }
-}
-
-class AppBarAnimateSize extends AnimatedWidget {
-  AppBarAnimateSize({
-    Key key,
-    Animation<double> animation,
-    this.onPress,
-  }) : super(key: key, listenable: animation);
-
-  final Function onPress;
 
   static final _sizeTween = new Tween<double>(begin: 100.0, end: 555.0);
 
-  bool expanded = false;
-
-  bool _test() {
+  bool test() {
     bool test = false;
-    if (_sizeTween.evaluate(listenable) == _sizeTween.end) {
+    if (_sizeTween.evaluate(animation) == _sizeTween.end) {
       test = true;
     } else {
       test = false;
@@ -63,15 +28,43 @@ class AppBarAnimateSize extends AnimatedWidget {
     return test;
   }
 
+  double getRadianFromDegree(double degree) {
+    double unitRadian = 57.295779513;
+    return degree / unitRadian;
+  }
+
+  bool _animateAppBar() {
+    expanded ? controller.reverse() : controller.forward();
+    expanded = !expanded;
+    return expanded;
+  }
+
+  @override
+  void initState() {
+    controllerRotate =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+    animationRotate = Tween<double>(begin: 0.0, end: 180.0).animate(
+        CurvedAnimation(parent: controllerRotate, curve: Curves.easeOut));
+    controller = new AnimationController(
+        duration: new Duration(milliseconds: 500), vsync: this);
+    animation = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
+    super.initState();
+    controllerRotate.addListener(() {
+      setState(() {});
+    });
+    controller.addListener(() {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    expanded = _test();
     return PreferredSize(
-        preferredSize: new Size.fromHeight(_sizeTween.evaluate(listenable)),
+        preferredSize: new Size.fromHeight(_sizeTween.evaluate(animation)),
         child: ClipPath(
           clipper: ClipperCustomAppBar(),
           child: Container(
-              height: _sizeTween.evaluate(listenable),
+              height: _sizeTween.evaluate(animation),
               child: Stack(
                 children: [
                   Container(
@@ -89,22 +82,32 @@ class AppBarAnimateSize extends AnimatedWidget {
                         child: Container(
                           margin: EdgeInsets.all(5.0),
                           height: 300,
-                          //color: expanded ? Colors.pink : Colors.purple,
                           child: ChoixCategorie(
                             expanded: expanded,
                           ),
                         ),
                       )),
                   Align(
-                    alignment: Alignment.topCenter,
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.expand_more,
-                          size: 35,
-                          color: Colors.black,
-                        ),
-                        onPressed: onPress),
-                  ),
+                      alignment: Alignment.topCenter,
+                      child: Transform(
+                        transform: Matrix4.rotationZ(
+                            getRadianFromDegree(animationRotate.value)),
+                        alignment: Alignment.center,
+                        child: IconButton(
+                            icon: Icon(
+                              Icons.expand_more,
+                              size: 35,
+                              color: Colors.black,
+                            ),
+                            onPressed: () {
+                              if (controllerRotate.isCompleted) {
+                                controllerRotate.reverse();
+                              } else {
+                                controllerRotate.forward();
+                              }
+                              _animateAppBar();
+                            }),
+                      )),
                 ],
               )),
         ));

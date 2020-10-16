@@ -53,7 +53,7 @@ Future<void> main() async {
                     darkThemeCustom.scaffoldBackgroundColor);
             return ThemeNotifier(themeData);
           }
-          return ThemeNotifier(darkThemeCustom);
+          return ThemeNotifier(darkThemeOrange);
         },
         child: MyApp(),
       ),

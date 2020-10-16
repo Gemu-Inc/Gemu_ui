@@ -71,7 +71,10 @@ class PanelGamesBar extends StatelessWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Color(0xFF7C79A5), Color(0xFFDC804F)],
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).accentColor
+                          ],
                         )),
                     tabs: games
                         .map((e) => Tab(

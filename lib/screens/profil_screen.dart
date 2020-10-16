@@ -1,7 +1,6 @@
 import 'package:Gemu/screens/Login/login_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:Gemu/widgets/widgets.dart';
 import 'package:Gemu/data/data.dart';
 import 'package:provider/provider.dart';
 import 'package:Gemu/screens/Welcome/components/authentication_service.dart';

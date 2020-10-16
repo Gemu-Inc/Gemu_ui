@@ -14,50 +14,119 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final List<Game> games = panelGames;
+  int selectedIndex = 0;
 
-  /*TabController _tabController;
+  TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: games.length);
+    _tabController =
+        TabController(vsync: this, length: games.length, initialIndex: 1);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: games.length,
-        child: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: StickyTabBarDelegate(
-                    child: TabBar(
-                      isScrollable: true,
-                      labelColor: Colors.black,
-                      tabs: games.map((e) => Tab(text: e.nameGame)).toList(),
+    return CustomScrollView(
+      physics: BouncingScrollPhysics(),
+      slivers: [
+        SliverToBoxAdapter(
+            child: PreferredSize(
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 100,
+                        width: MediaQuery.of(context).size.width - 25,
+                        child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: TabBar(
+                                isScrollable: true,
+                                controller: _tabController,
+                                labelColor: Colors.black,
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                indicator: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Theme.of(context).primaryColor,
+                                        Theme.of(context).accentColor
+                                      ],
+                                    )),
+                                tabs: games
+                                    .map((e) => Container(
+                                          height: 88,
+                                          width: 88,
+                                          child: Tab(
+                                              child: Column(
+                                            children: [
+                                              Container(
+                                                height: 60,
+                                                width: 60,
+                                                margin: EdgeInsets.all(5.0),
+                                                decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      begin: Alignment.topLeft,
+                                                      end:
+                                                          Alignment.bottomRight,
+                                                      colors: [
+                                                        Theme.of(context)
+                                                            .primaryColor,
+                                                        Theme.of(context)
+                                                            .accentColor
+                                                      ],
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0),
+                                                    image: DecorationImage(
+                                                        fit: BoxFit.cover,
+                                                        image: AssetImage(
+                                                            e.imageUrl))),
+                                              ),
+                                              Text(
+                                                e.nameGame,
+                                                style: TextStyle(fontSize: 15),
+                                              ),
+                                            ],
+                                          )),
+                                        ))
+                                    .toList(),
+                                onTap: (index) =>
+                                    setState(() => selectedIndex = index),
+                              ),
+                            )),
+                      ),
                     ),
-                  ),
+                    Divider(
+                      color: Theme.of(context).primaryColor,
+                      thickness: 0.75,
+                    )
+                  ],
                 ),
-              ];
-            },
-            body: TabBarView(
-                physics: AlwaysScrollableScrollPhysics(),
-                children: games
-                    .map((e) => Container(
-                        height: 3000,
-                        child: Center(
-                          child: Text(e.nameGame),
-                        )))
-                    .toList())));
+                preferredSize: Size.fromHeight(100))),
+        SliverFillRemaining(
+            child: TabBarView(
+          controller: _tabController,
+          children: games
+              .map((e) => Center(
+                    child: Text('${e.nameGame} content'),
+                  ))
+              .toList(),
+        ))
+      ],
+    );
   }
 }
 
