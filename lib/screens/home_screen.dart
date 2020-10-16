@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 labelColor: Colors.black,
                                 indicatorSize: TabBarIndicatorSize.tab,
                                 indicator: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
+                                    borderRadius: BorderRadius.circular(50),
                                     gradient: LinearGradient(
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
@@ -69,38 +69,30 @@ class _HomeScreenState extends State<HomeScreen>
                                           height: 88,
                                           width: 88,
                                           child: Tab(
-                                              child: Column(
-                                            children: [
-                                              Container(
-                                                height: 60,
-                                                width: 60,
-                                                margin: EdgeInsets.all(5.0),
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      begin: Alignment.topLeft,
-                                                      end:
-                                                          Alignment.bottomRight,
-                                                      colors: [
-                                                        Theme.of(context)
-                                                            .primaryColor,
-                                                        Theme.of(context)
-                                                            .accentColor
-                                                      ],
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5.0),
-                                                    image: DecorationImage(
-                                                        fit: BoxFit.cover,
-                                                        image: AssetImage(
-                                                            e.imageUrl))),
-                                              ),
-                                              Text(
-                                                e.nameGame,
-                                                style: TextStyle(fontSize: 15),
-                                              ),
-                                            ],
-                                          )),
+                                            child: Container(
+                                              height: 75,
+                                              width: 75,
+                                              margin: EdgeInsets.all(5.0),
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      Theme.of(context)
+                                                          .primaryColor,
+                                                      Theme.of(context)
+                                                          .accentColor
+                                                    ],
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0),
+                                                  image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: AssetImage(
+                                                          e.imageUrl))),
+                                            ),
+                                          ),
                                         ))
                                     .toList(),
                                 onTap: (index) =>
