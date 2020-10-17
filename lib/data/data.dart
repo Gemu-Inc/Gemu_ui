@@ -14,7 +14,7 @@ final List<CategoriePost> categoriePosts = [
   CategoriePost(idCategorie: 03, name: 'Aide', selected: true),
   CategoriePost(idCategorie: 04, name: 'Leak', selected: true),
   CategoriePost(idCategorie: 05, name: 'Débat', selected: true),
-  CategoriePost(idCategorie: 06, name: 'Evénement', selected: true),
+  CategoriePost(idCategorie: 06, name: 'Évènement', selected: true),
   CategoriePost(idCategorie: 07, name: 'Compétition', selected: true)
 ];
 
