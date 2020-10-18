@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen>
                     Align(
                       alignment: Alignment.center,
                       child: Container(
-                        height: 100,
+                        height: MediaQuery.of(context).size.height / 10,
                         width: MediaQuery.of(context).size.width - 25,
                         child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 5.0),
@@ -66,12 +66,12 @@ class _HomeScreenState extends State<HomeScreen>
                                     )),
                                 tabs: games
                                     .map((e) => Container(
-                                          height: 88,
-                                          width: 88,
+                                          height: 55,
+                                          width: 55,
                                           child: Tab(
                                             child: Container(
-                                              height: 75,
-                                              width: 75,
+                                              height: 50,
+                                              width: 50,
                                               margin: EdgeInsets.all(5.0),
                                               decoration: BoxDecoration(
                                                   gradient: LinearGradient(

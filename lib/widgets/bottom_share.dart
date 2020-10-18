@@ -61,13 +61,13 @@ class _BottomShare extends State<BottomShare>
         Positioned(
             left: size.width / 4,
             right: size.width / 4,
-            bottom: 40,
+            bottom: 20,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
                 IgnorePointer(
                     child: Container(
-                  height: 250,
+                  height: 150,
                   width: 200,
                   color: Colors.transparent,
                 )),
@@ -81,14 +81,14 @@ class _BottomShare extends State<BottomShare>
                       alignment: Alignment.center,
                       child: GestureDetector(
                         child: Container(
-                          height: 55,
-                          width: 55,
+                          height: 45,
+                          width: 45,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: Theme.of(context).primaryColor),
                           child: Icon(
                             Icons.photo_camera,
-                            size: 30,
+                            size: 25,
                           ),
                         ),
                         onTap: () => print('Photo'),
@@ -104,8 +104,8 @@ class _BottomShare extends State<BottomShare>
                       alignment: Alignment.center,
                       child: GestureDetector(
                         child: Container(
-                          height: 55,
-                          width: 55,
+                          height: 45,
+                          width: 45,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               gradient: LinearGradient(
@@ -117,7 +117,7 @@ class _BottomShare extends State<BottomShare>
                                   ])),
                           child: Icon(
                             Icons.sms,
-                            size: 30,
+                            size: 25,
                           ),
                         ),
                         onTap: () => print('Texte'),
@@ -133,14 +133,14 @@ class _BottomShare extends State<BottomShare>
                       alignment: Alignment.center,
                       child: GestureDetector(
                         child: Container(
-                          height: 55,
-                          width: 55,
+                          height: 45,
+                          width: 45,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: Theme.of(context).accentColor),
                           child: Icon(
                             Icons.videocam,
-                            size: 30,
+                            size: 25,
                           ),
                         ),
                         onTap: () => print('Caméra'),
@@ -150,42 +150,47 @@ class _BottomShare extends State<BottomShare>
                     transform: Matrix4.rotationZ(
                         getRadianFromDegree(rotationAnimationFlatButton.value)),
                     alignment: Alignment.center,
-                    child: FloatingActionButton(
-                        heroTag: null,
-                        onPressed: () {
-                          if (animationController.isCompleted) {
-                            animationController.reverse();
-                          } else {
-                            animationController.forward();
-                          }
-                        },
-                        elevation: 8.0,
-                        tooltip: 'Share',
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 60,
-                              width: 60,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Theme.of(context).primaryColor,
-                                        Theme.of(context).accentColor
-                                      ])),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: ImageIcon(
-                                AssetImage('img/share.png'),
-                                size: 40,
-                                color: Theme.of(context).secondaryHeaderColor,
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () {
+                            if (animationController.isCompleted) {
+                              animationController.reverse();
+                            } else {
+                              animationController.forward();
+                            }
+                          },
+                          backgroundColor: Colors.transparent,
+                          elevation: 10.0,
+                          tooltip: 'Share',
+                          child: Stack(
+                            children: [
+                              Container(
+                                //height: 60,
+                                //width: 60,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Theme.of(context).primaryColor,
+                                          Theme.of(context).accentColor
+                                        ])),
                               ),
-                            )
-                          ],
-                        ))),
+                              Align(
+                                alignment: Alignment.center,
+                                child: ImageIcon(
+                                  AssetImage('img/share.png'),
+                                  size: 30,
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                ),
+                              )
+                            ],
+                          )),
+                    )),
               ],
             ))
       ],

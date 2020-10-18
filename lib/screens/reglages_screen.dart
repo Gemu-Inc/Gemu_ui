@@ -51,233 +51,276 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
             ],
           ),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Current Theme Colors",
-              style: Theme.of(context).textTheme.headline5,
-            ),
-            Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Row(
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Container(
+                margin: EdgeInsets.all(5.0),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        RawMaterialButton(
-                          onPressed: () => _updateState(0),
-                          child: AnimatedSwitcher(
-                              duration: Duration(milliseconds: 400),
-                              transitionBuilder:
-                                  (Widget child, Animation<double> animation) =>
-                                      ScaleTransition(
-                                          child: child, scale: animation),
-                              child: _getIcon(themeNotifier, lightThemeOrange)),
-                          shape: CircleBorder(),
-                          elevation: 2.0,
-                          fillColor: lightThemeOrange.scaffoldBackgroundColor,
-                          padding: EdgeInsets.all(5.0),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(themes[0]),
-                      ],
+                    Text(
+                      "Current Theme Colors",
+                      style: Theme.of(context).textTheme.headline5,
                     ),
-                    Spacer(),
-                    Column(
-                      children: [
-                        RawMaterialButton(
-                          onPressed: () => _updateState(1),
-                          child: AnimatedSwitcher(
-                              duration: Duration(milliseconds: 400),
-                              transitionBuilder:
-                                  (Widget child, Animation<double> animation) =>
-                                      ScaleTransition(
-                                          child: child, scale: animation),
-                              child: _getIcon(themeNotifier, lightThemePurple)),
-                          shape: CircleBorder(),
-                          elevation: 2.0,
-                          fillColor: lightThemePurple.scaffoldBackgroundColor,
-                          padding: EdgeInsets.all(5.0),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(themes[1]),
-                      ],
+                    Container(
+                        margin: EdgeInsets.all(5.0),
+                        height: 90,
+                        width: MediaQuery.of(context).size.width,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            Container(
+                              height: 80,
+                              width: MediaQuery.of(context).size.width / 4,
+                              child: Column(
+                                children: [
+                                  RawMaterialButton(
+                                    onPressed: () => _updateState(0),
+                                    child: AnimatedSwitcher(
+                                        duration: Duration(milliseconds: 400),
+                                        transitionBuilder: (Widget child,
+                                                Animation<double> animation) =>
+                                            ScaleTransition(
+                                                child: child, scale: animation),
+                                        child: _getIcon(
+                                            themeNotifier, lightThemeOrange)),
+                                    shape: CircleBorder(),
+                                    elevation: 2.0,
+                                    fillColor: lightThemeOrange
+                                        .scaffoldBackgroundColor,
+                                    padding: EdgeInsets.all(5.0),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(themes[0]),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: 80,
+                              width: MediaQuery.of(context).size.width / 4,
+                              child: Column(
+                                children: [
+                                  RawMaterialButton(
+                                    onPressed: () => _updateState(1),
+                                    child: AnimatedSwitcher(
+                                        duration: Duration(milliseconds: 400),
+                                        transitionBuilder: (Widget child,
+                                                Animation<double> animation) =>
+                                            ScaleTransition(
+                                                child: child, scale: animation),
+                                        child: _getIcon(
+                                            themeNotifier, lightThemePurple)),
+                                    shape: CircleBorder(),
+                                    elevation: 2.0,
+                                    fillColor: lightThemePurple
+                                        .scaffoldBackgroundColor,
+                                    padding: EdgeInsets.all(5.0),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(themes[1]),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: 80,
+                              width: MediaQuery.of(context).size.width / 4,
+                              child: Column(
+                                children: [
+                                  RawMaterialButton(
+                                    onPressed: () => _updateState(2),
+                                    child: AnimatedSwitcher(
+                                      duration: Duration(milliseconds: 400),
+                                      transitionBuilder: (Widget child,
+                                              Animation<double> animation) =>
+                                          ScaleTransition(
+                                              child: child, scale: animation),
+                                      child: _getIcon(
+                                          themeNotifier, darkThemeOrange),
+                                    ),
+                                    shape: CircleBorder(),
+                                    elevation: 2.0,
+                                    fillColor:
+                                        darkThemeOrange.scaffoldBackgroundColor,
+                                    padding: EdgeInsets.all(5.0),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(themes[2]),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: 80,
+                              width: MediaQuery.of(context).size.width / 4,
+                              child: Column(
+                                children: [
+                                  RawMaterialButton(
+                                    onPressed: () => _updateState(3),
+                                    child: AnimatedSwitcher(
+                                        duration: Duration(milliseconds: 400),
+                                        transitionBuilder: (Widget child,
+                                                Animation<double> animation) =>
+                                            ScaleTransition(
+                                                child: child, scale: animation),
+                                        child: _getIcon(
+                                            themeNotifier, darkThemePurple)),
+                                    shape: CircleBorder(),
+                                    elevation: 2.0,
+                                    fillColor:
+                                        darkThemePurple.scaffoldBackgroundColor,
+                                    padding: EdgeInsets.all(5.0),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(themes[3]),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )),
+                    SizedBox(
+                      height: 20,
                     ),
-                    Spacer(),
+                    Text(
+                      "Select Pre-defined Themes",
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
                     Column(
                       children: [
-                        RawMaterialButton(
-                          onPressed: () => _updateState(2),
-                          child: AnimatedSwitcher(
-                            duration: Duration(milliseconds: 400),
-                            transitionBuilder: (Widget child,
-                                    Animation<double> animation) =>
-                                ScaleTransition(child: child, scale: animation),
-                            child: _getIcon(themeNotifier, darkThemeOrange),
+                        Container(
+                          margin: EdgeInsets.all(5.0),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          shape: CircleBorder(),
-                          elevation: 2.0,
-                          fillColor: darkThemeOrange.scaffoldBackgroundColor,
-                          padding: EdgeInsets.all(5.0),
+                          child: FlatButton(
+                              onPressed: () => _openDialogLight("Primary Color",
+                                  lightThemeCustom.primaryColor, true),
+                              color: lightThemeCustom.primaryColor,
+                              child: Text("Choose Primary Color",
+                                  textAlign: TextAlign.center,
+                                  style: lightThemeCustom
+                                      .primaryTextTheme.button)),
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(5.0),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: FlatButton(
+                              onPressed: () => _openDialogLight("AccentColor",
+                                  lightThemeCustom.accentColor, false),
+                              color: lightThemeCustom.accentColor,
+                              child: Text("Choose Accent Color",
+                                  textAlign: TextAlign.center,
+                                  style: lightThemeCustom
+                                      .primaryTextTheme.button)),
                         ),
                         SizedBox(
-                          height: 5,
+                          height: 10,
                         ),
-                        Text(themes[2]),
-                      ],
-                    ),
-                    Spacer(),
-                    Column(
-                      children: [
                         RawMaterialButton(
-                          onPressed: () => _updateState(3),
+                          onPressed: () {
+                            _updateState(4);
+                            colorChangedPrimary(
+                                lightThemeCustom.primaryColor.value);
+                            colorChangedAccent(
+                                lightThemeCustom.accentColor.value);
+                          },
                           child: AnimatedSwitcher(
                               duration: Duration(milliseconds: 400),
                               transitionBuilder:
                                   (Widget child, Animation<double> animation) =>
                                       ScaleTransition(
                                           child: child, scale: animation),
-                              child: _getIcon(themeNotifier, darkThemePurple)),
+                              child: _getIcon(themeNotifier, lightThemeCustom)),
                           shape: CircleBorder(),
                           elevation: 2.0,
-                          fillColor: darkThemePurple.scaffoldBackgroundColor,
+                          fillColor: lightThemeCustom.scaffoldBackgroundColor,
                           padding: EdgeInsets.all(5.0),
                         ),
                         SizedBox(
                           height: 5,
                         ),
-                        Text(themes[3]),
+                        Text(themes[4]),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(5.0),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: FlatButton(
+                              onPressed: () => _openDialogDark("Primary Color",
+                                  darkThemeCustom.primaryColor, true),
+                              color: darkThemeCustom.primaryColor,
+                              child: Text("Choose Primary Color",
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      darkThemeCustom.primaryTextTheme.button)),
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(5.0),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: FlatButton(
+                              onPressed: () => _openDialogDark("AccentColor",
+                                  darkThemeCustom.accentColor, false),
+                              color: darkThemeCustom.accentColor,
+                              child: Text("Choose Accent Color",
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      darkThemeCustom.primaryTextTheme.button)),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        RawMaterialButton(
+                          onPressed: () {
+                            _updateState(5);
+                            colorChangedPrimary(
+                                darkThemeCustom.primaryColor.value);
+                            colorChangedAccent(
+                                darkThemeCustom.accentColor.value);
+                          },
+                          child: AnimatedSwitcher(
+                              duration: Duration(milliseconds: 400),
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) =>
+                                      ScaleTransition(
+                                          child: child, scale: animation),
+                              child: _getIcon(themeNotifier, darkThemeCustom)),
+                          shape: CircleBorder(),
+                          elevation: 2.0,
+                          fillColor: darkThemeCustom.scaffoldBackgroundColor,
+                          padding: EdgeInsets.all(5.0),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(themes[5]),
                       ],
                     ),
                   ],
-                )),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Select Pre-defined Themes",
-              style: Theme.of(context).textTheme.headline5,
-            ),
-            Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.all(5.0),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: FlatButton(
-                      onPressed: () => _openDialogLight(
-                          "Primary Color", lightThemeCustom.primaryColor, true),
-                      color: lightThemeCustom.primaryColor,
-                      child: Text("Choose Primary Color",
-                          textAlign: TextAlign.center,
-                          style: lightThemeCustom.primaryTextTheme.button)),
                 ),
-                Container(
-                  margin: EdgeInsets.all(5.0),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: FlatButton(
-                      onPressed: () => _openDialogLight(
-                          "AccentColor", lightThemeCustom.accentColor, false),
-                      color: lightThemeCustom.accentColor,
-                      child: Text("Choose Accent Color",
-                          textAlign: TextAlign.center,
-                          style: lightThemeCustom.primaryTextTheme.button)),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                RawMaterialButton(
-                  onPressed: () {
-                    _updateState(4);
-                    colorChangedPrimary(lightThemeCustom.primaryColor.value);
-                    colorChangedAccent(lightThemeCustom.accentColor.value);
-                  },
-                  child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 400),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) =>
-                              ScaleTransition(child: child, scale: animation),
-                      child: _getIcon(themeNotifier, lightThemeCustom)),
-                  shape: CircleBorder(),
-                  elevation: 2.0,
-                  fillColor: lightThemeCustom.scaffoldBackgroundColor,
-                  padding: EdgeInsets.all(5.0),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(themes[4]),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.all(5.0),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: FlatButton(
-                      onPressed: () => _openDialogDark(
-                          "Primary Color", darkThemeCustom.primaryColor, true),
-                      color: darkThemeCustom.primaryColor,
-                      child: Text("Choose Primary Color",
-                          textAlign: TextAlign.center,
-                          style: darkThemeCustom.primaryTextTheme.button)),
-                ),
-                Container(
-                  margin: EdgeInsets.all(5.0),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: FlatButton(
-                      onPressed: () => _openDialogDark(
-                          "AccentColor", darkThemeCustom.accentColor, false),
-                      color: darkThemeCustom.accentColor,
-                      child: Text("Choose Accent Color",
-                          textAlign: TextAlign.center,
-                          style: darkThemeCustom.primaryTextTheme.button)),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                RawMaterialButton(
-                  onPressed: () {
-                    _updateState(5);
-                    colorChangedPrimary(darkThemeCustom.primaryColor.value);
-                    colorChangedAccent(darkThemeCustom.accentColor.value);
-                  },
-                  child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 400),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) =>
-                              ScaleTransition(child: child, scale: animation),
-                      child: _getIcon(themeNotifier, darkThemeCustom)),
-                  shape: CircleBorder(),
-                  elevation: 2.0,
-                  fillColor: darkThemeCustom.scaffoldBackgroundColor,
-                  padding: EdgeInsets.all(5.0),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(themes[5]),
-              ],
-            ),
+              ),
+            )
           ],
         ));
   }

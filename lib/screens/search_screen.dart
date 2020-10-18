@@ -16,36 +16,33 @@ class _SearchScreenState extends State<SearchScreen> {
     final List<Post> post = posts;
     return CustomScrollScreen(widgets: [
       Container(
-        margin: EdgeInsets.only(bottom: 20.0),
-        height: 50,
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: Container(
-            margin: EdgeInsets.only(left: 60.0, right: 60.0),
-            decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                border: Border.all(
-                    color: Theme.of(context).secondaryHeaderColor, width: 2),
-                borderRadius: BorderRadius.circular(50)),
-            child: FlatButton(
-                onPressed: () => Navigator.pushNamed(context, '/searchBar'),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.search,
-                      color: Theme.of(context).secondaryHeaderColor,
-                    ),
-                    SizedBox(width: 5),
-                    Text(
-                      'Utilisateurs, clans ou jeux',
-                      style: TextStyle(
-                          color: Theme.of(context).secondaryHeaderColor,
-                          fontSize: 19,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ))),
-      ),
+          margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 20.0),
+          height: 50,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              border: Border.all(
+                  color: Theme.of(context).secondaryHeaderColor, width: 2),
+              borderRadius: BorderRadius.circular(50)),
+          child: FlatButton(
+              onPressed: () => Navigator.pushNamed(context, '/searchBar'),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search,
+                    color: Theme.of(context).secondaryHeaderColor,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    'Utilisateurs, clans ou jeux',
+                    style: TextStyle(
+                        color: Theme.of(context).secondaryHeaderColor,
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ))),
       Container(
           margin: EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
           child: Column(
