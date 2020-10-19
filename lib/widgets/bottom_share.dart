@@ -163,7 +163,7 @@ class _BottomShare extends State<BottomShare>
                             }
                           },
                           backgroundColor: Colors.transparent,
-                          elevation: 10.0,
+                          elevation: 6.0,
                           tooltip: 'Share',
                           child: Stack(
                             children: [

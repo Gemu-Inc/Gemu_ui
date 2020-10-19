@@ -29,55 +29,53 @@ class _ProfilMenuState extends State<ProfilMenu> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             Container(
-                height: 200,
                 child: DrawerHeader(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Align(
+                      alignment: Alignment.topLeft,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          height: 90,
+                          width: 90,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: Colors.black, width: 2.0),
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(currentUser.imageProfil))),
+                        ),
+                      )),
+                  Row(
                     children: [
-                      Align(
-                          alignment: Alignment.topLeft,
-                          child: GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              height: 90,
-                              width: 90,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                      color: Colors.black, width: 2.0),
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image:
-                                          AssetImage(currentUser.imageProfil))),
-                            ),
-                          )),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 10.0),
-                            child: Text(
-                              currentUser.name,
-                              style: TextStyle(
-                                  fontSize: 23, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Spacer(
-                            flex: 3,
-                          ),
-                          Text('Followers'),
-                          Spacer(
-                            flex: 1,
-                          ),
-                          Text('Points'),
-                          Spacer(
-                            flex: 1,
-                          ),
-                          Text('Follows')
-                        ],
-                      )
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Text(
+                          currentUser.name,
+                          style: TextStyle(
+                              fontSize: 23, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Spacer(
+                        flex: 3,
+                      ),
+                      Text('Followers'),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      Text('Points'),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      Text('Follows')
                     ],
-                  ),
-                )),
+                  )
+                ],
+              ),
+            )),
             Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
             ListTile(
               leading: Icon(Icons.verified_user),
