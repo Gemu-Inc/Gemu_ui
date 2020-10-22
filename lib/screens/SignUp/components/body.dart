@@ -1,3 +1,5 @@
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/Screens/Login/login_screen.dart';
 import 'package:Gemu/Screens/Signup/components/background.dart';
@@ -12,7 +14,12 @@ import 'package:Gemu/screens/Welcome/components/authentication_service.dart';
 import 'package:provider/provider.dart';
 
 class Body extends StatelessWidget {
-  String emailController = '';
+  TextEditingController _nameController = new TextEditingController();
+  TextEditingController _emailController = new TextEditingController();
+  TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _repasswordController = new TextEditingController();
+  /*String _emailController = '';
+  String _nameController = '';*/
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -30,21 +37,64 @@ class Body extends StatelessWidget {
               "lib/assets/icons/signup.svg",
               height: size.height * 0.35,
             ),
-            RoundedInputField(
+            /*RoundedInputField(
               hintText: "Your Email",
               onChanged: (value) {
-                emailController = value;
+                _emailController = value;
               },
             ),
-            RoundedPasswordField(
-              onChanged: (value) {},
+            RoundedInputField(
+              hintText: "Your Name",
+              onChanged: (value) {
+                _nameController = value;
+              },
+            ),*/
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(labelText: "Name: "),
+            ),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: "Email: "),
+            ),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(labelText: "Password: "),
+            ),
+            TextField(
+              controller: _repasswordController,
+              decoration: const InputDecoration(labelText: "RePassword: "),
             ),
             RoundedButton(
-              text: "SIGNUP",
-              press: () async {
-                  await context.read<AuthenticationService>().signInorUpEmailLink(email: emailController);
-              },
-            ),
+                text: "SIGNUP",
+                press: () async {
+                  try {
+                    User user = (await FirebaseAuth.instance
+                            .createUserWithEmailAndPassword(
+                                email: _emailController.text,
+                                password: _passwordController.text))
+                        .user;
+                    await CloudFunctions.instance
+                        .getHttpsCallable(functionName: "addUser")
+                        .call({
+                      "email": _emailController.text,
+                      "name": _nameController.text,
+                    });
+                    print('okkkkkk');
+                  } catch (e) {
+                    print(e);
+                    _nameController.text = "";
+                    _emailController.text = "";
+                    _passwordController.text = "";
+                    _repasswordController.text = "";
+                  }
+                  /*CloudFunctions.instance
+                      .getHttpsCallable(functionName: "addUser")
+                      .call({
+                    "name": _nameController,
+                    "email": _emailController,
+                  });*/
+                }),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               login: false,

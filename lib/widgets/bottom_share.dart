@@ -183,7 +183,7 @@ class _BottomShare extends State<BottomShare>
                               Align(
                                 alignment: Alignment.center,
                                 child: ImageIcon(
-                                  AssetImage('img/share.png'),
+                                  AssetImage('lib/assets/images/share.png'),
                                   size: 30,
                                   color: Theme.of(context).secondaryHeaderColor,
                                 ),

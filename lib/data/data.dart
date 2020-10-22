@@ -1,11 +1,10 @@
 import 'package:Gemu/models/clan_model.dart';
 import 'package:Gemu/models/models.dart';
-import 'package:Gemu/screens/screens.dart';
 
 final UserLogin currentUser = UserLogin(
   name: '0ruj',
-  imageProfil: 'img/Lelouch.png',
-  imageBanniere: 'img/Lelouch_appbar.png',
+  imageProfil: 'lib/assets/images/Lelouch.png',
+  imageBanniere: 'lib/assets/images/Lelouch_appbar.png',
 );
 
 final List<CategoriePost> categoriePosts = [
@@ -196,30 +195,75 @@ final List<Post> posts = [
 ];
 
 final List<Clan> panelClans = [
-  Clan(nameClan: 'Lay\'s', pointsClan: 4587, imageUrl: 'img/Lays.png'),
-  Clan(nameClan: 'Orion', pointsClan: 2561, imageUrl: 'img/Orion.png'),
-  Clan(nameClan: 'Tenryu', pointsClan: 6698, imageUrl: 'img/Tenryu.png'),
-  Clan(nameClan: 'Lay\'s', pointsClan: 4587, imageUrl: 'img/Lays.png'),
-  Clan(nameClan: 'Orion', pointsClan: 2561, imageUrl: 'img/Orion.png'),
-  Clan(nameClan: 'Tenryu', pointsClan: 6698, imageUrl: 'img/Tenryu.png'),
-  Clan(nameClan: 'Lay\'s', pointsClan: 4587, imageUrl: 'img/Lays.png'),
-  Clan(nameClan: 'Orion', pointsClan: 2561, imageUrl: 'img/Orion.png'),
-  Clan(nameClan: 'Tenryu', pointsClan: 6698, imageUrl: 'img/Tenryu.png'),
-  Clan(nameClan: 'Lay\'s', pointsClan: 4587, imageUrl: 'img/Lays.png'),
-  Clan(nameClan: 'Orion', pointsClan: 2561, imageUrl: 'img/Orion.png'),
-  Clan(nameClan: 'Tenryu', pointsClan: 6698, imageUrl: 'img/Tenryu.png'),
-  Clan(nameClan: 'Lay\'s', pointsClan: 4587, imageUrl: 'img/Lays.png'),
-  Clan(nameClan: 'Orion', pointsClan: 2561, imageUrl: 'img/Orion.png'),
-  Clan(nameClan: 'Tenryu', pointsClan: 6698, imageUrl: 'img/Tenryu.png'),
+  Clan(
+      nameClan: 'Lay\'s',
+      pointsClan: 4587,
+      imageUrl: 'lib/assets/images/Lays.png'),
+  Clan(
+      nameClan: 'Orion',
+      pointsClan: 2561,
+      imageUrl: 'lib/assets/images/Orion.png'),
+  Clan(
+      nameClan: 'Tenryu',
+      pointsClan: 6698,
+      imageUrl: 'lib/assets/images/Tenryu.png'),
+  Clan(
+      nameClan: 'Lay\'s',
+      pointsClan: 4587,
+      imageUrl: 'lib/assets/images/Lays.png'),
+  Clan(
+      nameClan: 'Orion',
+      pointsClan: 2561,
+      imageUrl: 'lib/assets/images/Orion.png'),
+  Clan(
+      nameClan: 'Tenryu',
+      pointsClan: 6698,
+      imageUrl: 'lib/assets/images/Tenryu.png'),
+  Clan(
+      nameClan: 'Lay\'s',
+      pointsClan: 4587,
+      imageUrl: 'lib/assets/images/Lays.png'),
+  Clan(
+      nameClan: 'Orion',
+      pointsClan: 2561,
+      imageUrl: 'lib/assets/images/Orion.png'),
+  Clan(
+      nameClan: 'Tenryu',
+      pointsClan: 6698,
+      imageUrl: 'lib/assets/images/Tenryu.png'),
+  Clan(
+      nameClan: 'Lay\'s',
+      pointsClan: 4587,
+      imageUrl: 'lib/assets/images/Lays.png'),
+  Clan(
+      nameClan: 'Orion',
+      pointsClan: 2561,
+      imageUrl: 'lib/assets/images/Orion.png'),
+  Clan(
+      nameClan: 'Tenryu',
+      pointsClan: 6698,
+      imageUrl: 'lib/assets/images/Tenryu.png'),
+  Clan(
+      nameClan: 'Lay\'s',
+      pointsClan: 4587,
+      imageUrl: 'lib/assets/images/Lays.png'),
+  Clan(
+      nameClan: 'Orion',
+      pointsClan: 2561,
+      imageUrl: 'lib/assets/images/Orion.png'),
+  Clan(
+      nameClan: 'Tenryu',
+      pointsClan: 6698,
+      imageUrl: 'lib/assets/images/Tenryu.png'),
 ];
 
 final List<Game> panelGames = [
   //Game(nameGame: 'Abo\'s', imageUrl: null),
   //Game(nameGame: 'Mix', imageUrl: null),
-  Game(nameGame: 'Fortnite', imageUrl: 'img/logo_fortnite.jpg'),
-  Game(nameGame: 'Fall Guys', imageUrl: 'img/logo_fall_guys.png'),
-  Game(nameGame: 'Valorant', imageUrl: 'img/logo_valorant.png'),
-  Game(nameGame: 'Formula One', imageUrl: 'img/FormulaOne.png'),
+  Game(nameGame: 'Fortnite', imageUrl: 'lib/assets/images/logo_fortnite.jpg'),
+  Game(nameGame: 'Fall Guys', imageUrl: 'lib/assets/images/logo_fall_guys.png'),
+  Game(nameGame: 'Valorant', imageUrl: 'lib/assets/images/logo_valorant.png'),
+  Game(nameGame: 'Formula One', imageUrl: 'lib/assets/images/FormulaOne.png'),
 ];
 
 final List<Categorie> panelCategorie = [
