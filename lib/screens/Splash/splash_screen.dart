@@ -13,7 +13,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
     return SafeArea(
       child: SplashScreen(
         seconds: 3,
-        navigateAfterSeconds: PrincipalScreen(),
+        navigateAfterSeconds: NavScreen(),
         image: Image.asset('img/share_chargement.png'),
         backgroundColor: Colors.black26,
         photoSize: 75.0,

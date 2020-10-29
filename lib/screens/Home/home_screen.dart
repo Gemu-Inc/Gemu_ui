@@ -1,8 +1,6 @@
 import 'package:Gemu/data/data.dart';
 import 'package:Gemu/models/game_model.dart';
 import 'package:flutter/material.dart';
-import 'package:Gemu/widgets/widgets.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);

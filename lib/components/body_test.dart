@@ -1,7 +1,5 @@
-import 'package:Gemu/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:Gemu/data/data.dart';
-import 'dart:math';
+//import 'dart:math';
 
 const CURVE_HEIGHT = 210.0;
 const AVATAR_RADIUS = CURVE_HEIGHT * 0.20;
@@ -72,9 +70,9 @@ class CurvedShape extends StatelessWidget {
 class ClipperCustomTest extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    Offset circleCenter = Offset(size.width / 2, size.height - 40);
+    //Offset circleCenter = Offset(size.width / 2, size.height - 40);
 
-    Offset topLeft = Offset(0, 0);
+    /*Offset topLeft = Offset(0, 0);
     Offset bottomLeft = Offset(0, size.height - 80);
     Offset topRight = Offset(size.width, 0);
     Offset bottomRight = Offset(size.width, size.height - 80);
@@ -82,9 +80,9 @@ class ClipperCustomTest extends CustomClipper<Path> {
     Offset leftCurveControlPoint =
         Offset(circleCenter.dx * 0.5, size.height - AVATAR_RADIUS);
     Offset rightCurveControlPoint =
-        Offset(circleCenter.dx * 1.5, size.height - AVATAR_RADIUS);
+        Offset(circleCenter.dx * 1.5, size.height - AVATAR_RADIUS);*/
 
-    final arcStartAngle = 180 / 180 * pi;
+    /*final arcStartAngle = 180 / 180 * pi;
     final avatarLeftPointX = circleCenter.dx + 32 * cos(arcStartAngle);
     final avatarLeftPointY = circleCenter.dy + 62 * sin(arcStartAngle);
     Offset avatarLeftPoint =
@@ -93,7 +91,7 @@ class ClipperCustomTest extends CustomClipper<Path> {
     final arcEndAngle = 0 / 180 * pi;
     final avatarRightPointX = circleCenter.dx + 32 * cos(arcEndAngle);
     final avatarRightPointY = circleCenter.dy + 62 * sin(arcEndAngle);
-    Offset avatarRightPoint = Offset(avatarRightPointX, avatarRightPointY);
+    Offset avatarRightPoint = Offset(avatarRightPointX, avatarRightPointY);*/
 
     var path = Path()
       ..lineTo(0, size.height * 0.75)

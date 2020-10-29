@@ -1,14 +1,14 @@
-import 'package:Gemu/screens/reglages_screen.dart';
-import 'package:Gemu/widgets/widgets.dart';
+import 'package:Gemu/screens/Profil/reglages_screen.dart';
+import 'package:Gemu/components/components.dart';
 import 'package:flutter/material.dart';
-import 'package:Gemu/config/config.dart';
+import 'package:Gemu/configuration/configuration.dart';
 import 'package:Gemu/screens/screens.dart';
 import 'package:Gemu/screens/Welcome/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:Gemu/screens/Welcome/components/authentication_service.dart';
+import 'package:Gemu/services/authentication_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

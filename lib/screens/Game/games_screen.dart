@@ -1,5 +1,5 @@
 import 'package:Gemu/models/models.dart';
-import 'package:Gemu/widgets/widgets.dart';
+import 'package:Gemu/components/components.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/data/data.dart';
 

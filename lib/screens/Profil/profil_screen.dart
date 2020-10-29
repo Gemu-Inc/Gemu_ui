@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/data/data.dart';
 import 'package:provider/provider.dart';
-import 'package:Gemu/screens/Welcome/components/authentication_service.dart';
+import 'package:Gemu/services/authentication_service.dart';
 
 class ProfilMenu extends StatefulWidget {
   ProfilMenu({Key key}) : super(key: key);

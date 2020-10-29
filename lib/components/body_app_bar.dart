@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Gemu/widgets/widgets.dart';
+import 'package:Gemu/components/components.dart';
 
 class BodyAppBarNavScreen extends StatelessWidget {
   final Widget banniere, texte;

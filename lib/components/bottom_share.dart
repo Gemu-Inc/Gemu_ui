@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:Gemu/widgets/widgets.dart';
 
 class BottomShare extends StatefulWidget {
   @override

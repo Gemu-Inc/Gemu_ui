@@ -1,4 +1,3 @@
-import 'package:Gemu/widgets/circular_button.dart';
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {

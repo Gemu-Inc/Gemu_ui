@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:Gemu/widgets/widgets.dart';
-import 'package:Gemu/data/data.dart';
 
 class MessagerieMenu extends StatefulWidget {
   MessagerieMenu({Key key}) : super(key: key);

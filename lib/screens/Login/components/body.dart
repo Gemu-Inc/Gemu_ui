@@ -1,5 +1,4 @@
-import 'package:Gemu/screens/nav_screen.dart';
-import 'package:Gemu/screens/principal_screen.dart';
+import 'package:Gemu/screens/Navigation/nav_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,17 +9,13 @@ import 'package:Gemu/components/rounded_button.dart';
 import 'package:Gemu/components/rounded_input_field.dart';
 import 'package:Gemu/components/rounded_password_field.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:Gemu/screens/Welcome/components/authentication_service.dart';
+import 'package:Gemu/services/authentication_service.dart';
 
 class Body extends StatelessWidget {
-  // const Body({
-  //   Key key,
-  // }) : super(key: key);
-  String emailController = '';
-  String passwordController = '';
-
   @override
   Widget build(BuildContext context) {
+    String emailController = '';
+    String passwordController = '';
     Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
@@ -55,7 +50,7 @@ class Body extends StatelessWidget {
                         );
                 if (result == 'Signed in') {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return PrincipalScreen();
+                    return NavScreen();
                   }));
                 } else {
                   showDialog(

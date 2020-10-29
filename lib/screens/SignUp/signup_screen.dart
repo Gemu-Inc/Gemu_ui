@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Gemu/Screens/Signup/components/body.dart';
+import 'package:Gemu/screens/Signup/components/body.dart';
 
 class SignUpScreen extends StatelessWidget {
   @override

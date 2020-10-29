@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:Gemu/screens/screens.dart';
-import 'package:Gemu/widgets/widgets.dart';
+import 'package:Gemu/components/components.dart';
 import 'package:Gemu/data/data.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 

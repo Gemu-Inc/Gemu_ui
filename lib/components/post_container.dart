@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:Gemu/models/models.dart';
-import 'package:Gemu/widgets/widgets.dart';
+import 'package:Gemu/components/components.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class PostContainer extends StatelessWidget {

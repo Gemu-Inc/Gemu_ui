@@ -1,4 +1,3 @@
-import 'package:Gemu/config/theme_values.dart';
 import 'package:flutter/material.dart';
 
 class ThemeNotifier with ChangeNotifier {
