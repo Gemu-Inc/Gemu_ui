@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:Gemu/components/components.dart';
-import 'package:Gemu/data/data.dart';
+import 'package:Gemu/core/data/data.dart';
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget child;

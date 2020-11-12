@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Gemu/models/models.dart';
+import 'package:Gemu/core/models/models.dart';
 import 'package:Gemu/components/components.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 

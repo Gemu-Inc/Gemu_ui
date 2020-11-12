@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Gemu/models/models.dart';
+import 'package:Gemu/core/models/models.dart';
 
 class MessageUser extends StatelessWidget {
   final UserLogin currentUser;

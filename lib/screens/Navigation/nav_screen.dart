@@ -1,144 +1,106 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:Gemu/screens/screens.dart';
 import 'package:Gemu/components/components.dart';
-import 'package:Gemu/data/data.dart';
+import 'package:Gemu/core/data/data.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class NavScreen extends StatefulWidget {
-  NavScreen({Key key}) : super(key: key);
+  static final String routeName = 'nav';
+
+  final auth.User firebaseUser;
+
+  NavScreen({this.firebaseUser});
 
   @override
   _NavScreenState createState() => _NavScreenState();
 }
 
-class _NavScreenState extends State<NavScreen> {
-  final List<Widget> _screens = [
-    HomeScreen(),
-    SearchScreen(),
-    ClansScreen(),
-    GamesScreen(),
+class _NavScreenState extends State<NavScreen>
+    with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKeyNav = GlobalKey<ScaffoldState>();
+
+  List<String> appBarTitles = ['Home', 'Parcourir', 'Clans', 'Games'];
+
+  TabController _tabController;
+  int currentTabIndex = 0;
+  String initialAppBarTitle = 'Home';
+
+  final List<Tab> _tabs = <Tab>[
+    Tab(icon: Icon(Icons.home)),
+    Tab(
+      icon: Icon(Icons.search),
+    ),
+    Tab(
+      icon: Icon(Icons.people),
+    ),
+    Tab(icon: Icon(Icons.videogame_asset))
   ];
-  final List<IconData> _icons = [
-    Icons.home,
-    Icons.search,
-    Icons.people,
-    Icons.videogame_asset,
-  ];
-  int _selectedIndex = 0;
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  @override
+  void initState() {
+    super.initState();
 
-  double xOffset = 0;
-  double yOffset = 0;
-  double scaleFactor = 1;
+    _tabController = TabController(length: _tabs.length, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    currentTabIndex = 0;
+  }
 
-  bool isDrawerOpen = false;
+  void _onTabChanged() {
+    /// Only manually set the index if it is changing from a swipe, not a tab selection (indexIsChanging is only true when selecting a tab, and tab index is automatically changed) to avoid setting the index twice when a tab is selected
+    if (!_tabController.indexIsChanging)
+      setState(() {
+        print('Changing to Tab: ${_tabController.index}');
+        currentTabIndex = _tabController.index;
+        initialAppBarTitle = appBarTitles[_tabController.index];
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      transform: Matrix4.translationValues(xOffset, yOffset, 0)
-        ..scale(scaleFactor)
-        ..rotateY(isDrawerOpen ? 0 : 0),
-      duration: Duration(milliseconds: 500),
-      child: DefaultTabController(
-        length: _icons.length,
-        child: Scaffold(
-          key: _scaffoldKey,
-          endDrawer: MessagerieMenu(),
-          body: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                SliverGradientAppBar(
-                  gradient: LinearGradient(
-                    colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).accentColor
-                    ],
-                  ),
-                  pinned: true,
-                  leading: ProfilButton(
-                      currentUser: currentUser,
-                      width: 40,
-                      height: 40,
-                      colorFond: Colors.transparent,
-                      colorBorder: Colors.black,
-                      onPress: () => Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return ProfilMenu();
-                          }))),
-                  /*isDrawerOpen
-                      ? IconButton(
-                          icon: Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              xOffset = 0;
-                              yOffset = 0;
-                              scaleFactor = 1;
-                              isDrawerOpen = false;
-                            });
-                          })
-                      : ProfilButton(
-                          currentUser: currentUser,
-                          width: 40,
-                          height: 40,
-                          colorFond: Colors.transparent,
-                          colorBorder: Colors.black,
-                          onPress: () {
-                            setState(() {
-                              xOffset = 0;
-                              yOffset = 555;
-                              scaleFactor = 1;
-                              isDrawerOpen = true;
-                            });
-                          }),*/
-                  actions: [
-                    Container(
-                      margin: EdgeInsets.only(right: 5.0),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        /*boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(context).cardColor,
-                            offset: Offset(10.0, 5.0),
-                            blurRadius: 2.0,
-                          ),
-                        ],*/
-                      ),
-                      child: IconButton(
-                        icon:
-                            Icon(Icons.message, size: 40, color: Colors.black),
-                        onPressed: () =>
-                            _scaffoldKey.currentState.openEndDrawer(),
-                      ),
-                    )
-                  ],
-                  expandedHeight: 110,
-                  flexibleSpace: FlexibleSpaceBar(
-                      background: Align(
-                    alignment: Alignment.center,
-                    child: MessageUser(currentUser: currentUser),
-                  )),
-                ),
-                SliverToBoxAdapter(child: AppBarAnimate())
-              ];
-            },
-            body: TabBarView(
-                physics: NeverScrollableScrollPhysics(), children: _screens),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: BottomShare(),
-          bottomNavigationBar: CustomTabBar(
-            icons: _icons,
-            selectedIndex: _selectedIndex,
-            onTap: (index) => setState(() => _selectedIndex = index),
-          ),
+    return Scaffold(
+      key: _scaffoldKeyNav,
+      appBar: GradientAppBar(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).primaryColor,
+            Theme.of(context).accentColor
+          ],
         ),
+        leading: ProfilButton(
+            currentUser: currentUser,
+            width: 33,
+            height: 33,
+            colorFond: Colors.transparent,
+            colorBorder: Colors.black,
+            onPress: () {
+              Navigator.pushNamed(context, ProfilMenu.routeName);
+            }),
+        title: Text(initialAppBarTitle),
+        centerTitle: true,
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.notifications,
+                size: 33,
+              ),
+              onPressed: () {
+                print('Notifications');
+              })
+        ],
+      ),
+      body: TabBarView(controller: _tabController, children: [
+        HomeScreen(),
+        SearchScreen(),
+        ClansScreen(),
+        GamesScreen()
+      ]),
+      bottomNavigationBar: TabBar(
+        tabs: _tabs,
+        controller: _tabController,
       ),
     );
   }

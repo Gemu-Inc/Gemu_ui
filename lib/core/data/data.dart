@@ -1,5 +1,5 @@
-import 'package:Gemu/models/clan_model.dart';
-import 'package:Gemu/models/models.dart';
+import 'package:Gemu/core/models/clan_model.dart';
+import 'package:Gemu/core/models/models.dart';
 
 final UserLogin currentUser = UserLogin(
   name: '0ruj',

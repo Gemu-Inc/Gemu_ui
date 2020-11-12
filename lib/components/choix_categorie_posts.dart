@@ -1,5 +1,5 @@
-import 'package:Gemu/data/data.dart';
-import 'package:Gemu/models/models.dart';
+import 'package:Gemu/core/data/data.dart';
+import 'package:Gemu/core/models/models.dart';
 import 'package:flutter/material.dart';
 
 class ChoixCategorie extends StatefulWidget {

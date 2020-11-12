@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:Gemu/configuration/configuration.dart';
+import 'package:Gemu/styles/styles.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
 class ReglagesScreen extends StatefulWidget {
-  ReglagesScreen({Key key}) : super(key: key);
+  static final String routeName = 'design';
 
   @override
   _ReglagesScreenState createState() => _ReglagesScreenState();

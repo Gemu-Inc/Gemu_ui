@@ -1,5 +1,5 @@
-import 'package:Gemu/data/data.dart';
-import 'package:Gemu/models/game_model.dart';
+import 'package:Gemu/core/data/data.dart';
+import 'package:Gemu/core/models/game_model.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {

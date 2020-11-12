@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:Gemu/models/models.dart';
+import 'package:Gemu/core/models/models.dart';
 
 class Post {
   final UserLogin user;

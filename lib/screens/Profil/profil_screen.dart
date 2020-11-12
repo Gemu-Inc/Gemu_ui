@@ -1,12 +1,16 @@
+import 'package:Gemu/components/components.dart';
 import 'package:Gemu/screens/Login/login_screen.dart';
+import 'package:Gemu/screens/Welcome/welcome_screen.dart';
+import 'package:Gemu/screens/screens.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:Gemu/data/data.dart';
+import 'package:Gemu/core/data/data.dart';
 import 'package:provider/provider.dart';
-import 'package:Gemu/services/authentication_service.dart';
+import 'package:Gemu/core/services/authentication_service.dart';
+import 'package:Gemu/core/services/auth_service.dart';
 
 class ProfilMenu extends StatefulWidget {
-  ProfilMenu({Key key}) : super(key: key);
+  static final String routeName = 'profil';
 
   @override
   _ProfilMenuState createState() => _ProfilMenuState();
@@ -51,14 +55,6 @@ class _ProfilMenuState extends State<ProfilMenu> {
                       )),
                   Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          currentUser.name,
-                          style: TextStyle(
-                              fontSize: 23, fontWeight: FontWeight.bold),
-                        ),
-                      ),
                       Spacer(
                         flex: 3,
                       ),
@@ -80,22 +76,13 @@ class _ProfilMenuState extends State<ProfilMenu> {
             ListTile(
               leading: Icon(Icons.verified_user),
               title: Text('Profil'),
-              onTap: () => {},
+              onTap: () => {Navigator.pushNamed(context, '/editprofileScreen')},
             ),
             ListTile(
               leading: Icon(Icons.border_color),
               title: Text('Design'),
-              onTap: () => {Navigator.pushNamed(context, '/reglagesScreen')},
-            ),
-            ListTile(
-              leading: Icon(Icons.access_time),
-              title: Text('Activités'),
-              onTap: () => {},
-            ),
-            ListTile(
-              leading: Icon(Icons.save),
-              title: Text('Sauvegardes'),
-              onTap: () => {},
+              onTap: () =>
+                  {Navigator.pushNamed(context, ReglagesScreen.routeName)},
             ),
             ListTile(
               leading: Icon(Icons.settings),
@@ -127,35 +114,31 @@ class _ProfilMenuState extends State<ProfilMenu> {
                             style: TextStyle(color: Colors.red),
                           ),
                           onPressed: () {
-                            context.read<AuthenticationService>().signOut();
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return LoginScreen();
-                            }));
+                            _signOut();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        WelcomeScreen()),
+                                (Route<dynamic> route) => false);
                           }),
                     ],
                   ),
-
-                  // actions: [
-                  //   FlatButton("Non"),
-                  //   FlatButton("Oui"),
-                  // ],
                 ),
               },
-              // onTap:
-              //   CupertinoAlertDialog(
-              //     title: Text("Déconnexion ?"),
-              //     content: Text("Êtes-vous sûr ?"),
-              //     actions: [
-              //       FlatButton("Non"),
-              //       FlatButton("Oui"),
-              //     ],
-              //   )
-              //context.read<AuthenticationService>().signOut()
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _signOut() async {
+    await Provider.of<AuthService>(context, listen: false).signOut();
+    if (await Provider.of<AuthService>(context, listen: false).getUser() ==
+        null) {
+      print('Sucessfully signed out user');
+    } else {
+      print('Failed to sign out user');
+    }
   }
 }

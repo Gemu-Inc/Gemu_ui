@@ -6,3 +6,6 @@ export 'Message/messagerie_screen.dart';
 export 'Clan/clans_screen.dart';
 export 'Game/games_screen.dart';
 export 'Recherche/search_screen.dart';
+export 'SignIn_Or_SignUp/signin_or_signup.dart';
+export 'Profil/reglages_screen.dart';
+export 'Profil/edit_profile_screen.dart';

@@ -1,4 +1,4 @@
-import 'package:Gemu/configuration/theme_notifier.dart';
+import 'package:Gemu/styles/theme_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
