@@ -366,6 +366,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  get:
+    dependency: transitive
+    description:
+      name: get
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.17.1"
+  get_it:
+    dependency: "direct main"
+    description:
+      name: get_it
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.1"
   gradient_app_bar:
     dependency: "direct main"
     description:
@@ -443,6 +457,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.4"
+  observable_ish:
+    dependency: transitive
+    description:
+      name: observable_ish
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.4"
   octo_image:
     dependency: transitive
     description:
@@ -651,6 +672,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0-nullsafety.1"
+  stacked:
+    dependency: "direct main"
+    description:
+      name: stacked
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.7.6"
+  stacked_services:
+    dependency: "direct main"
+    description:
+      name: stacked_services
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.11"
   stream_channel:
     dependency: transitive
     description:
@@ -764,5 +799,5 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-  dart: ">=2.10.0-110 <2.11.0"
+  dart: ">=2.10.0 <2.11.0"
   flutter: ">=1.20.0 <2.0.0"
