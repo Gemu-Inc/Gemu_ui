@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class DialogRequest {
   final String title;
@@ -9,6 +10,36 @@ class DialogRequest {
   DialogRequest(
       {@required this.title,
       @required this.description,
+      @required this.buttonTitle,
+      this.cancelTitle});
+}
+
+class DialogRequestLightCustom {
+  final String title;
+  final Color currentColor;
+  final bool primaryColor;
+  final String buttonTitle;
+  final String cancelTitle;
+
+  DialogRequestLightCustom(
+      {@required this.title,
+      @required this.currentColor,
+      @required this.primaryColor,
+      @required this.buttonTitle,
+      this.cancelTitle});
+}
+
+class DialogRequestDarkCustom {
+  final String title;
+  final Color currentColor;
+  final bool primaryColor;
+  final String buttonTitle;
+  final String cancelTitle;
+
+  DialogRequestDarkCustom(
+      {@required this.title,
+      @required this.currentColor,
+      @required this.primaryColor,
       @required this.buttonTitle,
       this.cancelTitle});
 }

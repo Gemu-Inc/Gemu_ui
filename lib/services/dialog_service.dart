@@ -9,14 +9,25 @@ import 'package:Gemu/services/navigation_service.dart';
 class DialogService {
   GlobalKey<NavigatorState> _dialogNavigationKey = GlobalKey<NavigatorState>();
   Function(DialogRequest) _showDialogListener;
+  Function(DialogRequestLightCustom) _showDialogListenerLightCustom;
+  Function(DialogRequestDarkCustom) _showDialogListenerDarkCustom;
   Completer<DialogResponse> _dialogCompleter;
-  NavigationService _navigationService = locator<NavigationService>();
 
   GlobalKey<NavigatorState> get dialogNavigationKey => _dialogNavigationKey;
 
   /// Registers a callback function. Typically to show the dialog
   void registerDialogListener(Function(DialogRequest) showDialogListener) {
     _showDialogListener = showDialogListener;
+  }
+
+  void registerDialogListenerLightCustom(
+      Function(DialogRequestLightCustom) showDialogListener) {
+    _showDialogListenerLightCustom = showDialogListener;
+  }
+
+  void registerDialogListenerDarkCustom(
+      Function(DialogRequestDarkCustom) showDialogListener) {
+    _showDialogListenerDarkCustom = showDialogListener;
   }
 
   /// Calls the dialog listener and returns a Future that will wait for dialogComplete.
@@ -46,6 +57,34 @@ class DialogService {
         description: description,
         buttonTitle: confirmationTitle,
         cancelTitle: cancelTitle));
+    return _dialogCompleter.future;
+  }
+
+  Future<DialogResponse> showDialogLightCustom(
+      {@required String title,
+      @required Color currentColor,
+      @required bool primaryColor,
+      String confirmationTitle = 'Done'}) {
+    _dialogCompleter = Completer<DialogResponse>();
+    _showDialogListenerLightCustom(DialogRequestLightCustom(
+        title: title,
+        currentColor: currentColor,
+        primaryColor: primaryColor,
+        buttonTitle: confirmationTitle));
+    return _dialogCompleter.future;
+  }
+
+  Future<DialogResponse> showDialogDarkCustom(
+      {@required String title,
+      @required Color currentColor,
+      @required bool primaryColor,
+      String confirmationTitle = 'Done'}) {
+    _dialogCompleter = Completer<DialogResponse>();
+    _showDialogListenerDarkCustom(DialogRequestDarkCustom(
+        title: title,
+        currentColor: currentColor,
+        primaryColor: primaryColor,
+        buttonTitle: confirmationTitle));
     return _dialogCompleter.future;
   }
 

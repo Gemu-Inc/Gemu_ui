@@ -1,3 +1,4 @@
+import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/screensmodels/Profil/design_screen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/styles/styles.dart';
@@ -6,10 +7,10 @@ import 'package:flutter_material_color_picker/flutter_material_color_picker.dart
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
+import 'package:Gemu/locator.dart';
+import 'package:Gemu/services/navigation_service.dart';
 
 class DesignScreen extends StatefulWidget {
-  static final String routeName = 'design';
-
   @override
   _DesignScreenState createState() => _DesignScreenState();
 }
@@ -19,6 +20,7 @@ class _DesignScreenState extends State<DesignScreen> {
   List themes = Constants.themes;
   SharedPreferences prefs;
   ThemeNotifier themeNotifier;
+  final NavigationService _navigationService = locator<NavigationService>();
 
   @override
   void initState() {
@@ -45,7 +47,7 @@ class _DesignScreenState extends State<DesignScreen> {
           appBar: GradientAppBar(
             leading: IconButton(
                 icon: Icon(Icons.arrow_back_ios),
-                onPressed: () => Navigator.pop(context)),
+                onPressed: () => model.navigateToProfilMenu()),
             title: Text('Design'),
             gradient: LinearGradient(
               colors: [
@@ -210,10 +212,11 @@ class _DesignScreenState extends State<DesignScreen> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: FlatButton(
-                                onPressed: () => _openDialogLight(
-                                    "Primary Color",
-                                    lightThemeCustom.primaryColor,
-                                    true),
+                                onPressed: () {
+                                  setState(() {
+                                    model.openDialogLightPrimaryColor();
+                                  });
+                                },
                                 color: lightThemeCustom.primaryColor,
                                 child: Text("Choose Primary Color",
                                     textAlign: TextAlign.center,
@@ -227,8 +230,8 @@ class _DesignScreenState extends State<DesignScreen> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: FlatButton(
-                                onPressed: () => _openDialogLight("AccentColor",
-                                    lightThemeCustom.accentColor, false),
+                                onPressed: () =>
+                                    model.openDialogLightAccentColor(),
                                 color: lightThemeCustom.accentColor,
                                 child: Text("Choose Accent Color",
                                     textAlign: TextAlign.center,
@@ -277,10 +280,8 @@ class _DesignScreenState extends State<DesignScreen> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: FlatButton(
-                                onPressed: () => _openDialogDark(
-                                    "Primary Color",
-                                    darkThemeCustom.primaryColor,
-                                    true),
+                                onPressed: () =>
+                                    model.openDialogDarkPrimaryColor(),
                                 color: darkThemeCustom.primaryColor,
                                 child: Text("Choose Primary Color",
                                     textAlign: TextAlign.center,
@@ -294,8 +295,8 @@ class _DesignScreenState extends State<DesignScreen> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: FlatButton(
-                                onPressed: () => _openDialogDark("AccentColor",
-                                    darkThemeCustom.accentColor, false),
+                                onPressed: () =>
+                                    model.openDialogDarkAccentColor(),
                                 color: darkThemeCustom.accentColor,
                                 child: Text("Choose Accent Color",
                                     textAlign: TextAlign.center,
@@ -338,78 +339,6 @@ class _DesignScreenState extends State<DesignScreen> {
               )
             ],
           )),
-    );
-  }
-
-  void _openDialogLight(String title, Color currentColor, bool primaryColor) {
-    showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(6.0),
-          title: Text(title),
-          content: Container(
-              height: 250,
-              child: MaterialColorPicker(
-                selectedColor: currentColor,
-                onColorChange: (color) => setState(() => lightThemeCustom =
-                    (primaryColor)
-                        ? lightThemeCustom.copyWith(primaryColor: color)
-                        : lightThemeCustom.copyWith(accentColor: color)),
-                onMainColorChange: (color) => setState(() => lightThemeCustom =
-                    (primaryColor)
-                        ? lightThemeCustom.copyWith(primaryColor: color)
-                        : lightThemeCustom.copyWith(accentColor: color)),
-              )),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                "Done",
-                style: Theme.of(context).textTheme.button,
-              ),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  void _openDialogDark(String title, Color currentColor, bool primaryColor) {
-    showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(6.0),
-          title: Text(title),
-          content: Container(
-              height: 250,
-              child: MaterialColorPicker(
-                selectedColor: currentColor,
-                onColorChange: (color) => setState(() => darkThemeCustom =
-                    (primaryColor)
-                        ? darkThemeCustom.copyWith(primaryColor: color)
-                        : darkThemeCustom.copyWith(accentColor: color)),
-                onMainColorChange: (color) => setState(() => darkThemeCustom =
-                    (primaryColor)
-                        ? darkThemeCustom.copyWith(primaryColor: color)
-                        : darkThemeCustom.copyWith(accentColor: color)),
-              )),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                "Done",
-                style: Theme.of(context).textTheme.button,
-              ),
-            )
-          ],
-        );
-      },
     );
   }
 
