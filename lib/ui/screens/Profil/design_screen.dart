@@ -1,14 +1,11 @@
-import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/screensmodels/Profil/design_screen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/styles/styles.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
-import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
-import 'package:Gemu/locator.dart';
-import 'package:Gemu/services/navigation_service.dart';
+import 'dart:math';
 
 class DesignScreen extends StatefulWidget {
   @override
@@ -20,7 +17,7 @@ class _DesignScreenState extends State<DesignScreen> {
   List themes = Constants.themes;
   SharedPreferences prefs;
   ThemeNotifier themeNotifier;
-  final NavigationService _navigationService = locator<NavigationService>();
+  bool isSwitched = false;
 
   @override
   void initState() {
@@ -206,133 +203,87 @@ class _DesignScreenState extends State<DesignScreen> {
                       Column(
                         children: [
                           Container(
+                              height: 250,
+                              child: Center(
+                                  child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text('Light'),
+                                  Switch(
+                                    value: isSwitched,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        isSwitched = value;
+                                      });
+                                    },
+                                    inactiveThumbColor: Colors.blue,
+                                    inactiveTrackColor: Colors.black,
+                                    activeColor: Colors.red,
+                                    activeTrackColor: Colors.black,
+                                  ),
+                                  Text('Dark')
+                                ],
+                              ))),
+                          Container(
                             margin: EdgeInsets.all(5.0),
-                            width: double.infinity,
+                            height: 60,
+                            width: 60,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: FlatButton(
+                                gradient: LinearGradient(
+                                    colors: [Colors.grey[200], Colors.black]),
+                                borderRadius: BorderRadius.circular(40)),
+                            child: RawMaterialButton(
                                 onPressed: () {
-                                  setState(() {
-                                    model.openDialogLightPrimaryColor();
-                                  });
+                                  if (isSwitched == false) {
+                                    model.openDialogThemeCustomLight();
+                                  } else if (isSwitched == true) {
+                                    model.openDialogThemeCustomDark();
+                                  }
                                 },
-                                color: lightThemeCustom.primaryColor,
-                                child: Text("Choose Primary Color",
-                                    textAlign: TextAlign.center,
-                                    style: lightThemeCustom
-                                        .primaryTextTheme.button)),
+                                child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Color((Random().nextDouble() *
+                                                        0xFFFFFF)
+                                                    .toInt())
+                                                .withOpacity(1.0),
+                                            Color((Random().nextDouble() *
+                                                        0xFFFFFF)
+                                                    .toInt())
+                                                .withOpacity(1.0)
+                                          ]),
+                                      borderRadius: BorderRadius.circular(40)),
+                                  child: Icon(
+                                    Icons.edit,
+                                    size: 20.0,
+                                  ),
+                                )),
                           ),
-                          Container(
-                            margin: EdgeInsets.all(5.0),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: FlatButton(
-                                onPressed: () =>
-                                    model.openDialogLightAccentColor(),
-                                color: lightThemeCustom.accentColor,
-                                child: Text("Choose Accent Color",
-                                    textAlign: TextAlign.center,
-                                    style: lightThemeCustom
-                                        .primaryTextTheme.button)),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          RawMaterialButton(
-                            onPressed: () {
-                              _updateState(4);
-                              colorChangedPrimary(
-                                  lightThemeCustom.primaryColor.value);
-                              colorChangedAccent(
-                                  lightThemeCustom.accentColor.value);
-                            },
-                            child: AnimatedSwitcher(
-                                duration: Duration(milliseconds: 400),
-                                transitionBuilder: (Widget child,
-                                        Animation<double> animation) =>
-                                    ScaleTransition(
-                                        child: child, scale: animation),
-                                child:
-                                    _getIcon(themeNotifier, lightThemeCustom)),
-                            shape: CircleBorder(),
-                            elevation: 2.0,
-                            fillColor: lightThemeCustom.scaffoldBackgroundColor,
-                            padding: EdgeInsets.all(5.0),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(themes[4]),
+                          FlatButton(
+                              onPressed: () {
+                                if (isSwitched == false) {
+                                  _updateState(4);
+                                  colorChangedPrimary(
+                                      themeCustomLight.primaryColor.value);
+                                  colorChangedAccent(
+                                      themeCustomLight.accentColor.value);
+                                } else if (isSwitched == true) {
+                                  _updateState(5);
+                                  colorChangedPrimary(
+                                      themeCustomDark.primaryColor.value);
+                                  colorChangedAccent(
+                                      themeCustomDark.accentColor.value);
+                                }
+                              },
+                              child: Text('Save')),
                         ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.all(5.0),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: FlatButton(
-                                onPressed: () =>
-                                    model.openDialogDarkPrimaryColor(),
-                                color: darkThemeCustom.primaryColor,
-                                child: Text("Choose Primary Color",
-                                    textAlign: TextAlign.center,
-                                    style: darkThemeCustom
-                                        .primaryTextTheme.button)),
-                          ),
-                          Container(
-                            margin: EdgeInsets.all(5.0),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: FlatButton(
-                                onPressed: () =>
-                                    model.openDialogDarkAccentColor(),
-                                color: darkThemeCustom.accentColor,
-                                child: Text("Choose Accent Color",
-                                    textAlign: TextAlign.center,
-                                    style: darkThemeCustom
-                                        .primaryTextTheme.button)),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          RawMaterialButton(
-                            onPressed: () {
-                              _updateState(5);
-                              colorChangedPrimary(
-                                  darkThemeCustom.primaryColor.value);
-                              colorChangedAccent(
-                                  darkThemeCustom.accentColor.value);
-                            },
-                            child: AnimatedSwitcher(
-                                duration: Duration(milliseconds: 400),
-                                transitionBuilder: (Widget child,
-                                        Animation<double> animation) =>
-                                    ScaleTransition(
-                                        child: child, scale: animation),
-                                child:
-                                    _getIcon(themeNotifier, darkThemeCustom)),
-                            shape: CircleBorder(),
-                            elevation: 2.0,
-                            fillColor: darkThemeCustom.scaffoldBackgroundColor,
-                            padding: EdgeInsets.all(5.0),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(themes[5]),
-                        ],
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -382,10 +333,10 @@ class _DesignScreenState extends State<DesignScreen> {
       themeNotifier.setTheme(darkThemeOrange);
     } else if (value == 'DarkPurple') {
       themeNotifier.setTheme(darkThemePurple);
-    } else if (value == 'LightCustom') {
-      themeNotifier.setTheme(lightThemeCustom);
-    } else if (value == 'DarkCustom') {
-      themeNotifier.setTheme(darkThemeCustom);
+    } else if (value == 'ThemeCustomLight') {
+      themeNotifier.setTheme(themeCustomLight);
+    } else if (value == 'ThemeCustomDark') {
+      themeNotifier.setTheme(themeCustomDark);
     }
     prefs.setString(Constants.appTheme, value);
   }

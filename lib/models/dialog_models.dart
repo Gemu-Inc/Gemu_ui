@@ -14,34 +14,21 @@ class DialogRequest {
       this.cancelTitle});
 }
 
-class DialogRequestLightCustom {
-  final String title;
-  final Color currentColor;
-  final bool primaryColor;
-  final String buttonTitle;
+class DialogRequestThemeCustom {
+  final Color currentPrimaryColor;
+  final Color currentAccentColor;
+  final String confirmationTitle;
   final String cancelTitle;
-
-  DialogRequestLightCustom(
-      {@required this.title,
-      @required this.currentColor,
-      @required this.primaryColor,
-      @required this.buttonTitle,
-      this.cancelTitle});
-}
-
-class DialogRequestDarkCustom {
-  final String title;
-  final Color currentColor;
   final bool primaryColor;
-  final String buttonTitle;
-  final String cancelTitle;
+  final bool accentColor;
 
-  DialogRequestDarkCustom(
-      {@required this.title,
-      @required this.currentColor,
+  DialogRequestThemeCustom(
+      {@required this.currentPrimaryColor,
+      @required this.currentAccentColor,
+      @required this.confirmationTitle,
+      @required this.cancelTitle,
       @required this.primaryColor,
-      @required this.buttonTitle,
-      this.cancelTitle});
+      @required this.accentColor});
 }
 
 class DialogResponse {

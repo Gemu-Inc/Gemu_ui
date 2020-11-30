@@ -21,6 +21,7 @@ Future<void> main() async {
     runApp(ChangeNotifierProvider<ThemeNotifier>(
         create: (_) {
           String theme = value.getString(Constants.appTheme);
+          print(theme);
           ThemeData themeData;
           if (theme == 'DarkPurple') {
             themeData = darkThemePurple;
@@ -34,25 +35,23 @@ Future<void> main() async {
           } else if (theme == 'DarkOrange') {
             themeData = darkThemeOrange;
             return ThemeNotifier(themeData);
-          } else if (theme == 'LightCustom') {
+          } else if (theme == 'ThemeCustomLight') {
             themeData = ThemeData(
-                brightness: lightThemeCustom.brightness,
-                primaryColor:
-                    Color(value.getInt('color_primary') ?? Colors.blue.value),
-                accentColor:
-                    Color(value.getInt('color_accent') ?? Colors.blue.value),
-                scaffoldBackgroundColor:
-                    lightThemeCustom.scaffoldBackgroundColor);
+              brightness: themeCustomLight.brightness,
+              primaryColor:
+                  Color(value.getInt('color_primary') ?? Colors.blue.value),
+              accentColor:
+                  Color(value.getInt('color_accent') ?? Colors.blue.value),
+            );
             return ThemeNotifier(themeData);
-          } else if (theme == 'DarkCustom') {
+          } else if (theme == 'ThemeCustomDark') {
             themeData = ThemeData(
-                brightness: darkThemeCustom.brightness,
-                primaryColor:
-                    Color(value.getInt('color_primary') ?? Colors.blue.value),
-                accentColor:
-                    Color(value.getInt('color_accent') ?? Colors.blue.value),
-                scaffoldBackgroundColor:
-                    darkThemeCustom.scaffoldBackgroundColor);
+              brightness: themeCustomDark.brightness,
+              primaryColor:
+                  Color(value.getInt('color_primary') ?? Colors.blue.value),
+              accentColor:
+                  Color(value.getInt('color_accent') ?? Colors.blue.value),
+            );
             return ThemeNotifier(themeData);
           }
           return ThemeNotifier(darkThemeOrange);

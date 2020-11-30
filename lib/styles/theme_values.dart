@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Color myColor;
+
+void getColor() async {
+  Future<SharedPreferences> prefs = SharedPreferences.getInstance();
+  prefs.then((value) {
+    myColor = Color(value.getInt('color_primary') ?? Colors.green.value);
+  });
+}
 
 /// --- Dark Orange Theme ---
 final darkThemeOrange = ThemeData(
@@ -152,20 +161,6 @@ final lightThemePurple = ThemeData(
   indicatorColor: Color(0xFF7C79A5),
 );
 
-ThemeData lightThemeCustom = ThemeData(
-  brightness: Brightness.light,
-  primaryColor:
-      Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-  accentColor:
-      Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-  scaffoldBackgroundColor: Colors.grey[200],
-);
+ThemeData themeCustomLight = ThemeData(brightness: Brightness.light);
 
-ThemeData darkThemeCustom = ThemeData(
-  brightness: Brightness.dark,
-  primaryColor:
-      Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-  accentColor:
-      Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-  scaffoldBackgroundColor: Colors.grey[1000],
-);
+ThemeData themeCustomDark = ThemeData(brightness: Brightness.dark);

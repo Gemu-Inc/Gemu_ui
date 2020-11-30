@@ -13,31 +13,19 @@ class DesignScreenModel extends BaseModel {
     _navigationService.pop();
   }
 
-  Future openDialogLightPrimaryColor() async {
-    await _dialogService.showDialogLightCustom(
-        title: 'Primary Color',
-        currentColor: lightThemeCustom.primaryColor,
-        primaryColor: true);
+  Future openDialogThemeCustomLight() async {
+    await _dialogService.showDialogThemeCustomLight(
+        currentPrimaryColor: themeCustomLight.primaryColor,
+        currentAccentColor: themeCustomLight.accentColor,
+        primaryColor: true,
+        accentColor: false);
   }
 
-  Future openDialogLightAccentColor() async {
-    await _dialogService.showDialogLightCustom(
-        title: 'Accent Color',
-        currentColor: lightThemeCustom.accentColor,
-        primaryColor: false);
-  }
-
-  Future openDialogDarkPrimaryColor() async {
-    await _dialogService.showDialogDarkCustom(
-        title: 'Primary Color',
-        currentColor: darkThemeCustom.primaryColor,
-        primaryColor: true);
-  }
-
-  Future openDialogDarkAccentColor() async {
-    await _dialogService.showDialogDarkCustom(
-        title: 'Accent Color',
-        currentColor: darkThemeCustom.accentColor,
-        primaryColor: false);
+  Future openDialogThemeCustomDark() async {
+    await _dialogService.showDialogThemeCustomDark(
+        currentPrimaryColor: themeCustomDark.primaryColor,
+        currentAccentColor: themeCustomDark.accentColor,
+        primaryColor: true,
+        accentColor: false);
   }
 }

@@ -5,7 +5,7 @@ class Constants {
     "LightPurple",
     "DarkOrange",
     "DarkPurple",
-    "LightCustom",
-    "DarkCustom"
+    "ThemeCustomLight",
+    "ThemeCustomDark",
   ];
 }

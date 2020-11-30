@@ -9,8 +9,8 @@ import 'package:Gemu/services/navigation_service.dart';
 class DialogService {
   GlobalKey<NavigatorState> _dialogNavigationKey = GlobalKey<NavigatorState>();
   Function(DialogRequest) _showDialogListener;
-  Function(DialogRequestLightCustom) _showDialogListenerLightCustom;
-  Function(DialogRequestDarkCustom) _showDialogListenerDarkCustom;
+  Function(DialogRequestThemeCustom) _showDialogListenerThemeCustomLight;
+  Function(DialogRequestThemeCustom) _showDialogListenerThemeCustomDark;
   Completer<DialogResponse> _dialogCompleter;
 
   GlobalKey<NavigatorState> get dialogNavigationKey => _dialogNavigationKey;
@@ -20,14 +20,14 @@ class DialogService {
     _showDialogListener = showDialogListener;
   }
 
-  void registerDialogListenerLightCustom(
-      Function(DialogRequestLightCustom) showDialogListener) {
-    _showDialogListenerLightCustom = showDialogListener;
+  void registerDialogListenerThemeCustomLight(
+      Function(DialogRequestThemeCustom) showDialogListener) {
+    _showDialogListenerThemeCustomLight = showDialogListener;
   }
 
-  void registerDialogListenerDarkCustom(
-      Function(DialogRequestDarkCustom) showDialogListener) {
-    _showDialogListenerDarkCustom = showDialogListener;
+  void registerDialogListenerThemeCustomDark(
+      Function(DialogRequestThemeCustom) showDialogListener) {
+    _showDialogListenerThemeCustomDark = showDialogListener;
   }
 
   /// Calls the dialog listener and returns a Future that will wait for dialogComplete.
@@ -60,31 +60,39 @@ class DialogService {
     return _dialogCompleter.future;
   }
 
-  Future<DialogResponse> showDialogLightCustom(
-      {@required String title,
-      @required Color currentColor,
+  Future<DialogResponse> showDialogThemeCustomLight(
+      {@required Color currentPrimaryColor,
+      @required Color currentAccentColor,
       @required bool primaryColor,
-      String confirmationTitle = 'Done'}) {
+      @required bool accentColor,
+      String confirmationTitle = 'Done',
+      String cancelTitle = 'Cancel'}) {
     _dialogCompleter = Completer<DialogResponse>();
-    _showDialogListenerLightCustom(DialogRequestLightCustom(
-        title: title,
-        currentColor: currentColor,
+    _showDialogListenerThemeCustomLight(DialogRequestThemeCustom(
+        currentPrimaryColor: currentPrimaryColor,
+        currentAccentColor: currentAccentColor,
+        confirmationTitle: confirmationTitle,
+        cancelTitle: cancelTitle,
         primaryColor: primaryColor,
-        buttonTitle: confirmationTitle));
+        accentColor: accentColor));
     return _dialogCompleter.future;
   }
 
-  Future<DialogResponse> showDialogDarkCustom(
-      {@required String title,
-      @required Color currentColor,
+  Future<DialogResponse> showDialogThemeCustomDark(
+      {@required Color currentPrimaryColor,
+      @required Color currentAccentColor,
       @required bool primaryColor,
-      String confirmationTitle = 'Done'}) {
+      @required bool accentColor,
+      String confirmationTitle = 'Done',
+      String cancelTitle = 'Cancel'}) {
     _dialogCompleter = Completer<DialogResponse>();
-    _showDialogListenerDarkCustom(DialogRequestDarkCustom(
-        title: title,
-        currentColor: currentColor,
+    _showDialogListenerThemeCustomDark(DialogRequestThemeCustom(
+        currentPrimaryColor: currentPrimaryColor,
+        currentAccentColor: currentAccentColor,
+        confirmationTitle: confirmationTitle,
+        cancelTitle: cancelTitle,
         primaryColor: primaryColor,
-        buttonTitle: confirmationTitle));
+        accentColor: accentColor));
     return _dialogCompleter.future;
   }
 
