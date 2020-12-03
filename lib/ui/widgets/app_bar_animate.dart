@@ -72,8 +72,8 @@ class _AppBarAnimateState extends State<AppBarAnimate>
                   child: Container(
                     decoration: BoxDecoration(
                         gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
                             colors: [
                           Theme.of(context).primaryColor,
                           Theme.of(context).accentColor
@@ -88,20 +88,25 @@ class _AppBarAnimateState extends State<AppBarAnimate>
                                   getRadianFromDegree(animationRotate.value)),
                               alignment: Alignment.center,
                               child: GestureDetector(
-                                onTap: () {
-                                  if (controllerRotate.isCompleted) {
-                                    controllerRotate.reverse();
-                                  } else {
-                                    controllerRotate.forward();
-                                  }
-                                  _animateAppBar();
-                                },
-                                child: Icon(
-                                  Icons.expand_more,
-                                  size: 35,
-                                  color: Colors.black,
-                                ),
-                              )),
+                                  onTap: () {
+                                    if (controllerRotate.isCompleted) {
+                                      controllerRotate.reverse();
+                                    } else {
+                                      controllerRotate.forward();
+                                    }
+                                    _animateAppBar();
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Colors.black),
+                                    ),
+                                    child: Icon(
+                                      Icons.expand_more,
+                                      size: 35,
+                                      color: Colors.black,
+                                    ),
+                                  ))),
                         ),
                       ),
                       Padding(

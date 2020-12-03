@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
 import 'dart:math';
+import 'package:Gemu/ui/widgets/busy_button.dart';
 
 class DesignScreen extends StatefulWidget {
   @override
@@ -18,6 +19,7 @@ class _DesignScreenState extends State<DesignScreen> {
   SharedPreferences prefs;
   ThemeNotifier themeNotifier;
   bool isSwitched = false;
+  bool createTheme = false;
 
   @override
   void initState() {
@@ -62,8 +64,12 @@ class _DesignScreenState extends State<DesignScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Current Theme Colors",
+                        "Default Theme Colors",
                         style: Theme.of(context).textTheme.headline5,
+                      ),
+                      Text(
+                        "Select your default theme color",
+                        style: TextStyle(fontSize: 15),
                       ),
                       Container(
                           margin: EdgeInsets.all(5.0),
@@ -197,13 +203,17 @@ class _DesignScreenState extends State<DesignScreen> {
                         height: 20,
                       ),
                       Text(
-                        "Select Pre-defined Themes",
+                        "Create Theme Colors",
                         style: Theme.of(context).textTheme.headline5,
+                      ),
+                      Text(
+                        "Select, create and save your own design",
+                        style: TextStyle(fontSize: 15),
                       ),
                       Column(
                         children: [
                           Container(
-                              height: 250,
+                              height: 100,
                               child: Center(
                                   child: Row(
                                 mainAxisAlignment:
@@ -235,6 +245,9 @@ class _DesignScreenState extends State<DesignScreen> {
                                 borderRadius: BorderRadius.circular(40)),
                             child: RawMaterialButton(
                                 onPressed: () {
+                                  setState(() {
+                                    createTheme = true;
+                                  });
                                   if (isSwitched == false) {
                                     model.openDialogThemeCustomLight();
                                   } else if (isSwitched == true) {
@@ -265,23 +278,38 @@ class _DesignScreenState extends State<DesignScreen> {
                                   ),
                                 )),
                           ),
-                          FlatButton(
-                              onPressed: () {
-                                if (isSwitched == false) {
-                                  _updateState(4);
-                                  colorChangedPrimary(
-                                      themeCustomLight.primaryColor.value);
-                                  colorChangedAccent(
-                                      themeCustomLight.accentColor.value);
-                                } else if (isSwitched == true) {
-                                  _updateState(5);
-                                  colorChangedPrimary(
-                                      themeCustomDark.primaryColor.value);
-                                  colorChangedAccent(
-                                      themeCustomDark.accentColor.value);
-                                }
-                              },
-                              child: Text('Save')),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          createTheme
+                              ? BusyButton(
+                                  onPressed: () {
+                                    if (isSwitched == false) {
+                                      _updateState(4);
+                                      colorChangedPrimary(
+                                          themeCustomLight.primaryColor.value);
+                                      colorChangedAccent(
+                                          themeCustomLight.accentColor.value);
+                                      setState(() {
+                                        createTheme = false;
+                                      });
+                                    } else if (isSwitched == true) {
+                                      _updateState(5);
+                                      colorChangedPrimary(
+                                          themeCustomDark.primaryColor.value);
+                                      colorChangedAccent(
+                                          themeCustomDark.accentColor.value);
+                                      setState(() {
+                                        createTheme = false;
+                                      });
+                                    }
+                                  },
+                                  title: 'Save',
+                                )
+                              : Container(
+                                  height: 50,
+                                  color: Colors.transparent,
+                                ),
                         ],
                       )
                     ],

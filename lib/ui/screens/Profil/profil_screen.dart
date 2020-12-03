@@ -18,49 +18,105 @@ class _ProfilMenuState extends State<ProfilMenu> {
         body: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                   colors: [
                 Theme.of(context).primaryColor,
                 Theme.of(context).accentColor
               ])),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              Container(
-                  child: DrawerHeader(
+          child: Container(
+              height: 280,
+              child: DrawerHeader(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Align(
-                        alignment: Alignment.topLeft,
-                        child: GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            height: 90,
-                            width: 90,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.black, width: 2.0),
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image:
-                                        AssetImage(currentUser.imageProfil))),
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: IconButton(
+                              icon: Icon(
+                                Icons.expand_more,
+                                size: 35,
+                              ),
+                              onPressed: () => model.navigateToNavigation()),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: GestureDetector(
+                            onTap: () => print('Changer d\'image de profil'),
+                            child: Container(
+                              height: 90,
+                              width: 90,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: Colors.black, width: 2.0),
+                                  image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image:
+                                          AssetImage(currentUser.imageProfil))),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                              icon: Icon(
+                                Icons.settings,
+                                size: 25,
+                              ),
+                              onPressed: () => model.navigateToReglages()),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    GestureDetector(
+                        onTap: () => print('Changer le nom du user'),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Oruj',
+                            style: TextStyle(fontSize: 23),
                           ),
                         )),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            '0',
+                            style: TextStyle(fontSize: 23),
+                          ),
+                          Text(
+                            '0',
+                            style: TextStyle(fontSize: 23),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: 0.0),
+                            child: Text(
+                              '0',
+                              style: TextStyle(fontSize: 23),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Spacer(
-                          flex: 3,
-                        ),
                         Text('Followers'),
-                        Spacer(
-                          flex: 1,
-                        ),
-                        Text('Points'),
-                        Spacer(
-                          flex: 1,
+                        Padding(
+                          padding: EdgeInsets.only(right: 10.0),
+                          child: Text('Points'),
                         ),
                         Text('Follows')
                       ],
@@ -68,24 +124,6 @@ class _ProfilMenuState extends State<ProfilMenu> {
                   ],
                 ),
               )),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
-              ListTile(
-                  leading: Icon(Icons.verified_user),
-                  title: Text('Profil'),
-                  onTap: () => {
-                        model.navigateToEditProfile(),
-                      }),
-              ListTile(
-                  leading: Icon(Icons.border_color),
-                  title: Text('Design'),
-                  onTap: () => {model.navigateToDesign()}),
-              ListTile(
-                leading: Icon(Icons.exit_to_app),
-                title: Text('Déconnexion'),
-                onTap: () => {model.userSignOut()},
-              ),
-            ],
-          ),
         ),
       ),
     );

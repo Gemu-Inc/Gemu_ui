@@ -6,3 +6,4 @@ const String ProfilMenuRoute = "ProfilMenu";
 const String EditProfileScreenRoute = "EditProfileScreen";
 const String DesignScreenRoute = "DesignScreenRoute";
 const String SearchScreenRoute = "SearchScreenRoute";
+const String ReglagesScreenRoute = "ReglagesScreenRoute";

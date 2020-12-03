@@ -84,7 +84,7 @@ class _NavScreenState extends State<NavScreen>
                     ),
                     onPressed: () {
                       print('Notifications');
-                    })
+                    }),
               ],
             ),
             body: TabBarView(

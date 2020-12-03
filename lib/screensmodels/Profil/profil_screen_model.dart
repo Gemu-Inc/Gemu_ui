@@ -2,35 +2,15 @@ import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/locator.dart';
 import 'package:Gemu/screensmodels/base_model.dart';
 import 'package:Gemu/services/navigation_service.dart';
-import 'package:Gemu/services/auth_service.dart';
-import 'package:Gemu/services/dialog_service.dart';
 
 class ProfilScreenModel extends BaseModel {
-  final AuthService _authService = locator<AuthService>();
   final NavigationService _navigationService = locator<NavigationService>();
-  final DialogService _dialogService = locator<DialogService>();
 
-  void navigateToEditProfile() {
-    _navigationService.navigateTo(EditProfileScreenRoute);
+  navigateToNavigation() {
+    _navigationService.pop();
   }
 
-  void navigateToDesign() {
-    _navigationService.navigateTo(DesignScreenRoute);
-  }
-
-  Future userSignOut() async {
-    var dialogResponse = await _dialogService.showConfirmationDialog(
-        title: 'Déconnexion',
-        description: 'Êtes-vous sur?',
-        confirmationTitle: 'Yes',
-        cancelTitle: 'No');
-
-    if (dialogResponse.confirmed) {
-      setBusy(true);
-      await _authService.signOut();
-      setBusy(false);
-      print('User sign out');
-      _navigationService.navigateAndRemoveUntil(WelcomeScreenRoute);
-    }
+  navigateToReglages() {
+    _navigationService.navigateTo(ReglagesScreenRoute);
   }
 }

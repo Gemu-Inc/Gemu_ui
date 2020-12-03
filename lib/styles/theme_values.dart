@@ -52,7 +52,7 @@ final darkThemeOrange = ThemeData(
 /// --- Dark Purple Theme ---
 final darkThemePurple = ThemeData(
   brightness: Brightness.dark,
-  primaryColor: Color(0xFF7C79A5),
+  primaryColor: Color(0xFF5959A3),
   accentColor: Color(0xFFDC804F),
   secondaryHeaderColor: Colors.black,
   scaffoldBackgroundColor: Colors.grey[1000],
@@ -74,7 +74,7 @@ final darkThemePurple = ThemeData(
   cardTheme: CardTheme(color: Colors.black),
   cardColor: Colors.black45,
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: Color(0xFF7C79A5),
+    backgroundColor: Color(0xFF5959A3),
   ),
   bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black),
   bottomAppBarTheme: BottomAppBarTheme(
@@ -82,16 +82,16 @@ final darkThemePurple = ThemeData(
   ),
   tabBarTheme: TabBarTheme(
     unselectedLabelColor: Colors.grey[400],
-    labelColor: Color(0xFF7C79A5),
+    labelColor: Color(0xFF5959A3),
   ),
-  indicatorColor: Color(0xFF7C79A5),
+  indicatorColor: Color(0xFF5959A3),
 );
 
 /// --- Light Orange Theme ---
 final lightThemeOrange = ThemeData(
   brightness: Brightness.light,
   primaryColor: Color(0xFFDC804F),
-  accentColor: Color(0xFF7C79A5),
+  accentColor: Color(0xFF5959A3),
   secondaryHeaderColor: Colors.white,
   scaffoldBackgroundColor: Colors.grey[200],
   splashColor: Colors.grey[200],
@@ -127,7 +127,7 @@ final lightThemeOrange = ThemeData(
 /// --- Light Purple Theme ---
 final lightThemePurple = ThemeData(
   brightness: Brightness.light,
-  primaryColor: Color(0xFF7C79A5),
+  primaryColor: Color(0xFF5959A3),
   accentColor: Color(0xFFDC804F),
   secondaryHeaderColor: Colors.white,
   scaffoldBackgroundColor: Colors.grey[200],
@@ -148,7 +148,7 @@ final lightThemePurple = ThemeData(
   ),
   cardTheme: CardTheme(color: Colors.white),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: Color(0xFF7C79A5),
+    backgroundColor: Color(0xFF5959A3),
   ),
   bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.white),
   bottomAppBarTheme: BottomAppBarTheme(
@@ -156,9 +156,9 @@ final lightThemePurple = ThemeData(
   ),
   tabBarTheme: TabBarTheme(
     unselectedLabelColor: Colors.black,
-    labelColor: Color(0xFF7C79A5),
+    labelColor: Color(0xFF5959A3),
   ),
-  indicatorColor: Color(0xFF7C79A5),
+  indicatorColor: Color(0xFF5959A3),
 );
 
 ThemeData themeCustomLight = ThemeData(brightness: Brightness.light);
