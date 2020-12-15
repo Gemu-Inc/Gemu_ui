@@ -1,4 +1,4 @@
-import 'package:Gemu/screensmodels/Profil/design_screen_model.dart';
+import 'package:Gemu/screensmodels/Reglages/design_screen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/styles/styles.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
@@ -47,7 +47,7 @@ class _DesignScreenState extends State<DesignScreen> {
             leading: IconButton(
                 icon: Icon(Icons.arrow_back_ios),
                 onPressed: () => model.navigateToProfilMenu()),
-            title: Text('Design'),
+            title: Text('Apparence'),
             gradient: LinearGradient(
               colors: [
                 Theme.of(context).primaryColor,

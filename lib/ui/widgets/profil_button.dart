@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/models/models.dart';
 
 class ProfilButton extends StatelessWidget {
-  final UserLogin currentUser;
+  final String currentUser;
   final double width, height;
   final Color colorFond, colorBorder;
   final Function onPress;
@@ -30,8 +30,7 @@ class ProfilButton extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: colorBorder),
               image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage(currentUser.imageProfil))),
+                  fit: BoxFit.cover, image: NetworkImage(currentUser))),
         ));
   }
 }

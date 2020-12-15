@@ -1,5 +1,11 @@
 import 'package:Gemu/models/clan_model.dart';
 import 'package:Gemu/models/models.dart';
+import 'package:Gemu/locator.dart';
+import 'package:Gemu/services/auth_service.dart';
+import 'package:Gemu/models/user.dart';
+
+final AuthService _authService = locator<AuthService>();
+final UserC userC = _authService.currentUser;
 
 final UserLogin currentUser = UserLogin(
   name: '0ruj',

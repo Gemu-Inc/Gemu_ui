@@ -1,4 +1,4 @@
-import 'package:Gemu/screensmodels/Profil/reglages_screen_model.dart';
+import 'package:Gemu/screensmodels/Reglages/reglages_screen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
@@ -23,24 +23,35 @@ class ReglagesScreen extends StatelessWidget {
                     icon: Icon(Icons.arrow_back_ios),
                     onPressed: () => model.navigateToProfile()),
                 title: Text("Réglages"),
+                actions: [
+                  IconButton(
+                      icon: Icon(Icons.logout),
+                      onPressed: () => model.userSignOut())
+                ],
               ),
               body: ListView(
                 padding: EdgeInsets.zero,
                 children: [
                   Padding(padding: EdgeInsets.only(top: 10.0)),
                   ListTile(
-                    leading: Icon(Icons.verified_user),
-                    title: Text('Profil'),
-                    onTap: () => model.navigateToEditProfile(),
+                    title: Text('PARAMÈTRES UTILISATEUR'),
                   ),
                   ListTile(
-                      leading: Icon(Icons.border_color),
-                      title: Text('Design'),
-                      onTap: () => model.navigateToDesign()),
+                    leading: Icon(Icons.account_box),
+                    title: Text('Mon compte'),
+                    onTap: () => model.navigateToEditProfile(),
+                  ),
+                  Divider(),
                   ListTile(
-                    leading: Icon(Icons.exit_to_app),
-                    title: Text('Déconnexion'),
-                    onTap: () => model.userSignOut(),
+                    title: Text('PARAMÈTRES DE L\'APPLICATION'),
+                  ),
+                  ListTile(
+                      leading: Icon(Icons.design_services),
+                      title: Text('Apparence'),
+                      onTap: () => model.navigateToDesign()),
+                  Divider(),
+                  ListTile(
+                    title: Text('INFORMATIONS SUR L\'APPLICATION'),
                   ),
                 ],
               ),

@@ -13,4 +13,8 @@ class NavScreenModel extends BaseModel {
   void navigateToProfil() {
     _navigationService.navigateTo(ProfilMenuRoute);
   }
+
+  void navigateToSearch() {
+    _navigationService.navigateTo(SearchScreenRoute);
+  }
 }

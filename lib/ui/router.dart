@@ -1,8 +1,8 @@
 import 'package:Gemu/ui/screens/Login/login_screen.dart';
 import 'package:Gemu/ui/screens/Navigation/nav_screen.dart';
-import 'package:Gemu/ui/screens/Profil/edit_profile_screen.dart';
+import 'package:Gemu/ui/screens/Reglages/edit_profile_screen.dart';
 import 'package:Gemu/ui/screens/Profil/profil_screen.dart';
-import 'package:Gemu/ui/screens/Profil/reglages_screen.dart';
+import 'package:Gemu/ui/screens/Reglages/reglages_screen.dart';
 import 'package:Gemu/ui/screens/Register/register_screen.dart';
 import 'package:Gemu/ui/screens/Search/search_screen.dart';
 import 'package:Gemu/ui/screens/screens.dart';
