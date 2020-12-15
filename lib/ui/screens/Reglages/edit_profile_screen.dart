@@ -1,21 +1,11 @@
-import 'dart:io';
 import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/screensmodels/Reglages/edit_profile_screen_model.dart';
 import 'package:Gemu/services/firestore_service.dart';
-import 'package:Gemu/ui/screens/Navigation/nav_screen.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:stacked/stacked.dart';
 import 'package:Gemu/models/user.dart';
 import 'package:Gemu/models/data.dart';
-import 'package:Gemu/constants/route_names.dart';
-import 'package:Gemu/locator.dart';
-import 'package:Gemu/services/auth_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override
@@ -70,8 +60,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     height: 125,
                                     width: 125,
                                     child: StreamBuilder<UserC>(
-                                        stream: FirestoreService(uid: userC.id)
-                                            .userData,
+                                        stream: model.userData,
                                         builder: (context, snapshot) {
                                           if (snapshot.hasData) {
                                             UserC _userC = snapshot.data;
@@ -122,47 +111,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: Text('Supp'),
                     onPressed: () =>
                         model.deleteImgProfile(title: 'profileImg')),
-                StreamBuilder<UserC>(
-                    stream: FirestoreService(uid: userC.id).userData,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        UserC _userC = snapshot.data;
-                        return Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                TextFormField(
-                                  decoration:
-                                      InputDecoration(labelText: "Pseudo"),
-                                  validator: (value) => value.isEmpty
-                                      ? 'Please enter a name'
-                                      : null,
-                                  onChanged: (value) =>
-                                      setState(() => _currentName = value),
-                                ),
-                                RaisedButton(
-                                    child: Text('Save'),
-                                    onPressed: () async {
-                                      if (_formKey.currentState.validate()) {
-                                        print("Username updated");
-                                        await FirestoreService(uid: userC.id)
-                                            .updateUserPseudo(
-                                                _currentName ?? _userC.pseudo);
-                                      }
-                                      Navigator.pushNamed(
-                                              context, NavScreenRoute)
-                                          .then((value) => setState(() {}));
-                                    })
-                              ],
-                            ));
-                      } else {
-                        return CircularProgressIndicator(
-                          strokeWidth: 3,
-                          valueColor: AlwaysStoppedAnimation(
-                              Theme.of(context).primaryColor),
-                        );
-                      }
-                    }),
+                Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(labelText: "Pseudo"),
+                          validator: (value) =>
+                              value.isEmpty ? 'Please enter a name' : null,
+                          onChanged: (value) =>
+                              setState(() => _currentName = value),
+                        ),
+                        RaisedButton(
+                            child: Text('Save'),
+                            onPressed: () async {
+                              if (_formKey.currentState.validate()) {
+                                print("Username updated");
+                                await model.updateUserPseudo(_currentName);
+                              }
+                              Navigator.pushNamed(context, NavScreenRoute)
+                                  .then((value) => setState(() {}));
+                            })
+                      ],
+                    )),
               ],
             )));
   }

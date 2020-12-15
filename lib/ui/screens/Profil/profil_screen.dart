@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/models/data.dart';
 import 'package:stacked/stacked.dart';
-import 'package:Gemu/models/data.dart';
 import 'package:Gemu/models/user.dart';
 
 class ProfilMenu extends StatefulWidget {
@@ -46,8 +45,7 @@ class _ProfilMenuState extends State<ProfilMenu> {
                         Align(
                             alignment: Alignment.center,
                             child: StreamBuilder<UserC>(
-                                stream:
-                                    FirestoreService(uid: userC.id).userData,
+                                stream: model.userData,
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     UserC _userC = snapshot.data;
@@ -94,7 +92,7 @@ class _ProfilMenuState extends State<ProfilMenu> {
                     Align(
                         alignment: Alignment.center,
                         child: StreamBuilder(
-                            stream: FirestoreService(uid: userC.id).userData,
+                            stream: model.userData,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
                                 UserC _userC = snapshot.data;

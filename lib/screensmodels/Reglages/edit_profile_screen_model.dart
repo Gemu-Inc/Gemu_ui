@@ -19,6 +19,18 @@ class EditProfileScreenModel extends BaseModel {
   final DialogService _dialogService = locator<DialogService>();
   final AuthService _authService = locator<AuthService>();
 
+  Stream<UserC> get userData {
+    var currentUser = _authService.currentUser;
+    return _firestoreService.userData(currentUser.id);
+  }
+
+  Future updateUserPseudo(String currentName) async {
+    var currentUser = _authService.currentUser;
+
+    await _firestoreService.updateUserPseudo(
+        currentName ?? currentUser.pseudo, currentUser.id);
+  }
+
   File _selectedImage;
   File get selectedImage => _selectedImage;
 

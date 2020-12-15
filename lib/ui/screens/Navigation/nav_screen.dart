@@ -72,7 +72,7 @@ class _NavScreenState extends State<NavScreen>
                 ],
               ),
               leading: StreamBuilder<UserC>(
-                  stream: FirestoreService(uid: userC.id).userData,
+                  stream: model.userData,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       UserC _userC = snapshot.data;

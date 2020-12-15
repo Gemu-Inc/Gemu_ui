@@ -6,8 +6,6 @@ import 'package:Gemu/models/user.dart';
 class FirestoreService {
   final CollectionReference _usersCollectionReference =
       FirebaseFirestore.instance.collection('users');
-  final String uid;
-  FirestoreService({this.uid});
 
   Future createUser(UserC user) async {
     try {
@@ -35,7 +33,7 @@ class FirestoreService {
     }
   }
 
-  Future updateUserPseudo(String name) async {
+  Future updateUserPseudo(String name, String uid) async {
     return await _usersCollectionReference.doc(uid).update({'pseudo': name});
   }
 
@@ -49,15 +47,14 @@ class FirestoreService {
 
   UserC _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserC(
-      id: uid,
       pseudo: snapshot.data()['pseudo'],
       photoURL: snapshot.data()['photoURL'],
     );
   }
 
-  Stream<UserC> get userData {
+  Stream<UserC> userData(String uidTest) {
     return _usersCollectionReference
-        .doc(uid)
+        .doc(uidTest)
         .snapshots()
         .map(_userDataFromSnapshot);
   }
