@@ -12,6 +12,26 @@ class AuthService {
   UserC _currentUser;
   UserC get currentUser => _currentUser;
 
+  Future updateEmail({@required String email}) async {
+    try {
+      var user = _firebaseAuth.currentUser;
+      await user.updateEmail(email);
+      return user != null;
+    } catch (e) {
+      return e.message;
+    }
+  }
+
+  Future updatePassword({@required String password}) async {
+    try {
+      var user = _firebaseAuth.currentUser;
+      await user.updatePassword(password);
+      return user != null;
+    } catch (e) {
+      return e.message;
+    }
+  }
+
   Future loginWithEmail({
     @required String email,
     @required String password,

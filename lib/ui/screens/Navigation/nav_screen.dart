@@ -1,18 +1,10 @@
-import 'dart:io';
-import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/screensmodels/Navigation/nav_screen_model.dart';
-import 'package:Gemu/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/ui/screens/screens.dart';
 import 'package:Gemu/ui/widgets/widgets.dart';
-import 'package:Gemu/models/data.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
-import 'package:Gemu/locator.dart';
-import 'package:Gemu/services/navigation_service.dart';
 import 'package:stacked/stacked.dart';
-import 'package:Gemu/models/data.dart';
 import 'package:Gemu/models/user.dart';
-import 'package:Gemu/services/firestore_service.dart';
 
 class NavScreen extends StatefulWidget {
   NavScreen({Key key}) : super(key: key);

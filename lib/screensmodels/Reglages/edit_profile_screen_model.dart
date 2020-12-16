@@ -31,6 +31,19 @@ class EditProfileScreenModel extends BaseModel {
         currentName ?? currentUser.pseudo, currentUser.id);
   }
 
+  Future updateUserEmail(String email) async {
+    var currentUser = _authService.currentUser;
+
+    await _authService.updateEmail(email: email ?? currentUser.email);
+
+    await _firestoreService.updateUserEmail(
+        email ?? currentUser.email, currentUser.id);
+  }
+
+  Future updateUserPassword(String password) async {
+    await _authService.updatePassword(password: password);
+  }
+
   File _selectedImage;
   File get selectedImage => _selectedImage;
 

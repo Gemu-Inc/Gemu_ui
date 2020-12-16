@@ -167,8 +167,6 @@ class _BottomShare extends State<BottomShare>
                           child: Stack(
                             children: [
                               Container(
-                                //height: 60,
-                                //width: 60,
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     gradient: LinearGradient(

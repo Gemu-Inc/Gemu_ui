@@ -41,20 +41,25 @@ class FirestoreService {
     return await _usersCollectionReference.doc(uid).update({'photoURL': image});
   }
 
+  Future updateUserEmail(String email, String uid) async {
+    return await _usersCollectionReference.doc(uid).update({'email': email});
+  }
+
   Future deleteUserImgProfile(String uid) async {
     return await _usersCollectionReference.doc(uid).update({'photoURL': null});
   }
 
   UserC _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserC(
+      email: snapshot.data()['email'],
       pseudo: snapshot.data()['pseudo'],
       photoURL: snapshot.data()['photoURL'],
     );
   }
 
-  Stream<UserC> userData(String uidTest) {
+  Stream<UserC> userData(String uid) {
     return _usersCollectionReference
-        .doc(uidTest)
+        .doc(uid)
         .snapshots()
         .map(_userDataFromSnapshot);
   }
