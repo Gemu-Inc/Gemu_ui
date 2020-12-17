@@ -1,3 +1,6 @@
+import 'package:Gemu/ui/screens/Reglages/edit_email_screen.dart';
+import 'package:Gemu/ui/screens/Reglages/edit_password_screen.dart';
+import 'package:Gemu/ui/screens/Reglages/edit_user_name_screen.dart';
 import 'package:Gemu/ui/screens/Login/login_screen.dart';
 import 'package:Gemu/ui/screens/Navigation/nav_screen.dart';
 import 'package:Gemu/ui/screens/Reglages/edit_profile_screen.dart';
@@ -36,6 +39,15 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case ReglagesScreenRoute:
       return _getPageRoute(
           routeName: settings.name, viewToShow: ReglagesScreen());
+    case EditUserNameScreenRoute:
+      return _getPageRoute(
+          routeName: settings.name, viewToShow: EditUserNameScreen());
+    case EditEmailScreenRoute:
+      return _getPageRoute(
+          routeName: settings.name, viewToShow: EditEmailScreen());
+    case EditPasswordRoute:
+      return _getPageRoute(
+          routeName: settings.name, viewToShow: EditPasswordScreen());
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

@@ -1,12 +1,8 @@
-import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/screensmodels/Reglages/edit_profile_screen_model.dart';
-import 'package:Gemu/services/firestore_service.dart';
-import 'package:Gemu/ui/widgets/custom_scroll_screen_animate.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:stacked/stacked.dart';
 import 'package:Gemu/models/user.dart';
-import 'package:Gemu/models/data.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override
@@ -14,9 +10,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final _formKey = GlobalKey<FormState>();
-  String _currentName;
-
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<EditProfileScreenModel>.reactive(
@@ -157,30 +150,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ListTile(
                     title: Text('INFORMATIONS DU COMPTE'),
                   ),
-                  Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            decoration: InputDecoration(labelText: "Pseudo"),
-                            validator: (value) =>
-                                value.isEmpty ? 'Please enter a name' : null,
-                            onChanged: (value) =>
-                                setState(() => _currentName = value),
-                          ),
-                          RaisedButton(
-                              child: Text('Save'),
-                              onPressed: () async {
-                                if (_formKey.currentState.validate()) {
-                                  print("Username updated");
-                                  await model.updateUserPseudo(_currentName);
-                                }
-                                Navigator.pushNamed(context, NavScreenRoute);
-                              })
-                        ],
-                      )),
                   FlatButton(
-                      onPressed: () => print('Changer le pseudo'),
+                      onPressed: () => model.navigateToEditUserName(),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -207,7 +178,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ],
                       )),
                   FlatButton(
-                      onPressed: () => print('Changer l\'email'),
+                      onPressed: () => model.navigateToEditEmail(),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -234,7 +205,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ],
                       )),
                   FlatButton(
-                      onPressed: () => print('Changer le password'),
+                      onPressed: () => model.navigateToEditPassword(),
                       child: Stack(
                         children: [
                           Align(

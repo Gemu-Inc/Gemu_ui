@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:Gemu/locator.dart';
 import 'package:Gemu/models/user.dart';
+import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/screensmodels/base_model.dart';
 import 'package:Gemu/services/cloud_storage_service.dart';
+import 'package:Gemu/ui/screens/Reglages/edit_email_screen.dart';
 import 'package:Gemu/utils/image_selector.dart';
 import 'package:Gemu/services/firestore_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
@@ -112,5 +114,17 @@ class EditProfileScreenModel extends BaseModel {
     }
 
     _navigationService.pop();
+  }
+
+  void navigateToEditUserName() {
+    _navigationService.navigateTo(EditUserNameScreenRoute);
+  }
+
+  void navigateToEditEmail() {
+    _navigationService.navigateTo(EditEmailScreenRoute);
+  }
+
+  void navigateToEditPassword() {
+    _navigationService.navigateTo(EditPasswordRoute);
   }
 }
