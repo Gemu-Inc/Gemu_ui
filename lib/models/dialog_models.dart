@@ -31,6 +31,21 @@ class DialogRequestThemeCustom {
       @required this.accentColor});
 }
 
+class DialogRequestReAuth {
+  final String title;
+  final String description;
+  String password;
+  final String confirmationTitle;
+  final String cancelTitle;
+
+  DialogRequestReAuth(
+      {@required this.title,
+      @required this.description,
+      @required this.password,
+      @required this.confirmationTitle,
+      @required this.cancelTitle});
+}
+
 class DialogResponse {
   final String fieldOne;
   final String fieldTwo;

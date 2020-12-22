@@ -1,16 +1,14 @@
 import 'dart:async';
-import 'package:Gemu/constants/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:Gemu/models/dialog_models.dart';
-import 'package:Gemu/locator.dart';
-import 'package:Gemu/services/navigation_service.dart';
 
 class DialogService {
   GlobalKey<NavigatorState> _dialogNavigationKey = GlobalKey<NavigatorState>();
   Function(DialogRequest) _showDialogListener;
   Function(DialogRequestThemeCustom) _showDialogListenerThemeCustomLight;
   Function(DialogRequestThemeCustom) _showDialogListenerThemeCustomDark;
+  Function(DialogRequestReAuth) _showDialogListenerReAuth;
   Completer<DialogResponse> _dialogCompleter;
 
   GlobalKey<NavigatorState> get dialogNavigationKey => _dialogNavigationKey;
@@ -28,6 +26,11 @@ class DialogService {
   void registerDialogListenerThemeCustomDark(
       Function(DialogRequestThemeCustom) showDialogListener) {
     _showDialogListenerThemeCustomDark = showDialogListener;
+  }
+
+  void registerDialogListenerReAuth(
+      Function(DialogRequestReAuth) showDialogListener) {
+    _showDialogListenerReAuth = showDialogListener;
   }
 
   /// Calls the dialog listener and returns a Future that will wait for dialogComplete.
@@ -56,6 +59,22 @@ class DialogService {
         title: title,
         description: description,
         buttonTitle: confirmationTitle,
+        cancelTitle: cancelTitle));
+    return _dialogCompleter.future;
+  }
+
+  Future<DialogResponse> showDialogReAuth(
+      {@required String title,
+      @required String description,
+      @required String password,
+      String confirmationTitle = 'Ok',
+      String cancelTitle = 'Cancel'}) {
+    _dialogCompleter = Completer<DialogResponse>();
+    _showDialogListenerReAuth(DialogRequestReAuth(
+        title: title,
+        description: description,
+        password: password,
+        confirmationTitle: confirmationTitle,
         cancelTitle: cancelTitle));
     return _dialogCompleter.future;
   }

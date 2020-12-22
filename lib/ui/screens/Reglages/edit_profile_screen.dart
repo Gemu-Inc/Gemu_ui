@@ -19,7 +19,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               appBar: GradientAppBar(
                   leading: IconButton(
                       icon: Icon(Icons.arrow_back_ios),
-                      onPressed: () => Navigator.pop(context)),
+                      onPressed: () => model.navigateToReglages()),
                   title: Text('Mon compte'),
                   gradient: LinearGradient(
                     colors: [

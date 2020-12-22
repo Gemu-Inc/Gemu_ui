@@ -12,20 +12,29 @@ class AuthService {
   UserC _currentUser;
   UserC get currentUser => _currentUser;
 
-  Future updateEmail({@required String email}) async {
+  Future updateEmail(
+      {@required String password, @required String newEmail}) async {
     try {
       var user = _firebaseAuth.currentUser;
-      await user.updateEmail(email);
+      var authResult = await user.reauthenticateWithCredential(
+          EmailAuthProvider.credential(email: user.email, password: password));
+      await authResult.user.updateEmail(newEmail);
+      print('Successfull changed email');
       return user != null;
     } catch (e) {
       return e.message;
     }
   }
 
-  Future updatePassword({@required String password}) async {
+  Future updatePassword(
+      {@required String currentPassword, @required String newPassword}) async {
     try {
       var user = _firebaseAuth.currentUser;
-      await user.updatePassword(password);
+      var authResult = await user.reauthenticateWithCredential(
+          EmailAuthProvider.credential(
+              email: user.email, password: currentPassword));
+      await authResult.user.updatePassword(newPassword);
+      print('Successfull changed password');
       return user != null;
     } catch (e) {
       return e.message;

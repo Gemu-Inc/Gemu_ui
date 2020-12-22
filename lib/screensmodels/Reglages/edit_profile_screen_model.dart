@@ -4,7 +4,6 @@ import 'package:Gemu/models/user.dart';
 import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/screensmodels/base_model.dart';
 import 'package:Gemu/services/cloud_storage_service.dart';
-import 'package:Gemu/ui/screens/Reglages/edit_email_screen.dart';
 import 'package:Gemu/utils/image_selector.dart';
 import 'package:Gemu/services/firestore_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
@@ -24,26 +23,6 @@ class EditProfileScreenModel extends BaseModel {
   Stream<UserC> get userData {
     var currentUser = _authService.currentUser;
     return _firestoreService.userData(currentUser.id);
-  }
-
-  Future updateUserPseudo(String currentName) async {
-    var currentUser = _authService.currentUser;
-
-    await _firestoreService.updateUserPseudo(
-        currentName ?? currentUser.pseudo, currentUser.id);
-  }
-
-  Future updateUserEmail(String email) async {
-    var currentUser = _authService.currentUser;
-
-    await _authService.updateEmail(email: email ?? currentUser.email);
-
-    await _firestoreService.updateUserEmail(
-        email ?? currentUser.email, currentUser.id);
-  }
-
-  Future updateUserPassword(String password) async {
-    await _authService.updatePassword(password: password);
   }
 
   File _selectedImage;
@@ -114,6 +93,10 @@ class EditProfileScreenModel extends BaseModel {
     }
 
     _navigationService.pop();
+  }
+
+  void navigateToReglages() {
+    _navigationService.navigateTo(ReglagesScreenRoute);
   }
 
   void navigateToEditUserName() {

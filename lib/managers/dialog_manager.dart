@@ -4,7 +4,6 @@ import 'package:Gemu/models/dialog_models.dart';
 import 'package:Gemu/services/dialog_service.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:Gemu/styles/styles.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DialogManager extends StatefulWidget {
   final Widget child;
@@ -20,6 +19,7 @@ class _DialogManagerState extends State<DialogManager> {
   void initState() {
     super.initState();
     _dialogService.registerDialogListener(_showDialog);
+    _dialogService.registerDialogListenerReAuth(_reAuth);
     _dialogService.registerDialogListenerThemeCustomLight(_openDialogLight);
     _dialogService.registerDialogListenerThemeCustomDark(_openDialogDark);
   }
@@ -55,6 +55,44 @@ class _DialogManagerState extends State<DialogManager> {
                 ),
               ],
             ));
+  }
+
+  String _reAuth(DialogRequestReAuth request) {
+    var isConfirmationDialog = request.cancelTitle != null;
+    final _formKey = GlobalKey<FormState>();
+
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(request.title),
+              content: Form(
+                key: _formKey,
+                child: TextFormField(
+                    decoration: InputDecoration(labelText: "Password"),
+                    obscureText: true,
+                    validator: (value) =>
+                        value.isEmpty ? 'Please enter a password' : null,
+                    onChanged: (value) =>
+                        setState(() => request.password = value)),
+              ),
+              actions: [
+                if (isConfirmationDialog)
+                  FlatButton(
+                      onPressed: () {
+                        _dialogService
+                            .dialogComplete(DialogResponse(confirmed: false));
+                      },
+                      child: Text(request.cancelTitle)),
+                FlatButton(
+                    onPressed: () {
+                      _dialogService
+                          .dialogComplete(DialogResponse(confirmed: true));
+                    },
+                    child: Text(request.confirmationTitle))
+              ],
+            ));
+
+    return request.password;
   }
 
   void _openDialogLight(DialogRequestThemeCustom request) {

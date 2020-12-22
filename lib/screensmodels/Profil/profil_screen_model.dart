@@ -12,7 +12,7 @@ class ProfilScreenModel extends BaseModel {
   final FirestoreService _firestoreService = locator<FirestoreService>();
 
   navigateToNavigation() {
-    _navigationService.pop();
+    _navigationService.navigateTo(NavScreenRoute);
   }
 
   navigateToReglages() {
