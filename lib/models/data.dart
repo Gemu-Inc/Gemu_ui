@@ -4,12 +4,6 @@ import 'package:Gemu/locator.dart';
 import 'package:Gemu/services/auth_service.dart';
 import 'package:Gemu/models/user.dart';
 
-final UserLogin currentUser = UserLogin(
-  name: '0ruj',
-  imageProfil: 'lib/assets/images/Lelouch.png',
-  imageBanniere: 'lib/assets/images/Lelouch_appbar.png',
-);
-
 final List<CategoriePost> categoriePosts = [
   CategoriePost(idCategorie: 01, name: 'Général', selected: true),
   CategoriePost(idCategorie: 02, name: 'Blague', selected: true),
@@ -22,7 +16,6 @@ final List<CategoriePost> categoriePosts = [
 
 final List<Post> posts = [
   Post(
-    user: currentUser,
     caption: 'Check out these cool puppers',
     timeAgo: '58m',
     imageUrl: 'https://images.unsplash.com/photo-1525253086316-d0c936c814f8',
@@ -32,7 +25,6 @@ final List<Post> posts = [
     shares: 96,
   ),
   Post(
-    user: currentUser,
     caption:
         'Please enjoy this placeholder text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     timeAgo: '3hr',
@@ -43,7 +35,6 @@ final List<Post> posts = [
     shares: 18,
   ),
   Post(
-    user: currentUser,
     caption: 'Butterfly',
     timeAgo: '1d',
     videoUrl:
@@ -54,7 +45,6 @@ final List<Post> posts = [
     comments: 1001,
   ),
   Post(
-    user: currentUser,
     caption: 'This is a very good boy.',
     timeAgo: '8hr',
     imageUrl:
@@ -65,7 +55,6 @@ final List<Post> posts = [
     shares: 27,
   ),
   Post(
-    user: currentUser,
     caption: 'Little bee',
     timeAgo: '3d',
     videoUrl:
@@ -76,7 +65,6 @@ final List<Post> posts = [
     comments: 1001,
   ),
   Post(
-    user: currentUser,
     caption: 'Adventure 🏔',
     timeAgo: '15hr',
     imageUrl:
@@ -87,7 +75,6 @@ final List<Post> posts = [
     shares: 42,
   ),
   Post(
-    user: currentUser,
     caption:
         'More placeholder text for the soul: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     timeAgo: '1d',
@@ -98,7 +85,6 @@ final List<Post> posts = [
     shares: 9,
   ),
   Post(
-    user: currentUser,
     caption: 'A classic.',
     timeAgo: '1d',
     videoUrl: null,
@@ -109,7 +95,6 @@ final List<Post> posts = [
     comments: 301,
   ),
   Post(
-    user: currentUser,
     caption: 'Check out these cool puppers',
     timeAgo: '58m',
     imageUrl: 'https://images.unsplash.com/photo-1525253086316-d0c936c814f8',
@@ -119,7 +104,6 @@ final List<Post> posts = [
     shares: 96,
   ),
   Post(
-    user: currentUser,
     caption:
         'Please enjoy this placeholder text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     timeAgo: '3hr',
@@ -130,7 +114,6 @@ final List<Post> posts = [
     shares: 18,
   ),
   Post(
-    user: currentUser,
     caption: 'Butterfly',
     timeAgo: '1d',
     videoUrl:
@@ -141,7 +124,6 @@ final List<Post> posts = [
     comments: 1001,
   ),
   Post(
-    user: currentUser,
     caption: 'This is a very good boy.',
     timeAgo: '8hr',
     imageUrl:
@@ -152,7 +134,6 @@ final List<Post> posts = [
     shares: 27,
   ),
   Post(
-    user: currentUser,
     caption: 'Little bee',
     timeAgo: '3d',
     videoUrl:
@@ -163,7 +144,6 @@ final List<Post> posts = [
     comments: 1001,
   ),
   Post(
-    user: currentUser,
     caption: 'Adventure 🏔',
     timeAgo: '15hr',
     imageUrl:
@@ -174,7 +154,6 @@ final List<Post> posts = [
     shares: 42,
   ),
   Post(
-    user: currentUser,
     caption:
         'More placeholder text for the soul: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     timeAgo: '1d',
@@ -185,7 +164,6 @@ final List<Post> posts = [
     shares: 9,
   ),
   Post(
-    user: currentUser,
     caption: 'A classic.',
     timeAgo: '1d',
     videoUrl: null,

@@ -2,7 +2,6 @@ import 'package:meta/meta.dart';
 import 'package:Gemu/models/models.dart';
 
 class Post {
-  final UserLogin user;
   final String caption;
   final String timeAgo;
   final String imageUrl;
@@ -12,7 +11,6 @@ class Post {
   final int shares;
 
   const Post({
-    @required this.user,
     @required this.caption,
     @required this.timeAgo,
     @required this.imageUrl,

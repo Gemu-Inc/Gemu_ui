@@ -95,8 +95,7 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                                             actions: [
                                               FlatButton(
                                                   onPressed: () {
-                                                    model
-                                                        .navigateToEditProfile();
+                                                    Navigator.pop(context);
                                                   },
                                                   child: Text('Cancel')),
                                               FlatButton(
@@ -104,8 +103,7 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                                                     await model.updateUserEmail(
                                                         _currentPassword,
                                                         _currentEmail);
-                                                    model
-                                                        .navigateToEditProfile();
+                                                    Navigator.pop(context);
                                                   },
                                                   child: Text('OK'))
                                             ]));

@@ -126,18 +126,18 @@ class _PostHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        ProfileAvatar(imageUrl: post.user.imageProfil),
+        //ProfileAvatar(imageUrl: post.user.imageProfil),
         const SizedBox(width: 8.0),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              /*Text(
                 post.user.name,
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                 ),
-              ),
+              ),*/
               Text(
                 '${post.timeAgo}',
                 style: TextStyle(

@@ -19,7 +19,6 @@ class _DialogManagerState extends State<DialogManager> {
   void initState() {
     super.initState();
     _dialogService.registerDialogListener(_showDialog);
-    _dialogService.registerDialogListenerReAuth(_reAuth);
     _dialogService.registerDialogListenerThemeCustomLight(_openDialogLight);
     _dialogService.registerDialogListenerThemeCustomDark(_openDialogDark);
   }
@@ -55,44 +54,6 @@ class _DialogManagerState extends State<DialogManager> {
                 ),
               ],
             ));
-  }
-
-  String _reAuth(DialogRequestReAuth request) {
-    var isConfirmationDialog = request.cancelTitle != null;
-    final _formKey = GlobalKey<FormState>();
-
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text(request.title),
-              content: Form(
-                key: _formKey,
-                child: TextFormField(
-                    decoration: InputDecoration(labelText: "Password"),
-                    obscureText: true,
-                    validator: (value) =>
-                        value.isEmpty ? 'Please enter a password' : null,
-                    onChanged: (value) =>
-                        setState(() => request.password = value)),
-              ),
-              actions: [
-                if (isConfirmationDialog)
-                  FlatButton(
-                      onPressed: () {
-                        _dialogService
-                            .dialogComplete(DialogResponse(confirmed: false));
-                      },
-                      child: Text(request.cancelTitle)),
-                FlatButton(
-                    onPressed: () {
-                      _dialogService
-                          .dialogComplete(DialogResponse(confirmed: true));
-                    },
-                    child: Text(request.confirmationTitle))
-              ],
-            ));
-
-    return request.password;
   }
 
   void _openDialogLight(DialogRequestThemeCustom request) {

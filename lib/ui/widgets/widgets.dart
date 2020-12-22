@@ -1,6 +1,5 @@
 export 'test.dart';
 export 'circular_button.dart';
-export 'profil_banniere.dart';
 export 'message_user.dart';
 export 'panel_games_bar.dart';
 export 'custom_tab_bar.dart';

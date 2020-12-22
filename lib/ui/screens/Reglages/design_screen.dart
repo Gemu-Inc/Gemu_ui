@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
 import 'dart:math';
 import 'package:Gemu/ui/widgets/busy_button.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
 class DesignScreen extends StatefulWidget {
   @override
@@ -249,9 +250,21 @@ class _DesignScreenState extends State<DesignScreen> {
                                     createTheme = true;
                                   });
                                   if (isSwitched == false) {
-                                    model.openDialogThemeCustomLight();
+                                    _openDialogLight(
+                                        currentPrimaryColor:
+                                            themeCustomLight.primaryColor,
+                                        currentAccentColor:
+                                            themeCustomLight.accentColor,
+                                        primaryColor: true,
+                                        accentColor: false);
                                   } else if (isSwitched == true) {
-                                    model.openDialogThemeCustomDark();
+                                    _openDialogDark(
+                                        currentPrimaryColor:
+                                            themeCustomDark.primaryColor,
+                                        currentAccentColor:
+                                            themeCustomDark.accentColor,
+                                        primaryColor: true,
+                                        accentColor: false);
                                   }
                                 },
                                 child: Container(
@@ -377,5 +390,158 @@ class _DesignScreenState extends State<DesignScreen> {
   void colorChangedAccent(int value) async {
     var prefs = await SharedPreferences.getInstance();
     prefs.setInt('color_accent', value);
+  }
+
+  void _openDialogLight(
+      {@required Color currentPrimaryColor,
+      @required Color currentAccentColor,
+      @required bool primaryColor,
+      @required bool accentColor}) {
+    List<String> title = ['Primary color', 'Accent color'];
+    List<Widget> content = [
+      Container(
+          height: 250,
+          child: MaterialColorPicker(
+            colors: fullMaterialColors,
+            selectedColor: currentPrimaryColor,
+            onColorChange: (color) => setState(() => themeCustomLight =
+                (primaryColor)
+                    ? themeCustomLight.copyWith(primaryColor: color)
+                    : themeCustomLight.copyWith(accentColor: color)),
+            onMainColorChange: (color) => setState(() => themeCustomLight =
+                (primaryColor)
+                    ? themeCustomLight.copyWith(primaryColor: color)
+                    : themeCustomLight.copyWith(accentColor: color)),
+          )),
+      Container(
+          height: 250,
+          child: MaterialColorPicker(
+            colors: fullMaterialColors,
+            selectedColor: currentAccentColor,
+            onColorChange: (color) => setState(() => themeCustomLight =
+                (accentColor)
+                    ? themeCustomLight.copyWith(primaryColor: color)
+                    : themeCustomLight.copyWith(accentColor: color)),
+            onMainColorChange: (color) => setState(() => themeCustomLight =
+                (accentColor)
+                    ? themeCustomLight.copyWith(primaryColor: color)
+                    : themeCustomLight.copyWith(accentColor: color)),
+          ))
+    ];
+
+    showDialog(
+        context: context,
+        builder: (_) => MyAlertDialog(
+              title: title,
+              content: content,
+            ));
+  }
+
+  void _openDialogDark(
+      {@required Color currentPrimaryColor,
+      @required Color currentAccentColor,
+      @required bool primaryColor,
+      @required bool accentColor}) {
+    List<String> title = ['Primary color', 'Accent color'];
+    List<Widget> content = [
+      Container(
+          height: 250,
+          child: MaterialColorPicker(
+            colors: fullMaterialColors,
+            selectedColor: currentPrimaryColor,
+            onColorChange: (color) => setState(() => themeCustomDark =
+                (primaryColor)
+                    ? themeCustomDark.copyWith(primaryColor: color)
+                    : themeCustomDark.copyWith(accentColor: color)),
+            onMainColorChange: (color) => setState(() => themeCustomDark =
+                (primaryColor)
+                    ? themeCustomDark.copyWith(primaryColor: color)
+                    : themeCustomDark.copyWith(accentColor: color)),
+          )),
+      Container(
+          height: 250,
+          child: MaterialColorPicker(
+            colors: fullMaterialColors,
+            selectedColor: currentAccentColor,
+            onColorChange: (color) => setState(() => themeCustomDark =
+                (accentColor)
+                    ? themeCustomDark.copyWith(primaryColor: color)
+                    : themeCustomDark.copyWith(accentColor: color)),
+            onMainColorChange: (color) => setState(() => themeCustomDark =
+                (accentColor)
+                    ? themeCustomDark.copyWith(primaryColor: color)
+                    : themeCustomDark.copyWith(accentColor: color)),
+          ))
+    ];
+
+    showDialog(
+        context: context,
+        builder: (_) => MyAlertDialog(
+              title: title,
+              content: content,
+            ));
+  }
+}
+
+class MyAlertDialog extends StatefulWidget {
+  final title;
+  final content;
+
+  MyAlertDialog({@required this.title, @required this.content});
+
+  @override
+  _MyAlertDialogState createState() => _MyAlertDialogState();
+}
+
+class _MyAlertDialogState extends State<MyAlertDialog> {
+  int currentPosition = 0;
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: EdgeInsets.all(6.0),
+      title: Text(widget.title[currentPosition]),
+      content: widget.content[currentPosition],
+      actions: [
+        Row(
+          children: [
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+                onPressed: () => setState(() {
+                      if (currentPosition != 0) {
+                        currentPosition -= 1;
+                      } else {
+                        currentPosition = 0;
+                      }
+                    }),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 15,
+                )),
+            FlatButton(
+                onPressed: () => setState(() {
+                      if (currentPosition != 1) {
+                        currentPosition += 1;
+                      } else {
+                        currentPosition = 1;
+                      }
+                    }),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 15,
+                )),
+            FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Done')),
+          ],
+        )
+      ],
+    );
   }
 }

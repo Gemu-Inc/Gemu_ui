@@ -13,7 +13,7 @@ class DesignScreenModel extends BaseModel {
     _navigationService.pop();
   }
 
-  Future openDialogThemeCustomLight() async {
+  /*Future openDialogThemeCustomLight() async {
     await _dialogService.showDialogThemeCustomLight(
         currentPrimaryColor: themeCustomLight.primaryColor,
         currentAccentColor: themeCustomLight.accentColor,
@@ -27,5 +27,5 @@ class DesignScreenModel extends BaseModel {
         currentAccentColor: themeCustomDark.accentColor,
         primaryColor: true,
         accentColor: false);
-  }
+  }*/
 }
