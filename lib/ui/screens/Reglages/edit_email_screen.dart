@@ -100,10 +100,12 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                                                   child: Text('Cancel')),
                                               FlatButton(
                                                   onPressed: () async {
+                                                    Navigator.pop(context);
                                                     await model.updateUserEmail(
                                                         _currentPassword,
                                                         _currentEmail);
-                                                    Navigator.pop(context);
+                                                    model
+                                                        .navigateToEditProfile();
                                                   },
                                                   child: Text('OK'))
                                             ]));

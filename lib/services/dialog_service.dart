@@ -6,9 +6,7 @@ import 'package:Gemu/models/dialog_models.dart';
 class DialogService {
   GlobalKey<NavigatorState> _dialogNavigationKey = GlobalKey<NavigatorState>();
   Function(DialogRequest) _showDialogListener;
-  Function(DialogRequestThemeCustom) _showDialogListenerThemeCustomLight;
-  Function(DialogRequestThemeCustom) _showDialogListenerThemeCustomDark;
-  Function(DialogRequestReAuth) _showDialogListenerReAuth;
+  Function(DialogRequest) _showDialogConfirmationListener;
   Completer<DialogResponse> _dialogCompleter;
 
   GlobalKey<NavigatorState> get dialogNavigationKey => _dialogNavigationKey;
@@ -18,19 +16,9 @@ class DialogService {
     _showDialogListener = showDialogListener;
   }
 
-  void registerDialogListenerThemeCustomLight(
-      Function(DialogRequestThemeCustom) showDialogListener) {
-    _showDialogListenerThemeCustomLight = showDialogListener;
-  }
-
-  void registerDialogListenerThemeCustomDark(
-      Function(DialogRequestThemeCustom) showDialogListener) {
-    _showDialogListenerThemeCustomDark = showDialogListener;
-  }
-
-  void registerDialogListenerReAuth(
-      Function(DialogRequestReAuth) showDialogListener) {
-    _showDialogListenerReAuth = showDialogListener;
+  void registerDialogConfirmationListener(
+      Function(DialogRequest) showDialogListener) {
+    _showDialogConfirmationListener = showDialogListener;
   }
 
   /// Calls the dialog listener and returns a Future that will wait for dialogComplete.
@@ -55,63 +43,11 @@ class DialogService {
       String confirmationTitle = 'Ok',
       String cancelTitle = 'Cancel'}) {
     _dialogCompleter = Completer<DialogResponse>();
-    _showDialogListener(DialogRequest(
+    _showDialogConfirmationListener(DialogRequest(
         title: title,
         description: description,
         buttonTitle: confirmationTitle,
         cancelTitle: cancelTitle));
-    return _dialogCompleter.future;
-  }
-
-  Future<DialogResponse> showDialogReAuth(
-      {@required String title,
-      @required String description,
-      @required String password,
-      String confirmationTitle = 'Ok',
-      String cancelTitle = 'Cancel'}) {
-    _dialogCompleter = Completer<DialogResponse>();
-    _showDialogListenerReAuth(DialogRequestReAuth(
-        title: title,
-        description: description,
-        password: password,
-        confirmationTitle: confirmationTitle,
-        cancelTitle: cancelTitle));
-    return _dialogCompleter.future;
-  }
-
-  Future<DialogResponse> showDialogThemeCustomLight(
-      {@required Color currentPrimaryColor,
-      @required Color currentAccentColor,
-      @required bool primaryColor,
-      @required bool accentColor,
-      String confirmationTitle = 'Done',
-      String cancelTitle = 'Cancel'}) {
-    _dialogCompleter = Completer<DialogResponse>();
-    _showDialogListenerThemeCustomLight(DialogRequestThemeCustom(
-        currentPrimaryColor: currentPrimaryColor,
-        currentAccentColor: currentAccentColor,
-        confirmationTitle: confirmationTitle,
-        cancelTitle: cancelTitle,
-        primaryColor: primaryColor,
-        accentColor: accentColor));
-    return _dialogCompleter.future;
-  }
-
-  Future<DialogResponse> showDialogThemeCustomDark(
-      {@required Color currentPrimaryColor,
-      @required Color currentAccentColor,
-      @required bool primaryColor,
-      @required bool accentColor,
-      String confirmationTitle = 'Done',
-      String cancelTitle = 'Cancel'}) {
-    _dialogCompleter = Completer<DialogResponse>();
-    _showDialogListenerThemeCustomDark(DialogRequestThemeCustom(
-        currentPrimaryColor: currentPrimaryColor,
-        currentAccentColor: currentAccentColor,
-        confirmationTitle: confirmationTitle,
-        cancelTitle: cancelTitle,
-        primaryColor: primaryColor,
-        accentColor: accentColor));
     return _dialogCompleter.future;
   }
 
