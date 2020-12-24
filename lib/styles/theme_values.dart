@@ -47,6 +47,7 @@ final darkThemeOrange = ThemeData(
     labelColor: Color(0xFFDC804F),
   ),
   indicatorColor: Color(0xFFDC804F),
+  //canvasColor: Colors.black12.withOpacity(0.4)
 );
 
 /// --- Dark Purple Theme ---
@@ -85,6 +86,7 @@ final darkThemePurple = ThemeData(
     labelColor: Color(0xFF5959A3),
   ),
   indicatorColor: Color(0xFF5959A3),
+  //canvasColor: Colors.black12.withOpacity(0.4)
 );
 
 /// --- Light Orange Theme ---
@@ -122,6 +124,7 @@ final lightThemeOrange = ThemeData(
     labelColor: Color(0xFFDC804F),
   ),
   indicatorColor: Color(0xFFDC804F),
+  //canvasColor: Colors.white12.withOpacity(0.4)
 );
 
 /// --- Light Purple Theme ---
@@ -159,8 +162,13 @@ final lightThemePurple = ThemeData(
     labelColor: Color(0xFF5959A3),
   ),
   indicatorColor: Color(0xFF5959A3),
+  //canvasColor: Colors.white12.withOpacity(0.4)
 );
 
-ThemeData themeCustomLight = ThemeData(brightness: Brightness.light);
+ThemeData themeCustomDark = ThemeData(
+  brightness: Brightness.dark, //canvasColor: Colors.black12.withOpacity(0.4)
+);
 
-ThemeData themeCustomDark = ThemeData(brightness: Brightness.dark);
+ThemeData themeCustomLight = ThemeData(
+  brightness: Brightness.light, //canvasColor: Colors.white12.withOpacity(0.4)
+);

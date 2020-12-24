@@ -39,7 +39,6 @@ class _NavScreenState extends State<NavScreen>
   }
 
   void _onTabChanged() {
-    /// Only manually set the index if it is changing from a swipe, not a tab selection (indexIsChanging is only true when selecting a tab, and tab index is automatically changed) to avoid setting the index twice when a tab is selected
     if (!_tabController.indexIsChanging)
       setState(() {
         print('Changing to Tab: ${_tabController.index}');
@@ -53,79 +52,83 @@ class _NavScreenState extends State<NavScreen>
     return ViewModelBuilder<NavScreenModel>.reactive(
         viewModelBuilder: () => NavScreenModel(),
         builder: (context, model, child) => Scaffold(
-            key: _scaffoldKeyNav,
-            appBar: GradientAppBar(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).accentColor
+              key: _scaffoldKeyNav,
+              appBar: GradientAppBar(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).accentColor
+                  ],
+                ),
+                leading: StreamBuilder<UserC>(
+                    stream: model.userData,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        UserC _userC = snapshot.data;
+                        return _userC.photoURL == null
+                            ? GestureDetector(
+                                onTap: () => model.navigateToProfil(),
+                                child: Container(
+                                  margin: EdgeInsets.all(3.0),
+                                  height: 33,
+                                  width: 33,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Colors.black)),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 30,
+                                  ),
+                                ),
+                              )
+                            : ProfilButton(
+                                currentUser: _userC.photoURL,
+                                width: 33,
+                                height: 33,
+                                colorFond: Colors.transparent,
+                                colorBorder: Colors.black,
+                                onPress: () => model.navigateToProfil());
+                      } else {
+                        return CircularProgressIndicator(
+                          strokeWidth: 3,
+                          valueColor: AlwaysStoppedAnimation(
+                              Theme.of(context).primaryColor),
+                        );
+                      }
+                    }),
+                title: Text(initialAppBarTitle),
+                centerTitle: true,
+                actions: [
+                  IconButton(
+                      icon: Icon(Icons.search, size: 33),
+                      onPressed: () => model.navigateToSearch()),
+                  IconButton(
+                      icon: Icon(
+                        Icons.notifications,
+                        size: 33,
+                      ),
+                      onPressed: () => print('Notifications')),
                 ],
               ),
-              leading: StreamBuilder<UserC>(
-                  stream: model.userData,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      UserC _userC = snapshot.data;
-                      return _userC.photoURL == null
-                          ? GestureDetector(
-                              onTap: () => model.navigateToProfil(),
-                              child: Container(
-                                margin: EdgeInsets.all(3.0),
-                                height: 33,
-                                width: 33,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.black)),
-                                child: Icon(
-                                  Icons.person,
-                                  size: 30,
-                                ),
-                              ),
-                            )
-                          : ProfilButton(
-                              currentUser: _userC.photoURL,
-                              width: 33,
-                              height: 33,
-                              colorFond: Colors.transparent,
-                              colorBorder: Colors.black,
-                              onPress: () => model.navigateToProfil());
-                    } else {
-                      return CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation(
-                            Theme.of(context).primaryColor),
-                      );
-                    }
-                  }),
-              title: Text(initialAppBarTitle),
-              centerTitle: true,
-              actions: [
-                IconButton(
-                    icon: Icon(Icons.search, size: 33),
-                    onPressed: () => model.navigateToSearch()),
-                IconButton(
-                    icon: Icon(
-                      Icons.notifications,
-                      size: 33,
-                    ),
-                    onPressed: () => print('Notifications')),
-              ],
-            ),
-            body: TabBarView(
-                physics: NeverScrollableScrollPhysics(),
-                controller: _tabController,
+              body: Stack(
                 children: [
-                  HomeScreen(),
-                  DiscoverScreen(),
-                  ClansScreen(),
-                  GamesScreen()
-                ]),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            floatingActionButton: BottomShare(),
-            bottomNavigationBar:
-                CustomTabBar(icons: _icons, controller: _tabController)));
+                  TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
+                      controller: _tabController,
+                      children: [
+                        HomeScreen(),
+                        DiscoverScreen(),
+                        ClansScreen(),
+                        GamesScreen()
+                      ]),
+                  CustomTabBar(icons: _icons, controller: _tabController),
+                ],
+              ),
+              floatingActionButton: BottomShare(),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
+            ));
   }
 }
