@@ -10,3 +10,4 @@ const String ReglagesScreenRoute = "ReglagesScreenRoute";
 const String EditUserNameScreenRoute = "EditUserNameScreen";
 const String EditEmailScreenRoute = "EditEmailScreen";
 const String EditPasswordRoute = "EditPasswordRoute";
+const String CreatePostRoute = "CreatePosteRoute";

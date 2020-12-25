@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:Gemu/ui/screens/Share/create_post_screen.dart';
+import 'package:Gemu/constants/route_names.dart';
 
 class BottomShare extends StatefulWidget {
   @override
@@ -90,7 +92,8 @@ class _BottomShare extends State<BottomShare>
                             size: 25,
                           ),
                         ),
-                        onTap: () => print('Photo'),
+                        onTap: () =>
+                            Navigator.pushNamed(context, CreatePostRoute),
                       )),
                 ),
                 Transform.translate(

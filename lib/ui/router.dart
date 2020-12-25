@@ -12,6 +12,7 @@ import 'package:Gemu/ui/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/ui/screens/Welcome/welcome_screen.dart';
+import 'package:Gemu/ui/screens/Share/create_post_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -48,6 +49,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case EditPasswordRoute:
       return _getPageRoute(
           routeName: settings.name, viewToShow: EditPasswordScreen());
+    case CreatePostRoute:
+      return _getPageRoute(
+          routeName: settings.name, viewToShow: CreatePostScreen());
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

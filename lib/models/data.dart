@@ -239,12 +239,19 @@ final List<Clan> panelClans = [
 ];
 
 final List<Game> panelGames = [
-  //Game(nameGame: 'Abo\'s', imageUrl: null),
-  //Game(nameGame: 'Mix', imageUrl: null),
   Game(nameGame: 'Fortnite', imageUrl: 'lib/assets/images/logo_fortnite.jpg'),
   Game(nameGame: 'Fall Guys', imageUrl: 'lib/assets/images/logo_fall_guys.png'),
   Game(nameGame: 'Valorant', imageUrl: 'lib/assets/images/logo_valorant.png'),
   Game(nameGame: 'Formula One', imageUrl: 'lib/assets/images/FormulaOne.png'),
+];
+
+final List<Fil> panelFil = [
+  Fil(nameFil: 'Abo\'s', imageUrl: null),
+  Fil(nameFil: 'Mix', imageUrl: null),
+  Fil(nameFil: 'Fortnite', imageUrl: 'lib/assets/images/logo_fortnite.jpg'),
+  Fil(nameFil: 'Fall Guys', imageUrl: 'lib/assets/images/logo_fall_guys.png'),
+  Fil(nameFil: 'Valorant', imageUrl: 'lib/assets/images/logo_valorant.png'),
+  Fil(nameFil: 'Formula One', imageUrl: 'lib/assets/images/FormulaOne.png'),
 ];
 
 final List<Categorie> panelCategorie = [

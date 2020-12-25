@@ -17,18 +17,18 @@ class CustomTabBar extends StatelessWidget {
             bottom: 0,
             child: Container(
                 width: size.width,
-                height: 60,
+                height: 65,
                 color: Colors.transparent,
                 child: Stack(
                   children: [
                     CustomPaint(
-                      size: Size(size.width, 60),
+                      size: Size(size.width, 70),
                       painter: BNBCustomPainter(
                           color: Colors.black12.withOpacity(0.4)),
                     ),
                     Container(
                       width: size.width,
-                      height: 60,
+                      height: 70,
                       child: TabBar(
                         indicator: CircleTabIndicator(
                             color: Theme.of(context).accentColor, radius: 3),

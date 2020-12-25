@@ -128,7 +128,7 @@ class _NavScreenState extends State<NavScreen>
               ),
               floatingActionButton: BottomShare(),
               floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
+                  FloatingActionButtonLocation.centerFloat,
             ));
   }
 }
