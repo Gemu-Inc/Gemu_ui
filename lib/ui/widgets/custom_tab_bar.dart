@@ -38,7 +38,7 @@ class CustomTabBar extends StatelessWidget {
                               icons[0],
                               size: 30,
                               color: controller.index == 0
-                                  ? Theme.of(context).accentColor
+                                  ? Theme.of(context).primaryColor
                                   : Colors.grey,
                             ),
                           ),
@@ -47,7 +47,7 @@ class CustomTabBar extends StatelessWidget {
                               icons[1],
                               size: 30,
                               color: controller.index == 1
-                                  ? Theme.of(context).accentColor
+                                  ? Theme.of(context).primaryColor
                                   : Colors.grey,
                             ),
                           ),
@@ -56,7 +56,7 @@ class CustomTabBar extends StatelessWidget {
                               icons[2],
                               size: 30,
                               color: controller.index == 2
-                                  ? Theme.of(context).accentColor
+                                  ? Theme.of(context).primaryColor
                                   : Colors.grey,
                             ),
                           ),
@@ -65,7 +65,7 @@ class CustomTabBar extends StatelessWidget {
                               icons[3],
                               size: 30,
                               color: controller.index == 3
-                                  ? Theme.of(context).accentColor
+                                  ? Theme.of(context).primaryColor
                                   : Colors.grey,
                             ),
                           ),

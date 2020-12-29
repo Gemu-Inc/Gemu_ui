@@ -3,7 +3,7 @@ import 'package:Gemu/models/models.dart';
 import 'package:Gemu/ui/widgets/widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class PostContainer extends StatelessWidget {
+/*class PostContainer extends StatelessWidget {
   final Post post;
 
   const PostContainer({Key key, @required this.post}) : super(key: key);
@@ -261,4 +261,4 @@ class _PostButton extends StatelessWidget {
       ),
     );
   }
-}
+}*/

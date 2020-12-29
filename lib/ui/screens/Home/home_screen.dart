@@ -44,41 +44,68 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
                 SliverToBoxAdapter(
                     child: PreferredSize(
-                        child: Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: Container(
-                                height: MediaQuery.of(context).size.height / 10,
-                                width: MediaQuery.of(context).size.width - 25,
-                                child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 5.0),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: TabBar(
-                                        isScrollable: true,
-                                        controller: _tabController,
-                                        labelColor: Colors.black,
-                                        indicatorSize: TabBarIndicatorSize.tab,
-                                        indicator: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                            color: Colors.black12
-                                                .withOpacity(0.4)),
-                                        tabs: fil
-                                            .map((e) => Container(
-                                                  height: 55,
-                                                  width: 55,
-                                                  child: Tab(
-                                                    child: e.imageUrl == null &&
-                                                            e.nameFil ==
-                                                                'Abo\'s'
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height / 10,
+                            width: MediaQuery.of(context).size.width - 25,
+                            child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5.0),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: TabBar(
+                                    isScrollable: true,
+                                    controller: _tabController,
+                                    labelColor: Colors.black,
+                                    indicatorSize: TabBarIndicatorSize.tab,
+                                    indicator: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: Colors.black12.withOpacity(0.4)),
+                                    tabs: fil
+                                        .map((e) => Container(
+                                              height: 55,
+                                              width: 55,
+                                              child: Tab(
+                                                child: e.imageUrl == null &&
+                                                        e.nameFil == 'Abo\'s'
+                                                    ? Container(
+                                                        height: 50,
+                                                        width: 50,
+                                                        margin:
+                                                            EdgeInsets.all(5.0),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          gradient:
+                                                              LinearGradient(
+                                                            begin: Alignment
+                                                                .topLeft,
+                                                            end: Alignment
+                                                                .bottomRight,
+                                                            colors: [
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                              Theme.of(context)
+                                                                  .accentColor
+                                                            ],
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      5.0),
+                                                        ),
+                                                        child: Icon(
+                                                          Icons
+                                                              .person_pin_circle,
+                                                          size: 30,
+                                                        ))
+                                                    : e.imageUrl == null &&
+                                                            e.nameFil == 'Mix'
                                                         ? Container(
                                                             height: 50,
                                                             width: 50,
-                                                            margin: EdgeInsets
-                                                                .all(5.0),
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                    5.0),
                                                             decoration:
                                                                 BoxDecoration(
                                                               gradient:
@@ -103,89 +130,47 @@ class _HomeScreenState extends State<HomeScreen>
                                                             ),
                                                             child: Icon(
                                                               Icons
-                                                                  .person_pin_circle,
+                                                                  .cloud_circle,
                                                               size: 30,
                                                             ))
-                                                        : e.imageUrl ==
-                                                                    null &&
-                                                                e.nameFil ==
-                                                                    'Mix'
-                                                            ? Container(
-                                                                height: 50,
-                                                                width: 50,
-                                                                margin:
-                                                                    EdgeInsets
-                                                                        .all(
+                                                        : Container(
+                                                            height: 50,
+                                                            width: 50,
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                    5.0),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topLeft,
+                                                                      end: Alignment
+                                                                          .bottomRight,
+                                                                      colors: [
+                                                                        Theme.of(context)
+                                                                            .primaryColor,
+                                                                        Theme.of(context)
+                                                                            .accentColor
+                                                                      ],
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
                                                                             5.0),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  gradient:
-                                                                      LinearGradient(
-                                                                    begin: Alignment
-                                                                        .topLeft,
-                                                                    end: Alignment
-                                                                        .bottomRight,
-                                                                    colors: [
-                                                                      Theme.of(
-                                                                              context)
-                                                                          .primaryColor,
-                                                                      Theme.of(
-                                                                              context)
-                                                                          .accentColor
-                                                                    ],
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5.0),
-                                                                ),
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .cloud_circle,
-                                                                  size: 30,
-                                                                ))
-                                                            : Container(
-                                                                height: 50,
-                                                                width: 50,
-                                                                margin:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            5.0),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                        gradient:
-                                                                            LinearGradient(
-                                                                          begin:
-                                                                              Alignment.topLeft,
-                                                                          end: Alignment
-                                                                              .bottomRight,
-                                                                          colors: [
-                                                                            Theme.of(context).primaryColor,
-                                                                            Theme.of(context).accentColor
-                                                                          ],
-                                                                        ),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                5.0),
-                                                                        image: DecorationImage(
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                            image: AssetImage(e.imageUrl))),
-                                                              ),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                        onTap: (index) => setState(
-                                            () => selectedIndex = index),
-                                      ),
-                                    )),
-                              ),
-                            ),
-                            /*Divider(
-                              color: Theme.of(context).primaryColor,
-                              thickness: 0.75,
-                            )*/
-                          ],
+                                                                    image: DecorationImage(
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        image: AssetImage(
+                                                                            e.imageUrl))),
+                                                          ),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    onTap: (index) =>
+                                        setState(() => selectedIndex = index),
+                                  ),
+                                )),
+                          ),
                         ),
                         preferredSize: Size.fromHeight(100))),
                 SliverFillRemaining(

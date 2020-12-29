@@ -2,10 +2,25 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:Gemu/models/user.dart';
+import 'package:Gemu/models/post.dart';
 
 class FirestoreService {
   final CollectionReference _usersCollectionReference =
       FirebaseFirestore.instance.collection('users');
+  final CollectionReference _postsCollectionReference =
+      FirebaseFirestore.instance.collection('posts');
+
+  Future addPost(Post post) async {
+    try {
+      await _postsCollectionReference.add(post.toMap());
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+
+      return e.toString();
+    }
+  }
 
   Future createUser(UserC user) async {
     try {
