@@ -1,11 +1,18 @@
-import 'package:Gemu/ui/widgets/text_field_container.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Gemu/models/post.dart';
 
 class PostItem extends StatelessWidget {
-  final commentController = TextEditingController();
+  final Post post;
+
+  const PostItem({
+    Key key,
+    this.post,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final commentController = TextEditingController();
     return Container(
         margin: EdgeInsets.only(top: 20.0),
         height: MediaQuery.of(context).size.height / 1.80,
@@ -56,18 +63,19 @@ class PostItem extends StatelessWidget {
                   Align(
                     alignment: Alignment.center,
                     child: Container(
-                      height: 200,
-                      width: MediaQuery.of(context).size.width / 1.20,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Icon(
-                        Icons.image,
-                        size: 60,
-                        color: Colors.black,
-                      ),
-                    ),
+                        height: 200,
+                        width: MediaQuery.of(context).size.width / 1.20,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: CachedNetworkImage(
+                          imageUrl: post.imageUrl,
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        )),
                   ),
                   Align(
                     alignment: Alignment.bottomLeft,
@@ -131,7 +139,7 @@ class PostItem extends StatelessWidget {
               width: MediaQuery.of(context).size.width / 1.10,
               //color: Colors.pink,
               alignment: Alignment.center,
-              child: Text('Content post'),
+              child: Text(post.content),
             ),
             Container(
               height: 60,

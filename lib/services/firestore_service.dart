@@ -10,6 +10,9 @@ class FirestoreService {
   final CollectionReference _postsCollectionReference =
       FirebaseFirestore.instance.collection('posts');
 
+  final StreamController<List<Post>> _postsController =
+      StreamController<List<Post>>.broadcast();
+
   Future addPost(Post post) async {
     try {
       await _postsCollectionReference.add(post.toMap());
@@ -20,6 +23,41 @@ class FirestoreService {
 
       return e.toString();
     }
+  }
+
+  /*Future getPostsOnceOff() async {
+    try {
+      var postDocumentSnapshot = await _postsCollectionReference.get();
+      if (postDocumentSnapshot.docs.isNotEmpty) {
+        return postDocumentSnapshot.docs
+            .map((snapshot) => Post.fromMap(snapshot.data(), snapshot.id))
+            .where((mappedItem) => mappedItem.imageFileName != null)
+            .toList();
+      }
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+
+      return e.toString();
+    }
+  }*/
+
+  Stream listenToPostsRealTime() {
+    // Register the handler for when the posts data changes
+    _postsCollectionReference.snapshots().listen((postsSnapshot) {
+      if (postsSnapshot.docs.isNotEmpty) {
+        var posts = postsSnapshot.docs
+            .map((snapshot) => Post.fromMap(snapshot.data(), snapshot.id))
+            .where((mappedItem) => mappedItem.imageFileName != null)
+            .toList();
+
+        // Add the posts onto the controller
+        _postsController.add(posts);
+      }
+    });
+
+    return _postsController.stream;
   }
 
   Future createUser(UserC user) async {

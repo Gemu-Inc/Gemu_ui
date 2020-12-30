@@ -37,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeScreenModel>.reactive(
         viewModelBuilder: () => HomeScreenModel(),
+        onModelReady: (model) => model.listenToPosts(),
         builder: (context, model, child) => CustomScrollView(
               physics: BouncingScrollPhysics(),
               slivers: [
@@ -178,9 +179,17 @@ class _HomeScreenState extends State<HomeScreen>
                     child: TabBarView(
                   controller: _tabController,
                   children: fil
-                      .map((e) => ListView(
-                            children: [PostItem(), PostItem()],
-                          ))
+                      .map((e) => model.posts != null
+                          ? ListView.builder(
+                              itemCount: model.posts.length,
+                              itemBuilder: (context, index) =>
+                                  PostItem(post: model.posts[index]))
+                          : Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(
+                                    Theme.of(context).primaryColor),
+                              ),
+                            ))
                       .toList(),
                 ))
               ],
