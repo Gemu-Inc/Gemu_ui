@@ -16,8 +16,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   List<Game> games = panelGames;
   List<CategoriePost> sections = categoriePosts;
   final contentController = TextEditingController();
-  String selected_game;
-  String selected_section;
+  String selectedGame;
+  String selectedSection;
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +44,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         child: Container(
                             color: Colors.black,
                             child: ExpansionTile(
-                              title: selected_game == null
+                              title: selectedGame == null
                                   ? Text('Game')
-                                  : Text(selected_game),
+                                  : Text(selectedGame),
                               children: games.map((Game game) {
                                 return Padding(
                                   padding: EdgeInsets.only(bottom: 10.0),
                                   child: GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          selected_game = game.nameGame;
+                                          selectedGame = game.nameGame;
                                         });
                                       },
                                       child: Row(
@@ -82,16 +82,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           child: Container(
                               color: Colors.black,
                               child: ExpansionTile(
-                                title: selected_section == null
+                                title: selectedSection == null
                                     ? Text('Section')
-                                    : Text(selected_section),
+                                    : Text(selectedSection),
                                 children: sections.map((CategoriePost section) {
                                   return Padding(
                                     padding: EdgeInsets.only(bottom: 10.0),
                                     child: GestureDetector(
                                         onTap: () {
                                           setState(() {
-                                            selected_section = section.name;
+                                            selectedSection = section.name;
                                           });
                                         },
                                         child: Row(
@@ -196,8 +196,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ],
                   ),
                   onPressed: () => model.addPost(
-                      game: selected_game,
-                      section: selected_section,
+                      game: selectedGame,
+                      section: selectedSection,
                       content: contentController.text)),
             ));
   }

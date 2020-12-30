@@ -4,6 +4,7 @@ import 'package:Gemu/models/data.dart';
 import 'package:Gemu/models/fil_model.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:Gemu/ui/widgets/post_item.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -177,8 +178,8 @@ class _HomeScreenState extends State<HomeScreen>
                     child: TabBarView(
                   controller: _tabController,
                   children: fil
-                      .map((e) => Center(
-                            child: Text('${e.nameFil} content'),
+                      .map((e) => ListView(
+                            children: [PostItem(), PostItem()],
                           ))
                       .toList(),
                 ))
