@@ -6,6 +6,7 @@ import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/services/firestore_service.dart';
 import 'package:Gemu/services/cloud_storage_service.dart';
 import 'package:Gemu/models/post.dart';
+import 'package:Gemu/models/user.dart';
 import 'package:flutter/foundation.dart';
 
 class HomeScreenModel extends BaseModel {
@@ -17,6 +18,9 @@ class HomeScreenModel extends BaseModel {
 
   List<Post> _posts;
   List<Post> get posts => _posts;
+
+  UserC _user;
+  UserC get user => _user;
 
   void listenToPosts() {
     setBusy(true);
@@ -30,5 +34,9 @@ class HomeScreenModel extends BaseModel {
 
       setBusy(false);
     });
+  }
+
+  Future<UserC> getUserPost(String uid) async {
+    return await _firestoreService.getUser(uid);
   }
 }

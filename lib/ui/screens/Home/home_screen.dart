@@ -182,8 +182,10 @@ class _HomeScreenState extends State<HomeScreen>
                       .map((e) => model.posts != null
                           ? ListView.builder(
                               itemCount: model.posts.length,
-                              itemBuilder: (context, index) =>
-                                  PostItem(post: model.posts[index]))
+                              itemBuilder: (context, index) => PostItem(
+                                  post: model.posts[index],
+                                  user: model
+                                      .getUserPost(model.posts[index].userId)))
                           : Center(
                               child: CircularProgressIndicator(
                                 valueColor: AlwaysStoppedAnimation(
