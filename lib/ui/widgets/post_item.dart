@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Gemu/models/post.dart';
 import 'package:Gemu/models/user.dart';
 
+//Post item mode scroll infini à retravailler
 class PostItem extends StatelessWidget {
   final Post post;
   final Future<UserC> user;
