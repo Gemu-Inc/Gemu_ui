@@ -176,9 +176,26 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                         preferredSize: Size.fromHeight(100))),
                 SliverFillRemaining(
-                    child: TabBarView(
-                  controller: _tabController,
-                  children: fil
+                    child: TabBarView(controller: _tabController, children: [
+                  Center(
+                    child: Text('test'),
+                  ),
+                  Center(
+                    child: Text('test'),
+                  ),
+                  Center(
+                    child: Text('test'),
+                  ),
+                  Center(
+                    child: Text('test'),
+                  ),
+                  Center(
+                    child: Text('test'),
+                  ),
+                  Center(
+                    child: Text('test'),
+                  ),
+                ] /*fil
                       .map((e) => model.posts != null
                           ? ListView.builder(
                               itemCount: model.posts.length,
@@ -192,8 +209,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     Theme.of(context).primaryColor),
                               ),
                             ))
-                      .toList(),
-                ))
+                      .toList(),*/
+                        ))
               ],
             ));
   }

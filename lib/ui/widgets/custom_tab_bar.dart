@@ -24,7 +24,7 @@ class CustomTabBar extends StatelessWidget {
                     CustomPaint(
                       size: Size(size.width, 70),
                       painter: BNBCustomPainter(
-                          color: Colors.black12.withOpacity(0.4)),
+                          color: Color(0xFF333333).withOpacity(0.5)),
                     ),
                     Container(
                       width: size.width,
@@ -87,7 +87,6 @@ class BNBCustomPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print(color);
     Paint paint = new Paint()
       ..color = color
       ..style = PaintingStyle.fill;
@@ -103,7 +102,7 @@ class BNBCustomPainter extends CustomPainter {
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
     path.lineTo(0, 20);
-    canvas.drawShadow(path, Colors.black, 5, true);
+    canvas.drawShadow(path, Color(0xFF333333), 1, true);
     canvas.drawPath(path, paint);
   }
 

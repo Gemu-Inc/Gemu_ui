@@ -53,15 +53,10 @@ class _NavScreenState extends State<NavScreen>
         viewModelBuilder: () => NavScreenModel(),
         builder: (context, model, child) => Scaffold(
               key: _scaffoldKeyNav,
-              appBar: GradientAppBar(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).accentColor
-                  ],
-                ),
+              backgroundColor: Color(0xFF333333),
+              appBar: AppBar(
+                elevation: 4,
+                backgroundColor: Color(0xFF333333),
                 leading: StreamBuilder<UserC>(
                     stream: model.userData,
                     builder: (context, snapshot) {
