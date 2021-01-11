@@ -34,6 +34,7 @@ class _ProfilMenuState extends State<ProfilMenu>
     return ViewModelBuilder<ProfilScreenModel>.reactive(
       viewModelBuilder: () => ProfilScreenModel(),
       builder: (context, model, child) => Scaffold(
+          backgroundColor: Color(0xFF1A1C25),
           appBar: PreferredSize(
               child: Container(
                 height: 280,
@@ -80,13 +81,19 @@ class _ProfilMenuState extends State<ProfilMenu>
                                                 Icons.person,
                                                 size: 50,
                                               ))
-                                          : ProfilButton(
-                                              currentUser: _userC.photoURL,
+                                          : Container(
+                                              margin: EdgeInsets.all(3.0),
                                               width: 90,
                                               height: 90,
-                                              colorFond: Colors.transparent,
-                                              colorBorder: Colors.black,
-                                              onPress: null,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.transparent,
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                      color: Color(0xFF222831)),
+                                                  image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: NetworkImage(
+                                                          _userC.photoURL))),
                                             );
                                     } else {
                                       return CircularProgressIndicator();
@@ -207,24 +214,26 @@ class _ProfilMenuState extends State<ProfilMenu>
               SliverToBoxAdapter(
                   child: PreferredSize(
                       child: Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        child: TabBar(
-                            isScrollable: true,
-                            controller: _tabController,
-                            indicatorColor: Theme.of(context).accentColor,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            labelPadding:
-                                EdgeInsets.symmetric(horizontal: 30.0),
-                            tabs: [
-                              Tab(
-                                text: 'Publications',
-                              ),
-                              Tab(
-                                text: 'Statistics',
-                              )
-                            ]),
-                      ),
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 10.0),
+                            child: TabBar(
+                                controller: _tabController,
+                                isScrollable: true,
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                indicator: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color(0xFF222831)),
+                                tabs: [
+                                  Tab(
+                                    text: 'Publications',
+                                  ),
+                                  Tab(
+                                    text: 'Statistics',
+                                  )
+                                ]),
+                          )),
                       preferredSize: Size.fromHeight(100))),
               SliverFillRemaining(
                 child: TabBarView(controller: _tabController, children: [

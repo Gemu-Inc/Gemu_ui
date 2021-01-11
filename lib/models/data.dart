@@ -82,8 +82,6 @@ final List<Game> panelGames = [
 ];
 
 final List<Fil> panelFil = [
-  Fil(nameFil: 'Abo\'s', imageUrl: null),
-  Fil(nameFil: 'Mix', imageUrl: null),
   Fil(nameFil: 'Fortnite', imageUrl: 'lib/assets/images/logo_fortnite.jpg'),
   Fil(nameFil: 'Fall Guys', imageUrl: 'lib/assets/images/logo_fall_guys.png'),
   Fil(nameFil: 'Valorant', imageUrl: 'lib/assets/images/logo_valorant.png'),

@@ -9,6 +9,7 @@ class StartUpScreen extends StatelessWidget {
         viewModelBuilder: () => StartUpScreenModel(),
         onModelReady: (model) => model.handleStartUpLogic(),
         builder: (context, model, child) => Scaffold(
+              backgroundColor: Color(0xFF1A1C25),
               body: Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 3,

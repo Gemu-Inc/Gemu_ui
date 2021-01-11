@@ -19,6 +19,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     return ViewModelBuilder<EditPasswordScreenModel>.reactive(
         viewModelBuilder: () => EditPasswordScreenModel(),
         builder: (context, model, child) => Scaffold(
+              backgroundColor: Color(0xFF1A1C25),
               appBar: AppBar(
                 backgroundColor: Colors.black26,
                 elevation: 0.0,

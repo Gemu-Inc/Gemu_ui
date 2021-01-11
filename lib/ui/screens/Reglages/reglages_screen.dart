@@ -11,6 +11,7 @@ class ReglagesScreen extends StatelessWidget {
     return ViewModelBuilder<ReglagesScreenModel>.reactive(
         viewModelBuilder: () => ReglagesScreenModel(),
         builder: (context, model, child) => Scaffold(
+              backgroundColor: Color(0xFF1A1C25),
               appBar: GradientAppBar(
                 gradient: LinearGradient(
                     begin: Alignment.topLeft,

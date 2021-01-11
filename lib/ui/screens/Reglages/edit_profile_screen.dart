@@ -15,7 +15,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return ViewModelBuilder<EditProfileScreenModel>.reactive(
         viewModelBuilder: () => EditProfileScreenModel(),
         builder: (context, model, child) => Scaffold(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              backgroundColor: Color(0xFF1A1C25),
               appBar: GradientAppBar(
                   leading: IconButton(
                       icon: Icon(Icons.arrow_back_ios),

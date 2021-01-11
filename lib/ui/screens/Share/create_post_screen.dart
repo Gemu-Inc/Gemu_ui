@@ -24,6 +24,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return ViewModelBuilder<CreatePostModel>.reactive(
         viewModelBuilder: () => CreatePostModel(),
         builder: (context, model, child) => Scaffold(
+              backgroundColor: Color(0xFF1A1C25),
               appBar: AppBar(
                   backgroundColor: Colors.transparent,
                   elevation: 0,

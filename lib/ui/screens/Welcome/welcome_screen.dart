@@ -12,6 +12,7 @@ class WelcomeScreen extends StatelessWidget {
     return ViewModelBuilder<WelcomeScreenModel>.reactive(
         viewModelBuilder: () => WelcomeScreenModel(),
         builder: (context, model, child) => Scaffold(
+            backgroundColor: Color(0xFF1A1C25),
             appBar: GradientAppBar(
               gradient: LinearGradient(
                   begin: Alignment.topLeft,

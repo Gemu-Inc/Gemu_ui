@@ -9,15 +9,12 @@ class DiscoverScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<DiscoverScreenModel>.reactive(
-      viewModelBuilder: () => DiscoverScreenModel(),
-      builder: (context, model, child) => CustomScrollScreen(widgets: [
-        Center(
-          child: Container(
-            margin: EdgeInsets.only(top: 25.0),
-            child: Text("Create your custom feed"),
-          ),
-        )
-      ]),
-    );
+        viewModelBuilder: () => DiscoverScreenModel(),
+        builder: (context, model, child) => Center(
+              child: Container(
+                margin: EdgeInsets.only(top: 25.0),
+                child: Text("Create your custom feed"),
+              ),
+            ));
   }
 }

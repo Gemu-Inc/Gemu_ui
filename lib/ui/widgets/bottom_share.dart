@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:Gemu/ui/screens/Share/create_post_screen.dart';
 import 'package:Gemu/constants/route_names.dart';
 
 class BottomShare extends StatefulWidget {
@@ -10,9 +9,7 @@ class BottomShare extends StatefulWidget {
 class _BottomShare extends State<BottomShare>
     with SingleTickerProviderStateMixin {
   AnimationController animationController;
-  Animation degOneTranslationAnimation,
-      degTwoTranslationAnimation,
-      degThreeTranslationAnimation;
+  Animation degOneTranslationAnimation, degTwoTranslationAnimation;
   Animation rotationAnimationCircularButton;
   Animation rotationAnimationFlatButton;
 
@@ -32,12 +29,6 @@ class _BottomShare extends State<BottomShare>
           tween: Tween<double>(begin: 1.2, end: 1.0), weight: 25.0),
     ]).animate(animationController);
     degTwoTranslationAnimation = TweenSequence([
-      TweenSequenceItem(
-          tween: Tween<double>(begin: 0.0, end: 1.4), weight: 55.0),
-      TweenSequenceItem(
-          tween: Tween<double>(begin: 1.4, end: 1.0), weight: 45.0),
-    ]).animate(animationController);
-    degThreeTranslationAnimation = TweenSequence([
       TweenSequenceItem(
           tween: Tween<double>(begin: 0.0, end: 1.75), weight: 35.0),
       TweenSequenceItem(
@@ -68,13 +59,13 @@ class _BottomShare extends State<BottomShare>
               children: [
                 IgnorePointer(
                     child: Container(
-                  height: 150,
+                  height: 100,
                   width: 200,
                   color: Colors.transparent,
                 )),
                 Transform.translate(
-                  offset: Offset.fromDirection(getRadianFromDegree(225),
-                      degOneTranslationAnimation.value * 85),
+                  offset: Offset.fromDirection(getRadianFromDegree(235),
+                      degOneTranslationAnimation.value * 75),
                   child: Transform(
                       transform: Matrix4.rotationZ(getRadianFromDegree(
                           rotationAnimationCircularButton.value))
@@ -88,7 +79,7 @@ class _BottomShare extends State<BottomShare>
                               borderRadius: BorderRadius.circular(30),
                               color: Theme.of(context).primaryColor),
                           child: Icon(
-                            Icons.photo_camera,
+                            Icons.add,
                             size: 25,
                           ),
                         ),
@@ -97,8 +88,8 @@ class _BottomShare extends State<BottomShare>
                       )),
                 ),
                 Transform.translate(
-                  offset: Offset.fromDirection(getRadianFromDegree(270),
-                      degTwoTranslationAnimation.value * 85),
+                  offset: Offset.fromDirection(getRadianFromDegree(305),
+                      degTwoTranslationAnimation.value * 75),
                   child: Transform(
                       transform: Matrix4.rotationZ(getRadianFromDegree(
                           rotationAnimationCircularButton.value))
@@ -110,42 +101,14 @@ class _BottomShare extends State<BottomShare>
                           width: 45,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Theme.of(context).primaryColor,
-                                    Theme.of(context).accentColor
-                                  ])),
-                          child: Icon(
-                            Icons.sms,
-                            size: 25,
-                          ),
-                        ),
-                        onTap: () => print('Texte'),
-                      )),
-                ),
-                Transform.translate(
-                  offset: Offset.fromDirection(getRadianFromDegree(315),
-                      degThreeTranslationAnimation.value * 85),
-                  child: Transform(
-                      transform: Matrix4.rotationZ(getRadianFromDegree(
-                          rotationAnimationCircularButton.value))
-                        ..scale(degThreeTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: GestureDetector(
-                        child: Container(
-                          height: 45,
-                          width: 45,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
                               color: Theme.of(context).accentColor),
                           child: Icon(
-                            Icons.videocam,
+                            Icons.play_arrow,
                             size: 25,
                           ),
                         ),
-                        onTap: () => print('Caméra'),
+                        onTap: () =>
+                            print('Démarrer l\'enregistrement d\'un clip'),
                       )),
                 ),
                 Transform(

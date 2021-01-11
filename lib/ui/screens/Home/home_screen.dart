@@ -5,6 +5,12 @@ import 'package:Gemu/models/fil_model.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:Gemu/ui/widgets/post_item.dart';
+import 'package:Gemu/ui/widgets/widgets.dart';
+import 'package:Gemu/models/user.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Gemu/ui/widgets/top_toolbar.dart';
+import 'package:Gemu/ui/widgets/actions_postbar.dart';
+import 'package:Gemu/ui/widgets/content_postdescription.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -13,205 +19,211 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
-  final List<Fil> fil = panelFil;
-  int selectedIndex = 0;
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  TabController _tabController, _tabGamesController;
+  PageController _pageFollowingController, _pageGamesController;
+  int currentTabIndex,
+      currentTabGamesIndex,
+      currentPageFollowingIndex,
+      currentPageGamesIndex;
 
-  TabController _tabController;
+  final List<Fil> fil = panelFil;
 
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(vsync: this, length: fil.length, initialIndex: 1);
+
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    currentTabIndex = 0;
+
+    _tabGamesController = TabController(length: fil.length, vsync: this);
+    _tabGamesController.addListener(_onTabGamesChanged);
+    currentTabGamesIndex = 0;
+
+    _pageFollowingController = PageController();
+    currentPageFollowingIndex = 0;
+
+    _pageGamesController = PageController();
+    currentPageGamesIndex = 0;
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  void _onTabChanged() {
+    if (!_tabController.indexIsChanging)
+      setState(() {
+        print('Changing to Tab: ${_tabController.index}');
+        currentTabIndex = _tabController.index;
+        currentPageGamesIndex = 0;
+      });
   }
+
+  void _onTabGamesChanged() {
+    if (!_tabGamesController.indexIsChanging)
+      setState(() {
+        print('Changing to Tab: ${_tabGamesController.index}');
+        currentTabGamesIndex = _tabGamesController.index;
+        currentPageGamesIndex = 0;
+      });
+  }
+
+  Widget get followingContainer => Container(
+      height: 100.0,
+      //color: Colors.pink,
+      width: 225.0,
+      margin: EdgeInsets.only(top: 5.0),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: TabBar(
+            controller: _tabController,
+            indicatorColor: Colors.transparent,
+            tabs: [
+              Tab(
+                child: currentTabIndex == 0
+                    ? Text('Following',
+                        style: TextStyle(
+                            fontSize: 17.0, fontWeight: FontWeight.bold))
+                    : Text(
+                        'Following',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+              ),
+              Tab(
+                child: currentTabIndex == 1
+                    ? Text('Games',
+                        style: TextStyle(
+                            fontSize: 17.0, fontWeight: FontWeight.bold))
+                    : Text(
+                        'Games',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+              ),
+            ]),
+      ));
+
+  Widget get middleSectionFollowing => PageView.builder(
+      controller: _pageFollowingController,
+      scrollDirection: Axis.vertical,
+      onPageChanged: (index) => setState(() {
+            currentPageFollowingIndex = index;
+          }),
+      itemCount: 6,
+      itemBuilder: (context, index) => Stack(children: [
+            /*Center(
+                child: Container(
+              color: Colors.pink,
+            )),*/
+            Positioned(left: 0, bottom: 75, child: ContentPostDescription()),
+            Positioned(
+                right: 0,
+                bottom: MediaQuery.of(context).size.height / 5,
+                child: ActionsPostBar())
+          ]));
+
+  Widget get panelGames => Positioned(
+      top: MediaQuery.of(context).size.height / 5,
+      child: Container(
+          height: MediaQuery.of(context).size.height / 9,
+          width: MediaQuery.of(context).size.width,
+          child: currentPageGamesIndex == 0
+              ? TabBar(
+                  controller: _tabGamesController,
+                  indicatorColor: Colors.transparent,
+                  tabs: fil
+                      .map((e) => Column(
+                            children: [
+                              Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Theme.of(context).primaryColor,
+                                          Theme.of(context).accentColor
+                                        ]),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    border:
+                                        Border.all(color: Color(0xFF222831)),
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: AssetImage(e.imageUrl))),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Text(
+                                '${e.nameFil}',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                ),
+                              )
+                            ],
+                          ))
+                      .toList())
+              : SizedBox()));
+
+  Widget get middleSectionGames => TabBarView(
+      controller: _tabGamesController,
+      children: fil
+          .map((e) => PageView.builder(
+              controller: _pageGamesController,
+              scrollDirection: Axis.vertical,
+              onPageChanged: (index) => setState(() {
+                    currentPageGamesIndex = index;
+                    print(
+                        'currentPageGamesIndex est à: $currentPageGamesIndex');
+                  }),
+              itemCount: 6,
+              itemBuilder: (context, index) => Stack(children: [
+                    /*Container(
+                      color: Colors.purple,
+                    ),*/
+                    Positioned(
+                        left: 0, bottom: 75, child: ContentPostDescription()),
+                    Positioned(
+                        right: 0,
+                        bottom: MediaQuery.of(context).size.height / 5,
+                        child: ActionsPostBar())
+                  ])))
+          .toList());
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeScreenModel>.reactive(
-        viewModelBuilder: () => HomeScreenModel(),
-        onModelReady: (model) => model.listenToPosts(),
-        builder: (context, model, child) => CustomScrollView(
-              physics: BouncingScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: AppBarAnimate(),
-                ),
-                SliverToBoxAdapter(
-                    child: PreferredSize(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            height: MediaQuery.of(context).size.height / 10,
-                            width: MediaQuery.of(context).size.width - 25,
-                            child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5.0),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: TabBar(
-                                    isScrollable: true,
-                                    controller: _tabController,
-                                    labelColor: Colors.black,
-                                    indicatorSize: TabBarIndicatorSize.tab,
-                                    indicator: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: Colors.black12.withOpacity(0.4)),
-                                    tabs: fil
-                                        .map((e) => Container(
-                                              height: 55,
-                                              width: 55,
-                                              child: Tab(
-                                                child: e.imageUrl == null &&
-                                                        e.nameFil == 'Abo\'s'
-                                                    ? Container(
-                                                        height: 50,
-                                                        width: 50,
-                                                        margin:
-                                                            EdgeInsets.all(5.0),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          gradient:
-                                                              LinearGradient(
-                                                            begin: Alignment
-                                                                .topLeft,
-                                                            end: Alignment
-                                                                .bottomRight,
-                                                            colors: [
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                              Theme.of(context)
-                                                                  .accentColor
-                                                            ],
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.0),
-                                                        ),
-                                                        child: Icon(
-                                                          Icons
-                                                              .person_pin_circle,
-                                                          size: 30,
-                                                        ))
-                                                    : e.imageUrl == null &&
-                                                            e.nameFil == 'Mix'
-                                                        ? Container(
-                                                            height: 50,
-                                                            width: 50,
-                                                            margin:
-                                                                EdgeInsets.all(
-                                                                    5.0),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              gradient:
-                                                                  LinearGradient(
-                                                                begin: Alignment
-                                                                    .topLeft,
-                                                                end: Alignment
-                                                                    .bottomRight,
-                                                                colors: [
-                                                                  Theme.of(
-                                                                          context)
-                                                                      .primaryColor,
-                                                                  Theme.of(
-                                                                          context)
-                                                                      .accentColor
-                                                                ],
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5.0),
-                                                            ),
-                                                            child: Icon(
-                                                              Icons
-                                                                  .cloud_circle,
-                                                              size: 30,
-                                                            ))
-                                                        : Container(
-                                                            height: 50,
-                                                            width: 50,
-                                                            margin:
-                                                                EdgeInsets.all(
-                                                                    5.0),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    gradient:
-                                                                        LinearGradient(
-                                                                      begin: Alignment
-                                                                          .topLeft,
-                                                                      end: Alignment
-                                                                          .bottomRight,
-                                                                      colors: [
-                                                                        Theme.of(context)
-                                                                            .primaryColor,
-                                                                        Theme.of(context)
-                                                                            .accentColor
-                                                                      ],
-                                                                    ),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            5.0),
-                                                                    image: DecorationImage(
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                        image: AssetImage(
-                                                                            e.imageUrl))),
-                                                          ),
-                                              ),
-                                            ))
-                                        .toList(),
-                                    onTap: (index) =>
-                                        setState(() => selectedIndex = index),
-                                  ),
-                                )),
-                          ),
-                        ),
-                        preferredSize: Size.fromHeight(100))),
-                SliverFillRemaining(
-                    child: TabBarView(controller: _tabController, children: [
-                  Center(
-                    child: Text('test'),
-                  ),
-                  Center(
-                    child: Text('test'),
-                  ),
-                  Center(
-                    child: Text('test'),
-                  ),
-                  Center(
-                    child: Text('test'),
-                  ),
-                  Center(
-                    child: Text('test'),
-                  ),
-                  Center(
-                    child: Text('test'),
-                  ),
-                ] /*fil
-                      .map((e) => model.posts != null
-                          ? ListView.builder(
-                              itemCount: model.posts.length,
-                              itemBuilder: (context, index) => PostItem(
-                                  post: model.posts[index],
-                                  user: model
-                                      .getUserPost(model.posts[index].userId)))
-                          : Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation(
-                                    Theme.of(context).primaryColor),
-                              ),
-                            ))
-                      .toList(),*/
-                        ))
-              ],
-            ));
+      viewModelBuilder: () => HomeScreenModel(),
+      //onModelReady: (model) => model.listenToPosts(),
+      builder: (context, model, child) => Stack(
+        children: <Widget>[
+          TabBarView(
+            controller: _tabController,
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              Container(
+                  color: Colors.black,
+                  child: middleSectionFollowing), //Following
+              Container(
+                  color: Colors.black,
+                  child: Stack(
+                    children: [middleSectionGames, panelGames],
+                  )) //Games
+            ],
+          ),
+          Column(
+            children: [
+              TopToolBar(
+                model: model,
+                fondBar: Colors.transparent,
+                elevationBar: 0,
+                currentPageGamesIndex: currentPageGamesIndex,
+                currentTabGamesIndex: currentTabGamesIndex,
+                fil: fil,
+              ),
+              followingContainer,
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -57,7 +57,7 @@ class GamesFollowPanel extends StatelessWidget {
                   height: 125,
                   child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: panelGames.length,
+                      itemCount: game.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
                             margin: EdgeInsets.all(10.0),
