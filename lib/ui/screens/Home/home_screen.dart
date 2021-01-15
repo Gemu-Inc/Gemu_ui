@@ -5,7 +5,6 @@ import 'package:Gemu/models/fil_model.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:Gemu/ui/widgets/post_item.dart';
-import 'package:Gemu/ui/widgets/widgets.dart';
 import 'package:Gemu/models/user.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Gemu/ui/widgets/top_toolbar.dart';
@@ -33,9 +32,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(initialIndex: 1, length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
-    currentTabIndex = 0;
+    currentTabIndex = 1;
 
     _tabGamesController = TabController(length: fil.length, vsync: this);
     _tabGamesController.addListener(_onTabGamesChanged);
@@ -128,6 +127,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ? TabBar(
                   controller: _tabGamesController,
                   indicatorColor: Colors.transparent,
+                  isScrollable: true,
                   tabs: fil
                       .map((e) => Column(
                             children: [

@@ -13,7 +13,7 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-  List<Game> games = panelGames;
+  List<Games> games = panelGames;
   List<CategoriePost> sections = categoriePosts;
   final contentController = TextEditingController();
   String selectedGame;
@@ -48,7 +48,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               title: selectedGame == null
                                   ? Text('Game')
                                   : Text(selectedGame),
-                              children: games.map((Game game) {
+                              children: games.map((Games game) {
                                 return Padding(
                                   padding: EdgeInsets.only(bottom: 10.0),
                                   child: GestureDetector(

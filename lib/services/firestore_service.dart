@@ -25,24 +25,6 @@ class FirestoreService {
     }
   }
 
-  /*Future getPostsOnceOff() async {
-    try {
-      var postDocumentSnapshot = await _postsCollectionReference.get();
-      if (postDocumentSnapshot.docs.isNotEmpty) {
-        return postDocumentSnapshot.docs
-            .map((snapshot) => Post.fromMap(snapshot.data(), snapshot.id))
-            .where((mappedItem) => mappedItem.imageFileName != null)
-            .toList();
-      }
-    } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-
-      return e.toString();
-    }
-  }*/
-
   Stream listenToPostsRealTime() {
     // Register the handler for when the posts data changes
     _postsCollectionReference.snapshots().listen((postsSnapshot) {

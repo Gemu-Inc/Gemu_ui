@@ -99,15 +99,27 @@ class TopToolBar extends StatelessWidget {
           ),
         ),
       ],
-      title: Text(
-        '${fil[currentTabGamesIndex].nameFil}',
-        style: TextStyle(
-            fontSize: 17,
-            color: currentPageGamesIndex == 0
-                ? Colors.transparent
-                : Colors.grey[300],
-            fontWeight: FontWeight.bold),
-      ),
+      title: PreferredSize(
+          child: currentPageGamesIndex == 0
+              ? SizedBox()
+              : Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).accentColor
+                          ]),
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(color: Color(0xFF222831)),
+                      image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image:
+                              AssetImage(fil[currentTabGamesIndex].imageUrl)))),
+          preferredSize: Size.fromHeight(50)),
       centerTitle: true,
     );
   }

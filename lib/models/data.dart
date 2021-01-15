@@ -74,11 +74,12 @@ final List<CategoriePost> categoriePosts = [
   CategoriePost(idCategorie: 07, name: 'Compétition', selected: true)
 ];
 
-final List<Game> panelGames = [
-  Game(nameGame: 'Fortnite', imageUrl: 'lib/assets/images/logo_fortnite.jpg'),
-  Game(nameGame: 'Fall Guys', imageUrl: 'lib/assets/images/logo_fall_guys.png'),
-  Game(nameGame: 'Valorant', imageUrl: 'lib/assets/images/logo_valorant.png'),
-  Game(nameGame: 'Formula One', imageUrl: 'lib/assets/images/FormulaOne.png'),
+final List<Games> panelGames = [
+  Games(nameGame: 'Fortnite', imageUrl: 'lib/assets/images/logo_fortnite.jpg'),
+  Games(
+      nameGame: 'Fall Guys', imageUrl: 'lib/assets/images/logo_fall_guys.png'),
+  Games(nameGame: 'Valorant', imageUrl: 'lib/assets/images/logo_valorant.png'),
+  Games(nameGame: 'Formula One', imageUrl: 'lib/assets/images/FormulaOne.png'),
 ];
 
 final List<Fil> panelFil = [
@@ -86,24 +87,6 @@ final List<Fil> panelFil = [
   Fil(nameFil: 'Fall Guys', imageUrl: 'lib/assets/images/logo_fall_guys.png'),
   Fil(nameFil: 'Valorant', imageUrl: 'lib/assets/images/logo_valorant.png'),
   Fil(nameFil: 'Formula One', imageUrl: 'lib/assets/images/FormulaOne.png'),
-];
-
-final List<Categorie> panelCategorie = [
-  Categorie(idCategorie: 01, name: 'Action'),
-  Categorie(idCategorie: 02, name: 'Anime'),
-  Categorie(idCategorie: 03, name: 'Aventure'),
-  Categorie(idCategorie: 04, name: 'Casual'),
-  Categorie(idCategorie: 05, name: 'Fantasy'),
-  Categorie(idCategorie: 06, name: 'Humour'),
-  Categorie(idCategorie: 07, name: 'Indépendant'),
-  Categorie(idCategorie: 08, name: 'Multijoueur'),
-  Categorie(idCategorie: 09, name: 'RPG'),
-  Categorie(idCategorie: 10, name: 'Simulation'),
-  Categorie(idCategorie: 11, name: 'Solo'),
-  Categorie(idCategorie: 12, name: 'Sport'),
-  Categorie(idCategorie: 13, name: 'Stratégie'),
-  Categorie(idCategorie: 14, name: 'Violence'),
-  Categorie(idCategorie: 15, name: 'VR'),
-  Categorie(idCategorie: 16, name: '2D'),
-  Categorie(idCategorie: 17, name: 'Adulte'),
+  Fil(nameFil: 'CS:Go', imageUrl: 'lib/assets/images/FormulaOne.png'),
+  Fil(nameFil: 'FIFA', imageUrl: 'lib/assets/images/FormulaOne.png'),
 ];

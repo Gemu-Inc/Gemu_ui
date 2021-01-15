@@ -1,8 +1,8 @@
 import 'package:meta/meta.dart';
 
-class Game {
+class Games {
   final String nameGame;
   final String imageUrl;
 
-  const Game({@required this.nameGame, @required this.imageUrl});
+  const Games({@required this.nameGame, @required this.imageUrl});
 }
