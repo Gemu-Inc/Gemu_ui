@@ -1,17 +1,28 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:Gemu/models/user.dart';
 import 'package:Gemu/models/post.dart';
+import 'package:Gemu/models/categorie.dart';
+import 'package:Gemu/models/game.dart';
 
 class FirestoreService {
   final CollectionReference _usersCollectionReference =
       FirebaseFirestore.instance.collection('users');
   final CollectionReference _postsCollectionReference =
       FirebaseFirestore.instance.collection('posts');
+  final CollectionReference _categoriesCollectionReference =
+      FirebaseFirestore.instance.collection('categories');
+  final CollectionReference _gamesCollectionReference =
+      FirebaseFirestore.instance.collection('games');
 
   final StreamController<List<Post>> _postsController =
       StreamController<List<Post>>.broadcast();
+  final StreamController<List<Categorie>> _categoriesController =
+      StreamController<List<Categorie>>.broadcast();
+  final StreamController<List<Game>> _gamesController =
+      StreamController<List<Game>>.broadcast();
 
   Future addPost(Post post) async {
     try {
@@ -40,6 +51,43 @@ class FirestoreService {
     });
 
     return _postsController.stream;
+  }
+
+  Stream listenToCategoriesRealTime() {
+    // Register the handler for when the posts data changes
+    _categoriesCollectionReference.snapshots().listen((categoriesSnapshot) {
+      if (categoriesSnapshot.docs.isNotEmpty) {
+        var categories = categoriesSnapshot.docs
+            .map((snapshot) => Categorie.fromMap(snapshot.data(), snapshot.id))
+            .toList();
+
+        // Add the posts onto the controller
+        _categoriesController.add(categories);
+      }
+    });
+
+    return _categoriesController.stream;
+  }
+
+  Stream listenToGamesFollowRealTime(String uid) {
+    _usersCollectionReference.doc(uid).snapshots().map((snapshot) {
+      UserC userC = UserC.fromData(snapshot.data());
+      return _gamesCollectionReference
+        ..where(FieldPath.documentId, whereIn: userC.idGames)
+            .snapshots()
+            .listen((gamesSnapshot) {
+          if (gamesSnapshot.docs.isNotEmpty) {
+            var games = gamesSnapshot.docs
+                .map((snapshot) => Game.fromMap(snapshot.data(), snapshot.id))
+                .toList();
+
+            // Add the posts onto the controller
+            _gamesController.add(games);
+          }
+        });
+    }).toList();
+
+    return _gamesController.stream;
   }
 
   Future createUser(UserC user) async {

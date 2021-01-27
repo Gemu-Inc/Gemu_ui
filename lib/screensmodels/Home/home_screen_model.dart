@@ -26,10 +26,6 @@ class HomeScreenModel extends BaseModel {
     _navigationService.navigateTo(ProfilMenuRoute);
   }
 
-  void navigateToSearch() {
-    _navigationService.navigateTo(SearchScreenRoute);
-  }
-
   List<Post> _posts;
   List<Post> get posts => _posts;
 

@@ -1,14 +1,14 @@
-import 'package:Gemu/models/user.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
-import 'package:Gemu/ui/widgets/add_game_button.dart';
+import 'package:Gemu/ui/widgets/follow_game_button.dart';
+import 'package:Gemu/ui/widgets/unfollow_game_button.dart';
 import 'package:Gemu/models/categorie.dart';
 import 'package:Gemu/models/game.dart';
+import 'package:Gemu/ui/screens/Games/game_focus_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Gemu/models/user.dart';
-import 'dart:async';
 
 class CategorieScreen extends StatefulWidget {
   CategorieScreen({Key key, @required this.categorie}) : super(key: key);
@@ -36,18 +36,6 @@ class _CategorieScreenState extends State<CategorieScreen>
     super.dispose();
   }
 
-  UserC _userDataFromSnapshot(DocumentSnapshot snapshot) {
-    return UserC(idGames: snapshot.data()['idGames']);
-  }
-
-  Stream<UserC> userData(String uid) {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .snapshots()
-        .map(_userDataFromSnapshot);
-  }
-
   Widget get gamesFollow => FutureBuilder(
         future: FirebaseFirestore.instance
             .collection('users')
@@ -59,9 +47,7 @@ class _CategorieScreenState extends State<CategorieScreen>
                 stream: FirebaseFirestore.instance
                     .collection('games')
                     .where(FieldPath.documentId,
-                        isEqualTo: snapshotUser.data['idGames'])
-                    .where('idCategorie',
-                        isEqualTo: widget.categorie.documentId)
+                        whereIn: widget.categorie.idGames)
                     .snapshots(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
@@ -69,6 +55,112 @@ class _CategorieScreenState extends State<CategorieScreen>
                       direction: Axis.horizontal,
                       children: snapshot.data.docs.map((snapshot) {
                         Game game = Game.fromMap(snapshot.data(), snapshot.id);
+                        for (var i = 0;
+                            i < snapshotUser.data['idGames'].length;
+                            i++) {
+                          print(
+                              'taille: ${snapshotUser.data['idGames'].length}');
+                          print(i);
+                          if (game.documentId ==
+                              snapshotUser.data['idGames'][i]) {
+                            return Container(
+                                margin:
+                                    EdgeInsets.only(bottom: 10.0, top: 10.0),
+                                width: 90,
+                                height: 85,
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                        alignment: Alignment.topCenter,
+                                        child: GestureDetector(
+                                          onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) => GameFocusScreen(
+                                                    imageUrl: game.imageUrl)),
+                                          ),
+                                          child: Container(
+                                            height: 60,
+                                            width: 60,
+                                            decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      Theme.of(context)
+                                                          .primaryColor,
+                                                      Theme.of(context)
+                                                          .accentColor
+                                                    ]),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image:
+                                                        CachedNetworkImageProvider(
+                                                            game.imageUrl))),
+                                          ),
+                                        )),
+                                    Positioned(
+                                      bottom: 20,
+                                      right: 10,
+                                      child: UnfollowGameButton(
+                                        game: game,
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Text(game.name),
+                                    )
+                                  ],
+                                ));
+                          }
+                        }
+                        return SizedBox();
+                      }).toList(),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                });
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      );
+
+  Widget get gamesNoDiscover => FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('users')
+            .doc(_firebaseAuth.currentUser.uid)
+            .get(),
+        builder: (context, snapshotUser) {
+          if (snapshotUser.hasData) {
+            return StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('games')
+                    .where(FieldPath.documentId,
+                        whereIn: widget.categorie.idGames)
+                    .snapshots(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    return Wrap(
+                      direction: Axis.horizontal,
+                      children: snapshot.data.docs.map((snapshot) {
+                        Game game = Game.fromMap(snapshot.data(), snapshot.id);
+                        for (var i = 0;
+                            i < snapshotUser.data['idGames'].length;
+                            i++) {
+                          print(
+                              'taille: ${snapshotUser.data['idGames'].length}');
+                          print(i);
+                          if (game.documentId ==
+                              snapshotUser.data['idGames'][i]) {
+                            return SizedBox();
+                          }
+                        }
                         return Container(
                             margin: EdgeInsets.only(bottom: 10.0, top: 10.0),
                             width: 90,
@@ -76,29 +168,41 @@ class _CategorieScreenState extends State<CategorieScreen>
                             child: Stack(
                               children: [
                                 Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Container(
-                                    height: 60,
-                                    width: 60,
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Theme.of(context).primaryColor,
-                                              Theme.of(context).accentColor
-                                            ]),
-                                        borderRadius: BorderRadius.circular(10),
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: CachedNetworkImageProvider(
-                                                game.imageUrl))),
-                                  ),
-                                ),
+                                    alignment: Alignment.topCenter,
+                                    child: GestureDetector(
+                                      onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => GameFocusScreen(
+                                                imageUrl: game.imageUrl)),
+                                      ),
+                                      child: Container(
+                                        height: 60,
+                                        width: 60,
+                                        decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: [
+                                                  Theme.of(context)
+                                                      .primaryColor,
+                                                  Theme.of(context).accentColor
+                                                ]),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image:
+                                                    CachedNetworkImageProvider(
+                                                        game.imageUrl))),
+                                      ),
+                                    )),
                                 Positioned(
                                   bottom: 20,
                                   right: 10,
-                                  child: AddGameButton(),
+                                  child: FollowGameButton(
+                                    game: game,
+                                  ),
                                 ),
                                 Align(
                                   alignment: Alignment.bottomCenter,
@@ -115,66 +219,12 @@ class _CategorieScreenState extends State<CategorieScreen>
                   }
                 });
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
         },
       );
-
-  Widget get gamesNoDiscover => StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('games')
-          .where('idCategorie', isEqualTo: widget.categorie.documentId)
-          .snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasData) {
-          return Wrap(
-              direction: Axis.horizontal,
-              children: snapshot.data.docs.map((snapshot) {
-                Game game = Game.fromMap(snapshot.data(), snapshot.id);
-                return Container(
-                    margin: EdgeInsets.only(bottom: 10.0, top: 10.0),
-                    width: 90,
-                    height: 85,
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Theme.of(context).primaryColor,
-                                      Theme.of(context).accentColor
-                                    ]),
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(
-                                        game.imageUrl))),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 20,
-                          right: 10,
-                          child: AddGameButton(),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Text(game.name),
-                        )
-                      ],
-                    ));
-              }).toList());
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      });
 
   @override
   Widget build(BuildContext context) {

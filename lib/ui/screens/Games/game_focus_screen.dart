@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class GameFocusScreen extends StatefulWidget {
@@ -35,7 +36,8 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                   borderRadius: BorderRadius.circular(10.0),
                   border: Border.all(color: Color(0xFF222831)),
                   image: DecorationImage(
-                      fit: BoxFit.cover, image: AssetImage(widget.imageUrl))),
+                      fit: BoxFit.cover,
+                      image: CachedNetworkImageProvider(widget.imageUrl))),
             ),
             preferredSize: Size.fromWidth(100)),
         centerTitle: true,

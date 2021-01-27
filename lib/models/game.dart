@@ -3,26 +3,32 @@ import 'package:flutter/foundation.dart';
 class Game {
   final String name;
   final String imageUrl;
-  final String idCategorie;
+  //final List<String> idCategories;
   final String documentId;
 
   Game(
       {@required this.name,
       @required this.imageUrl,
-      @required this.idCategorie,
+      //@required this.idCategories,
       this.documentId});
 
   Map<String, dynamic> toMap() {
-    return {'name': name, 'imageUrl': imageUrl, 'idCategorie': idCategorie};
+    return {
+      'name': name,
+      'imageUrl': imageUrl, /*'idCategories': idCategories*/
+    };
   }
 
   static Game fromMap(Map<String, dynamic> map, String documentId) {
     if (map == null) return null;
 
     return Game(
-        name: map['name'],
-        imageUrl: map['imageUrl'],
-        idCategorie: map['idCategorie'],
-        documentId: documentId);
+      /*idCategories: List<String>.from(map['idCategories'].map((item) {
+          return item;
+        }).toList()),*/
+      name: map['name'],
+      imageUrl: map['imageUrl'],
+      documentId: documentId,
+    );
   }
 }

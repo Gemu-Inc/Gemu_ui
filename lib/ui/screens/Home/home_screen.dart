@@ -1,15 +1,17 @@
 import 'package:Gemu/screensmodels/Home/home_screen_model.dart';
-import 'package:Gemu/ui/widgets/app_bar_animate.dart';
 import 'package:Gemu/models/data.dart';
 import 'package:Gemu/models/fil_model.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:Gemu/ui/widgets/post_item.dart';
 import 'package:Gemu/models/user.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Gemu/ui/widgets/top_toolbar.dart';
 import 'package:Gemu/ui/widgets/actions_postbar.dart';
 import 'package:Gemu/ui/widgets/content_postdescription.dart';
+import 'package:Gemu/services/firestore_service.dart';
+import 'package:Gemu/models/game.dart';
+import 'package:Gemu/locator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -28,9 +30,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   final List<Fil> fil = panelFil;
 
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   @override
   void initState() {
     super.initState();
+    print('Rentre dans init de home');
 
     _tabController = TabController(initialIndex: 1, length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
@@ -67,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget get followingContainer => Container(
       height: 100.0,
-      //color: Colors.pink,
       width: 225.0,
       margin: EdgeInsets.only(top: 5.0),
       child: Align(
@@ -107,10 +111,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           }),
       itemCount: 6,
       itemBuilder: (context, index) => Stack(children: [
-            /*Center(
-                child: Container(
-              color: Colors.pink,
-            )),*/
+            Container(
+              decoration: BoxDecoration(color: Colors.black),
+            ),
             Positioned(left: 0, bottom: 75, child: ContentPostDescription()),
             Positioned(
                 right: 0,
@@ -121,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget get panelGames => Positioned(
       top: MediaQuery.of(context).size.height / 5,
       child: Container(
+          //color: Colors.pink,
           height: MediaQuery.of(context).size.height / 9,
           width: MediaQuery.of(context).size.width,
           child: currentPageGamesIndex == 0
@@ -165,28 +169,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget get middleSectionGames => TabBarView(
       controller: _tabGamesController,
-      children: fil
-          .map((e) => PageView.builder(
-              controller: _pageGamesController,
-              scrollDirection: Axis.vertical,
-              onPageChanged: (index) => setState(() {
-                    currentPageGamesIndex = index;
-                    print(
-                        'currentPageGamesIndex est à: $currentPageGamesIndex');
-                  }),
-              itemCount: 6,
-              itemBuilder: (context, index) => Stack(children: [
-                    /*Container(
-                      color: Colors.purple,
-                    ),*/
-                    Positioned(
-                        left: 0, bottom: 75, child: ContentPostDescription()),
-                    Positioned(
-                        right: 0,
-                        bottom: MediaQuery.of(context).size.height / 5,
-                        child: ActionsPostBar())
-                  ])))
-          .toList());
+      children: fil.map((e) {
+        return PageView.builder(
+            controller: _pageGamesController,
+            scrollDirection: Axis.vertical,
+            onPageChanged: (index) => setState(() {
+                  currentPageGamesIndex = index;
+                  print('currentPageGamesIndex est à: $currentPageGamesIndex');
+                }),
+            itemCount: 6,
+            itemBuilder: (context, index) => Stack(children: [
+                  Container(
+                    decoration: BoxDecoration(color: Colors.black),
+                  ),
+                  Positioned(
+                      left: 0, bottom: 75, child: ContentPostDescription()),
+                  Positioned(
+                      right: 0,
+                      bottom: MediaQuery.of(context).size.height / 5,
+                      child: ActionsPostBar())
+                ]));
+      }).toList());
 
   @override
   Widget build(BuildContext context) {
@@ -199,21 +202,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             controller: _tabController,
             physics: NeverScrollableScrollPhysics(),
             children: [
-              Container(
-                  color: Colors.black,
-                  child: middleSectionFollowing), //Following
-              Container(
-                  color: Colors.black,
-                  child: Stack(
-                    children: [middleSectionGames, panelGames],
-                  )) //Games
+              middleSectionFollowing, //Following
+              Stack(
+                children: [middleSectionGames, panelGames],
+              ) //Games
             ],
           ),
           Column(
             children: [
-              TopToolBar(
+              TopToolBarHome(
                 model: model,
-                fondBar: Colors.transparent,
+                gradient1: Colors.transparent,
+                gradient2: Colors.transparent,
                 elevationBar: 0,
                 currentPageGamesIndex: currentPageGamesIndex,
                 currentTabGamesIndex: currentTabGamesIndex,

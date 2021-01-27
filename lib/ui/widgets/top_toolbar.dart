@@ -3,18 +3,20 @@ import 'package:Gemu/screensmodels/Home/home_screen_model.dart';
 import 'package:Gemu/models/user.dart';
 import 'package:Gemu/ui/widgets/profil_button.dart';
 import 'package:Gemu/models/fil_model.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
 
-class TopToolBar extends StatelessWidget {
+class TopToolBarHome extends StatelessWidget {
   final HomeScreenModel model;
-  final Color fondBar;
+  final Color gradient1, gradient2;
   final double elevationBar;
   final int currentPageGamesIndex, currentTabGamesIndex;
   final List<Fil> fil;
 
-  const TopToolBar(
+  const TopToolBarHome(
       {Key key,
       @required this.model,
-      @required this.fondBar,
+      @required this.gradient1,
+      @required this.gradient2,
       @required this.elevationBar,
       @required this.currentPageGamesIndex,
       @required this.currentTabGamesIndex,
@@ -23,9 +25,9 @@ class TopToolBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
+    return GradientAppBar(
       elevation: elevationBar,
-      //backgroundColor: Colors.purple,
+      gradient: LinearGradient(colors: [gradient1, gradient2]),
       leading: StreamBuilder<UserC>(
           stream: model.userData,
           builder: (context, snapshot) {
@@ -48,7 +50,7 @@ class TopToolBar extends StatelessWidget {
                         ),
                       ),
                     )
-                  : ProfilButton(
+                  : ProfilButtonHome(
                       currentUser: _userC.photoURL,
                       width: 50,
                       height: 50,
@@ -65,29 +67,26 @@ class TopToolBar extends StatelessWidget {
           }),
       actions: [
         GestureDetector(
+          onTap: () => print('search'),
           child: Container(
             margin: EdgeInsets.only(top: 7.5, bottom: 7.5, right: 5.0),
-            height: 35,
-            width: 35,
+            height: 45,
+            width: 45,
             decoration: BoxDecoration(
                 color: Color(0xFF222831).withOpacity(0.5),
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(color: Color(0xFF222831).withOpacity(0.5))),
-            child: Icon(
-              Icons.search,
-              size: 28,
-              color: Theme.of(context).accentColor,
-            ),
+            child: Icon(Icons.search,
+                size: 28, color: Theme.of(context).accentColor),
           ),
-          onTap: () => model.navigateToSearch(),
         ),
         Builder(
           builder: (context) => GestureDetector(
             onTap: () => Scaffold.of(context).openEndDrawer(),
             child: Container(
               margin: EdgeInsets.only(top: 7.5, bottom: 7.5, right: 5.0),
-              height: 35,
-              width: 35,
+              height: 45,
+              width: 45,
               decoration: BoxDecoration(
                   color: Color(0xFF222831).withOpacity(0.5),
                   borderRadius: BorderRadius.circular(15),

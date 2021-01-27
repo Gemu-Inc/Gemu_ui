@@ -1,12 +1,15 @@
 import 'package:Gemu/models/models.dart';
-import 'package:Gemu/screensmodels/Games/games_screen_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/models/data.dart';
-import 'package:stacked/stacked.dart';
 import 'package:Gemu/ui/screens/Games/categorie_screen.dart';
 import 'package:Gemu/ui/screens/Games/game_focus_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Gemu/models/categorie.dart';
+import 'package:Gemu/models/game.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:Gemu/services/firestore_service.dart';
+import 'package:Gemu/locator.dart';
 
 class GamesScreen extends StatefulWidget {
   const GamesScreen({Key key}) : super(key: key);
@@ -32,7 +35,8 @@ class _GamesScreenState extends State<GamesScreen>
   }
 
   final List<Categorie> categorie = panelCategorie;*/
-  final List<Games> game = panelGames;
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -73,57 +77,93 @@ class _GamesScreenState extends State<GamesScreen>
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
-              height: 120,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: game.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                        //color: Colors.pink,
-                        margin: EdgeInsets.all(10.0),
-                        width: 100,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => GameFocusScreen(
-                                          imageUrl: game[index].imageUrl)),
-                                ),
-                                child: Container(
-                                    margin: EdgeInsets.fromLTRB(
-                                        11.0, 11.0, 11.0, 11.0),
-                                    height: 60,
-                                    width: 60,
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Theme.of(context).primaryColor,
-                                              Theme.of(context).accentColor
-                                            ]),
-                                        borderRadius: BorderRadius.circular(10),
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: AssetImage(
-                                                game[index].imageUrl)))),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Text(
-                                '${game[index].nameGame}',
-                              ),
-                            )
-                          ],
-                        ));
-                  }),
-            )
+                margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                height: 120,
+                child: FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(_firebaseAuth.currentUser.uid)
+                      .get(),
+                  builder: (context, snapshotUser) {
+                    if (snapshotUser.hasData) {
+                      return StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('games')
+                            .where(FieldPath.documentId,
+                                whereIn: snapshotUser.data['idGames'])
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            return ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: snapshot.data.docs.map((snapshot) {
+                                Game game =
+                                    Game.fromMap(snapshot.data(), snapshot.id);
+                                return Container(
+                                    margin: EdgeInsets.all(10.0),
+                                    width: 100,
+                                    child: Stack(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: GestureDetector(
+                                            onTap: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      GameFocusScreen(
+                                                          imageUrl:
+                                                              game.imageUrl)),
+                                            ),
+                                            child: Container(
+                                                margin: EdgeInsets.fromLTRB(
+                                                    11.0, 11.0, 11.0, 11.0),
+                                                height: 60,
+                                                width: 60,
+                                                decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                        begin:
+                                                            Alignment.topLeft,
+                                                        end: Alignment.bottomRight,
+                                                        colors: [
+                                                          Theme.of(context)
+                                                              .primaryColor,
+                                                          Theme.of(context)
+                                                              .accentColor
+                                                        ]),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    image: DecorationImage(
+                                                        fit: BoxFit.cover,
+                                                        image:
+                                                            CachedNetworkImageProvider(
+                                                                game.imageUrl)))),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Text(
+                                            '${game.name}',
+                                          ),
+                                        )
+                                      ],
+                                    ));
+                              }).toList(),
+                            );
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ))
           ],
         ),
       );
@@ -293,7 +333,7 @@ class _GamesScreenState extends State<GamesScreen>
                               boxShadow: [
                                 BoxShadow(
                                     color: Color(0xFF000000),
-                                    offset: Offset(4.0, 1.0))
+                                    offset: Offset(3.0, 0.0))
                               ]),
                           child: Icon(
                             Icons.add,

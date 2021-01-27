@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/ui/screens/screens.dart';
 import 'package:Gemu/ui/screens/Direct/direct_screen.dart';
 import 'package:Gemu/ui/widgets/widgets.dart';
+import 'package:Gemu/ui/screens/Highlights/highlights_screen.dart';
 import 'package:stacked/stacked.dart';
 
 class NavScreen extends StatefulWidget {
@@ -60,7 +61,7 @@ class _NavScreenState extends State<NavScreen>
                       controller: _tabController,
                       children: [
                         HomeScreen(),
-                        DiscoverScreen(),
+                        HighlightsScreen(),
                         GamesScreen(),
                         DirectScreen()
                       ]),

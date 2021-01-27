@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
+
 class UserC {
   final String id;
   final String pseudo;
   final String email;
   final String photoURL;
   final String points;
-  final String idGames;
+  final List<String> idGames;
 
   UserC(
       {this.id,
@@ -20,7 +22,9 @@ class UserC {
         email = data['email'],
         photoURL = data['photoURL'],
         points = data['points'],
-        idGames = data['idGames'];
+        idGames = List<String>.from(data['idGames'].map((item) {
+          return item;
+        }).toList());
 
   Map<String, dynamic> toJson() {
     return {
