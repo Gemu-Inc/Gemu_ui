@@ -1,11 +1,10 @@
 import 'package:Gemu/models/models.dart';
 import 'package:Gemu/screensmodels/Clans/clans_screen_model.dart';
-import 'package:Gemu/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/models/data.dart';
 import 'package:stacked/stacked.dart';
 
-class ClansScreen extends StatelessWidget {
+/*class ClansScreen extends StatelessWidget {
   const ClansScreen({Key key}) : super(key: key);
 
   @override
@@ -317,4 +316,4 @@ class MyClan extends StatelessWidget {
       ),
     );
   }
-}
+}*/

@@ -1,6 +1,5 @@
 import 'package:Gemu/ui/router.dart';
 import 'package:Gemu/ui/screens/StartUp/startup_screen.dart';
-import 'package:Gemu/ui/screens/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/styles/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';

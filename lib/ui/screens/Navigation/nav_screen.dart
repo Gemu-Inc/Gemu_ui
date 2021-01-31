@@ -1,12 +1,18 @@
 import 'package:Gemu/screensmodels/Navigation/nav_screen_model.dart';
+import 'package:Gemu/services/firestore_service.dart';
 import 'package:Gemu/ui/widgets/bottom_toolbar_noopacity.dart';
 import 'package:Gemu/ui/widgets/bottom_toolbar_withopacity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/ui/screens/screens.dart';
 import 'package:Gemu/ui/screens/Direct/direct_screen.dart';
 import 'package:Gemu/ui/widgets/widgets.dart';
 import 'package:Gemu/ui/screens/Highlights/highlights_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:Gemu/locator.dart';
+import 'package:Gemu/models/game.dart';
 
 class NavScreen extends StatefulWidget {
   NavScreen({Key key}) : super(key: key);
@@ -28,6 +34,9 @@ class _NavScreenState extends State<NavScreen>
     Icons.videogame_asset,
     Icons.play_arrow
   ];
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirestoreService _firestoreService = locator<FirestoreService>();
 
   @override
   void initState() {
@@ -60,7 +69,22 @@ class _NavScreenState extends State<NavScreen>
                       physics: NeverScrollableScrollPhysics(),
                       controller: _tabController,
                       children: [
-                        HomeScreen(),
+                        FutureBuilder(
+                          future: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(_firebaseAuth.currentUser.uid)
+                              .get(),
+                          builder: (context, snapshotUser) {
+                            if (!snapshotUser.hasData) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            return StreamProvider(
+                                create: (BuildContext context) =>
+                                    _firestoreService.getGamesFollow(
+                                        snapshotUser.data['idGames']),
+                                child: HomeScreen());
+                          },
+                        ),
                         HighlightsScreen(),
                         GamesScreen(),
                         DirectScreen()

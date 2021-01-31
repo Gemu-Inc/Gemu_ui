@@ -1,6 +1,4 @@
 import 'package:Gemu/screensmodels/Profil/profil_screen_model.dart';
-import 'package:Gemu/ui/widgets/custom_scroll_screen_animate.dart';
-import 'package:Gemu/ui/widgets/profil_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';

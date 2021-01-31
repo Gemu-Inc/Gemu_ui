@@ -21,8 +21,6 @@ class FirestoreService {
       StreamController<List<Post>>.broadcast();
   final StreamController<List<Categorie>> _categoriesController =
       StreamController<List<Categorie>>.broadcast();
-  final StreamController<List<Game>> _gamesController =
-      StreamController<List<Game>>.broadcast();
 
   Future addPost(Post post) async {
     try {
@@ -69,25 +67,31 @@ class FirestoreService {
     return _categoriesController.stream;
   }
 
-  Stream listenToGamesFollowRealTime(String uid) {
-    _usersCollectionReference.doc(uid).snapshots().map((snapshot) {
-      UserC userC = UserC.fromData(snapshot.data());
-      return _gamesCollectionReference
-        ..where(FieldPath.documentId, whereIn: userC.idGames)
-            .snapshots()
-            .listen((gamesSnapshot) {
-          if (gamesSnapshot.docs.isNotEmpty) {
-            var games = gamesSnapshot.docs
-                .map((snapshot) => Game.fromMap(snapshot.data(), snapshot.id))
-                .toList();
+  UserC _userDataFromSnapshot(DocumentSnapshot snapshot) {
+    return UserC(
+        id: snapshot.data()['id'],
+        email: snapshot.data()['email'],
+        pseudo: snapshot.data()['pseudo'],
+        photoURL: snapshot.data()['photoURL'],
+        idGames: List<String>.from(snapshot.data()['idGames'].map((item) {
+          return item;
+        }).toList()));
+  }
 
-            // Add the posts onto the controller
-            _gamesController.add(games);
-          }
-        });
-    }).toList();
+  Stream<UserC> userData(String uid) {
+    return _usersCollectionReference
+        .doc(uid)
+        .snapshots()
+        .map(_userDataFromSnapshot);
+  }
 
-    return _gamesController.stream;
+  Stream<List<Game>> getGamesFollow(List<dynamic> snapshot) {
+    return _gamesCollectionReference
+        .where(FieldPath.documentId, whereIn: snapshot)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((document) => Game.fromMap(document.data(), document.id))
+            .toList());
   }
 
   Future createUser(UserC user) async {
@@ -106,6 +110,7 @@ class FirestoreService {
     try {
       var userData = await _usersCollectionReference.doc(uid).get();
       print('${userData.data()}');
+
       return UserC.fromData(userData.data());
     } catch (e) {
       if (e is PlatformException) {
@@ -130,20 +135,5 @@ class FirestoreService {
 
   Future deleteUserImgProfile(String uid) async {
     return await _usersCollectionReference.doc(uid).update({'photoURL': null});
-  }
-
-  UserC _userDataFromSnapshot(DocumentSnapshot snapshot) {
-    return UserC(
-      email: snapshot.data()['email'],
-      pseudo: snapshot.data()['pseudo'],
-      photoURL: snapshot.data()['photoURL'],
-    );
-  }
-
-  Stream<UserC> userData(String uid) {
-    return _usersCollectionReference
-        .doc(uid)
-        .snapshots()
-        .map(_userDataFromSnapshot);
   }
 }

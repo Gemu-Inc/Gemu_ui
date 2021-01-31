@@ -1,16 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/screensmodels/Home/home_screen_model.dart';
 import 'package:Gemu/models/user.dart';
 import 'package:Gemu/ui/widgets/profil_button.dart';
-import 'package:Gemu/models/fil_model.dart';
+import 'package:Gemu/models/game.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 class TopToolBarHome extends StatelessWidget {
   final HomeScreenModel model;
   final Color gradient1, gradient2;
   final double elevationBar;
-  final int currentPageGamesIndex, currentTabGamesIndex;
-  final List<Fil> fil;
+  final int currentPageGamesIndex, currentTabGamesIndex, currentTabIndex;
+  final List<Game> game;
 
   const TopToolBarHome(
       {Key key,
@@ -20,7 +21,8 @@ class TopToolBarHome extends StatelessWidget {
       @required this.elevationBar,
       @required this.currentPageGamesIndex,
       @required this.currentTabGamesIndex,
-      @required this.fil})
+      @required this.currentTabIndex,
+      @required this.game})
       : super(key: key);
 
   @override
@@ -99,25 +101,27 @@ class TopToolBarHome extends StatelessWidget {
         ),
       ],
       title: PreferredSize(
-          child: currentPageGamesIndex == 0
+          child: currentTabIndex == 0
               ? SizedBox()
-              : Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Theme.of(context).primaryColor,
-                            Theme.of(context).accentColor
-                          ]),
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(color: Color(0xFF222831)),
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image:
-                              AssetImage(fil[currentTabGamesIndex].imageUrl)))),
+              : game != null
+                  ? Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Theme.of(context).primaryColor,
+                                Theme.of(context).accentColor
+                              ]),
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(color: Color(0xFF222831)),
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(
+                                  game[currentTabGamesIndex].imageUrl))))
+                  : CircularProgressIndicator(),
           preferredSize: Size.fromHeight(50)),
       centerTitle: true,
     );
