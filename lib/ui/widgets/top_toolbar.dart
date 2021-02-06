@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/screensmodels/Home/home_screen_model.dart';
 import 'package:Gemu/models/user.dart';
 import 'package:Gemu/ui/widgets/profil_button.dart';
 import 'package:Gemu/models/game.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TopToolBarHome extends StatelessWidget {
   final HomeScreenModel model;
@@ -12,8 +14,9 @@ class TopToolBarHome extends StatelessWidget {
   final double elevationBar;
   final int currentPageGamesIndex, currentTabGamesIndex, currentTabIndex;
   final List<Game> game;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  const TopToolBarHome(
+  TopToolBarHome(
       {Key key,
       @required this.model,
       @required this.gradient1,
@@ -30,12 +33,15 @@ class TopToolBarHome extends StatelessWidget {
     return GradientAppBar(
       elevation: elevationBar,
       gradient: LinearGradient(colors: [gradient1, gradient2]),
-      leading: StreamBuilder<UserC>(
-          stream: model.userData,
+      leading: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(_firebaseAuth.currentUser.uid)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              UserC _userC = snapshot.data;
-              return _userC.photoURL == null
+              //UserC _userC = UserC.fromData(snapshot.data());
+              return snapshot.data['photoURL'] == null
                   ? GestureDetector(
                       onTap: () => model.navigateToProfil(),
                       child: Container(
@@ -53,7 +59,7 @@ class TopToolBarHome extends StatelessWidget {
                       ),
                     )
                   : ProfilButtonHome(
-                      currentUser: _userC.photoURL,
+                      currentUser: snapshot.data['photoURL'],
                       width: 50,
                       height: 50,
                       colorFond: Colors.transparent,

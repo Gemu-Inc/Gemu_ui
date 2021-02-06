@@ -1,6 +1,8 @@
 const String WelcomeScreenRoute = "WelcomeScreen";
 const String NavScreenRoute = "NavScreen";
 const String RegisterScreenRoute = "RegisterScreen";
+const String RegisterFirstScreenRoute = "RegisterFirstScreen";
+const String RegisterSecondScreenRoute = "RegisterSecondScreen";
 const String LoginScreenRoute = "LoginScreen";
 const String ProfilMenuRoute = "ProfilMenu";
 const String EditProfileScreenRoute = "EditProfileScreen";
@@ -11,3 +13,5 @@ const String EditUserNameScreenRoute = "EditUserNameScreen";
 const String EditEmailScreenRoute = "EditEmailScreen";
 const String EditPasswordRoute = "EditPasswordRoute";
 const String CreatePostRoute = "CreatePosteRoute";
+const String GetStartedRoute = "GetStartedScreen";
+const String ConnectionScreenRoute = "ConnectionScreen";

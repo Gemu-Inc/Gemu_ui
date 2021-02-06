@@ -9,6 +9,14 @@ class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirestoreService _firestoreService = locator<FirestoreService>();
 
+  // GET change about status connection
+  Stream<User> get onAuthStateChanged => _firebaseAuth.authStateChanges();
+
+  // GET UID
+  Future<String> getCurrentUID() async {
+    return _firebaseAuth.currentUser.uid;
+  }
+
   UserC _currentUser;
   UserC get currentUser => _currentUser;
 

@@ -1,5 +1,6 @@
+import 'package:Gemu/services/auth_service.dart';
 import 'package:Gemu/ui/router.dart';
-import 'package:Gemu/ui/screens/StartUp/startup_screen.dart';
+import 'package:Gemu/ui/screens/Connection/connection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/styles/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +10,7 @@ import 'package:Gemu/locator.dart';
 import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
 import 'package:Gemu/managers/dialog_manager.dart';
+import 'package:Gemu/services/provider_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,18 +65,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Gemu',
-      builder: (context, child) => Navigator(
-        key: locator<DialogService>().dialogNavigationKey,
-        onGenerateRoute: (settings) => MaterialPageRoute(
-            builder: (context) => DialogManager(child: child)),
+    return ProviderAuth(
+      auth: AuthService(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Gemu',
+        builder: (context, child) => Navigator(
+          key: locator<DialogService>().dialogNavigationKey,
+          onGenerateRoute: (settings) => MaterialPageRoute(
+              builder: (context) => DialogManager(child: child)),
+        ),
+        navigatorKey: locator<NavigationService>().navigationKey,
+        theme: themeNotifier.getTheme(),
+        home: ConnectionScreen(),
+        onGenerateRoute: generateRoute,
       ),
-      navigatorKey: locator<NavigationService>().navigationKey,
-      theme: themeNotifier.getTheme(),
-      home: StartUpScreen(),
-      onGenerateRoute: generateRoute,
     );
   }
 }

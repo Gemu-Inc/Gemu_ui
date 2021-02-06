@@ -1,4 +1,6 @@
 import 'package:Gemu/screensmodels/Profil/profil_screen_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
@@ -60,12 +62,15 @@ class _ProfilMenuState extends State<ProfilMenu>
                                       model.navigateToNavigation())),
                           Align(
                               alignment: Alignment.center,
-                              child: StreamBuilder<UserC>(
-                                  stream: model.userData,
+                              child: StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(
+                                          FirebaseAuth.instance.currentUser.uid)
+                                      .snapshots(),
                                   builder: (context, snapshot) {
                                     if (snapshot.hasData) {
-                                      UserC _userC = snapshot.data;
-                                      return _userC.photoURL == null
+                                      return snapshot.data['photoURL'] == null
                                           ? Container(
                                               height: 90,
                                               width: 90,
@@ -91,7 +96,8 @@ class _ProfilMenuState extends State<ProfilMenu>
                                                   image: DecorationImage(
                                                       fit: BoxFit.cover,
                                                       image: NetworkImage(
-                                                          _userC.photoURL))),
+                                                          snapshot.data[
+                                                              'photoURL']))),
                                             );
                                     } else {
                                       return CircularProgressIndicator();
@@ -114,12 +120,14 @@ class _ProfilMenuState extends State<ProfilMenu>
                       Align(
                           alignment: Alignment.center,
                           child: StreamBuilder(
-                              stream: model.userData,
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(FirebaseAuth.instance.currentUser.uid)
+                                  .snapshots(),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  UserC _userC = snapshot.data;
                                   return Text(
-                                    _userC.pseudo,
+                                    snapshot.data['pseudo'],
                                     style: TextStyle(fontSize: 23),
                                   );
                                 } else {

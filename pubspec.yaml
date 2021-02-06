@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   auto_size_text: ^2.0.2
   cached_network_image: ^2.3.2+1
+  carousel_slider: ^3.0.0
   cloud_firestore: ^0.16.0
   cloud_functions: ^0.9.0
   cupertino_icons: ^1.0.0
@@ -46,11 +47,14 @@ dependencies:
   flutter_sticky_header: ^0.5.0
   flutter_svg: ^0.19.0
   get_it: ^5.0.1
+  google_fonts:
   gradient_app_bar: ^0.1.3
   image_picker: ^0.6.7+12
+  intro_slider:
   package_info: ^0.4.3
   provider: ^4.3.2+2
   shared_preferences: ^0.5.2
+  slider_button:
   splashscreen: ^1.2.0
   stacked: ^1.6.0
   stacked_services: ^0.4.3
