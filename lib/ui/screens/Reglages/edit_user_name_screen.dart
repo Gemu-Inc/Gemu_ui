@@ -1,7 +1,10 @@
-import 'package:Gemu/screensmodels/Reglages/edit_user_name_screen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:Gemu/models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
+
+import 'package:Gemu/screensmodels/Reglages/edit_user_name_screen_model.dart';
 
 class EditUserNameScreen extends StatefulWidget {
   EditUserNameScreen({Key key}) : super(key: key);
@@ -12,27 +15,37 @@ class EditUserNameScreen extends StatefulWidget {
 
 class _EditUserNameScreenState extends State<EditUserNameScreen> {
   final _formKey = GlobalKey<FormState>();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   String _currentName;
+  var currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUser = _firebaseAuth.currentUser.uid;
+  }
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<EditUserNameScreenModel>.reactive(
       viewModelBuilder: () => EditUserNameScreenModel(),
       builder: (context, model, child) => Scaffold(
-        backgroundColor: Color(0xFF1A1C25),
-        appBar: AppBar(
-          backgroundColor: Colors.black26,
-          elevation: 0.0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: GradientAppBar(
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).primaryColor,
+              Theme.of(context).accentColor
+            ],
+          ),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.grey,
             ),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
             'Changer le nom d\'utilisateur',
-            style: TextStyle(color: Colors.grey),
           ),
         ),
         body: Form(
@@ -46,13 +59,15 @@ class _EditUserNameScreenState extends State<EditUserNameScreen> {
                     height: 60,
                     width: MediaQuery.of(context).size.width - 130.0,
                     color: Colors.transparent,
-                    child: StreamBuilder<UserC>(
-                        stream: model.userData,
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(currentUser)
+                            .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            UserC _userC = snapshot.data;
                             return TextFormField(
-                              initialValue: _userC.pseudo,
+                              initialValue: snapshot.data['pseudo'],
                               validator: (value) =>
                                   value.isEmpty ? 'Please enter a name' : null,
                               onChanged: (value) =>
@@ -73,7 +88,8 @@ class _EditUserNameScreenState extends State<EditUserNameScreen> {
                             onPressed: () async {
                               if (_formKey.currentState.validate()) {
                                 print("Username updated");
-                                await model.updateUserPseudo(_currentName);
+                                await model.updateUserPseudo(
+                                    _currentName, currentUser);
                               }
                               model.navigateToEditProfile();
                             },

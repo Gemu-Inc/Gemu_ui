@@ -17,15 +17,15 @@ class BottomToolBarWithOpa extends StatelessWidget {
         left: 0,
         bottom: 0,
         child: Container(
-          decoration: BoxDecoration(
-            color: Color(0xFF1A1C25).withOpacity(0.5),
-          ),
+          /*decoration: BoxDecoration(
+              color:
+                  Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5)),*/
           width: size.width,
           height: 55,
           child: TabBar(
             indicatorColor: Colors.transparent,
-            /*indicator: CircleTabIndicator(
-                    color: Theme.of(context).accentColor, radius: 3),*/
+            labelColor: Theme.of(context).primaryColor,
+            unselectedLabelColor: Colors.grey,
             tabs: [
               Tab(
                 icon: Icon(
@@ -37,7 +37,12 @@ class BottomToolBarWithOpa extends StatelessWidget {
                 ),
                 child: Text(
                   'Home',
-                  style: TextStyle(fontSize: 8),
+                  style: TextStyle(
+                    fontSize: 8,
+                    color: controller.index == 0
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey,
+                  ),
                 ),
               ),
               Tab(
@@ -53,7 +58,11 @@ class BottomToolBarWithOpa extends StatelessWidget {
                     padding: EdgeInsets.only(right: 19.0),
                     child: Text(
                       'Highlights',
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          color: controller.index == 1
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey),
                     ),
                   )),
               Tab(
@@ -69,7 +78,11 @@ class BottomToolBarWithOpa extends StatelessWidget {
                     padding: EdgeInsets.only(left: 20.0),
                     child: Text(
                       'Games',
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          color: controller.index == 2
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey),
                     ),
                   )),
               Tab(
@@ -82,7 +95,11 @@ class BottomToolBarWithOpa extends StatelessWidget {
                 ),
                 child: Text(
                   'Direct',
-                  style: TextStyle(fontSize: 8),
+                  style: TextStyle(
+                      fontSize: 8,
+                      color: controller.index == 3
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey),
                 ),
               ),
             ],

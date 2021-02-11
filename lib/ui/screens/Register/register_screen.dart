@@ -1,4 +1,5 @@
-import 'package:Gemu/ui/screens/Register/components/selected_game.dart';
+import 'dart:async';
+import 'package:Gemu/screensmodels/Register/register_screen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +8,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Gemu/size_config.dart';
 import 'package:Gemu/constants/variables.dart';
 import 'package:Gemu/constants/route_names.dart';
+import 'package:Gemu/models/game.dart';
+import 'package:stacked/stacked.dart';
 import 'components/body.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -203,13 +206,13 @@ class RegisterSecondScreen extends StatefulWidget {
   RegisterSecondScreenState createState() => RegisterSecondScreenState();
 }
 
-class RegisterSecondScreenState extends State<RegisterSecondScreen>
-    with SingleTickerProviderStateMixin {
+class RegisterSecondScreenState extends State<RegisterSecondScreen> {
   Duration _duration = Duration(seconds: 1);
   bool isDayMood = false;
   Future games;
 
-  List<String> test = List();
+  List<String> test = List<String>();
+  List<Game> testGame = List<Game>();
 
   void timeMood() {
     int hour = DateTime.now().hour;
@@ -243,7 +246,8 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen>
           'idGames': test
         });
       });
-      Navigator.pushNamed(context, LoginScreenRoute);
+      Navigator.pushNamedAndRemoveUntil(
+          context, NavScreenRoute, (route) => false);
     } catch (e) {
       SnackBar snackBar = SnackBar(
           backgroundColor: Color(0xFF222831),
@@ -260,15 +264,10 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen>
     }
   }
 
-  getDataGames() {
-    games = FirebaseFirestore.instance.collection('games').get();
-  }
-
   @override
   void initState() {
     super.initState();
     timeMood();
-    getDataGames();
 
     print(widget.previousFields);
   }
@@ -286,124 +285,289 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen>
       Color(0xFF6E78B1),
       Color(0xFF947B8F),
     ];
-    return Scaffold(
-      backgroundColor: Color(0xFF1A1C25),
-      body: AnimatedContainer(
-        duration: _duration,
-        curve: Curves.easeInOut,
-        width: double.infinity,
-        height: SizeConfig.screenHeight,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDayMood ? lightBgColors : darkBgColors,
-          ),
-        ),
-        child: Container(
-            alignment: Alignment.center,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  VerticalSpacing(
-                    of: 40,
-                  ),
-                  Text(
-                    'Selection of games',
-                    style: mystyle(30),
-                  ),
-                  VerticalSpacing(
-                    of: 10,
-                  ),
-                  Text('Choose the games you want to follow'),
-                  VerticalSpacing(
-                    of: 40,
-                  ),
-                  FutureBuilder(
-                    future: games,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return Wrap(
-                        direction: Axis.horizontal,
-                        spacing: 5.0,
-                        children: List<Widget>.generate(
-                            snapshot.data.docs.length, (index) {
-                          DocumentSnapshot game = snapshot.data.docs[index];
-                          return Container(
-                              margin: EdgeInsets.only(bottom: 10.0, top: 10.0),
-                              width: 90,
-                              height: 90,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Container(
-                                      height: 60,
-                                      width: 60,
-                                      decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Theme.of(context).primaryColor,
-                                                Theme.of(context).accentColor
-                                              ]),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: CachedNetworkImageProvider(
-                                                  game.data()['imageUrl']))),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: SelectedGameButton(
-                                      game: game,
-                                      test: test,
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Text(
-                                      '${game.data()['name']}',
-                                      softWrap: true,
-                                    ),
-                                  )
-                                ],
-                              ));
-                        }),
-                      );
-                    },
-                  ),
-                  VerticalSpacing(
-                    of: 20,
-                  ),
-                  InkWell(
-                    onTap: () => registerUser(),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 2,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                        child: Text(
-                          "Sign up",
-                          style: mystyle(15, Colors.white, FontWeight.w700),
-                        ),
-                      ),
+    return ViewModelBuilder<RegisterScreenModel>.reactive(
+        viewModelBuilder: () => RegisterScreenModel(),
+        onModelReady: (model) => model.listenToGames(),
+        builder: (context, model, child) => Scaffold(
+              backgroundColor: Color(0xFF1A1C25),
+              body: AnimatedContainer(
+                  duration: _duration,
+                  curve: Curves.easeInOut,
+                  width: double.infinity,
+                  height: SizeConfig.screenHeight,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: isDayMood ? lightBgColors : darkBgColors,
                     ),
                   ),
-                ],
-              ),
-            )),
-      ),
-    );
+                  child: Stack(
+                    children: [
+                      Container(
+                          alignment: Alignment.center,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                VerticalSpacing(
+                                  of: 40,
+                                ),
+                                testGame.length == 0
+                                    ? SizedBox()
+                                    : Column(
+                                        children: [
+                                          Text(
+                                            'Selected games',
+                                            style: mystyle(30),
+                                          ),
+                                          VerticalSpacing(
+                                            of: 10,
+                                          ),
+                                          Text(
+                                              'Selects at least two games to continue'),
+                                          VerticalSpacing(
+                                            of: 20,
+                                          ),
+                                          Container(
+                                              height:
+                                                  SizeConfig.screenHeight / 8,
+                                              width: SizeConfig.screenWidth,
+                                              child: ListView(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                children: testGame.map((game) {
+                                                  return Stack(
+                                                    children: [
+                                                      Align(
+                                                          alignment: Alignment
+                                                              .topCenter,
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              game.selected =
+                                                                  false;
+                                                              setState(() {
+                                                                model.gameList
+                                                                    .add(game);
+                                                                test.remove(game
+                                                                    .documentId);
+                                                                testGame.remove(
+                                                                    game);
+                                                              });
+                                                            },
+                                                            child: Container(
+                                                              margin: EdgeInsets
+                                                                  .all(6.0),
+                                                              height: 60,
+                                                              width: 60,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  image: DecorationImage(
+                                                                      image: CachedNetworkImageProvider(game
+                                                                          .imageUrl),
+                                                                      fit: BoxFit
+                                                                          .cover)),
+                                                            ),
+                                                          )),
+                                                      Positioned(
+                                                          bottom: 15,
+                                                          right: 1,
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              game.selected =
+                                                                  false;
+                                                              setState(() {
+                                                                model.gameList
+                                                                    .add(game);
+                                                                test.remove(game
+                                                                    .documentId);
+                                                                testGame.remove(
+                                                                    game);
+                                                              });
+                                                            },
+                                                            child: Container(
+                                                                height: 25,
+                                                                width: 25,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                            .red[
+                                                                        400],
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                    border: Border.all(
+                                                                        color: Color(
+                                                                            0xFF222831))),
+                                                                child: Icon(
+                                                                  Icons.remove,
+                                                                  size: 20,
+                                                                )),
+                                                          )),
+                                                    ],
+                                                  );
+                                                }).toList(),
+                                              )),
+                                          testGame.length < 2
+                                              ? SizedBox()
+                                              : InkWell(
+                                                  onTap: () => registerUser(),
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            2,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.red,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10)),
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Sign up",
+                                                        style: mystyle(
+                                                            15,
+                                                            Colors.white,
+                                                            FontWeight.w700),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                        ],
+                                      ),
+                                VerticalSpacing(
+                                  of: 20,
+                                ),
+                                Text(
+                                  'Selection games',
+                                  style: mystyle(30),
+                                ),
+                                VerticalSpacing(
+                                  of: 10,
+                                ),
+                                Text('Choose the games you want to follow'),
+                                VerticalSpacing(
+                                  of: 10,
+                                ),
+                                model.gameList == null
+                                    ? CircularProgressIndicator()
+                                    : Wrap(
+                                        direction: Axis.horizontal,
+                                        spacing: 5.0,
+                                        children: model.gameList.map((game) {
+                                          print(model.gameList.length);
+                                          return Container(
+                                              margin: EdgeInsets.only(
+                                                  bottom: 10.0, top: 10.0),
+                                              width: 90,
+                                              height: 90,
+                                              child: Stack(
+                                                children: [
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        game.selected = true;
+                                                        setState(() {
+                                                          model.gameList
+                                                              .remove(game);
+                                                          test.add(
+                                                              game.documentId);
+                                                          testGame.add(game);
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        height: 60,
+                                                        width: 60,
+                                                        decoration: BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment
+                                                                    .topLeft,
+                                                                end: Alignment
+                                                                    .bottomRight,
+                                                                colors: [
+                                                                  Theme.of(
+                                                                          context)
+                                                                      .primaryColor,
+                                                                  Theme.of(
+                                                                          context)
+                                                                      .accentColor
+                                                                ]),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            image: DecorationImage(
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                image: CachedNetworkImageProvider(
+                                                                    game.imageUrl))),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                      bottom: 25,
+                                                      right: 10,
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          game.selected = true;
+                                                          setState(() {
+                                                            model.gameList
+                                                                .remove(game);
+                                                            test.add(game
+                                                                .documentId);
+                                                            testGame.add(game);
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                            height: 25,
+                                                            width: 25,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .green[400],
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                border: Border.all(
+                                                                    color: Color(
+                                                                        0xFF222831))),
+                                                            child: Icon(
+                                                              Icons.add,
+                                                              size: 20,
+                                                            )),
+                                                      )),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.bottomCenter,
+                                                    child: Text(
+                                                      '${game.name}',
+                                                      softWrap: true,
+                                                    ),
+                                                  )
+                                                ],
+                                              ));
+                                        }).toList(),
+                                      ),
+                                VerticalSpacing(
+                                  of: 20,
+                                ),
+                              ],
+                            ),
+                          )),
+                    ],
+                  )),
+            ));
+  }
+
+  @override
+  void dispose() {
+    test.clear();
+    testGame.clear();
+    super.dispose();
   }
 }

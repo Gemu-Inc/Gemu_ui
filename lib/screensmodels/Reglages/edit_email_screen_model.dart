@@ -5,11 +5,13 @@ import 'package:Gemu/services/auth_service.dart';
 import 'package:Gemu/services/firestore_service.dart';
 import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/models/user.dart';
+import 'package:Gemu/services/dialog_service.dart';
 
 class EditEmailScreenModel extends BaseModel {
   final AuthService _authService = locator<AuthService>();
   final FirestoreService _firestoreService = locator<FirestoreService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final DialogService _dialogService = locator<DialogService>();
 
   void navigateToEditProfile() {
     _navigationService.navigateTo(EditProfileScreenRoute);
@@ -20,15 +22,27 @@ class EditEmailScreenModel extends BaseModel {
     return _firestoreService.userData(currentUser.id);
   }
 
-  Future updateUserEmail(String currentPassword, String newEmail) async {
-    var currentUser = _authService.currentUser;
+  Future updateUserEmail(
+      String currentPassword, String newEmail, var currentUserID) async {
+    //var currentUser = _authService.currentUser;
 
-    var user = await _authService.updateEmail(
+    var result = await _authService.updateEmail(
         password: currentPassword, newEmail: newEmail ?? currentUser.email);
 
-    if (user != null) {
+    print(result);
+
+    if (result is String) {
+      await _dialogService.showDialog(
+        title: 'Could not change email',
+        description: result,
+      );
+    } else {
       await _firestoreService.updateUserEmail(
-          newEmail ?? currentUser.email, currentUser.id);
+          newEmail ?? currentUser.email, currentUserID);
+      await _dialogService.showDialog(
+        title: 'Email successfully updated',
+        description: 'Your email has been changed',
+      );
     }
   }
 }

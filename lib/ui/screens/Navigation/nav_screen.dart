@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Gemu/locator.dart';
-import 'package:Gemu/models/game.dart';
 
 class NavScreen extends StatefulWidget {
   NavScreen({Key key}) : super(key: key);
@@ -61,7 +60,7 @@ class _NavScreenState extends State<NavScreen>
         viewModelBuilder: () => NavScreenModel(),
         builder: (context, model, child) => Scaffold(
               key: _scaffoldKeyNav,
-              backgroundColor: Color(0xFF1A1C25),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               endDrawer: MessagerieMenu(),
               body: Stack(
                 children: [

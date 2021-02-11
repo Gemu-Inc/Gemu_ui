@@ -3,13 +3,33 @@ import 'package:Gemu/screensmodels/base_model.dart';
 import 'package:Gemu/services/auth_service.dart';
 import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
+import 'package:Gemu/services/firestore_service.dart';
 import 'package:Gemu/locator.dart';
 import 'package:flutter/foundation.dart';
+import 'package:Gemu/models/game.dart';
 
 class RegisterScreenModel extends BaseModel {
   final AuthService _authService = locator<AuthService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final DialogService _dialogService = locator<DialogService>();
+  final FirestoreService _firestoreService = locator<FirestoreService>();
+
+  List<Game> _gameList;
+  List<Game> get gameList => _gameList;
+
+  void listenToGames() {
+    setBusy(true);
+
+    _firestoreService.listenToGamesRealTime().listen((gamesData) {
+      List<Game> games = gamesData;
+      if (games != null && games.length > 0) {
+        _gameList = games;
+        notifyListeners();
+      }
+
+      setBusy(false);
+    });
+  }
 
   Future signUp(
       {@required String pseudo,

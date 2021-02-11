@@ -55,11 +55,11 @@ class _GamesScreenState extends State<GamesScreen>
   Widget get followPanel => Container(
         margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 10.0),
         decoration: BoxDecoration(
-            color: Color(0xFF222831),
+            color: Theme.of(context).canvasColor,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Color(0xFF121212),
+                color: Theme.of(context).shadowColor,
                 offset: Offset(-5.0, 5.0),
               )
             ]),
@@ -171,11 +171,11 @@ class _GamesScreenState extends State<GamesScreen>
   Widget get categoriePanel => Container(
         margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 80.0),
         decoration: BoxDecoration(
-            color: Color(0xFF222831),
+            color: Theme.of(context).canvasColor,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Color(0xFF121212),
+                color: Theme.of(context).shadowColor,
                 offset: Offset(-5.0, 5.0),
               )
             ]),
@@ -288,11 +288,11 @@ class _GamesScreenState extends State<GamesScreen>
                     height: 35,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        color: Color(0xFF222831),
+                        color: Theme.of(context).canvasColor,
                         borderRadius: BorderRadius.circular(10.0),
                         boxShadow: [
                           BoxShadow(
-                            color: Color(0xFF121212),
+                            color: Theme.of(context).shadowColor,
                             offset: Offset(-5.0, 5.0),
                           )
                         ]),
@@ -332,8 +332,8 @@ class _GamesScreenState extends State<GamesScreen>
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                    color: Color(0xFF000000),
-                                    offset: Offset(3.0, 0.0))
+                                    color: Theme.of(context).shadowColor,
+                                    offset: Offset(2.0, 0.0))
                               ]),
                           child: Icon(
                             Icons.add,

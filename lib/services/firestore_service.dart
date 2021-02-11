@@ -21,6 +21,8 @@ class FirestoreService {
       StreamController<List<Post>>.broadcast();
   final StreamController<List<Categorie>> _categoriesController =
       StreamController<List<Categorie>>.broadcast();
+  final StreamController<List<Game>> _gamesController =
+      StreamController<List<Game>>.broadcast();
 
   Future addPost(Post post) async {
     try {
@@ -32,6 +34,22 @@ class FirestoreService {
 
       return e.toString();
     }
+  }
+
+  Stream listenToGamesRealTime() {
+    FirebaseFirestore.instance
+        .collection('games')
+        .snapshots()
+        .listen((gamesSnapshot) {
+      if (gamesSnapshot.docs.isNotEmpty) {
+        var games = gamesSnapshot.docs
+            .map((snapshot) => Game.fromMap(snapshot.data(), snapshot.id))
+            .toList();
+        _gamesController.add(games);
+      }
+    });
+
+    return _gamesController.stream;
   }
 
   Stream listenToPostsRealTime() {

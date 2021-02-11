@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:Gemu/models/user.dart';
 
 class ProfilMenu extends StatefulWidget {
   @override
@@ -34,7 +33,7 @@ class _ProfilMenuState extends State<ProfilMenu>
     return ViewModelBuilder<ProfilScreenModel>.reactive(
       viewModelBuilder: () => ProfilScreenModel(),
       builder: (context, model, child) => Scaffold(
-          backgroundColor: Color(0xFF1A1C25),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: PreferredSize(
               child: Container(
                 height: 280,
@@ -228,9 +227,11 @@ class _ProfilMenuState extends State<ProfilMenu>
                                 controller: _tabController,
                                 isScrollable: true,
                                 indicatorSize: TabBarIndicatorSize.tab,
+                                labelColor: Theme.of(context).primaryColor,
+                                unselectedLabelColor: Colors.grey,
                                 indicator: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: Color(0xFF222831)),
+                                    color: Theme.of(context).canvasColor),
                                 tabs: [
                                   Tab(
                                     text: 'Publications',

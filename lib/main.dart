@@ -38,21 +38,35 @@ Future<void> main() async {
             return ThemeNotifier(themeData);
           } else if (theme == 'ThemeCustomLight') {
             themeData = ThemeData(
-              brightness: themeCustomLight.brightness,
-              primaryColor:
-                  Color(value.getInt('color_primary') ?? Colors.blue.value),
-              accentColor:
-                  Color(value.getInt('color_accent') ?? Colors.blue.value),
-            );
+                brightness: themeCustomLight.brightness,
+                scaffoldBackgroundColor:
+                    themeCustomLight.scaffoldBackgroundColor,
+                primaryColor:
+                    Color(value.getInt('color_primary') ?? Colors.blue.value),
+                accentColor:
+                    Color(value.getInt('color_accent') ?? Colors.blue.value),
+                canvasColor: themeCustomLight.canvasColor,
+                shadowColor: themeCustomLight.shadowColor,
+                iconTheme: themeCustomLight.iconTheme,
+                appBarTheme: themeCustomLight.appBarTheme,
+                bottomNavigationBarTheme:
+                    themeCustomLight.bottomNavigationBarTheme);
             return ThemeNotifier(themeData);
           } else if (theme == 'ThemeCustomDark') {
             themeData = ThemeData(
-              brightness: themeCustomDark.brightness,
-              primaryColor:
-                  Color(value.getInt('color_primary') ?? Colors.blue.value),
-              accentColor:
-                  Color(value.getInt('color_accent') ?? Colors.blue.value),
-            );
+                brightness: themeCustomDark.brightness,
+                scaffoldBackgroundColor:
+                    themeCustomLight.scaffoldBackgroundColor,
+                primaryColor:
+                    Color(value.getInt('color_primary') ?? Colors.blue.value),
+                accentColor:
+                    Color(value.getInt('color_accent') ?? Colors.blue.value),
+                canvasColor: themeCustomDark.canvasColor,
+                shadowColor: themeCustomDark.shadowColor,
+                iconTheme: themeCustomDark.iconTheme,
+                appBarTheme: themeCustomDark.appBarTheme,
+                bottomNavigationBarTheme:
+                    themeCustomDark.bottomNavigationBarTheme);
             return ThemeNotifier(themeData);
           }
           return ThemeNotifier(darkThemeOrange);

@@ -33,7 +33,7 @@ class _MessagerieMenuState extends State<MessagerieMenu>
   Widget build(BuildContext context) {
     return Drawer(
         child: Scaffold(
-      backgroundColor: Color(0xFF1A1C25),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: PreferredSize(
           child: Container(
               height: 100,
@@ -53,9 +53,11 @@ class _MessagerieMenuState extends State<MessagerieMenu>
                         controller: _tabController,
                         isScrollable: true,
                         indicatorSize: TabBarIndicatorSize.tab,
+                        labelColor: Theme.of(context).primaryColor,
+                        unselectedLabelColor: Colors.grey,
                         indicator: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Color(0xFF222831)),
+                            color: Theme.of(context).canvasColor),
                         tabs: [
                           Tab(
                               child: currentTabIndex == 0

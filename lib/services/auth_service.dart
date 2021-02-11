@@ -22,13 +22,11 @@ class AuthService {
 
   Future updateEmail(
       {@required String password, @required String newEmail}) async {
+    var user = _firebaseAuth.currentUser;
     try {
-      var user = _firebaseAuth.currentUser;
       var authResult = await user.reauthenticateWithCredential(
           EmailAuthProvider.credential(email: user.email, password: password));
       await authResult.user.updateEmail(newEmail);
-      print('Successfull changed email');
-      return user != null;
     } catch (e) {
       return e.message;
     }
@@ -36,14 +34,12 @@ class AuthService {
 
   Future updatePassword(
       {@required String currentPassword, @required String newPassword}) async {
+    var user = _firebaseAuth.currentUser;
     try {
-      var user = _firebaseAuth.currentUser;
       var authResult = await user.reauthenticateWithCredential(
           EmailAuthProvider.credential(
               email: user.email, password: currentPassword));
       await authResult.user.updatePassword(newPassword);
-      print('Successfull changed password');
-      return user != null;
     } catch (e) {
       return e.message;
     }

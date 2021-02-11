@@ -36,24 +36,24 @@ class EditProfileScreenModel extends BaseModel {
     }
   }
 
-  Future addImgProfile({@required String title}) async {
+  Future addImgProfile(
+      {@required String title, @required var currentUserID}) async {
     setBusy(true);
     CloudStorageResult storageResult;
-    var currentUser = _authService.currentUser;
 
     storageResult = await _cloudStorageService.uploadImage(
-        imageToUpload: _selectedImage, title: title + currentUser.id);
+        imageToUpload: _selectedImage, title: title + currentUserID);
 
     var result;
 
     result = await _firestoreService.updateUserImgProfile(
-        storageResult.imageUrl, currentUser.id);
+        storageResult.imageUrl, currentUserID);
 
     setBusy(false);
 
     if (result is String) {
       await _dialogService.showDialog(
-        title: 'Cound not change profile image',
+        title: 'Could not change profile image',
         description: result,
       );
     } else {
@@ -66,9 +66,10 @@ class EditProfileScreenModel extends BaseModel {
     _navigationService.pop();
   }
 
-  Future deleteImgProfile({@required String title}) async {
-    var currentUser = _authService.currentUser;
-    String imageFileName = title + currentUser.id;
+  Future deleteImgProfile(
+      {@required String title, @required var currentUserID}) async {
+    //var currentUser = _authService.currentUser;
+    String imageFileName = title + currentUserID;
 
     var storage;
 
@@ -78,7 +79,7 @@ class EditProfileScreenModel extends BaseModel {
 
     var result;
 
-    result = await _firestoreService.deleteUserImgProfile(currentUser.id);
+    result = await _firestoreService.deleteUserImgProfile(currentUserID);
 
     if (result is String) {
       await _dialogService.showDialog(

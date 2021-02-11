@@ -34,8 +34,9 @@ class ActionsPostBar extends StatelessWidget {
           Icon(icon, size: isShare ? 25.0 : 35.0, color: Colors.grey[300]),
           Padding(
             padding: EdgeInsets.only(top: isShare ? 5.0 : 2.0),
-            child:
-                Text(title, style: TextStyle(fontSize: isShare ? 10.0 : 12.0)),
+            child: Text(title,
+                style: TextStyle(
+                    fontSize: isShare ? 10.0 : 12.0, color: Colors.grey[300])),
           )
         ]));
   }

@@ -1,6 +1,8 @@
-import 'package:Gemu/screensmodels/Reglages/edit_password_screen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
+
+import 'package:Gemu/screensmodels/Reglages/edit_password_screen_model.dart';
 
 class EditPasswordScreen extends StatefulWidget {
   EditPasswordScreen({Key key}) : super(key: key);
@@ -19,20 +21,22 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     return ViewModelBuilder<EditPasswordScreenModel>.reactive(
         viewModelBuilder: () => EditPasswordScreenModel(),
         builder: (context, model, child) => Scaffold(
-              backgroundColor: Color(0xFF1A1C25),
-              appBar: AppBar(
-                backgroundColor: Colors.black26,
-                elevation: 0.0,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              appBar: GradientAppBar(
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).accentColor
+                  ],
+                ),
                 leading: IconButton(
                   icon: Icon(
                     Icons.arrow_back_ios,
-                    color: Colors.grey,
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
                 title: Text(
                   'Changer le mot de passe',
-                  style: TextStyle(color: Colors.grey),
                 ),
               ),
               body: Form(

@@ -1,4 +1,6 @@
 import 'package:Gemu/screensmodels/Reglages/edit_profile_screen_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:stacked/stacked.dart';
@@ -15,7 +17,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return ViewModelBuilder<EditProfileScreenModel>.reactive(
         viewModelBuilder: () => EditProfileScreenModel(),
         builder: (context, model, child) => Scaffold(
-              backgroundColor: Color(0xFF1A1C25),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               appBar: GradientAppBar(
                   leading: IconButton(
                       icon: Icon(Icons.arrow_back_ios),
@@ -30,7 +32,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   bottom: PreferredSize(
                       child: Container(
                         width: MediaQuery.of(context).size.width,
-                        color: Colors.black45,
+                        color: Theme.of(context).canvasColor.withOpacity(0.3),
                         child: Column(
                           children: [
                             Stack(
@@ -64,28 +66,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                     child: SizedBox(
                                                         height: 100,
                                                         width: 100,
-                                                        child: StreamBuilder<
-                                                                UserC>(
-                                                            stream:
-                                                                model.userData,
+                                                        child: StreamBuilder(
+                                                            stream: FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'users')
+                                                                .doc(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser
+                                                                    .uid)
+                                                                .snapshots(),
                                                             builder: (context,
                                                                 snapshot) {
                                                               if (snapshot
                                                                   .hasData) {
-                                                                UserC _userC =
-                                                                    snapshot
-                                                                        .data;
                                                                 return model.selectedImage ==
                                                                         null
-                                                                    ? _userC.photoURL ==
+                                                                    ? snapshot.data['photoURL'] ==
                                                                             null
                                                                         ? Container(
                                                                             child:
-                                                                                Icon(Icons.person),
+                                                                                Icon(
+                                                                              Icons.person,
+                                                                              size: 50,
+                                                                            ),
                                                                           )
                                                                         : Image
                                                                             .network(
-                                                                            _userC.photoURL,
+                                                                            snapshot.data['photoURL'],
                                                                             fit:
                                                                                 BoxFit.cover,
                                                                           )
@@ -115,8 +123,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                   decoration: BoxDecoration(
                                                       color: Colors.grey,
                                                       shape: BoxShape.circle),
-                                                  child:
-                                                      Icon(Icons.add_a_photo)),
+                                                  child: Icon(
+                                                    Icons.add_a_photo,
+                                                    size: 18,
+                                                  )),
                                             )
                                           ],
                                         ),
@@ -131,7 +141,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         top: 75.0, right: 100.0),
                                     child: FlatButton(
                                         onPressed: () => model.deleteImgProfile(
-                                            title: 'profileImg'),
+                                            title: 'profileImg',
+                                            currentUserID: FirebaseAuth
+                                                .instance.currentUser.uid),
                                         child: Text('Supprimer l\'icône',
                                             style: TextStyle(
                                                 fontSize: 12,
@@ -156,13 +168,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Nom d\'utilisateur'),
-                          StreamBuilder<UserC>(
-                              stream: model.userData,
+                          StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(FirebaseAuth.instance.currentUser.uid)
+                                  .snapshots(),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  UserC _userC = snapshot.data;
                                   return Text(
-                                    _userC.pseudo,
+                                    snapshot.data['pseudo'],
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey),
@@ -183,13 +197,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('E-mail'),
-                          StreamBuilder<UserC>(
-                              stream: model.userData,
+                          StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(FirebaseAuth.instance.currentUser.uid)
+                                  .snapshots(),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  UserC _userC = snapshot.data;
                                   return Text(
-                                    _userC.email,
+                                    snapshot.data['email'],
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey),
@@ -245,7 +261,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               floatingActionButton: model.selectedImage == null
                   ? SizedBox()
                   : FloatingActionButton(
-                      onPressed: () => model.addImgProfile(title: 'profileImg'),
+                      onPressed: () => model.addImgProfile(
+                          title: 'profileImg',
+                          currentUserID: FirebaseAuth.instance.currentUser.uid),
                       backgroundColor: Colors.transparent,
                       elevation: 6.0,
                       child: Stack(

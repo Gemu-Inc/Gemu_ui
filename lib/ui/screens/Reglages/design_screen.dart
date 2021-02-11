@@ -44,7 +44,7 @@ class _DesignScreenState extends State<DesignScreen> {
     return ViewModelBuilder<DesignScreenModel>.reactive(
       viewModelBuilder: () => DesignScreenModel(),
       builder: (context, model, child) => Scaffold(
-          backgroundColor: Color(0xFF1A1C25),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: GradientAppBar(
             leading: IconButton(
                 icon: Icon(Icons.arrow_back_ios),

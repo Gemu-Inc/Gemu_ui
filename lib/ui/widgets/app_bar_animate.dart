@@ -1,4 +1,6 @@
 import 'package:Gemu/ui/widgets/choix_categories.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/ui/widgets/widgets.dart';
@@ -115,12 +117,15 @@ class _AppBarAnimateState extends State<AppBarAnimate>
                               SliverAppBar(
                                 backgroundColor: Colors.transparent,
                                 elevation: 0,
-                                leading: StreamBuilder<UserC>(
-                                    stream: widget.model.userData,
+                                leading: StreamBuilder(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser.uid)
+                                        .snapshots(),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
-                                        UserC _userC = snapshot.data;
-                                        return _userC.photoURL == null
+                                        return snapshot.data['photoURL'] == null
                                             ? GestureDetector(
                                                 onTap: () => widget.model
                                                     .navigateToProfil(),
@@ -141,7 +146,8 @@ class _AppBarAnimateState extends State<AppBarAnimate>
                                                 ),
                                               )
                                             : ProfilButtonHighlights(
-                                                currentUser: _userC.photoURL,
+                                                currentUser:
+                                                    snapshot.data['photoURL'],
                                                 width: 50,
                                                 height: 50,
                                                 colorFond: Colors.transparent,
@@ -274,12 +280,14 @@ class _AppBarAnimateState extends State<AppBarAnimate>
                             Theme.of(context).primaryColor,
                             Theme.of(context).accentColor
                           ]),
-                          leading: StreamBuilder<UserC>(
-                              stream: widget.model.userData,
+                          leading: StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(FirebaseAuth.instance.currentUser.uid)
+                                  .snapshots(),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  UserC _userC = snapshot.data;
-                                  return _userC.photoURL == null
+                                  return snapshot.data['photoURL'] == null
                                       ? GestureDetector(
                                           onTap: () =>
                                               widget.model.navigateToProfil(),
@@ -299,7 +307,8 @@ class _AppBarAnimateState extends State<AppBarAnimate>
                                           ),
                                         )
                                       : ProfilButtonHighlights(
-                                          currentUser: _userC.photoURL,
+                                          currentUser:
+                                              snapshot.data['photoURL'],
                                           width: 50,
                                           height: 50,
                                           colorFond: Colors.transparent,

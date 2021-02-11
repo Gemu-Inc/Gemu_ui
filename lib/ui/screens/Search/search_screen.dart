@@ -122,7 +122,7 @@ class _SearchScreenState extends State<SearchScreen> {
         initialIndex: 0,
         length: _icons.length,
         child: Scaffold(
-          backgroundColor: Color(0xFF1A1C25),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0.0,

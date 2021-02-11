@@ -229,7 +229,7 @@ class _CategorieScreenState extends State<CategorieScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFF1A1C25),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: GradientAppBar(
             elevation: 6.0,
             gradient: LinearGradient(
@@ -251,10 +251,12 @@ class _CategorieScreenState extends State<CategorieScreen>
                       padding: EdgeInsets.all(10.0),
                       child: TabBar(
                         controller: _tabController,
+                        labelColor: Theme.of(context).primaryColor,
+                        unselectedLabelColor: Colors.grey,
                         indicatorSize: TabBarIndicatorSize.tab,
                         indicator: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Color(0xFF222831)),
+                            color: Theme.of(context).canvasColor),
                         tabs: [Text('A découvrir'), Text('Suivis')],
                       ),
                     )),

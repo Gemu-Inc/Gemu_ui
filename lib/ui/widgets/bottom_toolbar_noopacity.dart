@@ -17,19 +17,21 @@ class BottomToolBarNoOpa extends StatelessWidget {
         left: 0,
         bottom: 0,
         child: Container(
-          decoration: BoxDecoration(color: Color(0xFF1A1C25), boxShadow: [
-            BoxShadow(
-              color: Color(0xFF121212),
-              blurRadius: 1,
-              spreadRadius: 3,
-            )
-          ]),
+          decoration: BoxDecoration(
+              color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).shadowColor,
+                  blurRadius: 1,
+                  spreadRadius: 3,
+                )
+              ]),
           width: size.width,
           height: 55,
           child: TabBar(
             indicatorColor: Colors.transparent,
-            /*indicator: CircleTabIndicator(
-                    color: Theme.of(context).accentColor, radius: 3),*/
+            labelColor: Theme.of(context).primaryColor,
+            unselectedLabelColor: Colors.grey,
             tabs: [
               Tab(
                 icon: Icon(

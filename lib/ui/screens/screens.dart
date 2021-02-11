@@ -1,4 +1,3 @@
-export 'Splash/splash_screen.dart';
 export 'Navigation/nav_screen.dart';
 export 'Home/home_screen.dart';
 export 'Profil/profil_screen.dart';

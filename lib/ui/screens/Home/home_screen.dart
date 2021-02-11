@@ -57,6 +57,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: TabBar(
             controller: _tabController,
             indicatorColor: Colors.transparent,
+            labelColor: Theme.of(context).primaryColor,
+            unselectedLabelColor: Colors.grey,
             tabs: [
               Tab(
                 child: currentTabIndex == 0
@@ -130,9 +132,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 itemBuilder: (context, index) =>
                                     Stack(children: [
                                       Container(
-                                        decoration:
-                                            BoxDecoration(color: Colors.black),
-                                      ),
+                                          decoration: BoxDecoration(
+                                              color: Colors.black)),
                                       Positioned(
                                           left: 0,
                                           bottom: 75,
@@ -156,6 +157,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   child: Center(
                                     child: TabBar(
                                         indicatorColor: Colors.transparent,
+                                        labelColor:
+                                            Theme.of(context).primaryColor,
+                                        unselectedLabelColor: Colors.grey,
                                         isScrollable: true,
                                         onTap: (index) {
                                           setState(() {

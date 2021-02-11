@@ -148,7 +148,7 @@ class _BottomShare extends State<BottomShare>
                                 child: ImageIcon(
                                   AssetImage('lib/assets/images/share.png'),
                                   size: 30,
-                                  color: Theme.of(context).secondaryHeaderColor,
+                                  color: Theme.of(context).canvasColor,
                                 ),
                               )
                             ],

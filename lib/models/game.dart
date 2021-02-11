@@ -5,12 +5,14 @@ class Game {
   final String imageUrl;
   //final List<String> idCategories;
   final String documentId;
+  bool selected;
 
   Game(
       {@required this.name,
       @required this.imageUrl,
       //@required this.idCategories,
-      this.documentId});
+      this.documentId,
+      this.selected});
 
   Map<String, dynamic> toMap() {
     return {
@@ -23,12 +25,12 @@ class Game {
     if (map == null) return null;
 
     return Game(
-      /*idCategories: List<String>.from(map['idCategories'].map((item) {
+        /*idCategories: List<String>.from(map['idCategories'].map((item) {
           return item;
         }).toList()),*/
-      name: map['name'],
-      imageUrl: map['imageUrl'],
-      documentId: documentId,
-    );
+        name: map['name'],
+        imageUrl: map['imageUrl'],
+        documentId: documentId,
+        selected: false);
   }
 }

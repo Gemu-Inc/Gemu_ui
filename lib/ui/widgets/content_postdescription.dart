@@ -15,12 +15,19 @@ class ContentPostDescription extends StatelessWidget {
                 children: [
                   Text(
                     '0ruj#0827',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.grey[300]),
                   ),
                 ],
               ),
-              Text('Video title and some other stuff'),
-              Text('Different # select by the user')
+              Text(
+                'Video title and some other stuff',
+                style: TextStyle(color: Colors.grey),
+              ),
+              Text(
+                'Different # select by the user',
+                style: TextStyle(color: Colors.grey),
+              )
               /*Row(children: [
                 Icon(
                   Icons.music_note,
