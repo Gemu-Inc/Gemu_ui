@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Gemu/services/auth_service.dart';
+
 import 'package:Gemu/models/game.dart';
-import 'package:Gemu/locator.dart';
 
 class UnfollowGameButton extends StatefulWidget {
   final Game game;
@@ -15,7 +16,7 @@ class UnfollowGameButton extends StatefulWidget {
 
 class UnfollowGameButtonState extends State<UnfollowGameButton>
     with SingleTickerProviderStateMixin {
-  final AuthService _authService = locator<AuthService>();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   AnimationController _animationController;
   Animation _colorTween;
 
@@ -41,11 +42,10 @@ class UnfollowGameButtonState extends State<UnfollowGameButton>
         builder: (context, child) {
           return GestureDetector(
               onTap: () async {
-                var currentUser = _authService.currentUser;
                 if (_animationController.status == AnimationStatus.completed) {
                   await FirebaseFirestore.instance
                       .collection('users')
-                      .doc(currentUser.id)
+                      .doc(_firebaseAuth.currentUser.uid)
                       .update({
                     'idGames': FieldValue.arrayUnion([widget.game.documentId])
                   });
@@ -53,7 +53,7 @@ class UnfollowGameButtonState extends State<UnfollowGameButton>
                 } else {
                   await FirebaseFirestore.instance
                       .collection('users')
-                      .doc(currentUser.id)
+                      .doc(_firebaseAuth.currentUser.uid)
                       .update({
                     'idGames': FieldValue.arrayRemove([widget.game.documentId])
                   });

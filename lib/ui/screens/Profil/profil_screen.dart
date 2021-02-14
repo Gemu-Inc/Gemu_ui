@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:stacked/stacked.dart';
 
 class ProfilMenu extends StatefulWidget {
@@ -33,32 +34,71 @@ class _ProfilMenuState extends State<ProfilMenu>
     return ViewModelBuilder<ProfilScreenModel>.reactive(
       viewModelBuilder: () => ProfilScreenModel(),
       builder: (context, model, child) => Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: PreferredSize(
-              child: Container(
-                height: 280,
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).accentColor
-                    ])),
-                child: DrawerHeader(
-                  child: Column(
-                    children: [
-                      Stack(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: NestedScrollView(
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverGradientAppBar(
+                  automaticallyImplyLeading: false,
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).accentColor
+                      ]),
+                  elevation: 6.0,
+                  forceElevated: true,
+                  pinned: true,
+                  leading: IconButton(
+                      icon: Icon(
+                        Icons.expand_more,
+                        size: 35,
+                      ),
+                      onPressed: () => model.navigateToNavigation()),
+                  centerTitle: true,
+                  title: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(FirebaseAuth.instance.currentUser.uid)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(
+                            snapshot.data['pseudo'],
+                            style: TextStyle(fontSize: 23),
+                          );
+                        } else {
+                          return CircularProgressIndicator(
+                            strokeWidth: 3,
+                            valueColor: AlwaysStoppedAnimation(
+                                Theme.of(context).primaryColor),
+                          );
+                        }
+                      }),
+                  actions: [
+                    IconButton(
+                        icon: Icon(
+                          Icons.settings,
+                          size: 25,
+                        ),
+                        onPressed: () => model.navigateToReglages())
+                  ],
+                  expandedHeight: 250,
+                  flexibleSpace: FlexibleSpaceBar(
+                    collapseMode: CollapseMode.parallax,
+                    background: Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).accentColor
+                          ])),
+                      child: Stack(
                         children: [
-                          Align(
-                              alignment: Alignment.topLeft,
-                              child: IconButton(
-                                  icon: Icon(
-                                    Icons.expand_more,
-                                    size: 35,
-                                  ),
-                                  onPressed: () =>
-                                      model.navigateToNavigation())),
                           Align(
                               alignment: Alignment.center,
                               child: StreamBuilder(
@@ -103,147 +143,107 @@ class _ProfilMenuState extends State<ProfilMenu>
                                     }
                                   })),
                           Align(
-                            alignment: Alignment.topRight,
-                            child: IconButton(
-                                icon: Icon(
-                                  Icons.settings,
-                                  size: 25,
-                                ),
-                                onPressed: () => model.navigateToReglages()),
-                          ),
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.only(right: 15.0, bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    height: 60,
+                                    width: 70,
+                                    child: Stack(
+                                      children: [
+                                        Align(
+                                            alignment: Alignment.topCenter,
+                                            child: Text(
+                                              'Followers',
+                                            )),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Text(
+                                            '0',
+                                            style: TextStyle(fontSize: 23),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 60,
+                                    width: 50,
+                                    child: Stack(
+                                      children: [
+                                        Align(
+                                            alignment: Alignment.topCenter,
+                                            child: Text(
+                                              'Points',
+                                            )),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Text(
+                                            '0',
+                                            style: TextStyle(fontSize: 23),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 60,
+                                    width: 50,
+                                    child: Stack(
+                                      children: [
+                                        Align(
+                                            alignment: Alignment.topCenter,
+                                            child: Text(
+                                              'Follows',
+                                            )),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Text(
+                                            '0',
+                                            style: TextStyle(fontSize: 23),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
                         ],
                       ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Align(
-                          alignment: Alignment.center,
-                          child: StreamBuilder(
-                              stream: FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(FirebaseAuth.instance.currentUser.uid)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return Text(
-                                    snapshot.data['pseudo'],
-                                    style: TextStyle(fontSize: 23),
-                                  );
-                                } else {
-                                  return CircularProgressIndicator(
-                                    strokeWidth: 3,
-                                    valueColor: AlwaysStoppedAnimation(
-                                        Theme.of(context).primaryColor),
-                                  );
-                                }
-                              })),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Container(
-                              height: 60,
-                              width: 70,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                      alignment: Alignment.topCenter,
-                                      child: Text(
-                                        'Followers',
-                                      )),
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Text(
-                                      '0',
-                                      style: TextStyle(fontSize: 23),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: 60,
-                              width: 50,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                      alignment: Alignment.topCenter,
-                                      child: Text(
-                                        'Points',
-                                      )),
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Text(
-                                      '0',
-                                      style: TextStyle(fontSize: 23),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: 60,
-                              width: 50,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                      alignment: Alignment.topCenter,
-                                      child: Text(
-                                        'Follows',
-                                      )),
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Text(
-                                      '0',
-                                      style: TextStyle(fontSize: 23),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-              preferredSize: Size.fromHeight(280)),
-          body: CustomScrollView(
-            physics: BouncingScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                  child: PreferredSize(
-                      child: Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 10.0),
-                            child: TabBar(
-                                controller: _tabController,
-                                isScrollable: true,
-                                indicatorSize: TabBarIndicatorSize.tab,
-                                labelColor: Theme.of(context).primaryColor,
-                                unselectedLabelColor: Colors.grey,
-                                indicator: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Theme.of(context).canvasColor),
-                                tabs: [
-                                  Tab(
-                                    text: 'Publications',
-                                  ),
-                                  Tab(
-                                    text: 'Statistics',
-                                  )
-                                ]),
-                          )),
-                      preferredSize: Size.fromHeight(100))),
-              SliverFillRemaining(
-                child: TabBarView(controller: _tabController, children: [
+                SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _SliverAppBarDelegate(TabBar(
+                        controller: _tabController,
+                        isScrollable: true,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        labelColor: Theme.of(context).primaryColor,
+                        unselectedLabelColor: Colors.grey,
+                        indicator: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Theme.of(context).canvasColor),
+                        tabs: [
+                          Tab(
+                            text: 'Publications',
+                          ),
+                          Tab(
+                            text: 'Statistics',
+                          )
+                        ])))
+              ];
+            },
+            body: Stack(
+              children: [
+                TabBarView(controller: _tabController, children: [
                   Center(
                     child: Text('Publication\'s content'),
                   ),
@@ -251,9 +251,36 @@ class _ProfilMenuState extends State<ProfilMenu>
                     child: Text('Statistics\'s content'),
                   )
                 ]),
-              )
-            ],
-          )),
+              ],
+            )),
+      ),
     );
+  }
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return new Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 5),
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
   }
 }

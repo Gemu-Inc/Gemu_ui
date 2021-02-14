@@ -1,12 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:Gemu/models/categorie.dart';
 
 class ChoixCategories extends StatefulWidget {
-  final Categorie e;
+  final DocumentSnapshot categorie;
 
   ChoixCategories({
     Key key,
-    @required this.e,
+    @required this.categorie,
   }) : super(key: key);
 
   @override
@@ -24,18 +24,16 @@ class ChoixCategoriesState extends State<ChoixCategories>
     animationController =
         AnimationController(duration: Duration(milliseconds: 300), vsync: this)
           ..addListener(() {
-            this.setState(() {
-              print(widget.key);
-            });
+            this.setState(() {});
           });
-    _colorTween = ColorTween(begin: Colors.black45, end: Colors.transparent)
-        .animate(animationController);
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: _colorTween,
+        animation: _colorTween = ColorTween(
+                begin: Theme.of(context).canvasColor, end: Colors.transparent)
+            .animate(animationController),
         builder: (context, child) {
           return GestureDetector(
             child: Container(
@@ -45,10 +43,10 @@ class ChoixCategoriesState extends State<ChoixCategories>
                 decoration: BoxDecoration(
                     color: _colorTween.value,
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.black45)),
+                    border: Border.all(color: Theme.of(context).canvasColor)),
                 child: Align(
                   alignment: Alignment.center,
-                  child: Text(widget.e.name),
+                  child: Text(widget.categorie['name']),
                 )),
             onTap: () {
               if (animationController.status == AnimationStatus.completed) {
@@ -59,5 +57,11 @@ class ChoixCategoriesState extends State<ChoixCategories>
             },
           );
         });
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
   }
 }

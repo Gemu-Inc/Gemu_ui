@@ -58,9 +58,6 @@ class _CategorieScreenState extends State<CategorieScreen>
                         for (var i = 0;
                             i < snapshotUser.data['idGames'].length;
                             i++) {
-                          print(
-                              'taille: ${snapshotUser.data['idGames'].length}');
-                          print(i);
                           if (game.documentId ==
                               snapshotUser.data['idGames'][i]) {
                             return Container(
@@ -102,12 +99,14 @@ class _CategorieScreenState extends State<CategorieScreen>
                                           ),
                                         )),
                                     Positioned(
-                                      bottom: 20,
-                                      right: 10,
-                                      child: UnfollowGameButton(
-                                        game: game,
-                                      ),
-                                    ),
+                                        bottom: 20,
+                                        right: 10,
+                                        child: GestureDetector(
+                                          onTap: () => print('appuie'),
+                                          child: UnfollowGameButton(
+                                            game: game,
+                                          ),
+                                        )),
                                     Align(
                                       alignment: Alignment.bottomCenter,
                                       child: Text(game.name),
@@ -153,9 +152,6 @@ class _CategorieScreenState extends State<CategorieScreen>
                         for (var i = 0;
                             i < snapshotUser.data['idGames'].length;
                             i++) {
-                          print(
-                              'taille: ${snapshotUser.data['idGames'].length}');
-                          print(i);
                           if (game.documentId ==
                               snapshotUser.data['idGames'][i]) {
                             return SizedBox();

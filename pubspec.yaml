@@ -55,6 +55,7 @@ dependencies:
   provider: ^4.3.2+2
   shared_preferences: ^0.5.2
   slider_button:
+  sliding_up_panel:
   splashscreen: ^1.2.0
   stacked: ^1.6.0
   stacked_services: ^0.4.3
