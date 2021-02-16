@@ -16,6 +16,7 @@ class ConnectionScreenState extends State<ConnectionScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           print('user log in');
+          ProviderAuth.of(context).auth.getCurrentUID();
           return NavScreen();
         } else {
           print('user log out');

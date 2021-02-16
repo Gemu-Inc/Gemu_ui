@@ -4,8 +4,6 @@ import 'package:Gemu/services/auth_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
 import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/constants/route_names.dart';
-import 'package:Gemu/ui/screens/Connection/connection_screen.dart';
-import 'package:Gemu/ui/screens/Welcome/welcome_screen.dart';
 
 class ReglagesScreenModel extends BaseModel {
   final AuthService _authService = locator<AuthService>();

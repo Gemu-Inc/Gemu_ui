@@ -16,10 +16,6 @@ class HighlightScreenModel extends BaseModel {
     return _firestoreService.userData(currentUser.id);
   }
 
-  void navigateToProfil() {
-    _navigationService.navigateTo(ProfilMenuRoute);
-  }
-
   void navigateToSearch() {
     _navigationService.navigateTo(SearchScreenRoute);
   }

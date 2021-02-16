@@ -22,10 +22,6 @@ class HomeScreenModel extends BaseModel {
     return _firestoreService.userData(currentUser.id);
   }
 
-  void navigateToProfil() {
-    _navigationService.navigateTo(ProfilMenuRoute);
-  }
-
   List<Post> _posts;
   List<Post> get posts => _posts;
 

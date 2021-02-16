@@ -18,6 +18,9 @@ import 'package:Gemu/ui/screens/GetStarted/get_started_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
+    case ConnectionScreenRoute:
+      return _getPageRoute(
+          routeName: settings.name, viewToShow: ConnectionScreen());
     case WelcomeScreenRoute:
       return _getPageRoute(
           routeName: settings.name, viewToShow: WelcomeScreen());
@@ -34,8 +37,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           routeName: settings.name, viewToShow: RegisterSecondScreen());
     case NavScreenRoute:
       return _getPageRoute(routeName: settings.name, viewToShow: NavScreen());
+    case ProfilMenuDrawerRoute:
+      return _getPageRoute(
+          routeName: settings.name, viewToShow: ProfilMenuDrawer());
     case ProfilMenuRoute:
       return _getPageRoute(routeName: settings.name, viewToShow: ProfilMenu());
+    case MessagerieMenuRoute:
+      return _getPageRoute(
+          routeName: settings.name, viewToShow: MessagerieMenu());
     case EditProfileScreenRoute:
       return _getPageRoute(
           routeName: settings.name, viewToShow: EditProfileScreen());
@@ -63,9 +72,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case GetStartedRoute:
       return _getPageRoute(
           routeName: settings.name, viewToShow: GetStartedScreen());
-    case ConnectionScreenRoute:
-      return _getPageRoute(
-          routeName: settings.name, viewToShow: ConnectionScreen());
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

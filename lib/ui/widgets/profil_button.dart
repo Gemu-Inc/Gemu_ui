@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:Gemu/models/models.dart';
 
 class ProfilButtonHome extends StatelessWidget {
   final String currentUser;
@@ -56,18 +55,20 @@ class ProfilButtonHighlights extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPress,
-      child: Container(
-        margin: EdgeInsets.only(top: 3.0, left: 3.0),
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-            color: colorFond,
-            shape: BoxShape.circle,
-            border: Border.all(color: colorBorder),
-            image: DecorationImage(
-                fit: BoxFit.cover, image: NetworkImage(currentUser))),
+    return Builder(
+      builder: (context) => GestureDetector(
+        onTap: onPress,
+        child: Container(
+          margin: EdgeInsets.only(top: 3.0, left: 3.0),
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+              color: colorFond,
+              shape: BoxShape.circle,
+              border: Border.all(color: colorBorder),
+              image: DecorationImage(
+                  fit: BoxFit.cover, image: NetworkImage(currentUser))),
+        ),
       ),
     );
   }

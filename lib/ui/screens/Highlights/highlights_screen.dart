@@ -38,7 +38,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _controllerRotate =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     _animationRotate = Tween<double>(begin: 0.0, end: 180.0).animate(
         CurvedAnimation(parent: _controllerRotate, curve: Curves.easeOut));
     _controllerRotate.addListener(() {
@@ -172,9 +172,9 @@ class HighlightsScreenState extends State<HighlightsScreen>
               },
               header: Padding(
                   padding: EdgeInsets.only(
-                    bottom: 5.0,
-                    left: SizeConfig.screenWidth / 2.25,
-                  ),
+                      bottom: 5.0,
+                      left: SizeConfig.screenWidth / 2.25,
+                      right: SizeConfig.screenWidth / 2.25),
                   child: Transform(
                       transform: Matrix4.rotationZ(
                           getRadianFromDegree(_animationRotate.value)),
@@ -191,7 +191,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
                         ),
                       ))),
               footer: Padding(
-                padding: EdgeInsets.only(top: 35.0, left: 20.0),
+                padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
                 child: Text(
                   'Que veux-tu voir dans tes highlights aujourd\'hui?',
                   style: TextStyle(

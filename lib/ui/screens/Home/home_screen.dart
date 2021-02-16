@@ -16,19 +16,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  TabController _tabController;
+  TabController _tabMenuController;
   PageController _pageFollowingController, _pageGamesController;
+  AnimationController _animationRotateController;
+  Animation _animationRotate;
   int currentTabIndex,
       currentTabGamesIndex,
       currentPageFollowingIndex,
       currentPageGamesIndex;
+  bool panelGames;
 
   @override
   void initState() {
     super.initState();
 
-    _tabController = TabController(initialIndex: 1, length: 2, vsync: this);
-    _tabController.addListener(_onTabChanged);
+    _tabMenuController = TabController(initialIndex: 1, length: 2, vsync: this);
+    _tabMenuController.addListener(_onTabChanged);
     currentTabIndex = 1;
     currentTabGamesIndex = 0;
 
@@ -37,15 +40,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     _pageGamesController = PageController();
     currentPageGamesIndex = 0;
+
+    _animationRotateController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    _animationRotate = Tween<double>(begin: 0.0, end: 180.0).animate(
+        CurvedAnimation(
+            parent: _animationRotateController, curve: Curves.easeOut));
+    _animationRotateController.addListener(() {
+      setState(() {});
+    });
+
+    panelGames = false;
+  }
+
+  @override
+  void dispose() {
+    _tabMenuController.dispose();
+    _pageFollowingController.dispose();
+    _pageGamesController.dispose();
+    _animationRotateController.dispose();
+    super.dispose();
   }
 
   void _onTabChanged() {
-    if (!_tabController.indexIsChanging)
+    if (!_tabMenuController.indexIsChanging)
       setState(() {
-        print('Changing to Tab: ${_tabController.index}');
-        currentTabIndex = _tabController.index;
+        print('Changing to Tab: ${_tabMenuController.index}');
+        currentTabIndex = _tabMenuController.index;
         currentPageGamesIndex = 0;
       });
+  }
+
+  double getRadianFromDegree(double degree) {
+    double unitRadian = 57.295779513;
+    return degree / unitRadian;
   }
 
   Widget get followingContainer => Container(
@@ -55,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: Align(
         alignment: Alignment.topCenter,
         child: TabBar(
-            controller: _tabController,
+            controller: _tabMenuController,
             indicatorColor: Colors.transparent,
             labelColor: Theme.of(context).primaryColor,
             unselectedLabelColor: Colors.grey,
@@ -72,9 +100,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
               Tab(
                 child: currentTabIndex == 1
-                    ? Text('Games',
-                        style: TextStyle(
-                            fontSize: 17.0, fontWeight: FontWeight.bold))
+                    ? GestureDetector(
+                        onTap: () {
+                          if (_animationRotateController.isCompleted) {
+                            _animationRotateController.reverse();
+                            setState(() {
+                              panelGames = false;
+                            });
+                          } else {
+                            _animationRotateController.forward();
+                            setState(() {
+                              panelGames = true;
+                            });
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Text('Games',
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.bold)),
+                            Transform(
+                                transform: Matrix4.rotationZ(
+                                    getRadianFromDegree(
+                                        _animationRotate.value)),
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.expand_more,
+                                ))
+                          ],
+                        ),
+                      )
                     : Text(
                         'Games',
                         style: TextStyle(color: Colors.grey),
@@ -107,12 +163,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return ViewModelBuilder<HomeScreenModel>.reactive(
       disposeViewModel: false,
       viewModelBuilder: () => HomeScreenModel(),
-      //onModelReady: (model) => model.listenToPosts(),
       builder: (context, model, child) => Stack(
         children: <Widget>[
-          TabBarView(controller: _tabController, children: [
+          TabBarView(controller: _tabMenuController, children: [
             middleSectionFollowing, //Following
-            gamesList != null
+            gamesList != null //Games
                 ? DefaultTabController(
                     initialIndex: currentTabGamesIndex,
                     length: gamesList.length,
@@ -123,11 +178,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             return PageView.builder(
                                 controller: _pageGamesController,
                                 scrollDirection: Axis.vertical,
-                                onPageChanged: (index) => setState(() {
-                                      currentPageGamesIndex = index;
-                                      print(
-                                          'currentPageGamesIndex est à: $currentPageGamesIndex');
-                                    }),
+                                onPageChanged: (index) {
+                                  setState(() {
+                                    currentPageGamesIndex = index;
+                                    print(
+                                        'currentPageGamesIndex est à: $currentPageGamesIndex');
+                                  });
+                                  if (panelGames = true) {
+                                    setState(() {
+                                      _animationRotateController.reverse();
+                                      panelGames = false;
+                                    });
+                                  }
+                                },
                                 itemCount: 6,
                                 itemBuilder: (context, index) =>
                                     Stack(children: [
@@ -147,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                           child: ActionsPostBar())
                                     ]));
                           }).toList()),
-                      currentPageGamesIndex == 0
+                      panelGames
                           ? Positioned(
                               top: MediaQuery.of(context).size.height / 5,
                               child: Container(

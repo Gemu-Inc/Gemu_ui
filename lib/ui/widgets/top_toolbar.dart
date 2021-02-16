@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/screensmodels/Home/home_screen_model.dart';
-import 'package:Gemu/models/user.dart';
 import 'package:Gemu/ui/widgets/profil_button.dart';
 import 'package:Gemu/models/game.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
@@ -42,29 +41,31 @@ class TopToolBarHome extends StatelessWidget {
             if (snapshot.hasData) {
               //UserC _userC = UserC.fromData(snapshot.data());
               return snapshot.data['photoURL'] == null
-                  ? GestureDetector(
-                      onTap: () => model.navigateToProfil(),
-                      child: Container(
-                        margin: EdgeInsets.all(3.0),
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF222831),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Color(0xFF222831))),
-                        child: Icon(
-                          Icons.person,
-                          size: 40,
+                  ? Builder(
+                      builder: (context) => GestureDetector(
+                        onTap: () => Scaffold.of(context).openDrawer(),
+                        child: Container(
+                          margin: EdgeInsets.all(3.0),
+                          height: 45,
+                          width: 45,
+                          decoration: BoxDecoration(
+                              color: Color(0xFF222831),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Color(0xFF222831))),
+                          child: Icon(
+                            Icons.person,
+                            size: 40,
+                          ),
                         ),
                       ),
                     )
                   : ProfilButtonHome(
                       currentUser: snapshot.data['photoURL'],
-                      width: 50,
-                      height: 50,
+                      width: 45,
+                      height: 45,
                       colorFond: Colors.transparent,
                       colorBorder: Color(0xFF222831),
-                      onPress: () => model.navigateToProfil());
+                      onPress: () => Scaffold.of(context).openDrawer());
             } else {
               return CircularProgressIndicator(
                 strokeWidth: 3,
@@ -74,33 +75,19 @@ class TopToolBarHome extends StatelessWidget {
             }
           }),
       actions: [
-        GestureDetector(
-          onTap: () => print('search'),
-          child: Container(
-            margin: EdgeInsets.only(top: 7.5, bottom: 7.5, right: 5.0),
-            height: 45,
-            width: 45,
-            decoration: BoxDecoration(
-                color: Color(0xFF222831).withOpacity(0.5),
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Color(0xFF222831).withOpacity(0.5))),
-            child: Icon(Icons.search,
-                size: 28, color: Theme.of(context).accentColor),
-          ),
-        ),
         Builder(
           builder: (context) => GestureDetector(
             onTap: () => Scaffold.of(context).openEndDrawer(),
             child: Container(
               margin: EdgeInsets.only(top: 7.5, bottom: 7.5, right: 5.0),
-              height: 45,
-              width: 45,
+              height: 50,
+              width: 50,
               decoration: BoxDecoration(
-                  color: Color(0xFF222831).withOpacity(0.5),
+                  color: Theme.of(context).canvasColor.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(15),
-                  border:
-                      Border.all(color: Color(0xFF222831).withOpacity(0.5))),
-              child: Icon(Icons.bubble_chart_outlined,
+                  border: Border.all(
+                      color: Theme.of(context).canvasColor.withOpacity(0.5))),
+              child: Icon(Icons.notifications_active,
                   size: 28, color: Theme.of(context).accentColor),
             ),
           ),

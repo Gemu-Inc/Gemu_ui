@@ -61,7 +61,8 @@ class _NavScreenState extends State<NavScreen>
         builder: (context, model, child) => Scaffold(
               key: _scaffoldKeyNav,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              endDrawer: MessagerieMenu(),
+              drawer: ProfilMenuDrawer(),
+              endDrawer: MessagerieMenuDrawer(),
               body: Stack(
                 children: [
                   TabBarView(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:Gemu/constants/route_names.dart';
 
@@ -72,20 +74,21 @@ class _BottomShare extends State<BottomShare>
                         ..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
                       child: GestureDetector(
-                        child: Container(
-                          height: 45,
-                          width: 45,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: Theme.of(context).primaryColor),
-                          child: Icon(
-                            Icons.add,
-                            size: 25,
+                          child: Container(
+                            height: 45,
+                            width: 45,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: Theme.of(context).primaryColor),
+                            child: Icon(
+                              Icons.add,
+                              size: 25,
+                            ),
                           ),
-                        ),
-                        onTap: () =>
-                            Navigator.pushNamed(context, CreatePostRoute),
-                      )),
+                          onTap: () {
+                            animationController.reverse();
+                            Navigator.pushNamed(context, CreatePostRoute);
+                          })),
                 ),
                 Transform.translate(
                   offset: Offset.fromDirection(getRadianFromDegree(305),
@@ -96,20 +99,21 @@ class _BottomShare extends State<BottomShare>
                         ..scale(degTwoTranslationAnimation.value),
                       alignment: Alignment.center,
                       child: GestureDetector(
-                        child: Container(
-                          height: 45,
-                          width: 45,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: Theme.of(context).accentColor),
-                          child: Icon(
-                            Icons.play_arrow,
-                            size: 25,
+                          child: Container(
+                            height: 45,
+                            width: 45,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: Theme.of(context).accentColor),
+                            child: Icon(
+                              Icons.play_arrow,
+                              size: 25,
+                            ),
                           ),
-                        ),
-                        onTap: () =>
-                            print('Démarrer l\'enregistrement d\'un clip'),
-                      )),
+                          onTap: () {
+                            animationController.reverse();
+                            print('Démarrer l\'enregistrement d\'un clip');
+                          })),
                 ),
                 Transform(
                     transform: Matrix4.rotationZ(
@@ -125,6 +129,12 @@ class _BottomShare extends State<BottomShare>
                               animationController.reverse();
                             } else {
                               animationController.forward();
+                              Timer(Duration(seconds: 15), () {
+                                if (animationController.isCompleted) {
+                                  animationController.reverse();
+                                  print('Timer over');
+                                }
+                              });
                             }
                           },
                           backgroundColor: Colors.transparent,
