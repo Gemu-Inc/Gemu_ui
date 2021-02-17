@@ -15,53 +15,31 @@ class ChoixCategories extends StatefulWidget {
 
 class ChoixCategoriesState extends State<ChoixCategories>
     with SingleTickerProviderStateMixin {
-  AnimationController animationController;
-  Animation _colorTween;
+  bool isSelected;
 
   @override
   void initState() {
     super.initState();
-    animationController =
-        AnimationController(duration: Duration(milliseconds: 300), vsync: this)
-          ..addListener(() {
-            this.setState(() {});
-          });
+    isSelected = true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-        animation: _colorTween = ColorTween(
-                begin: Theme.of(context).canvasColor, end: Colors.transparent)
-            .animate(animationController),
-        builder: (context, child) {
-          return GestureDetector(
-            child: Container(
-                margin: EdgeInsets.all(5.0),
-                height: 50,
-                width: 120,
-                decoration: BoxDecoration(
-                    color: _colorTween.value,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Theme.of(context).canvasColor)),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text(widget.categorie['name']),
-                )),
-            onTap: () {
-              if (animationController.status == AnimationStatus.completed) {
-                animationController.reverse();
-              } else {
-                animationController.forward();
-              }
-            },
-          );
+    return FilterChip(
+      label: Text(widget.categorie['name']),
+      labelPadding: EdgeInsets.all(4.0),
+      selected: isSelected,
+      onSelected: (bool selected) {
+        setState(() {
+          isSelected = !isSelected;
         });
+      },
+      selectedColor: Theme.of(context).canvasColor,
+    );
   }
 
   @override
   void dispose() {
-    animationController.dispose();
     super.dispose();
   }
 }

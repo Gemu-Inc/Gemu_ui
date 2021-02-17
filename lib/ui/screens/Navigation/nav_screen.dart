@@ -1,17 +1,18 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stacked/stacked.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:Gemu/screensmodels/Navigation/nav_screen_model.dart';
 import 'package:Gemu/services/firestore_service.dart';
 import 'package:Gemu/ui/widgets/bottom_toolbar_noopacity.dart';
 import 'package:Gemu/ui/widgets/bottom_toolbar_withopacity.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:Gemu/ui/screens/screens.dart';
 import 'package:Gemu/ui/screens/Direct/direct_screen.dart';
-import 'package:Gemu/ui/widgets/widgets.dart';
 import 'package:Gemu/ui/screens/Highlights/highlights_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:stacked/stacked.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Gemu/locator.dart';
+import 'package:Gemu/ui/widgets/bottom_share.dart';
 
 class NavScreen extends StatefulWidget {
   NavScreen({Key key}) : super(key: key);
@@ -20,8 +21,7 @@ class NavScreen extends StatefulWidget {
   _NavScreenState createState() => _NavScreenState();
 }
 
-class _NavScreenState extends State<NavScreen>
-    with SingleTickerProviderStateMixin {
+class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKeyNav = GlobalKey<ScaffoldState>();
 
   TabController _tabController;
@@ -37,6 +37,11 @@ class _NavScreenState extends State<NavScreen>
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirestoreService _firestoreService = locator<FirestoreService>();
 
+  AnimationController animationController;
+  Animation degOneTranslationAnimation, degTwoTranslationAnimation;
+  Animation rotationAnimationCircularButton;
+  Animation rotationAnimationFlatButton;
+
   @override
   void initState() {
     super.initState();
@@ -44,14 +49,25 @@ class _NavScreenState extends State<NavScreen>
     _tabController = TabController(length: _icons.length, vsync: this);
     _tabController.addListener(_onTabChanged);
     currentTabIndex = 0;
+
+    animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 350));
+    animationController.addListener(() {
+      setState(() {});
+    });
   }
 
   void _onTabChanged() {
-    if (!_tabController.indexIsChanging)
+    if (!_tabController.indexIsChanging) {
       setState(() {
         print('Changing to Tab: ${_tabController.index}');
         currentTabIndex = _tabController.index;
       });
+
+      if (animationController.isCompleted) {
+        animationController.reverse();
+      }
+    }
   }
 
   @override
@@ -94,9 +110,18 @@ class _NavScreenState extends State<NavScreen>
                           icons: _icons, controller: _tabController)
                       : BottomToolBarNoOpa(
                           icons: _icons, controller: _tabController),
-                  BottomShare()
+                  BottomShare(
+                    animationController: animationController,
+                  )
                 ],
               ),
             ));
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    animationController.dispose();
+    super.dispose();
   }
 }
