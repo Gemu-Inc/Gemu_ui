@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/constants/route_names.dart';
 
 class BottomShare extends StatefulWidget {
-  BottomShare({Key key, @required this.animationController});
-
-  final AnimationController animationController;
   @override
   _BottomShare createState() => _BottomShare();
 }
 
 class _BottomShare extends State<BottomShare>
     with SingleTickerProviderStateMixin {
+  AnimationController animationController;
   Animation degOneTranslationAnimation, degTwoTranslationAnimation;
   Animation rotationAnimationCircularButton;
   Animation rotationAnimationFlatButton;
@@ -23,24 +21,28 @@ class _BottomShare extends State<BottomShare>
 
   @override
   void initState() {
+    animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 350));
     degOneTranslationAnimation = TweenSequence([
       TweenSequenceItem(
           tween: Tween<double>(begin: 0.0, end: 1.2), weight: 75.0),
       TweenSequenceItem(
           tween: Tween<double>(begin: 1.2, end: 1.0), weight: 25.0),
-    ]).animate(widget.animationController);
+    ]).animate(animationController);
     degTwoTranslationAnimation = TweenSequence([
       TweenSequenceItem(
           tween: Tween<double>(begin: 0.0, end: 1.75), weight: 35.0),
       TweenSequenceItem(
           tween: Tween<double>(begin: 1.75, end: 1.0), weight: 35.0),
-    ]).animate(widget.animationController);
+    ]).animate(animationController);
     rotationAnimationCircularButton = Tween<double>(begin: 180.0, end: 0.0)
         .animate(CurvedAnimation(
-            parent: widget.animationController, curve: Curves.easeOut));
+            parent: animationController, curve: Curves.easeOut));
     rotationAnimationFlatButton = Tween<double>(begin: 360.0, end: 0.0).animate(
-        CurvedAnimation(
-            parent: widget.animationController, curve: Curves.easeOut));
+        CurvedAnimation(parent: animationController, curve: Curves.easeOut));
+    animationController.addListener(() {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -52,7 +54,7 @@ class _BottomShare extends State<BottomShare>
         Positioned(
             left: size.width / 4,
             right: size.width / 4,
-            bottom: 20,
+            bottom: 30,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
@@ -83,7 +85,7 @@ class _BottomShare extends State<BottomShare>
                             ),
                           ),
                           onTap: () {
-                            widget.animationController.reverse();
+                            animationController.reverse();
                             Navigator.pushNamed(context, CreatePostRoute);
                           })),
                 ),
@@ -108,7 +110,7 @@ class _BottomShare extends State<BottomShare>
                             ),
                           ),
                           onTap: () {
-                            widget.animationController.reverse();
+                            animationController.reverse();
                             print('Démarrer l\'enregistrement d\'un clip');
                           })),
                 ),
@@ -122,13 +124,13 @@ class _BottomShare extends State<BottomShare>
                       child: FloatingActionButton(
                           heroTag: null,
                           onPressed: () {
-                            if (widget.animationController.isCompleted) {
-                              widget.animationController.reverse();
+                            if (animationController.isCompleted) {
+                              animationController.reverse();
                             } else {
-                              widget.animationController.forward();
-                              Timer(Duration(seconds: 15), () {
-                                if (widget.animationController.isCompleted) {
-                                  widget.animationController.reverse();
+                              animationController.forward();
+                              Timer(Duration(seconds: 6), () {
+                                if (animationController.isCompleted) {
+                                  animationController.reverse();
                                   print('Timer over');
                                 }
                               });

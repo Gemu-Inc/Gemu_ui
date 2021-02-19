@@ -1,3 +1,4 @@
+import 'package:Gemu/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
@@ -6,8 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:Gemu/screensmodels/Navigation/nav_screen_model.dart';
 import 'package:Gemu/services/firestore_service.dart';
-import 'package:Gemu/ui/widgets/bottom_toolbar_noopacity.dart';
-import 'package:Gemu/ui/widgets/bottom_toolbar_withopacity.dart';
 import 'package:Gemu/ui/screens/screens.dart';
 import 'package:Gemu/ui/screens/Direct/direct_screen.dart';
 import 'package:Gemu/ui/screens/Highlights/highlights_screen.dart';
@@ -24,54 +23,40 @@ class NavScreen extends StatefulWidget {
 class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKeyNav = GlobalKey<ScaffoldState>();
 
-  TabController _tabController;
-  int currentTabIndex = 0;
-
-  final List<IconData> _icons = [
-    Icons.home,
-    Icons.map,
-    Icons.videogame_asset,
-    Icons.play_arrow
-  ];
+  int page;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirestoreService _firestoreService = locator<FirestoreService>();
 
-  AnimationController animationController;
-  Animation degOneTranslationAnimation, degTwoTranslationAnimation;
-  Animation rotationAnimationCircularButton;
-  Animation rotationAnimationFlatButton;
-
   @override
   void initState() {
     super.initState();
-
-    _tabController = TabController(length: _icons.length, vsync: this);
-    _tabController.addListener(_onTabChanged);
-    currentTabIndex = 0;
-
-    animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 350));
-    animationController.addListener(() {
-      setState(() {});
-    });
-  }
-
-  void _onTabChanged() {
-    if (!_tabController.indexIsChanging) {
-      setState(() {
-        print('Changing to Tab: ${_tabController.index}');
-        currentTabIndex = _tabController.index;
-      });
-
-      if (animationController.isCompleted) {
-        animationController.reverse();
-      }
-    }
+    page = 0;
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screenNav = [
+      FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('users')
+            .doc(_firebaseAuth.currentUser.uid)
+            .get(),
+        builder: (context, snapshotUser) {
+          if (!snapshotUser.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          return StreamProvider(
+              create: (BuildContext context) => _firestoreService
+                  .getGamesFollow(snapshotUser.data['idGames']),
+              child: HomeScreen());
+        },
+      ),
+      HighlightsScreen(),
+      GamesScreen(),
+      DirectScreen()
+    ];
+
     return ViewModelBuilder<NavScreenModel>.reactive(
         viewModelBuilder: () => NavScreenModel(),
         builder: (context, model, child) => Scaffold(
@@ -81,47 +66,72 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
               endDrawer: MessagerieMenuDrawer(),
               body: Stack(
                 children: [
-                  TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: _tabController,
-                      children: [
-                        FutureBuilder(
-                          future: FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(_firebaseAuth.currentUser.uid)
-                              .get(),
-                          builder: (context, snapshotUser) {
-                            if (!snapshotUser.hasData) {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                            return StreamProvider(
-                                create: (BuildContext context) =>
-                                    _firestoreService.getGamesFollow(
-                                        snapshotUser.data['idGames']),
-                                child: HomeScreen());
-                          },
-                        ),
-                        HighlightsScreen(),
-                        GamesScreen(),
-                        DirectScreen()
-                      ]),
-                  currentTabIndex == 0
-                      ? BottomToolBarWithOpa(
-                          icons: _icons, controller: _tabController)
-                      : BottomToolBarNoOpa(
-                          icons: _icons, controller: _tabController),
-                  BottomShare(
-                    animationController: animationController,
-                  )
+                  screenNav[page],
+                  Positioned(
+                      left: 0,
+                      bottom: 0,
+                      child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 60,
+                          decoration: page == 0
+                              ? BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border(
+                                      top: BorderSide(color: Colors.white60)))
+                              : BoxDecoration(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  boxShadow: [
+                                      BoxShadow(
+                                        color: Theme.of(context).shadowColor,
+                                        blurRadius: 1,
+                                        spreadRadius: 3,
+                                      )
+                                    ]),
+                          child: BottomNavigationBar(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              type: BottomNavigationBarType.fixed,
+                              onTap: (index) {
+                                setState(() {
+                                  page = index;
+                                  print('Page: $page');
+                                });
+                              },
+                              currentIndex: page,
+                              fixedColor: Theme.of(context).primaryColor,
+                              selectedIconTheme: IconThemeData(size: 26),
+                              unselectedIconTheme: IconThemeData(size: 24),
+                              selectedLabelStyle: TextStyle(fontSize: 14.0),
+                              unselectedLabelStyle: TextStyle(fontSize: 12.0),
+                              items: [
+                                BottomNavigationBarItem(
+                                    activeIcon: Icon(Icons.home),
+                                    icon: Icon(Icons.home_outlined),
+                                    label: 'Home'),
+                                BottomNavigationBarItem(
+                                    activeIcon: Icon(Icons.highlight),
+                                    icon: Icon(Icons.highlight_outlined),
+                                    label: 'Highlights'),
+                                BottomNavigationBarItem(
+                                    activeIcon: Icon(Icons.videogame_asset),
+                                    icon: Icon(Icons.videogame_asset_outlined),
+                                    label: 'Games'),
+                                BottomNavigationBarItem(
+                                    activeIcon: Icon(Icons.play_arrow),
+                                    icon: Icon(Icons.play_arrow_outlined),
+                                    label: 'Direct')
+                              ])))
                 ],
               ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
+              floatingActionButton: BottomShare(),
             ));
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
-    animationController.dispose();
     super.dispose();
   }
 }

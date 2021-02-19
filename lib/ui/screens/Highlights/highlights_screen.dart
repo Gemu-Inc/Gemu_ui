@@ -202,42 +202,36 @@ class HighlightsScreenState extends State<HighlightsScreen>
                 }
               },
               header: Padding(
-                  padding: EdgeInsets.only(
-                      bottom: 5.0,
-                      left: SizeConfig.screenWidth / 2.25,
-                      right: SizeConfig.screenWidth / 2.25),
-                  child: GestureDetector(
-                    onTap: () {
-                      if (_controllerRotate.isCompleted) {
-                        _panelController.close();
-                        _controllerRotate.reverse();
-                        setState(() {
-                          padding = true;
-                        });
-                      } else {
-                        _panelController.open();
-                        _controllerRotate.forward();
-                        setState(() {
-                          padding = false;
-                        });
-                      }
-                    },
-                    child: Transform(
-                        transform: Matrix4.rotationZ(
-                            getRadianFromDegree(_animationRotate.value)),
-                        alignment: Alignment.center,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.black),
-                          ),
-                          child: Icon(
-                            Icons.expand_more,
-                            size: 35,
-                            color: Colors.black,
-                          ),
-                        )),
-                  )),
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width / 4 + 70.0),
+                child: GestureDetector(
+                  onTap: () {
+                    if (_controllerRotate.isCompleted) {
+                      _panelController.close();
+                      _controllerRotate.reverse();
+                      setState(() {
+                        padding = true;
+                      });
+                    } else {
+                      _panelController.open();
+                      _controllerRotate.forward();
+                      setState(() {
+                        padding = false;
+                      });
+                    }
+                  },
+                  child: Transform(
+                    transform: Matrix4.rotationZ(
+                        getRadianFromDegree(_animationRotate.value)),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.expand_more,
+                      size: 35,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
               body: Center(
                 child: Container(
                   margin: EdgeInsets.only(top: 25.0),

@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   auto_size_text: ^2.0.2
+  animated_button:
   cached_network_image: ^2.3.2+1
   carousel_slider: ^3.0.0
   cloud_firestore: ^0.16.0

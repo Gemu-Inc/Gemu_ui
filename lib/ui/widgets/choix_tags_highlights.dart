@@ -23,9 +23,8 @@ class _ChoixTagsState extends State<ChoixTags>
   @override
   Widget build(BuildContext context) {
     return FilterChip(
-        padding: EdgeInsets.all(5.0),
         label: Text(widget.tag.name),
-        labelPadding: EdgeInsets.all(4.0),
+        labelPadding: EdgeInsets.all(6.0),
         selected: isSelected,
         onSelected: (bool selected) {
           setState(() {

@@ -11,73 +11,66 @@ class ActionsPostBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100.0,
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        _getFollowAction(context: context),
-        _getSocialReferencement(
-            iconUp: Icons.arrow_upward,
-            iconDown: Icons.arrow_downward,
-            title: '3.2m'),
-        _getSocialAction(icon: Icons.message, title: '16.4k'),
-        _getSocialAction(icon: Icons.reply, title: 'Share', isShare: true),
-        //_getMusicPlayerAction()
-      ]),
+      alignment: Alignment.center,
+      height: 70,
+      width: MediaQuery.of(context).size.width / 2,
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _getSocialReferencement(
+                iconUp: Icons.arrow_upward,
+                iconDown: Icons.arrow_downward,
+                title: '3.2m'),
+            _getSocialAction(icon: Icons.message_rounded, title: '16.4k'),
+            _getFollowAction(context: context),
+          ]),
     );
   }
 
-  Widget _getSocialAction({String title, IconData icon, bool isShare = false}) {
-    return Container(
-        margin: EdgeInsets.only(top: 15.0),
-        width: 60.0,
-        height: 60.0,
-        child: Column(children: [
-          Icon(icon, size: isShare ? 25.0 : 35.0, color: Colors.grey[300]),
-          Padding(
-            padding: EdgeInsets.only(top: isShare ? 5.0 : 2.0),
-            child: Text(title,
-                style: TextStyle(
-                    fontSize: isShare ? 10.0 : 12.0, color: Colors.grey[300])),
-          )
-        ]));
-  }
-
   Widget _getSocialReferencement(
-      {String title,
-      IconData iconUp,
-      IconData iconDown,
-      bool isShare = false}) {
+      {String title, IconData iconUp, IconData iconDown}) {
     return Container(
-        margin: EdgeInsets.only(top: 15.0),
-        width: 80.0,
         height: 60.0,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(iconUp,
-                    size: isShare ? 25.0 : 35.0, color: Colors.grey[300]),
+                Icon(iconUp, size: 28, color: Colors.grey[300]),
                 SizedBox(
                   width: 10.0,
                 ),
-                Icon(iconDown,
-                    size: isShare ? 25.0 : 35.0, color: Colors.grey[300]),
+                Icon(iconDown, size: 28, color: Colors.grey[300]),
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(top: isShare ? 5.0 : 2.0),
-              child: Text(title,
-                  style: TextStyle(fontSize: isShare ? 10.0 : 12.0)),
+              padding: EdgeInsets.only(top: 2.0),
+              child: Text(title, style: TextStyle(fontSize: 12.0)),
             )
           ],
         ));
   }
 
-  Widget _getFollowAction({BuildContext context, String pictureUrl}) {
+  Widget _getSocialAction({String title, IconData icon}) {
     return Container(
-        margin: EdgeInsets.symmetric(vertical: 10.0),
-        width: 60.0,
         height: 60.0,
+        child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          Icon(icon, size: 28, color: Colors.grey[300]),
+          Padding(
+            padding: EdgeInsets.only(top: 2.0),
+            child: Text(title,
+                style: TextStyle(fontSize: 12.0, color: Colors.grey[300])),
+          )
+        ]));
+  }
+
+  Widget _getFollowAction({BuildContext context}) {
+    return Container(
+        margin: EdgeInsets.only(top: 10.0),
+        width: 55.0,
+        height: 55.0,
         child: Stack(
             children: [_getProfilePicture(), _getPlusIcon(context: context)]));
   }
@@ -121,40 +114,5 @@ class ActionsPostBar extends StatelessWidget {
               placeholder: (context, url) => new CircularProgressIndicator(),
               errorWidget: (context, url, error) => new Icon(Icons.error),
             )));
-  }
-
-  LinearGradient get musicGradient => LinearGradient(colors: [
-        Colors.grey[800],
-        Colors.grey[900],
-        Colors.grey[900],
-        Colors.grey[800]
-      ], stops: [
-        0.0,
-        0.4,
-        0.6,
-        1.0
-      ], begin: Alignment.bottomLeft, end: Alignment.topRight);
-
-  Widget _getMusicPlayerAction() {
-    return Container(
-        margin: EdgeInsets.only(top: 10.0),
-        width: ActionWidgetSize,
-        height: ActionWidgetSize,
-        child: Column(children: [
-          Container(
-            padding: EdgeInsets.all(11.0),
-            height: ProfileImageSize,
-            width: ProfileImageSize,
-            decoration: BoxDecoration(
-                gradient: musicGradient,
-                borderRadius: BorderRadius.circular(ProfileImageSize / 2)),
-            child: CachedNetworkImage(
-              imageUrl:
-                  "https://secure.gravatar.com/avatar/ef4a9338dca42372f15427cdb4595ef7",
-              placeholder: (context, url) => new CircularProgressIndicator(),
-              errorWidget: (context, url, error) => new Icon(Icons.error),
-            ),
-          ),
-        ]));
   }
 }

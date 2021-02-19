@@ -27,7 +27,7 @@ class ChoixCategoriesState extends State<ChoixCategories>
   Widget build(BuildContext context) {
     return FilterChip(
       label: Text(widget.categorie['name']),
-      labelPadding: EdgeInsets.all(4.0),
+      labelPadding: EdgeInsets.all(6.0),
       selected: isSelected,
       onSelected: (bool selected) {
         setState(() {

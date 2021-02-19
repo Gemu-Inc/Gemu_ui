@@ -150,11 +150,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             Container(
               decoration: BoxDecoration(color: Colors.black),
             ),
-            Positioned(left: 0, bottom: 75, child: ContentPostDescription()),
-            Positioned(
-                right: 0,
-                bottom: MediaQuery.of(context).size.height / 5,
-                child: ActionsPostBar())
+            Positioned(left: 0, bottom: 80, child: ContentPostDescription()),
+            Positioned(right: 0, bottom: 80, child: ActionsPostBar())
           ]));
 
   @override
@@ -199,14 +196,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                               color: Colors.black)),
                                       Positioned(
                                           left: 0,
-                                          bottom: 75,
+                                          bottom: 80,
                                           child: ContentPostDescription()),
                                       Positioned(
                                           right: 0,
-                                          bottom: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              5,
+                                          bottom: 80,
                                           child: ActionsPostBar())
                                     ]));
                           }).toList()),
