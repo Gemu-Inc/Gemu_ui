@@ -83,10 +83,13 @@ class ActionsPostBar extends StatelessWidget {
           width: PlusIconSize, // PlusIconSize = 20.0;
           height: PlusIconSize, // PlusIconSize = 20.0;
           decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).accentColor
-              ]),
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).accentColor
+                  ]),
               borderRadius: BorderRadius.circular(15.0)),
           child: Icon(
             Icons.add,

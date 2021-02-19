@@ -13,7 +13,7 @@ import 'package:Gemu/ui/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/ui/screens/Welcome/welcome_screen.dart';
-import 'package:Gemu/ui/screens/Share/create_post_screen.dart';
+import 'package:Gemu/ui/screens/Share/Post/create_post_screen.dart';
 import 'package:Gemu/ui/screens/GetStarted/get_started_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
