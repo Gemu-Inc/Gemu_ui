@@ -11,7 +11,7 @@ class ReglagesScreenModel extends BaseModel {
   final DialogService _dialogService = locator<DialogService>();
 
   void navigateToProfile() {
-    _navigationService.navigateTo(ProfilMenuRoute);
+    _navigationService.pop();
   }
 
   void navigateToEditProfile() {

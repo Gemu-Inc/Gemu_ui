@@ -1,6 +1,8 @@
 import 'dart:async';
+
+import 'package:Gemu/ui/screens/Share/Post/camera.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:Gemu/constants/route_names.dart';
 
 class BottomShare extends StatefulWidget {
   @override
@@ -13,10 +15,30 @@ class _BottomShare extends State<BottomShare>
   Animation degOneTranslationAnimation, degTwoTranslationAnimation;
   Animation rotationAnimationCircularButton;
   Animation rotationAnimationFlatButton;
+  List<CameraDescription> _cameras;
 
   double getRadianFromDegree(double degree) {
     double unitRadian = 57.295779513;
     return degree / unitRadian;
+  }
+
+  void logError(String code, String message) =>
+      print('Error: $code\nError Message: $message');
+
+  Future<void> initializeCamera() async {
+    try {
+      final cameras = await availableCameras();
+      _cameras = cameras;
+      print('Camera description: $_cameras');
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CameraPost(
+                    cameras: _cameras,
+                  )));
+    } on CameraException catch (e) {
+      logError(e.code, e.description);
+    }
   }
 
   @override
@@ -86,7 +108,7 @@ class _BottomShare extends State<BottomShare>
                           ),
                           onTap: () {
                             animationController.reverse();
-                            Navigator.pushNamed(context, CreatePostRoute);
+                            initializeCamera();
                           })),
                 ),
                 Transform.translate(

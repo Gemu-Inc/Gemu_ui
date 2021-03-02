@@ -1,205 +1,156 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:stacked/stacked.dart';
-import 'package:Gemu/screensmodels/Share/create_post_model.dart';
-import 'package:Gemu/models/data.dart';
-import 'package:Gemu/models/game_model.dart';
-import 'package:Gemu/models/categorie_post_model.dart';
+import 'package:image_picker/image_picker.dart';
 
-class CreatePostScreen extends StatefulWidget {
-  CreatePostScreen({Key key}) : super(key: key);
+import 'package:Gemu/constants/variables.dart';
+import 'confirmation_screen.dart';
 
+class AddVideoScreen extends StatefulWidget {
   @override
-  _CreatePostScreenState createState() => _CreatePostScreenState();
+  AddVideoScreenState createState() => AddVideoScreenState();
 }
 
-class _CreatePostScreenState extends State<CreatePostScreen> {
-  List<Games> games = panelGames;
-  List<CategoriePost> sections = categoriePosts;
-  final contentController = TextEditingController();
-  String selectedGame;
-  String selectedSection;
+class AddVideoScreenState extends State<AddVideoScreen> {
+  pickVideo(ImageSource src) async {
+    final video = await ImagePicker().getVideo(source: src);
+    if (video != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ConfirmationScreen(
+                    file: File(video.path),
+                    path: video.path,
+                    imageSource: src,
+                  )));
+    }
+  }
+
+  pickImage(ImageSource src) async {
+    final image = await ImagePicker().getImage(source: src);
+  }
+
+  showOptionsVideo() {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: 175,
+            color: Theme.of(context).canvasColor,
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                ListTile(
+                  onTap: () => pickVideo(ImageSource.camera),
+                  leading: Icon(Icons.photo_camera),
+                  title: Text('Camera'),
+                ),
+                ListTile(
+                  onTap: () => pickVideo(ImageSource.gallery),
+                  leading: Icon(Icons.photo),
+                  title: Text('Gallery'),
+                ),
+                ListTile(
+                  onTap: () => Navigator.pop(context),
+                  leading: Icon(Icons.clear),
+                  title: Text('Cancel'),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  showOptionsImage() {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: 175,
+            color: Theme.of(context).canvasColor,
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                ListTile(
+                  onTap: () => pickImage(ImageSource.camera),
+                  leading: Icon(Icons.photo_camera),
+                  title: Text('Camera'),
+                ),
+                ListTile(
+                  onTap: () => pickImage(ImageSource.gallery),
+                  leading: Icon(Icons.photo),
+                  title: Text('Gallery'),
+                ),
+                ListTile(
+                  onTap: () => Navigator.pop(context),
+                  leading: Icon(Icons.clear),
+                  title: Text('Cancel'),
+                )
+              ],
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<CreatePostModel>.reactive(
-        viewModelBuilder: () => CreatePostModel(),
-        builder: (context, model, child) => Scaffold(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  leading: IconButton(
-                      icon: Icon(
-                        Icons.clear,
-                        size: 30,
-                      ),
-                      onPressed: () => Navigator.pop(context)),
-                  title: Text('Create post'),
-                  centerTitle: true),
-              body: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 30.0, vertical: 30.0),
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Container(
-                            color: Colors.black,
-                            child: ExpansionTile(
-                              title: selectedGame == null
-                                  ? Text('Game')
-                                  : Text(selectedGame),
-                              children: games.map((Games game) {
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: 10.0),
-                                  child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedGame = game.nameGame;
-                                        });
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                EdgeInsets.only(left: 15.0),
-                                            child: Text('${game.nameGame}'),
-                                          ),
-                                          Icon(
-                                            Icons.clear,
-                                            color: Colors.red,
-                                            size: 15,
-                                          )
-                                        ],
-                                      )),
-                                );
-                              }).toList(),
-                            )),
-                      ),
-                      SliverPadding(
-                          padding: EdgeInsets.symmetric(vertical: 20.0)),
-                      SliverToBoxAdapter(
-                          child: Container(
-                              color: Colors.black,
-                              child: ExpansionTile(
-                                title: selectedSection == null
-                                    ? Text('Section')
-                                    : Text(selectedSection),
-                                children: sections.map((CategoriePost section) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(bottom: 10.0),
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedSection = section.name;
-                                          });
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 15.0),
-                                              child: Text('${section.name}'),
-                                            ),
-                                            Icon(
-                                              Icons.clear,
-                                              color: Colors.red,
-                                              size: 15,
-                                            )
-                                          ],
-                                        )),
-                                  );
-                                }).toList(),
-                              ))),
-                      SliverPadding(
-                          padding: EdgeInsets.symmetric(vertical: 20.0)),
-                      SliverToBoxAdapter(
-                        child: Container(
-                          color: Colors.black,
-                          child: TextField(
-                            controller: contentController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SliverPadding(
-                          padding: EdgeInsets.symmetric(vertical: 20.0)),
-                      SliverToBoxAdapter(
-                          child: GestureDetector(
-                              onTap: () => model.selectImage(),
-                              child: model.selectedImage == null
-                                  ? Container(
-                                      height: 250,
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey[200],
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      alignment: Alignment.center,
-                                      child: Container(
-                                        height: 50,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.topCenter,
-                                              child: Icon(
-                                                Icons.image,
-                                                size: 30.0,
-                                              ),
-                                            ),
-                                            Align(
-                                                alignment:
-                                                    Alignment.bottomCenter,
-                                                child: Text(
-                                                  'Tap to add an image',
-                                                  style: TextStyle(
-                                                      color: Colors.black),
-                                                ))
-                                          ],
-                                        ),
-                                      ))
-                                  : Container(
-                                      height: 250,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Image.file(model.selectedImage,
-                                          fit: BoxFit.cover),
-                                    )))
-                    ],
-                  )),
-              floatingActionButton: FloatingActionButton(
-                  child: Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Theme.of(context).primaryColor,
-                                  Theme.of(context).accentColor
-                                ])),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.add,
-                          size: 25,
-                        ),
-                      )
-                    ],
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        elevation: 0,
+        leading: IconButton(
+            icon: Icon(Icons.clear), onPressed: () => Navigator.pop(context)),
+        title: Text(
+          'Create post',
+          style: mystyle(18),
+        ),
+      ),
+      body: Column(
+        children: [
+          Container(
+            height: (MediaQuery.of(context).size.height / 2) - 40,
+            child: InkWell(
+              splashColor: Theme.of(context).accentColor,
+              onTap: () => showOptionsVideo(),
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: 50,
+                  decoration:
+                      BoxDecoration(color: Theme.of(context).primaryColor),
+                  child: Center(
+                    child: Text(
+                      'Add Video',
+                      style: mystyle(23),
+                    ),
                   ),
-                  onPressed: () => model.addPost(
-                      game: selectedGame,
-                      section: selectedSection,
-                      content: contentController.text)),
-            ));
+                ),
+              ),
+            ),
+          ),
+          Container(
+            height: (MediaQuery.of(context).size.height / 2) - 40,
+            child: InkWell(
+              splashColor: Theme.of(context).accentColor,
+              onTap: () => showOptionsImage(),
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: 50,
+                  decoration:
+                      BoxDecoration(color: Theme.of(context).primaryColor),
+                  child: Center(
+                    child: Text(
+                      'Add Image',
+                      style: mystyle(23),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

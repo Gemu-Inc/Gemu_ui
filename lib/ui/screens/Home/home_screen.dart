@@ -18,8 +18,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TabController _tabMenuController;
   PageController _pageFollowingController, _pageGamesController;
-  AnimationController _animationRotateController;
-  Animation _animationRotate;
+
+  AnimationController _animationRotateController, _animationGamesController;
+  Animation _animationRotate, _animationGames;
+
   int currentTabIndex,
       currentTabGamesIndex,
       currentPageFollowingIndex,
@@ -41,8 +43,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _pageGamesController = PageController();
     currentPageGamesIndex = 0;
 
+    _animationGamesController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _animationGames = CurvedAnimation(
+        parent: _animationGamesController, curve: Curves.easeInCubic);
     _animationRotateController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _animationRotate = Tween<double>(begin: 0.0, end: 180.0).animate(
         CurvedAnimation(
             parent: _animationRotateController, curve: Curves.easeOut));
@@ -58,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _tabMenuController.dispose();
     _pageFollowingController.dispose();
     _pageGamesController.dispose();
+    _animationGamesController.dispose();
     _animationRotateController.dispose();
     super.dispose();
   }
@@ -104,14 +111,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         onTap: () {
                           if (_animationRotateController.isCompleted) {
                             _animationRotateController.reverse();
-                            setState(() {
-                              panelGames = false;
-                            });
+                            _animationGamesController.reverse();
                           } else {
                             _animationRotateController.forward();
-                            setState(() {
-                              panelGames = true;
-                            });
+                            _animationGamesController.forward();
                           }
                         },
                         child: Row(
@@ -204,70 +207,68 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                           child: ActionsPostBar())
                                     ]));
                           }).toList()),
-                      panelGames
-                          ? Positioned(
-                              top: MediaQuery.of(context).size.height / 5,
-                              child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height / 9,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Center(
-                                    child: TabBar(
-                                        indicatorColor: Colors.transparent,
-                                        labelColor:
-                                            Theme.of(context).primaryColor,
-                                        unselectedLabelColor: Colors.grey,
-                                        isScrollable: true,
-                                        onTap: (index) {
-                                          setState(() {
-                                            currentTabGamesIndex = index;
-                                            print(currentTabGamesIndex);
-                                          });
-                                        },
-                                        tabs: gamesList.map((game) {
-                                          return Column(
-                                            children: [
-                                              Container(
-                                                height: 50,
-                                                width: 50,
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                        begin:
-                                                            Alignment.topLeft,
-                                                        end: Alignment
-                                                            .bottomRight,
-                                                        colors: [
-                                                          Theme.of(context)
-                                                              .primaryColor,
-                                                          Theme.of(context)
-                                                              .accentColor
-                                                        ]),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                    border: Border.all(
-                                                        color:
-                                                            Color(0xFF222831)),
-                                                    image: DecorationImage(
-                                                        fit: BoxFit.cover,
-                                                        image:
-                                                            CachedNetworkImageProvider(
-                                                                game.imageUrl))),
+                      Positioned(
+                          top: MediaQuery.of(context).size.height / 5,
+                          child: SizeTransition(
+                            sizeFactor: _animationGames,
+                            child: Container(
+                                height: MediaQuery.of(context).size.height / 9,
+                                width: MediaQuery.of(context).size.width,
+                                child: Center(
+                                  child: TabBar(
+                                      indicatorColor: Colors.transparent,
+                                      labelColor:
+                                          Theme.of(context).primaryColor,
+                                      unselectedLabelColor: Colors.grey,
+                                      isScrollable: true,
+                                      onTap: (index) {
+                                        setState(() {
+                                          currentTabGamesIndex = index;
+                                          print(currentTabGamesIndex);
+                                        });
+                                      },
+                                      tabs: gamesList.map((game) {
+                                        return Column(
+                                          children: [
+                                            Container(
+                                              height: 50,
+                                              width: 50,
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                      begin: Alignment.topLeft,
+                                                      end:
+                                                          Alignment.bottomRight,
+                                                      colors: [
+                                                        Theme.of(context)
+                                                            .primaryColor,
+                                                        Theme.of(context)
+                                                            .accentColor
+                                                      ]),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
+                                                  border: Border.all(
+                                                      color: Color(0xFF222831)),
+                                                  image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image:
+                                                          CachedNetworkImageProvider(
+                                                              game.imageUrl))),
+                                            ),
+                                            SizedBox(
+                                              height: 5.0,
+                                            ),
+                                            Text(
+                                              '${game.name}',
+                                              style: TextStyle(
+                                                fontSize: 10,
                                               ),
-                                              SizedBox(
-                                                height: 5.0,
-                                              ),
-                                              Text(
-                                                '${game.name}',
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                ),
-                                              )
-                                            ],
-                                          );
-                                        }).toList()),
-                                  )))
-                          : SizedBox(),
+                                            )
+                                          ],
+                                        );
+                                      }).toList()),
+                                )),
+                          ))
                     ]))
                 : Center(
                     child: CircularProgressIndicator(),
