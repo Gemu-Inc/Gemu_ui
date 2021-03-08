@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Gemu/ui/screens/Share/Post/camera.dart';
+import 'package:Gemu/ui/screens/Share/Post/create_post_screen.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -9,8 +10,7 @@ class BottomShare extends StatefulWidget {
   _BottomShare createState() => _BottomShare();
 }
 
-class _BottomShare extends State<BottomShare>
-    with SingleTickerProviderStateMixin {
+class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
   AnimationController animationController;
   Animation degOneTranslationAnimation, degTwoTranslationAnimation;
   Animation rotationAnimationCircularButton;
@@ -43,6 +43,7 @@ class _BottomShare extends State<BottomShare>
 
   @override
   void initState() {
+    super.initState();
     animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 350));
     degOneTranslationAnimation = TweenSequence([
@@ -65,7 +66,12 @@ class _BottomShare extends State<BottomShare>
     animationController.addListener(() {
       setState(() {});
     });
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -108,7 +114,11 @@ class _BottomShare extends State<BottomShare>
                           ),
                           onTap: () {
                             animationController.reverse();
-                            initializeCamera();
+                            //initializeCamera(); //Pour initialiser les cameras directement sur l'appli
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return AddVideoScreen();
+                            }));
                           })),
                 ),
                 Transform.translate(
@@ -189,10 +199,5 @@ class _BottomShare extends State<BottomShare>
             ))
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

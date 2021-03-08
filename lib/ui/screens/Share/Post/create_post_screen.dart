@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 import 'package:Gemu/constants/variables.dart';
-import 'confirmation_screen.dart';
+import 'publish_video_screen.dart';
+import 'publish_picture_screen.dart';
 
 class AddVideoScreen extends StatefulWidget {
   @override
@@ -18,16 +20,41 @@ class AddVideoScreenState extends State<AddVideoScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ConfirmationScreen(
-                    file: File(video.path),
-                    path: video.path,
+              builder: (context) => PublishVideoScreen(
                     imageSource: src,
+                    videoPath: video.path,
                   )));
     }
   }
 
   pickImage(ImageSource src) async {
     final image = await ImagePicker().getImage(source: src);
+    if (image != null) {
+      File cropped = await ImageCropper.cropImage(
+          sourcePath: image.path,
+          aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+          compressQuality: 100,
+          maxWidth: 700,
+          maxHeight: 700,
+          compressFormat: ImageCompressFormat.jpg,
+          androidUiSettings: AndroidUiSettings(
+            statusBarColor: Theme.of(context).scaffoldBackgroundColor,
+            toolbarColor: Theme.of(context).scaffoldBackgroundColor,
+            toolbarWidgetColor: Colors.grey,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            activeControlsWidgetColor: Theme.of(context).primaryColor,
+          ));
+      if (cropped != null) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PublishPictureScreen(
+                      imagePath: cropped.path,
+                    )));
+      } else {
+        Navigator.pop(context);
+      }
+    }
   }
 
   showOptionsVideo() {
@@ -111,6 +138,27 @@ class AddVideoScreenState extends State<AddVideoScreen> {
             height: (MediaQuery.of(context).size.height / 2) - 40,
             child: InkWell(
               splashColor: Theme.of(context).accentColor,
+              onTap: () => showOptionsImage(),
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: 50,
+                  decoration:
+                      BoxDecoration(color: Theme.of(context).primaryColor),
+                  child: Center(
+                    child: Text(
+                      'Add Picture',
+                      style: mystyle(23),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            height: (MediaQuery.of(context).size.height / 2) - 40,
+            child: InkWell(
+              splashColor: Theme.of(context).accentColor,
               onTap: () => showOptionsVideo(),
               child: Center(
                 child: Container(
@@ -128,27 +176,6 @@ class AddVideoScreenState extends State<AddVideoScreen> {
               ),
             ),
           ),
-          Container(
-            height: (MediaQuery.of(context).size.height / 2) - 40,
-            child: InkWell(
-              splashColor: Theme.of(context).accentColor,
-              onTap: () => showOptionsImage(),
-              child: Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: 50,
-                  decoration:
-                      BoxDecoration(color: Theme.of(context).primaryColor),
-                  child: Center(
-                    child: Text(
-                      'Add Image',
-                      style: mystyle(23),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );

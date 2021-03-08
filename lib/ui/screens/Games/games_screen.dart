@@ -1,15 +1,14 @@
-import 'package:Gemu/models/models.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:Gemu/models/categorie.dart';
+import 'package:Gemu/models/game.dart';
 import 'package:Gemu/models/data.dart';
 import 'package:Gemu/ui/screens/Games/categorie_screen.dart';
 import 'package:Gemu/ui/screens/Games/game_focus_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:Gemu/models/categorie.dart';
-import 'package:Gemu/models/game.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:Gemu/services/firestore_service.dart';
-import 'package:Gemu/locator.dart';
+import 'package:Gemu/models/models.dart';
 
 class GamesScreen extends StatefulWidget {
   const GamesScreen({Key key}) : super(key: key);

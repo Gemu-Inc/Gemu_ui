@@ -16,4 +16,3 @@ const String EditUserNameScreenRoute = "EditUserNameScreen";
 const String EditEmailScreenRoute = "EditEmailScreen";
 const String EditPasswordRoute = "EditPasswordScreen";
 const String CreatePostRoute = "CreatePostScreen";
-const String ConfirmationScreenRoute = "ConfirmationScreen";

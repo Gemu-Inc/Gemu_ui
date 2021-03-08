@@ -15,7 +15,6 @@ import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/ui/screens/Welcome/welcome_screen.dart';
 import 'package:Gemu/ui/screens/Share/Post/create_post_screen.dart';
 import 'package:Gemu/ui/screens/GetStarted/get_started_screen.dart';
-import 'package:Gemu/ui/screens/Share/Post/confirmation_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -71,9 +70,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case CreatePostRoute:
       return _getPageRoute(
           routeName: settings.name, viewToShow: AddVideoScreen());
-    case ConfirmationScreenRoute:
-      return _getPageRoute(
-          routeName: settings.name, viewToShow: ConfirmationScreen());
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(
