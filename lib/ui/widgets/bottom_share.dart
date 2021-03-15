@@ -117,7 +117,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                             //initializeCamera(); //Pour initialiser les cameras directement sur l'appli
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return AddVideoScreen();
+                              return AddPostScreen();
                             }));
                           })),
                 ),

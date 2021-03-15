@@ -69,7 +69,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           routeName: settings.name, viewToShow: GetStartedScreen());
     case CreatePostRoute:
       return _getPageRoute(
-          routeName: settings.name, viewToShow: AddVideoScreen());
+          routeName: settings.name, viewToShow: AddPostScreen());
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

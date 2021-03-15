@@ -2,58 +2,43 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
 
 import 'package:Gemu/constants/variables.dart';
-import 'publish_video_screen.dart';
-import 'publish_picture_screen.dart';
+import 'video_editor_screen.dart';
+import 'picture_editor_screen.dart';
 
-class AddVideoScreen extends StatefulWidget {
+class AddPostScreen extends StatefulWidget {
   @override
-  AddVideoScreenState createState() => AddVideoScreenState();
+  AddPostScreenState createState() => AddPostScreenState();
 }
 
-class AddVideoScreenState extends State<AddVideoScreen> {
+class AddPostScreenState extends State<AddPostScreen> {
   pickVideo(ImageSource src) async {
-    final video = await ImagePicker().getVideo(source: src);
+    final video = await ImagePicker()
+        .getVideo(source: src, maxDuration: Duration(seconds: 10));
     if (video != null) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => PublishVideoScreen(
-                    imageSource: src,
-                    videoPath: video.path,
+              builder: (context) => VideoEditorScreen(
+                    file: File(video.path),
                   )));
+    } else {
+      Navigator.pop(context);
     }
   }
 
   pickImage(ImageSource src) async {
-    final image = await ImagePicker().getImage(source: src);
+    final image = await ImagePicker().getImage(source: src, imageQuality: 50);
     if (image != null) {
-      File cropped = await ImageCropper.cropImage(
-          sourcePath: image.path,
-          aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-          compressQuality: 100,
-          maxWidth: 700,
-          maxHeight: 700,
-          compressFormat: ImageCompressFormat.jpg,
-          androidUiSettings: AndroidUiSettings(
-            statusBarColor: Theme.of(context).scaffoldBackgroundColor,
-            toolbarColor: Theme.of(context).scaffoldBackgroundColor,
-            toolbarWidgetColor: Colors.grey,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            activeControlsWidgetColor: Theme.of(context).primaryColor,
-          ));
-      if (cropped != null) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => PublishPictureScreen(
-                      imagePath: cropped.path,
-                    )));
-      } else {
-        Navigator.pop(context);
-      }
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PictureEditorScreen(
+                    file: File(image.path),
+                  )));
+    } else {
+      Navigator.pop(context);
     }
   }
 

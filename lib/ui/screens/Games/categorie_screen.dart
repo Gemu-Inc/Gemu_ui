@@ -8,7 +8,6 @@ import 'package:Gemu/models/game.dart';
 import 'package:Gemu/ui/screens/Games/game_focus_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:Gemu/models/user.dart';
 
 class CategorieScreen extends StatefulWidget {
   CategorieScreen({Key key, @required this.categorie}) : super(key: key);

@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:video_player/video_player.dart';
 
-import 'publish_video_screen.dart';
-import 'publish_picture_screen.dart';
-
 class CameraPost extends StatefulWidget {
   CameraPost({Key key, this.cameras}) : super(key: key);
 
@@ -328,12 +325,6 @@ class CameraPostState extends State<CameraPost>
         });
         if (file != null) {
           showInSnackBar('Picture saved to ${file.path}');
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PublishPictureScreen(
-                        imagePath: imageFile.path,
-                      )));
         }
       }
     });
@@ -377,12 +368,12 @@ class CameraPostState extends State<CameraPost>
       if (file != null) {
         showInSnackBar('Video recorded to ${file.path}');
         videoFile = file;
-        Navigator.push(
+        /*Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => PublishVideoScreen(
                       videoPath: videoFile.path,
-                    )));
+                    )));*/
       }
     });
   }
