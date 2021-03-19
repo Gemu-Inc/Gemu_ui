@@ -59,28 +59,25 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
           .get();
       var alldocs = await FirebaseFirestore.instance
           .collection('posts')
-          .doc(gameId)
-          .collection(gameName)
           .where('uid', isEqualTo: currentUser)
           .get();
       int length = alldocs.docs.length;
       String picture = await uploadPictureToStorage(
-          imagePath, "Picture$gameName$currentUser-$length", gameName);
+          imagePath, "Picture$currentUser-$length", gameName);
       FirebaseFirestore.instance
           .collection('posts')
-          .doc(gameId)
-          .collection(gameName)
-          .doc("Picture$gameName$currentUser-$length")
+          .doc("Picture$currentUser-$length")
           .set({
         'uid': currentUser,
         'username': userdoc.data()['pseudo'],
         'profilepicture': userdoc.data()['photoURL'],
-        'id': "Picture$gameName$currentUser-$length",
+        'id': "Picture$currentUser-$length",
         'game': gameName,
         'up': [],
         'down': [],
         'commentcount': 0,
         'caption': _captionController.text,
+        'hashtags': _hashtagsController.text,
         'pictureUrl': picture,
       });
       Navigator.pushNamedAndRemoveUntil(

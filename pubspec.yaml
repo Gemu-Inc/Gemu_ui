@@ -67,6 +67,7 @@ dependencies:
   splashscreen: ^1.2.0
   stacked: ^1.6.0
   stacked_services: ^0.4.3
+  timeago:
   video_player: 
   video_editor: ^1.0.3+1
 

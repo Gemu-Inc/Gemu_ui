@@ -1,18 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Gemu/constants/variables.dart';
 import 'package:Gemu/screensmodels/Home/home_screen_model.dart';
 import 'package:Gemu/ui/widgets/top_toolbar.dart';
-import 'package:Gemu/ui/widgets/actions_postbar.dart';
-import 'package:Gemu/ui/widgets/content_postdescription.dart';
 import 'package:Gemu/models/game.dart';
 
-import 'components/picture_item.dart';
-import 'components/video_player_item.dart';
+import 'post_view_game.dart';
+import 'post_view_following.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -23,15 +19,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TabController _tabMenuController;
-  PageController _pageFollowingController, _pageGamesController;
 
   AnimationController _animationRotateController, _animationGamesController;
   Animation _animationRotate, _animationGames;
 
-  int currentTabIndex,
-      currentTabGamesIndex,
-      currentPageFollowingIndex,
-      currentPageGamesIndex;
+  int currentTabIndex, currentTabGamesIndex;
 
   List<Game> gamesList;
 
@@ -39,19 +31,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    /*gamesList = Provider.of<List<Game>>(context, listen: false);
-    print(gamesList);*/
-
     _tabMenuController = TabController(initialIndex: 1, length: 2, vsync: this);
     _tabMenuController.addListener(_onTabChanged);
     currentTabIndex = 1;
     currentTabGamesIndex = 0;
-
-    _pageFollowingController = PageController();
-    currentPageFollowingIndex = 0;
-
-    _pageGamesController = PageController();
-    currentPageGamesIndex = 0;
 
     _animationGamesController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
@@ -70,8 +53,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void dispose() {
     _tabMenuController.dispose();
-    _pageFollowingController.dispose();
-    _pageGamesController.dispose();
     _animationGamesController.dispose();
     _animationRotateController.dispose();
     super.dispose();
@@ -86,7 +67,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       setState(() {
         print('Changing to Tab: ${_tabMenuController.index}');
         currentTabIndex = _tabMenuController.index;
-        currentPageGamesIndex = 0;
       });
     }
   }
@@ -155,20 +135,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ]),
       ));
 
-  Widget get middleSectionFollowing => PageView.builder(
-      controller: _pageFollowingController,
-      scrollDirection: Axis.vertical,
-      onPageChanged: (index) => setState(() {
-            currentPageFollowingIndex = index;
-          }),
-      itemCount: 6,
-      itemBuilder: (context, index) => Stack(children: [
-            Container(
-              decoration: BoxDecoration(color: Colors.black),
-            ),
-            Positioned(left: 0, bottom: 80, child: ContentPostDescription()),
-            Positioned(right: 0, bottom: 80, child: ActionsPostBar())
-          ]));
+  Widget get middleSectionFollowing => PostViewFollowing();
 
   @override
   Widget build(BuildContext context) {
@@ -188,68 +155,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       TabBarView(
                           physics: NeverScrollableScrollPhysics(),
                           children: gamesList.map((game) {
-                            return StreamBuilder(
-                              stream: FirebaseFirestore.instance
-                                  .collection('posts')
-                                  .doc(game.documentId)
-                                  .collection(game.name)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-                                if (snapshot.data.docs.length == 0) {
-                                  return Center(
-                                    child: Text(
-                                      'Pas encore de posts pour ce jeu',
-                                      style: mystyle(11),
-                                    ),
-                                  );
-                                }
-                                return PageView.builder(
-                                    controller: _pageGamesController,
-                                    scrollDirection: Axis.vertical,
-                                    onPageChanged: (index) {
-                                      setState(() {
-                                        currentPageGamesIndex = index;
-                                        print(
-                                            'currentPageGamesIndex est à: $currentPageGamesIndex');
-                                      });
-                                      if (_animationRotateController
-                                          .isCompleted) {
-                                        _animationRotateController.reverse();
-                                        _animationGamesController.reverse();
-                                      }
-                                    },
-                                    itemCount: snapshot.data.docs.length,
-                                    itemBuilder: (context, index) {
-                                      DocumentSnapshot post =
-                                          snapshot.data.docs[index];
-
-                                      return Stack(children: [
-                                        post.data()['videoUrl'] == null
-                                            ? PictureItem(
-                                                pictureUrl:
-                                                    post.data()['pictureUrl'],
-                                              )
-                                            : VideoPlayerItem(
-                                                videoUrl:
-                                                    post.data()['videoUrl'],
-                                              ),
-                                        Positioned(
-                                            left: 0,
-                                            bottom: 80,
-                                            child: ContentPostDescription()),
-                                        Positioned(
-                                            right: 0,
-                                            bottom: 80,
-                                            child: ActionsPostBar())
-                                      ]);
-                                    });
-                              },
-                            );
+                            return PostViewGame(
+                                game: game,
+                                animationGamesController:
+                                    _animationGamesController,
+                                animationRotateController:
+                                    _animationRotateController);
                           }).toList()),
                       Positioned(
                           top: MediaQuery.of(context).size.height / 5,
@@ -331,7 +242,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   gradient1: Colors.transparent,
                   gradient2: Colors.transparent,
                   elevationBar: 0,
-                  currentPageGamesIndex: currentPageGamesIndex,
                   currentTabGamesIndex: currentTabGamesIndex,
                   currentTabIndex: currentTabIndex,
                   game: gamesList),

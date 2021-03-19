@@ -11,7 +11,7 @@ class TopToolBarHome extends StatelessWidget {
   final HomeScreenModel model;
   final Color gradient1, gradient2;
   final double elevationBar;
-  final int currentPageGamesIndex, currentTabGamesIndex, currentTabIndex;
+  final int currentTabGamesIndex, currentTabIndex;
   final List<Game> game;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -21,7 +21,6 @@ class TopToolBarHome extends StatelessWidget {
       @required this.gradient1,
       @required this.gradient2,
       @required this.elevationBar,
-      @required this.currentPageGamesIndex,
       @required this.currentTabGamesIndex,
       @required this.currentTabIndex,
       @required this.game})
@@ -39,7 +38,6 @@ class TopToolBarHome extends StatelessWidget {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              //UserC _userC = UserC.fromData(snapshot.data());
               return snapshot.data['photoURL'] == null
                   ? Builder(
                       builder: (context) => GestureDetector(
@@ -49,12 +47,12 @@ class TopToolBarHome extends StatelessWidget {
                           height: 45,
                           width: 45,
                           decoration: BoxDecoration(
-                              color: Color(0xFF222831),
+                              color: Color(0xFF222831).withOpacity(0.7),
                               shape: BoxShape.circle,
                               border: Border.all(color: Color(0xFF222831))),
                           child: Icon(
                             Icons.person,
-                            size: 40,
+                            size: 30,
                           ),
                         ),
                       ),

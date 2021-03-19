@@ -42,9 +42,6 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
 
   FlutterVideoCompress flutterVideoCompress = FlutterVideoCompress();
 
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  Stream stream;
-
   VideoEditorController _videoEditorController;
   TextEditingController _captionController = TextEditingController();
   TextEditingController _hashtagsController = TextEditingController();
@@ -111,30 +108,27 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
           .get();
       var alldocs = await FirebaseFirestore.instance
           .collection('posts')
-          .doc(idGame)
-          .collection(nameGame)
           .where('uid', isEqualTo: currentUser)
           .get();
       int length = alldocs.docs.length;
       String video = await uploadVideoToStorage(
-          videoPath, "Video$nameGame$currentUser-$length", nameGame);
+          videoPath, "Video$currentUser-$length", nameGame);
       String previewImage = await uploadImagePreviewToStorage(
           videoPath, "Video$currentUser-$length", nameGame);
       FirebaseFirestore.instance
           .collection('posts')
-          .doc(idGame)
-          .collection(nameGame)
-          .doc("Video$nameGame$currentUser-$length")
+          .doc("Video$currentUser-$length")
           .set({
         'uid': currentUser,
         'username': userdoc.data()['pseudo'],
         'profilpicture': userdoc.data()['photoURL'],
-        'id': "Video$nameGame$currentUser-$length",
+        'id': "Video$currentUser-$length",
         'game': nameGame,
         'up': [],
         'down': [],
         'commentcount': 0,
         'caption': _captionController.text,
+        'hashtags': _hashtagsController.text,
         'videoUrl': video,
         'previewImage': previewImage
       });
