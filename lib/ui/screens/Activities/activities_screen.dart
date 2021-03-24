@@ -1,15 +1,19 @@
-import 'package:Gemu/constants/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
-class MessagerieMenuDrawer extends StatefulWidget {
-  MessagerieMenuDrawer({Key key}) : super(key: key);
+import 'package:Gemu/constants/variables.dart';
+
+import 'notifications_screen.dart';
+import 'messages_screen.dart';
+
+class ActivitiesMenuDrawer extends StatefulWidget {
+  ActivitiesMenuDrawer({Key key}) : super(key: key);
 
   @override
-  _MessagerieMenuDrawerState createState() => _MessagerieMenuDrawerState();
+  _ActivitiesMenuDrawerState createState() => _ActivitiesMenuDrawerState();
 }
 
-class _MessagerieMenuDrawerState extends State<MessagerieMenuDrawer>
+class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
     with TickerProviderStateMixin {
   TabController _tabController;
   int currentTabIndex = 0;
@@ -111,12 +115,10 @@ class _MessagerieMenuDrawerState extends State<MessagerieMenuDrawer>
                 body: Stack(
                   children: [
                     TabBarView(controller: _tabController, children: [
-                      Center(
-                        child: Text(activities[whatActivity]),
+                      NotificationsScreen(
+                        whatActivity: activities[whatActivity],
                       ),
-                      Center(
-                        child: Text('Messages'),
-                      )
+                      MessagesScreen()
                     ]),
                     Align(
                         alignment: Alignment.topCenter,
@@ -154,12 +156,10 @@ class _MessagerieMenuDrawerState extends State<MessagerieMenuDrawer>
             body: Stack(
               children: [
                 TabBarView(controller: _tabController, children: [
-                  Center(
-                    child: Text(activities[whatActivity]),
+                  NotificationsScreen(
+                    whatActivity: activities[whatActivity],
                   ),
-                  Center(
-                    child: Text('Messages'),
-                  )
+                  MessagesScreen()
                 ]),
                 Align(alignment: Alignment.topCenter, child: activitiesPanel()),
               ],

@@ -534,14 +534,9 @@ class ProfileViewState extends State<ProfileView>
                             Positioned(
                               top: 0,
                               left: 0,
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.play_arrow,
-                                    color: Colors.white,
-                                  ),
-                                  Text('0')
-                                ],
+                              child: Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
                               ),
                             ),
                           ],

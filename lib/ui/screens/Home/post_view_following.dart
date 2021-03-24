@@ -22,6 +22,8 @@ class PostViewFollowingState extends State<PostViewFollowing> {
   bool dataIsThere = false;
   List posts = [];
 
+  Stream stream;
+
   @override
   void initState() {
     super.initState();
@@ -46,8 +48,12 @@ class PostViewFollowingState extends State<PostViewFollowing> {
         .get();
     for (var item in following.docs) {
       posts.add(item.id);
-      print(posts);
     }
+
+    stream = FirebaseFirestore.instance
+        .collection('posts')
+        .where('uid', whereIn: posts)
+        .snapshots();
 
     setState(() {
       dataIsThere = true;
@@ -58,10 +64,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
   Widget build(BuildContext context) {
     return dataIsThere
         ? StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('posts')
-                .where('uid', whereIn: posts)
-                .snapshots(),
+            stream: stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(
@@ -98,6 +101,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
                               pictureUrl: post.data()['pictureUrl'],
                             )
                           : VideoPlayerItem(
+                              idPost: post.data()['id'],
                               videoUrl: post.data()['videoUrl'],
                             ),
                       Positioned(
@@ -115,7 +119,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
                           child: ActionsPostBar(
                             idUser: post.data()['uid'],
                             idPost: post.data()['id'],
-                            profilPicture: post.data()['profilepicture'],
+                            profilPicture: post.data()['profilpicture'],
                             commentsCounts:
                                 post.data()['commentcount'].toString(),
                             up: post.data()['up'],

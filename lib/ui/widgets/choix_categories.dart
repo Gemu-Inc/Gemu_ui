@@ -1,13 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChoixCategories extends StatefulWidget {
-  final DocumentSnapshot categorie;
+  final String categorie;
+  final List tags;
 
-  ChoixCategories({
-    Key key,
-    @required this.categorie,
-  }) : super(key: key);
+  ChoixCategories({Key key, @required this.categorie, @required this.tags})
+      : super(key: key);
 
   @override
   ChoixCategoriesState createState() => ChoixCategoriesState();
@@ -24,22 +22,27 @@ class ChoixCategoriesState extends State<ChoixCategories>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FilterChip(
-      label: Text(widget.categorie['name']),
+      label: Text(widget.categorie),
       labelPadding: EdgeInsets.all(6.0),
       selected: isSelected,
       onSelected: (bool selected) {
         setState(() {
           isSelected = !isSelected;
+          if (isSelected == false) {
+            widget.tags.remove(widget.categorie);
+          } else {
+            widget.tags.add(widget.categorie);
+          }
         });
       },
       selectedColor: Theme.of(context).canvasColor,
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

@@ -29,11 +29,18 @@ class PostViewGameState extends State<PostViewGame> {
 
   int currentPageGamesIndex;
 
+  Stream stream;
+
   @override
   void initState() {
     super.initState();
     _pageGamesController = PageController();
     currentPageGamesIndex = 0;
+
+    stream = FirebaseFirestore.instance
+        .collection('posts')
+        .where('game', isEqualTo: widget.game.name)
+        .snapshots();
   }
 
   @override
@@ -45,10 +52,7 @@ class PostViewGameState extends State<PostViewGame> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('posts')
-          .where('game', isEqualTo: widget.game.name)
-          .snapshots(),
+      stream: stream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -101,6 +105,7 @@ class PostViewGameState extends State<PostViewGame> {
                         pictureUrl: post.data()['pictureUrl'],
                       )
                     : VideoPlayerItem(
+                        idPost: post.data()['id'],
                         videoUrl: post.data()['videoUrl'],
                       ),
                 Positioned(

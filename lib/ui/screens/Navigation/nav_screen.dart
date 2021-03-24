@@ -62,7 +62,7 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
               key: _scaffoldKeyNav,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               drawer: ProfilMenuDrawer(),
-              endDrawer: MessagerieMenuDrawer(),
+              endDrawer: ActivitiesMenuDrawer(),
               body: Stack(
                 children: [
                   screenNav[page],

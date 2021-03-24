@@ -48,6 +48,7 @@ class PictureItemState extends State<PictureItem>
   @override
   void dispose() {
     _upController.dispose();
+    _downController.dispose();
     super.dispose();
   }
 
