@@ -40,6 +40,7 @@ class PostViewGameState extends State<PostViewGame> {
     stream = FirebaseFirestore.instance
         .collection('posts')
         .where('game', isEqualTo: widget.game.name)
+        .where('privacy', isEqualTo: 'Public')
         .snapshots();
   }
 
@@ -101,16 +102,18 @@ class PostViewGameState extends State<PostViewGame> {
               return Stack(children: [
                 post.data()['videoUrl'] == null
                     ? PictureItem(
+                        idUser: post.data()['uid'],
                         idPost: post.data()['id'],
                         pictureUrl: post.data()['pictureUrl'],
                       )
                     : VideoPlayerItem(
+                        idUser: post.data()['uid'],
                         idPost: post.data()['id'],
                         videoUrl: post.data()['videoUrl'],
                       ),
                 Positioned(
                     left: 0,
-                    bottom: 80,
+                    bottom: 90,
                     child: ContentPostDescription(
                       idUser: post.data()['uid'],
                       username: post.data()['username'],
@@ -119,7 +122,7 @@ class PostViewGameState extends State<PostViewGame> {
                     )),
                 Positioned(
                     right: 0,
-                    bottom: 80,
+                    bottom: 75,
                     child: ActionsPostBar(
                       idUser: post.data()['uid'],
                       idPost: post.data()['id'],
@@ -127,7 +130,7 @@ class PostViewGameState extends State<PostViewGame> {
                       commentsCounts: post.data()['commentcount'].toString(),
                       up: post.data()['up'],
                       down: post.data()['down'],
-                    ))
+                    )),
               ]);
             });
       },

@@ -59,6 +59,7 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
     return ViewModelBuilder<NavScreenModel>.reactive(
         viewModelBuilder: () => NavScreenModel(),
         builder: (context, model, child) => Scaffold(
+              resizeToAvoidBottomInset: false,
               key: _scaffoldKeyNav,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               drawer: ProfilMenuDrawer(),

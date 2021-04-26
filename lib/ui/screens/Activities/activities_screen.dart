@@ -3,8 +3,8 @@ import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'package:Gemu/constants/variables.dart';
 
-import 'notifications_screen.dart';
-import 'messages_screen.dart';
+import 'Notifications/notifications_screen.dart';
+import 'Messages/messages_screen.dart';
 
 class ActivitiesMenuDrawer extends StatefulWidget {
   ActivitiesMenuDrawer({Key key}) : super(key: key);
@@ -28,7 +28,6 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
     'All activities',
     'Comments',
     'Follows',
-    'Gin',
     'Up&Down'
   ];
 
@@ -220,7 +219,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
         sizeFactor: _activitiesAnimation,
         child: ClipRect(
             child: Container(
-                height: MediaQuery.of(context).size.height / 2,
+                height: MediaQuery.of(context).size.height / 3,
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
                         begin: Alignment.topLeft,
@@ -287,19 +286,6 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                             style: mystyle(12, Colors.white60)),
                         trailing:
                             whatActivity == 3 ? Icon(Icons.check) : SizedBox(),
-                      ),
-                      ListTile(
-                        onTap: () {
-                          _rotateController.reverse();
-                          _activitiesController.reverse();
-                          setState(() {
-                            whatActivity = 4;
-                          });
-                        },
-                        title: Text(activities[4],
-                            style: mystyle(12, Colors.white60)),
-                        trailing:
-                            whatActivity == 4 ? Icon(Icons.check) : SizedBox(),
                       ),
                     ],
                   ),

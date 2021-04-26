@@ -184,7 +184,11 @@ class ActionsPostBarState extends State<ActionsPostBar> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 InkWell(
-                  onTap: () => pointUpPost(widget.idPost),
+                  onTap: () {
+                    if (uid != widget.idUser) {
+                      pointUpPost(widget.idPost);
+                    }
+                  },
                   child: Icon(iconUp,
                       size: 28,
                       color: widget.up.contains(uid)
@@ -195,7 +199,11 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                   width: 10.0,
                 ),
                 InkWell(
-                  onTap: () => pointsDownPost(widget.idPost),
+                  onTap: () {
+                    if (uid != widget.idUser) {
+                      pointsDownPost(widget.idPost);
+                    }
+                  },
                   child: Icon(iconDown,
                       size: 28,
                       color: widget.down.contains(uid)
@@ -217,12 +225,19 @@ class ActionsPostBarState extends State<ActionsPostBar> {
         height: 60.0,
         child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
           InkWell(
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => CommentsView(
-                          idPost: widget.idPost,
-                        ))),
+            onTap: () => showModalBottomSheet(
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20))),
+                context: context,
+                builder: (BuildContext context) {
+                  return CommentsView(
+                    idPost: widget.idPost,
+                  );
+                }),
             child: Icon(icon, size: 28, color: Colors.grey[300]),
           ),
           Padding(
@@ -238,14 +253,18 @@ class ActionsPostBarState extends State<ActionsPostBar> {
         margin: EdgeInsets.only(top: 10.0),
         width: 55.0,
         height: 55.0,
-        child: isFollowing
+        child: widget.idUser == uid
             ? Stack(
                 children: [_getProfilePicture(context)],
               )
-            : Stack(children: [
-                _getProfilePicture(context),
-                _getPlusIcon(context: context)
-              ]));
+            : isFollowing
+                ? Stack(
+                    children: [_getProfilePicture(context)],
+                  )
+                : Stack(children: [
+                    _getProfilePicture(context),
+                    _getPlusIcon(context: context)
+                  ]));
   }
 
   Widget _getPlusIcon({BuildContext context}) {

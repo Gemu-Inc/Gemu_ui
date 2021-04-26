@@ -5,9 +5,9 @@ import 'package:video_player/video_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class VideoPlayerItem extends StatefulWidget {
-  final String idPost, videoUrl;
+  final String idUser, idPost, videoUrl;
 
-  VideoPlayerItem({this.idPost, this.videoUrl});
+  VideoPlayerItem({this.idUser, this.idPost, this.videoUrl});
 
   @override
   VideoPlayerItemState createState() => VideoPlayerItemState();
@@ -26,6 +26,8 @@ class VideoPlayerItemState extends State<VideoPlayerItem>
   void initState() {
     super.initState();
     uid = FirebaseAuth.instance.currentUser.uid;
+
+    updateView();
 
     _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
     _videoPlayerController.initialize();
@@ -62,6 +64,32 @@ class VideoPlayerItemState extends State<VideoPlayerItem>
     _upController.dispose();
     _downController.dispose();
     super.dispose();
+  }
+
+  updateView() async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.idPost)
+        .get();
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.idPost)
+        .update({'viewcount': doc.data()['viewcount'] + 1});
+
+    var view = await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.idPost)
+        .collection('viewers')
+        .doc(uid)
+        .get();
+    if (!view.exists) {
+      FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.idPost)
+          .collection('viewers')
+          .doc(uid)
+          .set({});
+    }
   }
 
   upPost() async {
@@ -153,8 +181,10 @@ class VideoPlayerItemState extends State<VideoPlayerItem>
                   Expanded(child: Container(
                     child: GestureDetector(
                       onDoubleTap: () {
-                        _upController.forward();
-                        upPost();
+                        if (uid != widget.idUser) {
+                          _upController.forward();
+                          upPost();
+                        }
                       },
                     ),
                   )),
@@ -162,8 +192,10 @@ class VideoPlayerItemState extends State<VideoPlayerItem>
                     child: Container(
                       child: GestureDetector(
                         onDoubleTap: () {
-                          _downController.forward();
-                          downPost();
+                          if (uid != widget.idUser) {
+                            _downController.forward();
+                            downPost();
+                          }
                         },
                       ),
                     ),

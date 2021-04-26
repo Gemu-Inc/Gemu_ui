@@ -7,6 +7,11 @@ import 'package:stacked/stacked.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:Gemu/screensmodels/Profil/profil_screen_model.dart';
+import 'package:Gemu/constants/variables.dart';
+
+import 'posts_profil_screen.dart';
+import 'edit_private_posts_picture.dart';
+import 'edit_private_posts_video.dart';
 
 class ProfilMenuDrawer extends StatefulWidget {
   @override
@@ -22,10 +27,13 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
   bool isDrawer = true;
 
   String uid;
-  Future myposts;
+  DocumentSnapshot user;
+  Future mypostspublic, mypostsprivate;
   int followers, following;
   int points = 0;
   bool dataIsThere = false;
+
+  List postsProfil = [];
 
   @override
   void initState() {
@@ -44,10 +52,20 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
   getAllData() async {
     uid = FirebaseAuth.instance.currentUser.uid;
 
-    //posts user
-    myposts = FirebaseFirestore.instance
+    user = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    //posts public user
+    mypostspublic = FirebaseFirestore.instance
         .collection('posts')
         .where('uid', isEqualTo: uid)
+        .where('privacy', isEqualTo: "Public")
+        .get();
+
+    //posts private user
+    mypostsprivate = FirebaseFirestore.instance
+        .collection('posts')
+        .where('uid', isEqualTo: uid)
+        .where('privacy', isEqualTo: "Private")
         .get();
 
     //get points user
@@ -117,26 +135,10 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                       }
                                     }),
                                 centerTitle: true,
-                                title: StreamBuilder(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(FirebaseAuth
-                                            .instance.currentUser.uid)
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        return Text(
-                                          snapshot.data['pseudo'],
-                                          style: TextStyle(fontSize: 23),
-                                        );
-                                      } else {
-                                        return CircularProgressIndicator(
-                                          strokeWidth: 3,
-                                          valueColor: AlwaysStoppedAnimation(
-                                              Theme.of(context).primaryColor),
-                                        );
-                                      }
-                                    }),
+                                title: Text(
+                                  user.data()['pseudo'],
+                                  style: TextStyle(fontSize: 23),
+                                ),
                                 actions: [
                                   IconButton(
                                       icon: Icon(
@@ -162,59 +164,38 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                       children: [
                                         Align(
                                             alignment: Alignment.center,
-                                            child: StreamBuilder(
-                                                stream: FirebaseFirestore
-                                                    .instance
-                                                    .collection('users')
-                                                    .doc(FirebaseAuth.instance
-                                                        .currentUser.uid)
-                                                    .snapshots(),
-                                                builder: (context, snapshot) {
-                                                  if (snapshot.hasData) {
-                                                    return snapshot.data[
-                                                                'photoURL'] ==
-                                                            null
-                                                        ? Container(
-                                                            height: 90,
-                                                            width: 90,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              shape: BoxShape
-                                                                  .circle,
-                                                              border: Border.all(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  width: 2.0),
-                                                            ),
-                                                            child: Icon(
-                                                              Icons.person,
-                                                              size: 50,
-                                                            ))
-                                                        : Container(
-                                                            margin:
-                                                                EdgeInsets.all(
-                                                                    3.0),
-                                                            width: 90,
-                                                            height: 90,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .transparent,
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                border: Border.all(
-                                                                    color: Color(
-                                                                        0xFF222831)),
-                                                                image: DecorationImage(
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    image: NetworkImage(
-                                                                        snapshot
-                                                                            .data['photoURL']))),
-                                                          );
-                                                  } else {
-                                                    return CircularProgressIndicator();
-                                                  }
-                                                })),
+                                            child: user.data()['photoURL'] ==
+                                                    null
+                                                ? Container(
+                                                    height: 90,
+                                                    width: 90,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                          color: Colors.black,
+                                                          width: 2.0),
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.person,
+                                                      size: 50,
+                                                    ))
+                                                : Container(
+                                                    margin: EdgeInsets.all(3.0),
+                                                    width: 90,
+                                                    height: 90,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.transparent,
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                            color: Color(
+                                                                0xFF222831)),
+                                                        image: DecorationImage(
+                                                            fit: BoxFit.cover,
+                                                            image: NetworkImage(
+                                                                user.data()[
+                                                                    'photoURL']))),
+                                                  )),
                                         Align(
                                           alignment: Alignment.bottomCenter,
                                           child: Padding(
@@ -327,12 +308,9 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                           },
                           body: Stack(
                             children: [
-                              TabBarView(controller: _tabController, children: [
-                                posts(),
-                                Center(
-                                  child: Text('Publication\'s private content'),
-                                ),
-                              ]),
+                              TabBarView(
+                                  controller: _tabController,
+                                  children: [postsPublic(), postsPrivate()]),
                             ],
                           )),
                     )
@@ -371,25 +349,10 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                               }
                             }),
                         centerTitle: true,
-                        title: StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(FirebaseAuth.instance.currentUser.uid)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return Text(
-                                  snapshot.data['pseudo'],
-                                  style: TextStyle(fontSize: 23),
-                                );
-                              } else {
-                                return CircularProgressIndicator(
-                                  strokeWidth: 3,
-                                  valueColor: AlwaysStoppedAnimation(
-                                      Theme.of(context).primaryColor),
-                                );
-                              }
-                            }),
+                        title: Text(
+                          user.data()['pseudo'],
+                          style: TextStyle(fontSize: 23),
+                        ),
                         actions: [
                           IconButton(
                               icon: Icon(
@@ -414,50 +377,34 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                               children: [
                                 Align(
                                     alignment: Alignment.center,
-                                    child: StreamBuilder(
-                                        stream: FirebaseFirestore.instance
-                                            .collection('users')
-                                            .doc(FirebaseAuth
-                                                .instance.currentUser.uid)
-                                            .snapshots(),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasData) {
-                                            return snapshot.data['photoURL'] ==
-                                                    null
-                                                ? Container(
-                                                    height: 90,
-                                                    width: 90,
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      border: Border.all(
-                                                          color: Colors.black,
-                                                          width: 2.0),
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.person,
-                                                      size: 50,
-                                                    ))
-                                                : Container(
-                                                    margin: EdgeInsets.all(3.0),
-                                                    width: 90,
-                                                    height: 90,
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.transparent,
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                            color: Color(
-                                                                0xFF222831)),
-                                                        image: DecorationImage(
-                                                            fit: BoxFit.cover,
-                                                            image: NetworkImage(
-                                                                snapshot.data[
-                                                                    'photoURL']))),
-                                                  );
-                                          } else {
-                                            return CircularProgressIndicator();
-                                          }
-                                        })),
+                                    child: user.data()['photoURL'] == null
+                                        ? Container(
+                                            height: 90,
+                                            width: 90,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Colors.black,
+                                                  width: 2.0),
+                                            ),
+                                            child: Icon(
+                                              Icons.person,
+                                              size: 50,
+                                            ))
+                                        : Container(
+                                            margin: EdgeInsets.all(3.0),
+                                            width: 90,
+                                            height: 90,
+                                            decoration: BoxDecoration(
+                                                color: Colors.transparent,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                    color: Color(0xFF222831)),
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: NetworkImage(user
+                                                        .data()['photoURL']))),
+                                          )),
                                 Align(
                                   alignment: Alignment.bottomCenter,
                                   child: Padding(
@@ -569,10 +516,8 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                   body: Stack(
                     children: [
                       TabBarView(controller: _tabController, children: [
-                        posts(),
-                        Center(
-                          child: Text('Publication\s private content'),
-                        )
+                        postsPublic(),
+                        postsPrivate(),
                       ]),
                     ],
                   )),
@@ -580,108 +525,246 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
     );
   }
 
-  Widget posts() {
+  Widget postsPublic() {
     return FutureBuilder(
-        future: myposts,
+        future: mypostspublic,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.data.docs.length == 0) {
+            return Center(
+              child: Text(
+                'Pas encore de publications publiques',
+                style: mystyle(11),
+              ),
+            );
           }
           return GridView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: snapshot.data.docs.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, childAspectRatio: 1, crossAxisSpacing: 6),
+                  crossAxisCount: 3,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6),
               itemBuilder: (BuildContext context, int index) {
                 DocumentSnapshot post = snapshot.data.docs[index];
                 return post.data()['previewImage'] == null
-                    ? Container(
-                        height: 150,
-                        width: 150,
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 150,
-                              width: 150,
-                              child: Image(
-                                  fit: BoxFit.cover,
-                                  image: CachedNetworkImageProvider(
-                                      post.data()['pictureUrl'])),
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: InkWell(
-                                onTap: () => print('Supprimer ma publication'),
-                                child: Icon(
-                                  Icons.clear,
-                                  color: Colors.white,
-                                ),
+                    ? GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PostsProfilScreen(
+                                      userID: user.data()['id'],
+                                      indexPost: index,
+                                    ))),
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 150,
+                                width: 150,
+                                child: Image(
+                                    fit: BoxFit.cover,
+                                    image: CachedNetworkImageProvider(
+                                        post.data()['pictureUrl'])),
                               ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.remove_red_eye,
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: InkWell(
+                                  onTap: () =>
+                                      print('Supprimer ma publication'),
+                                  child: Icon(
+                                    Icons.clear,
                                     color: Colors.white,
                                   ),
-                                  Text('0')
-                                ],
+                                ),
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.remove_red_eye,
+                                      color: Colors.white,
+                                    ),
+                                    Text(post.data()['viewcount'].toString()),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       )
-                    : Container(
-                        height: 150,
-                        width: 150,
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 150,
-                              width: 150,
-                              child: Image(
-                                  fit: BoxFit.cover,
-                                  image: CachedNetworkImageProvider(
-                                      post.data()['previewImage'])),
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: InkWell(
-                                onTap: () => print('Supprimer ma publication'),
+                    : GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PostsProfilScreen(
+                                    userID: user.data()['id'],
+                                    indexPost: index))),
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 150,
+                                width: 150,
+                                child: Image(
+                                    fit: BoxFit.cover,
+                                    image: CachedNetworkImageProvider(
+                                        post.data()['previewImage'])),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: InkWell(
+                                  onTap: () =>
+                                      print('Supprimer ma publication'),
+                                  child: Icon(
+                                    Icons.clear,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.remove_red_eye,
+                                      color: Colors.white,
+                                    ),
+                                    Text(post.data()['viewcount'].toString()),
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                left: 0,
                                 child: Icon(
-                                  Icons.clear,
+                                  Icons.play_arrow,
                                   color: Colors.white,
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.remove_red_eye,
+                            ],
+                          ),
+                        ),
+                      );
+              });
+        });
+  }
+
+  Widget postsPrivate() {
+    return FutureBuilder(
+        future: mypostsprivate,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.data.docs.length == 0) {
+            return Center(
+              child: Text('Pas de publications privées', style: mystyle(11)),
+            );
+          }
+          return GridView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: snapshot.data.docs.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6),
+              itemBuilder: (BuildContext context, int index) {
+                DocumentSnapshot post = snapshot.data.docs[index];
+                return post.data()['previewImage'] == null
+                    ? GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditPrivatePostsPicture(
+                                      post: post,
+                                    ))),
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 150,
+                                width: 150,
+                                child: Image(
+                                    fit: BoxFit.cover,
+                                    image: CachedNetworkImageProvider(
+                                        post.data()['pictureUrl'])),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: InkWell(
+                                  onTap: () =>
+                                      print('Supprimer ma publication'),
+                                  child: Icon(
+                                    Icons.clear,
                                     color: Colors.white,
                                   ),
-                                  Text('0')
-                                ],
+                                ),
                               ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              child: Icon(
-                                Icons.play_arrow,
-                                color: Colors.white,
+                            ],
+                          ),
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditPrivatePostsVideo(
+                                      post: post,
+                                    ))),
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 150,
+                                width: 150,
+                                child: Image(
+                                    fit: BoxFit.cover,
+                                    image: CachedNetworkImageProvider(
+                                        post.data()['previewImage'])),
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: InkWell(
+                                  onTap: () =>
+                                      print('Supprimer ma publication'),
+                                  child: Icon(
+                                    Icons.clear,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                child: Icon(
+                                  Icons.play_arrow,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
               });

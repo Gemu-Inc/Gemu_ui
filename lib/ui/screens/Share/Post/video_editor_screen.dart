@@ -39,6 +39,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
   String _exportText = "";
   String choixGameName = "";
   String choixGameId = "";
+  String privacy = "Public";
 
   FlutterVideoCompress flutterVideoCompress = FlutterVideoCompress();
 
@@ -130,7 +131,9 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
         'caption': _captionController.text,
         'hashtags': _hashtagsController.text,
         'videoUrl': video,
-        'previewImage': previewImage
+        'previewImage': previewImage,
+        'privacy': privacy,
+        'viewcount': 0
       });
       Navigator.pushNamedAndRemoveUntil(
           context, NavScreenRoute, (route) => false);
@@ -262,7 +265,15 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                                     ))),
                             Align(
                               alignment: Alignment.topCenter,
-                              child: _topBar(),
+                              child: Column(
+                                children: [
+                                  _topBar(),
+                                  SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  _privacy()
+                                ],
+                              ),
                             ),
                             Align(
                               alignment: Alignment.centerRight,
@@ -442,6 +453,35 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
             ],
           );
         });
+  }
+
+  Widget _privacy() {
+    return InkWell(
+      onTap: () {
+        if (privacy == "Public") {
+          setState(() {
+            privacy = "Private";
+          });
+        } else if (privacy == "Private") {
+          setState(() {
+            privacy = "Public";
+          });
+        }
+      },
+      child: Container(
+        height: 25,
+        width: MediaQuery.of(context).size.width / 4,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            color: Colors.black,
+            border: Border.all(color: Colors.white),
+            borderRadius: BorderRadius.circular(10.0)),
+        child: Text(
+          privacy,
+          style: mystyle(11.0),
+        ),
+      ),
+    );
   }
 
   Widget _designBar() {

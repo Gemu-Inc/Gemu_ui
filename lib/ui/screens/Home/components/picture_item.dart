@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PictureItem extends StatefulWidget {
-  final String idPost, pictureUrl;
+  final String idUser, idPost, pictureUrl;
 
-  PictureItem({this.idPost, this.pictureUrl});
+  PictureItem({this.idUser, this.idPost, this.pictureUrl});
 
   @override
   PictureItemState createState() => PictureItemState();
@@ -22,6 +22,8 @@ class PictureItemState extends State<PictureItem>
   void initState() {
     super.initState();
     uid = FirebaseAuth.instance.currentUser.uid;
+
+    updateView();
 
     _upController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
@@ -50,6 +52,34 @@ class PictureItemState extends State<PictureItem>
     _upController.dispose();
     _downController.dispose();
     super.dispose();
+  }
+
+  updateView() async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.idPost)
+        .get();
+    if (doc.data()['uid'] != uid) {
+      FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.idPost)
+          .update({'viewcount': doc.data()['viewcount'] + 1});
+    }
+
+    var view = await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.idPost)
+        .collection('viewers')
+        .doc(uid)
+        .get();
+    if (!view.exists) {
+      FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.idPost)
+          .collection('viewers')
+          .doc(uid)
+          .set({});
+    }
   }
 
   upPost() async {
@@ -96,8 +126,7 @@ class PictureItemState extends State<PictureItem>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Stack(
+    return Stack(
       children: [
         Container(
           color: Colors.black,
@@ -112,8 +141,10 @@ class PictureItemState extends State<PictureItem>
             Expanded(child: Container(
               child: GestureDetector(
                 onDoubleTap: () {
-                  _upController.forward();
-                  upPost();
+                  if (uid != widget.idUser) {
+                    _upController.forward();
+                    upPost();
+                  }
                 },
               ),
             )),
@@ -121,8 +152,10 @@ class PictureItemState extends State<PictureItem>
               child: Container(
                 child: GestureDetector(
                   onDoubleTap: () {
-                    _downController.forward();
-                    downPost();
+                    if (uid != widget.idUser) {
+                      _downController.forward();
+                      downPost();
+                    }
                   },
                 ),
               ),
@@ -150,6 +183,6 @@ class PictureItemState extends State<PictureItem>
           ),
         )
       ],
-    ));
+    );
   }
 }

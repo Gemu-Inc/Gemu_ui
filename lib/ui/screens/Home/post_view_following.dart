@@ -50,10 +50,13 @@ class PostViewFollowingState extends State<PostViewFollowing> {
       posts.add(item.id);
     }
 
-    stream = FirebaseFirestore.instance
-        .collection('posts')
-        .where('uid', whereIn: posts)
-        .snapshots();
+    if (posts.length != 0) {
+      stream = FirebaseFirestore.instance
+          .collection('posts')
+          .where('uid', whereIn: posts)
+          .where('privacy', isEqualTo: 'Public')
+          .snapshots();
+    }
 
     setState(() {
       dataIsThere = true;
@@ -63,71 +66,80 @@ class PostViewFollowingState extends State<PostViewFollowing> {
   @override
   Widget build(BuildContext context) {
     return dataIsThere
-        ? StreamBuilder(
-            stream: stream,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+        ? posts.length == 0
+            ? Center(
+                child: Text(
+                  'No following at the moment',
+                  style: mystyle(11),
+                ),
+              )
+            : StreamBuilder(
+                stream: stream,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
 
-              if (snapshot.data.docs.length == 0) {
-                return Center(
-                  child: Text(
-                    'No following at the moment',
-                    style: mystyle(11),
-                  ),
-                );
-              }
+                  if (snapshot.data.docs.length == 0) {
+                    return Center(
+                      child: Text(
+                        'No following at the moment',
+                        style: mystyle(11),
+                      ),
+                    );
+                  }
 
-              return PageView.builder(
-                  controller: _pageFollowingController,
-                  scrollDirection: Axis.vertical,
-                  onPageChanged: (index) {
-                    setState(() {
-                      currentPageFollowingIndex = index;
-                      print(
-                          'currentPageGamesIndex est à: $currentPageFollowingIndex');
-                    });
-                  },
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot post = snapshot.data.docs[index];
-                    return Stack(children: [
-                      post.data()['videoUrl'] == null
-                          ? PictureItem(
-                              idPost: post.data()['id'],
-                              pictureUrl: post.data()['pictureUrl'],
-                            )
-                          : VideoPlayerItem(
-                              idPost: post.data()['id'],
-                              videoUrl: post.data()['videoUrl'],
-                            ),
-                      Positioned(
-                          left: 0,
-                          bottom: 80,
-                          child: ContentPostDescription(
-                            idUser: post.data()['uid'],
-                            username: post.data()['username'],
-                            caption: post.data()['caption'],
-                            hashtags: post.data()['hashtags'],
-                          )),
-                      Positioned(
-                          right: 0,
-                          bottom: 80,
-                          child: ActionsPostBar(
-                            idUser: post.data()['uid'],
-                            idPost: post.data()['id'],
-                            profilPicture: post.data()['profilpicture'],
-                            commentsCounts:
-                                post.data()['commentcount'].toString(),
-                            up: post.data()['up'],
-                            down: post.data()['down'],
-                          ))
-                    ]);
-                  });
-            })
+                  return PageView.builder(
+                      controller: _pageFollowingController,
+                      scrollDirection: Axis.vertical,
+                      onPageChanged: (index) {
+                        setState(() {
+                          currentPageFollowingIndex = index;
+                          print(
+                              'currentPageGamesIndex est à: $currentPageFollowingIndex');
+                        });
+                      },
+                      itemCount: snapshot.data.docs.length,
+                      itemBuilder: (context, index) {
+                        DocumentSnapshot post = snapshot.data.docs[index];
+                        return Stack(children: [
+                          post.data()['videoUrl'] == null
+                              ? PictureItem(
+                                  idUser: post.data()['uid'],
+                                  idPost: post.data()['id'],
+                                  pictureUrl: post.data()['pictureUrl'],
+                                )
+                              : VideoPlayerItem(
+                                  idUser: post.data()['uid'],
+                                  idPost: post.data()['id'],
+                                  videoUrl: post.data()['videoUrl'],
+                                ),
+                          Positioned(
+                              left: 0,
+                              bottom: 90,
+                              child: ContentPostDescription(
+                                idUser: post.data()['uid'],
+                                username: post.data()['username'],
+                                caption: post.data()['caption'],
+                                hashtags: post.data()['hashtags'],
+                              )),
+                          Positioned(
+                              right: 0,
+                              bottom: 75,
+                              child: ActionsPostBar(
+                                idUser: post.data()['uid'],
+                                idPost: post.data()['id'],
+                                profilPicture: post.data()['profilpicture'],
+                                commentsCounts:
+                                    post.data()['commentcount'].toString(),
+                                up: post.data()['up'],
+                                down: post.data()['down'],
+                              )),
+                        ]);
+                      });
+                })
         : Center(
             child: CircularProgressIndicator(),
           );

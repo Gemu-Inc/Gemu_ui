@@ -10,6 +10,8 @@ import 'package:Gemu/ui/widgets/clipper_appbar.dart';
 import 'package:Gemu/size_config.dart';
 import 'package:Gemu/ui/widgets/choix_categories.dart';
 
+import 'search_screen.dart';
+
 class HighlightsScreen extends StatefulWidget {
   const HighlightsScreen({Key key}) : super(key: key);
 
@@ -211,7 +213,8 @@ class HighlightsScreenState extends State<HighlightsScreen>
 
   Widget search() {
     return GestureDetector(
-      onTap: () => print('Search'),
+      onTap: () => Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SearchScreen())),
       child: Container(
         margin: EdgeInsets.only(left: 10.0, right: 20.0),
         height: 35,

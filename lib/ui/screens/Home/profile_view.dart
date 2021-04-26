@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
+import 'package:Gemu/ui/screens/Profil/posts_profil_screen.dart';
+
 class ProfileView extends StatefulWidget {
   final String idUser;
 
@@ -18,11 +20,12 @@ class ProfileViewState extends State<ProfileView>
   TabController _tabController;
 
   String uid;
-  Future myposts;
+  DocumentSnapshot user;
+  Future mypostsPublic;
   int pointsPost;
   int followers, following;
   int points = 0;
-  bool isFollowing;
+  bool isFollowing = false;
   bool dataIsThere = false;
 
   @override
@@ -44,10 +47,16 @@ class ProfileViewState extends State<ProfileView>
     //id online user
     uid = FirebaseAuth.instance.currentUser.uid;
 
-    //posts du profile user
-    myposts = FirebaseFirestore.instance
+    user = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.idUser)
+        .get();
+
+    //posts public du profile user
+    mypostsPublic = FirebaseFirestore.instance
         .collection('posts')
         .where('uid', isEqualTo: widget.idUser)
+        .where('privacy', isEqualTo: "Public")
         .get();
 
     //get points user
@@ -169,25 +178,10 @@ class ProfileViewState extends State<ProfileView>
                       forceElevated: true,
                       pinned: true,
                       centerTitle: true,
-                      title: StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(widget.idUser)
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return Text(
-                                snapshot.data['pseudo'],
-                                style: TextStyle(fontSize: 23),
-                              );
-                            } else {
-                              return CircularProgressIndicator(
-                                strokeWidth: 3,
-                                valueColor: AlwaysStoppedAnimation(
-                                    Theme.of(context).primaryColor),
-                              );
-                            }
-                          }),
+                      title: Text(
+                        user.data()['pseudo'],
+                        style: TextStyle(fontSize: 23),
+                      ),
                       actions: [
                         IconButton(
                             icon: Icon(Icons.clear),
@@ -209,16 +203,44 @@ class ProfileViewState extends State<ProfileView>
                             children: [
                               Align(
                                   alignment: Alignment.center,
-                                  child: StreamBuilder(
-                                      stream: FirebaseFirestore.instance
-                                          .collection('users')
-                                          .doc(widget.idUser)
-                                          .snapshots(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return widget.idUser == uid
-                                              ? snapshot.data['photoURL'] ==
-                                                      null
+                                  child: widget.idUser == uid
+                                      ? user.data()['photoURL'] == null
+                                          ? Container(
+                                              height: 90,
+                                              width: 90,
+                                              decoration: BoxDecoration(
+                                                color: Theme.of(context)
+                                                    .canvasColor,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                    color: Colors.black,
+                                                    width: 2.0),
+                                              ),
+                                              child: Icon(
+                                                Icons.person,
+                                                size: 50,
+                                              ))
+                                          : Container(
+                                              margin: EdgeInsets.all(3.0),
+                                              width: 90,
+                                              height: 90,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.transparent,
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                      color: Color(0xFF222831)),
+                                                  image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: NetworkImage(
+                                                          user.data()[
+                                                              'photoURL']))),
+                                            )
+                                      : Container(
+                                          height: 100,
+                                          width: 90,
+                                          child: Stack(
+                                            children: [
+                                              user.data()['photoURL'] == null
                                                   ? Container(
                                                       height: 90,
                                                       width: 90,
@@ -235,8 +257,6 @@ class ProfileViewState extends State<ProfileView>
                                                         size: 50,
                                                       ))
                                                   : Container(
-                                                      margin:
-                                                          EdgeInsets.all(3.0),
                                                       width: 90,
                                                       height: 90,
                                                       decoration: BoxDecoration(
@@ -250,98 +270,43 @@ class ProfileViewState extends State<ProfileView>
                                                           image: DecorationImage(
                                                               fit: BoxFit.cover,
                                                               image: NetworkImage(
-                                                                  snapshot.data[
+                                                                  user.data()[
                                                                       'photoURL']))),
-                                                    )
-                                              : Container(
-                                                  height: 100,
-                                                  width: 90,
-                                                  child: Stack(
-                                                    children: [
-                                                      snapshot.data[
-                                                                  'photoURL'] ==
-                                                              null
-                                                          ? Container(
-                                                              height: 90,
-                                                              width: 90,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .canvasColor,
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    width: 2.0),
-                                                              ),
-                                                              child: Icon(
-                                                                Icons.person,
-                                                                size: 50,
-                                                              ))
-                                                          : Container(
-                                                              width: 90,
-                                                              height: 90,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  border: Border.all(
-                                                                      color: Color(
-                                                                          0xFF222831)),
-                                                                  image: DecorationImage(
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      image: NetworkImage(
-                                                                          snapshot
-                                                                              .data['photoURL']))),
-                                                            ),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .bottomCenter,
-                                                        child: GestureDetector(
-                                                          onTap: () =>
-                                                              followUser(),
-                                                          child: Container(
-                                                            height: 30,
-                                                            width: 30,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              gradient: LinearGradient(
-                                                                  begin: Alignment
-                                                                      .topLeft,
-                                                                  end: Alignment.bottomRight,
-                                                                  colors: [
-                                                                    Theme.of(
-                                                                            context)
-                                                                        .primaryColor,
-                                                                    Theme.of(
-                                                                            context)
-                                                                        .accentColor
-                                                                  ]),
-                                                              shape: BoxShape
-                                                                  .circle,
-                                                              border: Border.all(
-                                                                  color: Color(
-                                                                      0xFF222831)),
-                                                            ),
-                                                            child: isFollowing
-                                                                ? Icon(
-                                                                    Icons.check)
-                                                                : Icon(
-                                                                    Icons.add),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
+                                                    ),
+                                              Align(
+                                                alignment:
+                                                    Alignment.bottomCenter,
+                                                child: GestureDetector(
+                                                  onTap: () => followUser(),
+                                                  child: Container(
+                                                    height: 30,
+                                                    width: 30,
+                                                    decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                          begin:
+                                                              Alignment.topLeft,
+                                                          end: Alignment
+                                                              .bottomRight,
+                                                          colors: [
+                                                            Theme.of(context)
+                                                                .primaryColor,
+                                                            Theme.of(context)
+                                                                .accentColor
+                                                          ]),
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                          color: Color(
+                                                              0xFF222831)),
+                                                    ),
+                                                    child: isFollowing
+                                                        ? Icon(Icons.check)
+                                                        : Icon(Icons.add),
                                                   ),
-                                                );
-                                        } else {
-                                          return CircularProgressIndicator();
-                                        }
-                                      })),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        )),
                               Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Padding(
@@ -444,7 +409,7 @@ class ProfileViewState extends State<ProfileView>
                 body: Stack(
                   children: [
                     TabBarView(controller: _tabController, children: [
-                      posts(),
+                      postsPublic(),
                       Center(
                         child: Text('Statistics\'s content'),
                       )
@@ -456,9 +421,9 @@ class ProfileViewState extends State<ProfileView>
               ));
   }
 
-  Widget posts() {
+  Widget postsPublic() {
     return FutureBuilder(
-        future: myposts,
+        future: mypostsPublic,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -476,70 +441,86 @@ class ProfileViewState extends State<ProfileView>
                 pointsPost =
                     (post.data()['up'].length - post.data()['down'].length);
                 return post.data()['previewImage'] == null
-                    ? Container(
-                        height: 150,
-                        width: 150,
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 150,
-                              width: 150,
-                              child: Image(
-                                  fit: BoxFit.cover,
-                                  image: CachedNetworkImageProvider(
-                                      post.data()['pictureUrl'])),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.remove_red_eye,
-                                    color: Colors.white,
-                                  ),
-                                  Text('0')
-                                ],
+                    ? GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PostsProfilScreen(
+                                    userID: user.data()['id'],
+                                    indexPost: index))),
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 150,
+                                width: 150,
+                                child: Image(
+                                    fit: BoxFit.cover,
+                                    image: CachedNetworkImageProvider(
+                                        post.data()['pictureUrl'])),
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.remove_red_eye,
+                                      color: Colors.white,
+                                    ),
+                                    Text(post.data()['viewcount'].toString()),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       )
-                    : Container(
-                        height: 150,
-                        width: 150,
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 150,
-                              width: 150,
-                              child: Image(
-                                  fit: BoxFit.cover,
-                                  image: CachedNetworkImageProvider(
-                                      post.data()['previewImage'])),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.remove_red_eye,
-                                    color: Colors.white,
-                                  ),
-                                  Text('0')
-                                ],
+                    : GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PostsProfilScreen(
+                                    userID: user.data()['id'],
+                                    indexPost: index))),
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 150,
+                                width: 150,
+                                child: Image(
+                                    fit: BoxFit.cover,
+                                    image: CachedNetworkImageProvider(
+                                        post.data()['previewImage'])),
                               ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              child: Icon(
-                                Icons.play_arrow,
-                                color: Colors.white,
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.remove_red_eye,
+                                      color: Colors.white,
+                                    ),
+                                    Text(post.data()['viewcount'].toString()),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                child: Icon(
+                                  Icons.play_arrow,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
               });

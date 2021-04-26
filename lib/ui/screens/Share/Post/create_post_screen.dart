@@ -14,41 +14,51 @@ class AddPostScreen extends StatefulWidget {
 
 class AddPostScreenState extends State<AddPostScreen> {
   pickVideo(ImageSource src) async {
-    final video = await ImagePicker()
-        .getVideo(source: src, maxDuration: Duration(seconds: 10));
-    if (video != null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => VideoEditorScreen(
-                    file: File(video.path),
-                  )));
-    } else {
-      Navigator.pop(context);
+    try {
+      final video = await ImagePicker()
+          .getVideo(source: src, maxDuration: Duration(seconds: 10));
+      if (video != null) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => VideoEditorScreen(
+                      file: File(video.path),
+                    )));
+      } else {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   pickImage(ImageSource src) async {
-    final image = await ImagePicker().getImage(source: src, imageQuality: 50);
-    if (image != null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PictureEditorScreen(
-                    file: File(image.path),
-                  )));
-    } else {
-      Navigator.pop(context);
+    try {
+      final image = await ImagePicker().getImage(source: src, imageQuality: 50);
+      if (image != null) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PictureEditorScreen(
+                      file: File(image.path),
+                    )));
+      } else {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   showOptionsVideo() {
     return showModalBottomSheet(
         context: context,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Theme.of(context).canvasColor,
+        elevation: 6,
         builder: (context) {
           return Container(
             height: 175,
-            color: Theme.of(context).canvasColor,
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
@@ -76,10 +86,12 @@ class AddPostScreenState extends State<AddPostScreen> {
   showOptionsImage() {
     return showModalBottomSheet(
         context: context,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Theme.of(context).canvasColor,
+        elevation: 6,
         builder: (context) {
           return Container(
             height: 175,
-            color: Theme.of(context).canvasColor,
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
