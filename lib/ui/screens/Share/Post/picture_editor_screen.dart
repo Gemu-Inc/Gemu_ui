@@ -72,6 +72,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
   String id;
   int postsCount;
 
+  bool expandContainer = false;
+
   @override
   void initState() {
     super.initState();
@@ -201,7 +203,6 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                 .doc("Picture$currentUser-$length")
                 .set({});
           } else {
-            print('pas empty');
             FirebaseFirestore.instance
                 .collection('hashtags')
                 .doc(id)
@@ -539,8 +540,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                       .contains(_hashtagsController.text.toLowerCase())) {
                     setState(() {
                       hashtagsSelected.add(_hashtagsController.text);
-                      _hashtagsController.clear();
                     });
+                    _hashtagsController.clear();
                   } else {
                     _hashtagsController.clear();
                   }
@@ -639,71 +640,96 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
   }
 
   Widget _designBar() {
-    return Container(
-      height: 70,
+    return AnimatedContainer(
+      height: expandContainer ? 150 : 90,
       width: 45,
+      duration: Duration(seconds: 1),
+      curve: Curves.fastOutSlowIn,
       decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(25),
           gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
                 Theme.of(context).primaryColor.withOpacity(0.3),
                 Theme.of(context).accentColor.withOpacity(0.3)
-              ]),
-          border: Border.all(color: Colors.black),
-          borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+              ])),
+      child: Stack(
         children: [
-          GestureDetector(
-            onTap: () async {
-              File cropped = await ImageCropper.cropImage(
-                  sourcePath: widget.file.path,
-                  aspectRatioPresets: [
-                    CropAspectRatioPreset.square,
-                    CropAspectRatioPreset.ratio3x2,
-                    CropAspectRatioPreset.original,
-                    CropAspectRatioPreset.ratio4x3,
-                    CropAspectRatioPreset.ratio16x9
-                  ],
-                  compressQuality: 100,
-                  compressFormat: ImageCompressFormat.jpg,
-                  maxHeight: 1080,
-                  maxWidth: 1080,
-                  androidUiSettings: AndroidUiSettings(
-                      toolbarTitle: '',
-                      initAspectRatio: CropAspectRatioPreset.original,
-                      lockAspectRatio: false,
-                      statusBarColor: Theme.of(context).scaffoldBackgroundColor,
-                      toolbarColor: Theme.of(context).scaffoldBackgroundColor,
-                      toolbarWidgetColor: Colors.grey,
-                      backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      activeControlsWidgetColor:
-                          Theme.of(context).primaryColor));
-              if (cropped != null) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return PictureEditorScreen(
-                    file: cropped,
-                  );
-                }));
-              } else {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return PictureEditorScreen(
-                    file: widget.file,
-                  );
-                }));
-              }
-            },
-            child: Icon(
-              Icons.crop,
-              color: Colors.white,
+          Align(
+            alignment: Alignment.topCenter,
+            child: ListView(
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: 10.0,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    File cropped = await ImageCropper.cropImage(
+                        sourcePath: widget.file.path,
+                        aspectRatioPresets: [
+                          CropAspectRatioPreset.square,
+                          CropAspectRatioPreset.ratio3x2,
+                          CropAspectRatioPreset.original,
+                          CropAspectRatioPreset.ratio4x3,
+                          CropAspectRatioPreset.ratio16x9
+                        ],
+                        compressQuality: 100,
+                        compressFormat: ImageCompressFormat.jpg,
+                        maxHeight: 1080,
+                        maxWidth: 1080,
+                        androidUiSettings: AndroidUiSettings(
+                            toolbarTitle: '',
+                            initAspectRatio: CropAspectRatioPreset.original,
+                            lockAspectRatio: false,
+                            statusBarColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            toolbarColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            toolbarWidgetColor: Colors.grey,
+                            backgroundColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            activeControlsWidgetColor:
+                                Theme.of(context).primaryColor));
+                    if (cropped != null) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return PictureEditorScreen(
+                          file: cropped,
+                        );
+                      }));
+                    } else {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return PictureEditorScreen(
+                          file: widget.file,
+                        );
+                      }));
+                    }
+                  },
+                  child: Icon(
+                    Icons.crop,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+              ],
             ),
           ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Icon(Icons.expand_more)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    expandContainer = !expandContainer;
+                  });
+                },
+                child: Icon(Icons.expand_more)),
+          )
         ],
       ),
     );
@@ -715,33 +741,43 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Container(
-                alignment: Alignment.topLeft,
-                width: 50,
-                height: 50,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Icon(
-                    Icons.clear,
-                    color: Colors.white,
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+                padding: EdgeInsets.only(left: 10.0),
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  width: 50,
+                  height: 50,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(
+                      Icons.clear,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              )),
-          Container(
-            height: 85,
-            child: Column(
-              children: [
-                _privacy(),
-                SizedBox(
-                  height: 10.0,
-                ),
-                _game()
-              ],
+                )),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              height: 85,
+              child: Column(
+                children: [
+                  _privacy(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  _game()
+                ],
+              ),
             ),
           ),
-          Padding(padding: EdgeInsets.only(right: 10.0), child: _designBar())
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+                padding: EdgeInsets.only(right: 10.0), child: _designBar()),
+          )
         ],
       ),
     );

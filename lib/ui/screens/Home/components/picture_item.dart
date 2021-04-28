@@ -64,21 +64,21 @@ class PictureItemState extends State<PictureItem>
           .collection('posts')
           .doc(widget.idPost)
           .update({'viewcount': doc.data()['viewcount'] + 1});
-    }
 
-    var view = await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(widget.idPost)
-        .collection('viewers')
-        .doc(uid)
-        .get();
-    if (!view.exists) {
-      FirebaseFirestore.instance
+      var view = await FirebaseFirestore.instance
           .collection('posts')
           .doc(widget.idPost)
           .collection('viewers')
           .doc(uid)
-          .set({});
+          .get();
+      if (!view.exists) {
+        FirebaseFirestore.instance
+            .collection('posts')
+            .doc(widget.idPost)
+            .collection('viewers')
+            .doc(uid)
+            .set({});
+      }
     }
   }
 
