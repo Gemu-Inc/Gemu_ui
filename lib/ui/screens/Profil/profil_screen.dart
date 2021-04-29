@@ -12,6 +12,8 @@ import 'package:Gemu/constants/variables.dart';
 import 'posts_profil_screen.dart';
 import 'edit_private_posts_picture.dart';
 import 'edit_private_posts_video.dart';
+import 'followers.dart';
+import 'follows.dart';
 
 class ProfilMenuDrawer extends StatefulWidget {
   @override
@@ -205,30 +207,44 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceAround,
                                               children: [
-                                                Container(
-                                                  height: 60,
-                                                  width: 70,
-                                                  child: Stack(
-                                                    children: [
-                                                      Align(
+                                                GestureDetector(
+                                                  onTap: () => Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Followers(
+                                                                idUser:
+                                                                    user.data()[
+                                                                        'id'],
+                                                              ))),
+                                                  child: Container(
+                                                    color: Colors.transparent,
+                                                    height: 60,
+                                                    width: 70,
+                                                    child: Stack(
+                                                      children: [
+                                                        Align(
+                                                            alignment: Alignment
+                                                                .topCenter,
+                                                            child: Text(
+                                                              'Followers',
+                                                            )),
+                                                        Align(
                                                           alignment: Alignment
-                                                              .topCenter,
+                                                              .bottomCenter,
                                                           child: Text(
-                                                            'Followers',
-                                                          )),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .bottomCenter,
-                                                        child: Text(
-                                                          followers.toString(),
-                                                          style: TextStyle(
-                                                              fontSize: 23),
-                                                        ),
-                                                      )
-                                                    ],
+                                                            followers
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                                fontSize: 23),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                                 Container(
+                                                  color: Colors.transparent,
                                                   height: 60,
                                                   width: 50,
                                                   child: Stack(
@@ -251,29 +267,41 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                                     ],
                                                   ),
                                                 ),
-                                                Container(
-                                                  height: 60,
-                                                  width: 50,
-                                                  child: Stack(
-                                                    children: [
-                                                      Align(
+                                                GestureDetector(
+                                                  onTap: () => Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Follows(
+                                                                  idUser: user
+                                                                          .data()[
+                                                                      'id']))),
+                                                  child: Container(
+                                                    color: Colors.transparent,
+                                                    height: 60,
+                                                    width: 50,
+                                                    child: Stack(
+                                                      children: [
+                                                        Align(
+                                                            alignment: Alignment
+                                                                .topCenter,
+                                                            child: Text(
+                                                              'Follows',
+                                                            )),
+                                                        Align(
                                                           alignment: Alignment
-                                                              .topCenter,
+                                                              .bottomCenter,
                                                           child: Text(
-                                                            'Follows',
-                                                          )),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .bottomCenter,
-                                                        child: Text(
-                                                          following.toString(),
-                                                          style: TextStyle(
-                                                              fontSize: 23),
-                                                        ),
-                                                      )
-                                                    ],
+                                                            following
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                                fontSize: 23),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
+                                                )
                                               ],
                                             ),
                                           ),
@@ -414,30 +442,41 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
                                       children: [
-                                        Container(
-                                          height: 60,
-                                          width: 70,
-                                          child: Stack(
-                                            children: [
-                                              Align(
+                                        GestureDetector(
+                                          onTap: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Followers(
+                                                          idUser: user
+                                                              .data()['id']))),
+                                          child: Container(
+                                            color: Colors.transparent,
+                                            height: 60,
+                                            width: 70,
+                                            child: Stack(
+                                              children: [
+                                                Align(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    child: Text(
+                                                      'Followers',
+                                                    )),
+                                                Align(
                                                   alignment:
-                                                      Alignment.topCenter,
+                                                      Alignment.bottomCenter,
                                                   child: Text(
-                                                    'Followers',
-                                                  )),
-                                              Align(
-                                                alignment:
-                                                    Alignment.bottomCenter,
-                                                child: Text(
-                                                  followers.toString(),
-                                                  style:
-                                                      TextStyle(fontSize: 23),
-                                                ),
-                                              )
-                                            ],
+                                                    followers.toString(),
+                                                    style:
+                                                        TextStyle(fontSize: 23),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                         Container(
+                                          color: Colors.transparent,
                                           height: 60,
                                           width: 50,
                                           child: Stack(
@@ -460,27 +499,36 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                             ],
                                           ),
                                         ),
-                                        Container(
-                                          height: 60,
-                                          width: 50,
-                                          child: Stack(
-                                            children: [
-                                              Align(
+                                        GestureDetector(
+                                          onTap: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => Follows(
+                                                      idUser:
+                                                          user.data()['id']))),
+                                          child: Container(
+                                            color: Colors.transparent,
+                                            height: 60,
+                                            width: 50,
+                                            child: Stack(
+                                              children: [
+                                                Align(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    child: Text(
+                                                      'Follows',
+                                                    )),
+                                                Align(
                                                   alignment:
-                                                      Alignment.topCenter,
+                                                      Alignment.bottomCenter,
                                                   child: Text(
-                                                    'Follows',
-                                                  )),
-                                              Align(
-                                                alignment:
-                                                    Alignment.bottomCenter,
-                                                child: Text(
-                                                  following.toString(),
-                                                  style:
-                                                      TextStyle(fontSize: 23),
-                                                ),
-                                              )
-                                            ],
+                                                    following.toString(),
+                                                    style:
+                                                        TextStyle(fontSize: 23),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -787,6 +835,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
       alignment: Alignment.center,
       padding: EdgeInsets.only(top: 5),
       child: _tabBar,

@@ -152,72 +152,159 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
           .where('uid', isEqualTo: currentUser)
           .get();
       int length = alldocs.docs.length;
-      String picture = await uploadPictureToStorage(
-          imagePath, "Picture$currentUser-$length", gameName);
-      FirebaseFirestore.instance
+
+      var doc = await FirebaseFirestore.instance
           .collection('posts')
-          .doc("Picture$currentUser-$length")
-          .set({
-        'uid': currentUser,
-        'username': userdoc.data()['pseudo'],
-        'profilepicture': userdoc.data()['photoURL'],
-        'id': "Picture$currentUser-$length",
-        'game': gameName,
-        'up': [],
-        'down': [],
-        'commentcount': 0,
-        'caption': _captionController.text,
-        'hashtags': hashtagsSelected,
-        'pictureUrl': picture,
-        'privacy': privacy,
-        'viewcount': 0
-      });
+          .doc('Picture$currentUser-$length')
+          .get();
+      if (!doc.exists) {
+        String picture = await uploadPictureToStorage(
+            imagePath, "Picture$currentUser-$length", gameName);
+        FirebaseFirestore.instance
+            .collection('posts')
+            .doc("Picture$currentUser-$length")
+            .set({
+          'uid': currentUser,
+          'username': userdoc.data()['pseudo'],
+          'profilepicture': userdoc.data()['photoURL'],
+          'id': "Picture$currentUser-$length",
+          'game': gameName,
+          'up': [],
+          'down': [],
+          'commentcount': 0,
+          'caption': _captionController.text,
+          'hashtags': hashtagsSelected,
+          'pictureUrl': picture,
+          'privacy': privacy,
+          'viewcount': 0
+        });
 
-      if (hashtagsSelected.length != 0) {
-        var hashtagdocs =
-            await FirebaseFirestore.instance.collection('hashtags').get();
-        int hashtagsLength = hashtagdocs.docs.length;
+        if (hashtagsSelected.length != 0) {
+          var hashtagdocs =
+              await FirebaseFirestore.instance.collection('hashtags').get();
+          int hashtagsLength = hashtagdocs.docs.length;
 
-        for (int i = 0; i < hashtagsSelected.length; i++) {
-          var docHashtags = await FirebaseFirestore.instance
-              .collection('hashtags')
-              .where('name', isEqualTo: hashtagsSelected[i])
-              .get();
-          for (var item in docHashtags.docs) {
-            id = item.data()['id'];
-            postsCount = item.data()['postsCount'];
+          for (int i = 0; i < hashtagsSelected.length; i++) {
+            var docHashtags = await FirebaseFirestore.instance
+                .collection('hashtags')
+                .where('name', isEqualTo: hashtagsSelected[i])
+                .get();
+            for (var item in docHashtags.docs) {
+              id = item.data()['id'];
+              postsCount = item.data()['postsCount'];
+            }
+            if (docHashtags.docs.isEmpty) {
+              FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .doc('Hashtag$hashtagsLength')
+                  .set({
+                'id': 'Hashtag$hashtagsLength',
+                'name': hashtagsSelected[i],
+                'postsCount': 1
+              });
+              FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .doc('Hashtag$hashtagsLength')
+                  .collection('posts')
+                  .doc("Picture$currentUser-$length")
+                  .set({});
+            } else {
+              FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .doc(id)
+                  .update({'postsCount': postsCount + 1});
+              FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .doc(id)
+                  .collection('posts')
+                  .doc("Picture$currentUser-$length")
+                  .set({});
+            }
+            if (hashtagsSelected.length > 1) {
+              setState(() {
+                hashtagsLength = hashtagsLength + 1;
+              });
+            }
           }
-          if (docHashtags.docs.isEmpty) {
-            FirebaseFirestore.instance
-                .collection('hashtags')
-                .doc('Hashtag$hashtagsLength')
-                .set({
-              'id': 'Hashtag$hashtagsLength',
-              'name': hashtagsSelected[i],
-              'postsCount': 1
-            });
-            FirebaseFirestore.instance
-                .collection('hashtags')
-                .doc('Hashtag$hashtagsLength')
-                .collection('posts')
-                .doc("Picture$currentUser-$length")
-                .set({});
-          } else {
-            FirebaseFirestore.instance
-                .collection('hashtags')
-                .doc(id)
-                .update({'postsCount': postsCount + 1});
-            FirebaseFirestore.instance
-                .collection('hashtags')
-                .doc(id)
-                .collection('posts')
-                .doc("Picture$currentUser-$length")
-                .set({});
-          }
-          if (hashtagsSelected.length > 1) {
-            setState(() {
-              hashtagsLength = hashtagsLength + 1;
-            });
+        }
+      } else {
+        setState(() {
+          length = length + 1;
+        });
+        print('length: $length');
+        var doc = await FirebaseFirestore.instance
+            .collection('posts')
+            .doc('Picture$currentUser-$length')
+            .get();
+        if (!doc.exists) {
+          String picture = await uploadPictureToStorage(
+              imagePath, "Picture$currentUser-$length", gameName);
+          FirebaseFirestore.instance
+              .collection('posts')
+              .doc("Picture$currentUser-$length")
+              .set({
+            'uid': currentUser,
+            'username': userdoc.data()['pseudo'],
+            'profilepicture': userdoc.data()['photoURL'],
+            'id': "Picture$currentUser-$length",
+            'game': gameName,
+            'up': [],
+            'down': [],
+            'commentcount': 0,
+            'caption': _captionController.text,
+            'hashtags': hashtagsSelected,
+            'pictureUrl': picture,
+            'privacy': privacy,
+            'viewcount': 0
+          });
+
+          if (hashtagsSelected.length != 0) {
+            var hashtagdocs =
+                await FirebaseFirestore.instance.collection('hashtags').get();
+            int hashtagsLength = hashtagdocs.docs.length;
+
+            for (int i = 0; i < hashtagsSelected.length; i++) {
+              var docHashtags = await FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .where('name', isEqualTo: hashtagsSelected[i])
+                  .get();
+              for (var item in docHashtags.docs) {
+                id = item.data()['id'];
+                postsCount = item.data()['postsCount'];
+              }
+              if (docHashtags.docs.isEmpty) {
+                FirebaseFirestore.instance
+                    .collection('hashtags')
+                    .doc('Hashtag$hashtagsLength')
+                    .set({
+                  'id': 'Hashtag$hashtagsLength',
+                  'name': hashtagsSelected[i],
+                  'postsCount': 1
+                });
+                FirebaseFirestore.instance
+                    .collection('hashtags')
+                    .doc('Hashtag$hashtagsLength')
+                    .collection('posts')
+                    .doc("Picture$currentUser-$length")
+                    .set({});
+              } else {
+                FirebaseFirestore.instance
+                    .collection('hashtags')
+                    .doc(id)
+                    .update({'postsCount': postsCount + 1});
+                FirebaseFirestore.instance
+                    .collection('hashtags')
+                    .doc(id)
+                    .collection('posts')
+                    .doc("Picture$currentUser-$length")
+                    .set({});
+              }
+              if (hashtagsSelected.length > 1) {
+                setState(() {
+                  hashtagsLength = hashtagsLength + 1;
+                });
+              }
+            }
           }
         }
       }

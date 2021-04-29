@@ -151,75 +151,164 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
           .where('uid', isEqualTo: currentUser)
           .get();
       int length = alldocs.docs.length;
-      String video = await uploadVideoToStorage(
-          videoPath, "Video$currentUser-$length", nameGame);
-      String previewImage = await uploadImagePreviewToStorage(
-          videoPath, "Video$currentUser-$length", nameGame);
-      FirebaseFirestore.instance
+
+      var doc = await FirebaseFirestore.instance
           .collection('posts')
-          .doc("Video$currentUser-$length")
-          .set({
-        'uid': currentUser,
-        'username': userdoc.data()['pseudo'],
-        'profilpicture': userdoc.data()['photoURL'],
-        'id': "Video$currentUser-$length",
-        'game': nameGame,
-        'up': [],
-        'down': [],
-        'commentcount': 0,
-        'caption': _captionController.text,
-        'hashtags': hashtagsSelected,
-        'videoUrl': video,
-        'previewImage': previewImage,
-        'privacy': privacy,
-        'viewcount': 0
-      });
+          .doc('Video$currentUser-$length')
+          .get();
+      if (!doc.exists) {
+        String video = await uploadVideoToStorage(
+            videoPath, "Video$currentUser-$length", nameGame);
+        String previewImage = await uploadImagePreviewToStorage(
+            videoPath, "Video$currentUser-$length", nameGame);
+        FirebaseFirestore.instance
+            .collection('posts')
+            .doc("Video$currentUser-$length")
+            .set({
+          'uid': currentUser,
+          'username': userdoc.data()['pseudo'],
+          'profilpicture': userdoc.data()['photoURL'],
+          'id': "Video$currentUser-$length",
+          'game': nameGame,
+          'up': [],
+          'down': [],
+          'commentcount': 0,
+          'caption': _captionController.text,
+          'hashtags': hashtagsSelected,
+          'videoUrl': video,
+          'previewImage': previewImage,
+          'privacy': privacy,
+          'viewcount': 0
+        });
 
-      if (hashtagsSelected.length != 0) {
-        var hashtagdocs =
-            await FirebaseFirestore.instance.collection('hashtags').get();
-        int hashtagsLength = hashtagdocs.docs.length;
+        if (hashtagsSelected.length != 0) {
+          var hashtagdocs =
+              await FirebaseFirestore.instance.collection('hashtags').get();
+          int hashtagsLength = hashtagdocs.docs.length;
 
-        for (int i = 0; i < hashtagsSelected.length; i++) {
-          var docHashtags = await FirebaseFirestore.instance
-              .collection('hashtags')
-              .where('name', isEqualTo: hashtagsSelected[i])
-              .get();
-          for (var item in docHashtags.docs) {
-            id = item.data()['id'];
-            postsCount = item.data()['postsCount'];
+          for (int i = 0; i < hashtagsSelected.length; i++) {
+            var docHashtags = await FirebaseFirestore.instance
+                .collection('hashtags')
+                .where('name', isEqualTo: hashtagsSelected[i])
+                .get();
+            for (var item in docHashtags.docs) {
+              id = item.data()['id'];
+              postsCount = item.data()['postsCount'];
+            }
+            if (docHashtags.docs.isEmpty) {
+              FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .doc('Hashtag$hashtagsLength')
+                  .set({
+                'id': 'Hashtag$hashtagsLength',
+                'name': hashtagsSelected[i],
+                'postsCount': 1
+              });
+              FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .doc('Hashtag$hashtagsLength')
+                  .collection('posts')
+                  .doc("Video$currentUser-$length")
+                  .set({});
+            } else {
+              FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .doc(id)
+                  .update({'postsCount': postsCount + 1});
+              FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .doc(id)
+                  .collection('posts')
+                  .doc("Video$currentUser-$length")
+                  .set({});
+            }
+            if (hashtagsSelected.length > 1) {
+              setState(() {
+                hashtagsLength = hashtagsLength + 1;
+              });
+            }
           }
-          if (docHashtags.docs.isEmpty) {
-            FirebaseFirestore.instance
-                .collection('hashtags')
-                .doc('Hashtag$hashtagsLength')
-                .set({
-              'id': 'Hashtag$hashtagsLength',
-              'name': hashtagsSelected[i],
-              'postsCount': 1
-            });
-            FirebaseFirestore.instance
-                .collection('hashtags')
-                .doc('Hashtag$hashtagsLength')
-                .collection('posts')
-                .doc("Video$currentUser-$length")
-                .set({});
-          } else {
-            FirebaseFirestore.instance
-                .collection('hashtags')
-                .doc(id)
-                .update({'postsCount': postsCount + 1});
-            FirebaseFirestore.instance
-                .collection('hashtags')
-                .doc(id)
-                .collection('posts')
-                .doc("Video$currentUser-$length")
-                .set({});
-          }
-          if (hashtagsSelected.length > 1) {
-            setState(() {
-              hashtagsLength = hashtagsLength + 1;
-            });
+        }
+      } else {
+        setState(() {
+          length = length + 1;
+        });
+        var doc = await FirebaseFirestore.instance
+            .collection('posts')
+            .doc('Video$currentUser-$length')
+            .get();
+        if (!doc.exists) {
+          String video = await uploadVideoToStorage(
+              videoPath, "Video$currentUser-$length", nameGame);
+          String previewImage = await uploadImagePreviewToStorage(
+              videoPath, "Video$currentUser-$length", nameGame);
+          FirebaseFirestore.instance
+              .collection('posts')
+              .doc("Video$currentUser-$length")
+              .set({
+            'uid': currentUser,
+            'username': userdoc.data()['pseudo'],
+            'profilpicture': userdoc.data()['photoURL'],
+            'id': "Video$currentUser-$length",
+            'game': nameGame,
+            'up': [],
+            'down': [],
+            'commentcount': 0,
+            'caption': _captionController.text,
+            'hashtags': hashtagsSelected,
+            'videoUrl': video,
+            'previewImage': previewImage,
+            'privacy': privacy,
+            'viewcount': 0
+          });
+
+          if (hashtagsSelected.length != 0) {
+            var hashtagdocs =
+                await FirebaseFirestore.instance.collection('hashtags').get();
+            int hashtagsLength = hashtagdocs.docs.length;
+
+            for (int i = 0; i < hashtagsSelected.length; i++) {
+              var docHashtags = await FirebaseFirestore.instance
+                  .collection('hashtags')
+                  .where('name', isEqualTo: hashtagsSelected[i])
+                  .get();
+              for (var item in docHashtags.docs) {
+                id = item.data()['id'];
+                postsCount = item.data()['postsCount'];
+              }
+              if (docHashtags.docs.isEmpty) {
+                FirebaseFirestore.instance
+                    .collection('hashtags')
+                    .doc('Hashtag$hashtagsLength')
+                    .set({
+                  'id': 'Hashtag$hashtagsLength',
+                  'name': hashtagsSelected[i],
+                  'postsCount': 1
+                });
+                FirebaseFirestore.instance
+                    .collection('hashtags')
+                    .doc('Hashtag$hashtagsLength')
+                    .collection('posts')
+                    .doc("Video$currentUser-$length")
+                    .set({});
+              } else {
+                FirebaseFirestore.instance
+                    .collection('hashtags')
+                    .doc(id)
+                    .update({'postsCount': postsCount + 1});
+                FirebaseFirestore.instance
+                    .collection('hashtags')
+                    .doc(id)
+                    .collection('posts')
+                    .doc("Video$currentUser-$length")
+                    .set({});
+              }
+              if (hashtagsSelected.length > 1) {
+                setState(() {
+                  hashtagsLength = hashtagsLength + 1;
+                });
+              }
+            }
           }
         }
       }

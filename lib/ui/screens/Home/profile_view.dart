@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'package:Gemu/ui/screens/Profil/posts_profil_screen.dart';
+import 'package:Gemu/ui/screens/Profil/followers.dart';
+import 'package:Gemu/ui/screens/Profil/follows.dart';
 
 class ProfileView extends StatefulWidget {
   final String idUser;
@@ -316,27 +318,40 @@ class ProfileViewState extends State<ProfileView>
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: [
-                                      Container(
-                                        height: 60,
-                                        width: 70,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                                alignment: Alignment.topCenter,
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Followers(
+                                                    idUser:
+                                                        user.data()['id']))),
+                                        child: Container(
+                                          color: Colors.transparent,
+                                          height: 60,
+                                          width: 70,
+                                          child: Stack(
+                                            children: [
+                                              Align(
+                                                  alignment:
+                                                      Alignment.topCenter,
+                                                  child: Text(
+                                                    'Followers',
+                                                  )),
+                                              Align(
+                                                alignment:
+                                                    Alignment.bottomCenter,
                                                 child: Text(
-                                                  'Followers',
-                                                )),
-                                            Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Text(
-                                                followers.toString(),
-                                                style: TextStyle(fontSize: 23),
-                                              ),
-                                            )
-                                          ],
+                                                  followers.toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 23),
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       Container(
+                                        color: Colors.transparent,
                                         height: 60,
                                         width: 50,
                                         child: Stack(
@@ -356,24 +371,36 @@ class ProfileViewState extends State<ProfileView>
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                        height: 60,
-                                        width: 60,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                                alignment: Alignment.topCenter,
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Follows(
+                                                    idUser:
+                                                        user.data()['id']))),
+                                        child: Container(
+                                          color: Colors.transparent,
+                                          height: 60,
+                                          width: 60,
+                                          child: Stack(
+                                            children: [
+                                              Align(
+                                                  alignment:
+                                                      Alignment.topCenter,
+                                                  child: Text(
+                                                    'Follows',
+                                                  )),
+                                              Align(
+                                                alignment:
+                                                    Alignment.bottomCenter,
                                                 child: Text(
-                                                  'Follows',
-                                                )),
-                                            Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Text(
-                                                following.toString(),
-                                                style: TextStyle(fontSize: 23),
-                                              ),
-                                            )
-                                          ],
+                                                  following.toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 23),
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -543,6 +570,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
       alignment: Alignment.center,
       padding: EdgeInsets.only(top: 5),
       child: _tabBar,

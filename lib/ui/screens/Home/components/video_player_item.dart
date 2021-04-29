@@ -155,14 +155,15 @@ class VideoPlayerItemState extends State<VideoPlayerItem>
           child: Stack(
             children: [
               Container(
-                color: Colors.black,
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: AspectRatio(
-                  aspectRatio: _videoPlayerController.value.aspectRatio,
-                  child: VideoPlayer(_videoPlayerController),
-                ),
-              ),
+                  color: Colors.black,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: _videoPlayerController.value.aspectRatio,
+                      child: VideoPlayer(_videoPlayerController),
+                    ),
+                  )),
               Center(
                   child: OpacityTransition(
                 visible: !_videoPlayerController.value.isPlaying,
