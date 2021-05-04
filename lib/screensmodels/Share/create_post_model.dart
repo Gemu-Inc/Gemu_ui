@@ -4,13 +4,13 @@ import 'package:Gemu/screensmodels/base_model.dart';
 import 'package:Gemu/locator.dart';
 import 'package:Gemu/services/cloud_storage_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
-import 'package:Gemu/services/firestore_service.dart';
+import 'package:Gemu/services/database_service.dart';
 import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/utils/image_selector.dart';
 import 'package:flutter/foundation.dart';
 
 class CreatePostModel extends BaseModel {
-  final FirestoreService _firestoreService = locator<FirestoreService>();
+  final DatabaseService _firestoreService = locator<DatabaseService>();
   final DialogService _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final ImageSelector _imageSelector = locator<ImageSelector>();

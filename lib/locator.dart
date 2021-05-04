@@ -1,5 +1,5 @@
 import 'package:Gemu/services/auth_service.dart';
-import 'package:Gemu/services/firestore_service.dart';
+import 'package:Gemu/services/database_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
 import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/utils/image_selector.dart';
@@ -12,7 +12,7 @@ void setupLocator() {
   locator.registerLazySingleton(() => NavigationService());
   locator.registerLazySingleton(() => DialogService());
   locator.registerLazySingleton(() => AuthService());
-  locator.registerLazySingleton(() => FirestoreService());
+  locator.registerLazySingleton(() => DatabaseService());
   locator.registerLazySingleton(() => CloudStorageService());
   locator.registerLazySingleton(() => ImageSelector());
 }

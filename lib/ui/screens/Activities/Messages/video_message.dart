@@ -22,10 +22,10 @@ class VideoMessage extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            ClipRRect(
+            /*ClipRRect(
               child: Image.network(
                   "https://firebasestorage.googleapis.com/v0/b/gemu-app.appspot.com/o/posts%2FValorant%2Fpictures%2FPictureF65wJ5TGmvgO8t7HUZJYcw1PmbA2-0?alt=media&token=a2ded5d8-bdcd-4f1b-856e-58d3398c1955"),
-            ),
+            ),*/
             Container(
               height: 25,
               width: 25,

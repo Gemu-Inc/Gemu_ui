@@ -3,7 +3,7 @@ import 'package:Gemu/screensmodels/base_model.dart';
 import 'package:Gemu/services/auth_service.dart';
 import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
-import 'package:Gemu/services/firestore_service.dart';
+import 'package:Gemu/services/database_service.dart';
 import 'package:Gemu/locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:Gemu/models/game.dart';
@@ -12,7 +12,7 @@ class RegisterScreenModel extends BaseModel {
   final AuthService _authService = locator<AuthService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final DialogService _dialogService = locator<DialogService>();
-  final FirestoreService _firestoreService = locator<FirestoreService>();
+  final DatabaseService _firestoreService = locator<DatabaseService>();
 
   List<Game> _gameList;
   List<Game> get gameList => _gameList;

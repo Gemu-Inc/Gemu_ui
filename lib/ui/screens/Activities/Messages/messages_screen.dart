@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:Gemu/models/chat.dart';
+import 'package:Gemu/models/user.dart';
+import 'package:Gemu/models/convo.dart';
+import 'package:Gemu/providers/newMessageProvider.dart';
 
 import 'message_card.dart';
+import 'contacts_screen.dart';
 
 class MessagesScreen extends StatefulWidget {
   @override
@@ -12,6 +18,9 @@ class MessagesScreen extends StatefulWidget {
 class MessagesScreenState extends State<MessagesScreen> {
   @override
   Widget build(BuildContext context) {
+    final String uid = FirebaseAuth.instance.currentUser.uid;
+    final List<Convo> _convos = Provider.of<List<Convo>>(context);
+    final List<UserModel> _users = Provider.of<List<UserModel>>(context);
     return Scaffold(
       body: Column(
         children: [
@@ -46,19 +55,49 @@ class MessagesScreenState extends State<MessagesScreen> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: chatsData.length,
-              itemBuilder: (context, index) => MessageCard(
-                chat: chatsData[index],
-              ),
-            ),
-          )
+              child: ListView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            children: getWidgets(context, uid, _convos, _users),
+          ))
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => print('Write a new message'),
+        onPressed: () => Navigator.push(context,
+            MaterialPageRoute(builder: (context) => NewMessageProvider())),
         child: Icon(Icons.person_add_alt_1),
       ),
     );
+  }
+
+  Map<String, UserModel> getUserMap(List<UserModel> users) {
+    final Map<String, UserModel> userMap = Map();
+    for (UserModel u in users) {
+      userMap[u.id] = u;
+    }
+    return userMap;
+  }
+
+  List<Widget> getWidgets(BuildContext context, String uid, List<Convo> _convos,
+      List<UserModel> _users) {
+    final List<Widget> list = <Widget>[];
+
+    if (_convos != null && _users != null && uid != null) {
+      final Map<String, UserModel> userMap = getUserMap(_users);
+      for (Convo c in _convos) {
+        if (c.userIds[0] == uid) {
+          list.add(MessageCard(
+              uid: uid,
+              peer: userMap[c.userIds[1]],
+              lastMessage: c.lastMessage));
+        } else {
+          list.add(MessageCard(
+              uid: uid,
+              peer: userMap[c.userIds[0]],
+              lastMessage: c.lastMessage));
+        }
+      }
+    }
+    return list;
   }
 }

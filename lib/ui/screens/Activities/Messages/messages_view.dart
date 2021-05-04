@@ -1,144 +1,189 @@
 import 'package:Gemu/constants/variables.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:bubble/bubble.dart';
 
 import 'package:Gemu/models/chat_messages.dart';
+import 'package:Gemu/models/user.dart';
+import 'package:Gemu/services/database_service.dart';
 
 import 'text_message.dart';
 import 'audio_message.dart';
 import 'video_message.dart';
 
-class MessagesView extends StatefulWidget {
-  final String name;
-  final bool isActive;
+class NewConversationScreen extends StatelessWidget {
+  const NewConversationScreen(
+      {@required this.uid, @required this.contact, @required this.convoID});
 
-  MessagesView({@required this.name, @required this.isActive});
-
-  @override
-  MessagesViewState createState() => MessagesViewState();
-}
-
-class MessagesViewState extends State<MessagesView> {
-  TextEditingController _messageController = TextEditingController();
-
-  bool isWritting = false;
+  final String uid, convoID;
+  final UserModel contact;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GradientAppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).primaryColor,
-              Theme.of(context).accentColor
-            ]),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () => Navigator.pop(context)),
-        title: Row(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Theme.of(context).primaryColor,
+                Theme.of(context).accentColor
+              ]),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios),
+              onPressed: () => Navigator.pop(context)),
+          title: Row(
+            children: [
+              Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: CachedNetworkImageProvider(contact.photoURL))),
+              ),
+              SizedBox(width: 10.0),
+              Text(contact.pseudo)
+            ],
+          )),
+      body: ChatScreen(uid: uid, contact: contact, convoID: convoID),
+    );
+  }
+}
+
+class ChatScreen extends StatefulWidget {
+  ChatScreen(
+      {@required this.uid, @required this.contact, @required this.convoID});
+
+  final String uid, convoID;
+  final UserModel contact;
+
+  @override
+  ChatScreenState createState() => ChatScreenState();
+}
+
+class ChatScreenState extends State<ChatScreen> {
+  final TextEditingController _messageController = TextEditingController();
+  final ScrollController _listScrollController = ScrollController();
+
+  String uid, convoID;
+  UserModel contact;
+  List<DocumentSnapshot> listMessage;
+
+  bool isWritting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    uid = widget.uid;
+    convoID = widget.convoID;
+    contact = widget.contact;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Stack(
+        children: [
+          Column(
+            children: [message(), chatInputField()],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget message() {
+    return Flexible(
+      child: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('messages')
+            .doc(convoID)
+            .collection(convoID)
+            .orderBy('timestamp', descending: true)
+            .limit(20)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          listMessage = snapshot.data.docs;
+          if (listMessage.length == 0) {
+            return Center(
+              child: Text('Pas encore de message avec cet utilisateur'),
+            );
+          }
+          return ListView.builder(
+            padding: EdgeInsets.all(1.0),
+            reverse: true,
+            controller: _listScrollController,
+            itemCount: listMessage.length,
+            itemBuilder: (BuildContext context, int index) =>
+                buildItem(index, listMessage[index]),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildItem(int index, DocumentSnapshot document) {
+    if (!document['read'] && document['idTo'] == uid) {
+      DatabaseService.updateMessageRead(document, convoID);
+    }
+
+    if (document['idTo'] == uid) {
+      return Container(
+        margin: EdgeInsets.symmetric(
+          vertical: 5.0,
+        ),
+        width: 200,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  shape: BoxShape.circle),
-              child: Icon(Icons.person),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.name,
-                  style: TextStyle(fontSize: 16),
+              child: Bubble(
+                color: Theme.of(context).canvasColor,
+                elevation: 0,
+                padding: BubbleEdges.all(10.0),
+                nip: BubbleNip.leftTop,
+                child: Text(
+                  document['content'],
+                  style: TextStyle(color: Colors.white),
                 ),
-                Text(
-                  widget.isActive ? 'Active' : 'Active 3m ago',
-                  style: TextStyle(fontSize: 12),
-                )
-              ],
+              ),
             )
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.local_phone),
-            onPressed: () {},
-          ),
-          IconButton(icon: Icon(Icons.videocam), onPressed: () {})
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-              child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            child: ListView.builder(
-              itemCount: demeChatMessages.length,
-              itemBuilder: (context, index) => message(demeChatMessages[index]),
-            ),
-          )),
-          chatInputField()
-        ],
-      ),
-    );
-  }
-
-  Widget messageContaint(ChatMessage message) {
-    switch (message.messageType) {
-      case ChatMessageType.text:
-        return TextMessage(message: message);
-        break;
-      case ChatMessageType.audio:
-        return AudioMessage(message: message);
-        break;
-      case ChatMessageType.video:
-        return VideoMessage(
-          message: message,
-        );
-        break;
-      default:
-        return SizedBox();
+      );
+    } else {
+      return Container(
+          margin: EdgeInsets.symmetric(vertical: 5.0),
+          width: 200,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                child: Bubble(
+                  color: Theme.of(context).accentColor,
+                  elevation: 0,
+                  padding: BubbleEdges.all(10.0),
+                  nip: BubbleNip.rightTop,
+                  child: Text(
+                    document['content'],
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ));
     }
-  }
-
-  Widget message(ChatMessage message) {
-    return Padding(
-      padding: EdgeInsets.only(top: 15),
-      child: Row(
-        mainAxisAlignment:
-            message.isSender ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: [
-          if (!message.isSender) ...[
-            Container(
-              height: 30,
-              width: 30,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black)),
-              child: Icon(Icons.person),
-            ),
-            SizedBox(
-              width: 15 / 2,
-            )
-          ],
-          messageContaint(message),
-          if (message.isSender)
-            MessageStatusDot(
-              status: message.messageStatus,
-            )
-        ],
-      ),
-    );
   }
 
   Widget chatInputField() {
@@ -192,7 +237,7 @@ class MessagesViewState extends State<MessagesView> {
                         ],
                       )
                     : GestureDetector(
-                        onTap: () => print('Envoyer'),
+                        onTap: () => onSendMessage(_messageController.text),
                         child: Text('Envoyer',
                             style: mystyle(15, Theme.of(context).primaryColor)))
               ],
@@ -201,6 +246,35 @@ class MessagesViewState extends State<MessagesView> {
         ],
       )),
     );
+  }
+
+  void onSendMessage(String content) {
+    if (content.trim() != '') {
+      _messageController.clear();
+      content = content.trim();
+      DatabaseService.sendMessage(convoID, uid, contact.id, content,
+          DateTime.now().millisecondsSinceEpoch.toString());
+      _listScrollController.animateTo(0.0,
+          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+    }
+  }
+
+  Widget messageContaint(ChatMessage message) {
+    switch (message.messageType) {
+      case ChatMessageType.text:
+        return TextMessage(message: message);
+        break;
+      case ChatMessageType.audio:
+        return AudioMessage(message: message);
+        break;
+      case ChatMessageType.video:
+        return VideoMessage(
+          message: message,
+        );
+        break;
+      default:
+        return SizedBox();
+    }
   }
 }
 

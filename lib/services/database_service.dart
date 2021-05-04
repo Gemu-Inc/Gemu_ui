@@ -1,13 +1,17 @@
 import 'dart:async';
+import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
 import 'package:Gemu/models/user.dart';
+import 'package:Gemu/models/convo.dart';
 import 'package:Gemu/models/post.dart';
 import 'package:Gemu/models/categorie.dart';
 import 'package:Gemu/models/game.dart';
 
-class FirestoreService {
+class DatabaseService {
   final CollectionReference _usersCollectionReference =
       FirebaseFirestore.instance.collection('users');
   final CollectionReference _postsCollectionReference =
@@ -85,8 +89,8 @@ class FirestoreService {
     return _categoriesController.stream;
   }
 
-  UserC _userDataFromSnapshot(DocumentSnapshot snapshot) {
-    return UserC(
+  UserModel _userDataFromSnapshot(DocumentSnapshot snapshot) {
+    return UserModel(
         id: snapshot.data()['id'],
         email: snapshot.data()['email'],
         pseudo: snapshot.data()['pseudo'],
@@ -96,7 +100,7 @@ class FirestoreService {
         }).toList()));
   }
 
-  Stream<UserC> userData(String uid) {
+  Stream<UserModel> userData(String uid) {
     return _usersCollectionReference
         .doc(uid)
         .snapshots()
@@ -112,7 +116,7 @@ class FirestoreService {
             .toList());
   }
 
-  Future createUser(UserC user) async {
+  Future createUser(UserModel user) async {
     try {
       await _usersCollectionReference.doc(user.id).set(user.toJson());
     } catch (e) {
@@ -129,7 +133,7 @@ class FirestoreService {
       var userData = await _usersCollectionReference.doc(uid).get();
       print('${userData.data()}');
 
-      return UserC.fromData(userData.data());
+      return UserModel.fromMap(userData.data());
     } catch (e) {
       if (e is PlatformException) {
         return e.message;
@@ -153,5 +157,109 @@ class FirestoreService {
 
   Future deleteUserImgProfile(String uid) async {
     return await _usersCollectionReference.doc(uid).update({'photoURL': null});
+  }
+
+  //Partie messagerie
+
+  static Stream<List<UserModel>> streamUsers() {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .snapshots()
+        .map((QuerySnapshot list) => list.docs
+            .map((DocumentSnapshot snap) => UserModel.fromMap(snap.data()))
+            .toList())
+        .handleError((dynamic e) {
+      print(e);
+    });
+  }
+
+  static Stream<List<UserModel>> getUsersByList(List<String> userIds) {
+    final List<Stream<UserModel>> streams = List();
+    for (String id in userIds) {
+      streams.add(FirebaseFirestore.instance
+          .collection('users')
+          .doc(id)
+          .snapshots()
+          .map((DocumentSnapshot snap) => UserModel.fromMap(snap.data())));
+    }
+    return StreamZip<UserModel>(streams).asBroadcastStream();
+  }
+
+  static Stream<List<Convo>> streamConversations(String uid) {
+    return FirebaseFirestore.instance
+        .collection('messages')
+        .orderBy('lastMessage.timestamp', descending: true)
+        .where('users', arrayContains: uid)
+        .snapshots()
+        .map((QuerySnapshot list) => list.docs
+            .map((DocumentSnapshot doc) => Convo.fromFirestore(doc))
+            .toList());
+  }
+
+  static void sendMessage(
+      String convoID, String id, String pid, String content, String timestamp) {
+    final DocumentReference convoDoc =
+        FirebaseFirestore.instance.collection('messages').doc(convoID);
+
+    convoDoc.set(<String, dynamic>{
+      'lastMessage': <String, dynamic>{
+        'idFrom': id,
+        'idTo': pid,
+        'timestamp': timestamp,
+        'content': content,
+        'read': false
+      },
+      'users': <String>[id, pid]
+    }).then((dynamic success) {
+      final DocumentReference messageDoc = FirebaseFirestore.instance
+          .collection('messages')
+          .doc(convoID)
+          .collection(convoID)
+          .doc(timestamp);
+
+      FirebaseFirestore.instance
+          .runTransaction((Transaction transaction) async {
+        transaction.set(messageDoc, <String, dynamic>{
+          'idFrom': id,
+          'idTo': pid,
+          'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+          'content': content,
+          'read': false
+        });
+      });
+    });
+  }
+
+  static void updateMessageRead(DocumentSnapshot doc, String convoID) {
+    final DocumentReference documentReference = FirebaseFirestore.instance
+        .collection('messages')
+        .doc(convoID)
+        .collection(convoID)
+        .doc(doc.id);
+
+    documentReference
+        .set(<String, dynamic>{'read': true}, SetOptions(merge: true));
+  }
+
+  static void updateLastMessage(
+      DocumentSnapshot doc, String uid, String pid, String convoID) {
+    final DocumentReference documentReference =
+        FirebaseFirestore.instance.collection('messages').doc(convoID);
+
+    documentReference
+        .set(<String, dynamic>{
+          'lastMessage': <String, dynamic>{
+            'idFrom': doc['idFrom'],
+            'idTo': doc['idTo'],
+            'timestamp': doc['timestamp'],
+            'content': doc['content'],
+            'read': doc['read']
+          },
+          'users': <String>[uid, pid]
+        })
+        .then((dynamic success) {})
+        .catchError((dynamic error) {
+          print(error);
+        });
   }
 }

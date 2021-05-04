@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 class BaseModel extends ChangeNotifier {
   final AuthService _authenticationService = locator<AuthService>();
 
-  UserC get currentUser => _authenticationService.currentUser;
+  UserModel get currentUser => _authenticationService.currentUser;
 
   bool _busy = false;
   bool get busy => _busy;

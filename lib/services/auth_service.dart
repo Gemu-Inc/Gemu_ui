@@ -3,11 +3,11 @@ import 'package:Gemu/locator.dart';
 import 'package:Gemu/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:Gemu/services/firestore_service.dart';
+import 'package:Gemu/services/database_service.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirestoreService _firestoreService = locator<FirestoreService>();
+  final DatabaseService _firestoreService = locator<DatabaseService>();
 
   // GET change about status connection
   Stream<User> get onAuthStateChanged => _firebaseAuth.authStateChanges();
@@ -19,8 +19,8 @@ class AuthService {
     return currentUser;
   }
 
-  UserC _currentUser;
-  UserC get currentUser => _currentUser;
+  UserModel _currentUser;
+  UserModel get currentUser => _currentUser;
 
   Future updateEmail(
       {@required String password, @required String newEmail}) async {
@@ -77,7 +77,7 @@ class AuthService {
       );
 
       // create a new user profile on firestore
-      _currentUser = UserC(
+      _currentUser = UserModel(
           id: authResult.user.uid,
           email: email,
           pseudo: pseudo,

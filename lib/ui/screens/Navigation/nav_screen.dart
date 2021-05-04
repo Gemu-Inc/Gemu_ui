@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:Gemu/screensmodels/Navigation/nav_screen_model.dart';
-import 'package:Gemu/services/firestore_service.dart';
+import 'package:Gemu/services/database_service.dart';
 import 'package:Gemu/ui/screens/screens.dart';
 import 'package:Gemu/ui/screens/Direct/direct_screen.dart';
 import 'package:Gemu/ui/screens/Highlights/highlights_screen.dart';
@@ -25,7 +25,7 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
   int page;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirestoreService _firestoreService = locator<FirestoreService>();
+  final DatabaseService _firestoreService = locator<DatabaseService>();
 
   @override
   void initState() {

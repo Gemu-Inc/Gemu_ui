@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:stacked/stacked.dart';
-import 'package:Gemu/models/user.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override

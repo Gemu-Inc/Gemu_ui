@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:Gemu/constants/variables.dart';
+import 'package:Gemu/providers/conversationProvider.dart';
 
 import 'Notifications/notifications_screen.dart';
 import 'Messages/messages_screen.dart';
@@ -80,6 +82,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
 
   @override
   Widget build(BuildContext context) {
+    final String uid = FirebaseAuth.instance.currentUser.uid;
     return isDrawer
         ? Drawer(
             child: Scaffold(
@@ -117,7 +120,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                       NotificationsScreen(
                         whatActivity: activities[whatActivity],
                       ),
-                      MessagesScreen()
+                      ConversationProvider(uid: uid)
                     ]),
                     Align(
                         alignment: Alignment.topCenter,
@@ -158,7 +161,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                   NotificationsScreen(
                     whatActivity: activities[whatActivity],
                   ),
-                  MessagesScreen()
+                  ConversationProvider(uid: uid)
                 ]),
                 Align(alignment: Alignment.topCenter, child: activitiesPanel()),
               ],

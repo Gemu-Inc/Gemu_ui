@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-
-class UserC {
+class UserModel {
   final String id;
   final String pseudo;
   final String email;
@@ -8,7 +6,7 @@ class UserC {
   final String points;
   final List<String> idGames;
 
-  UserC(
+  UserModel(
       {this.id,
       this.pseudo,
       this.email,
@@ -16,15 +14,17 @@ class UserC {
       this.points,
       this.idGames});
 
-  UserC.fromData(Map<String, dynamic> data)
-      : id = data['id'],
-        pseudo = data['pseudo'],
-        email = data['email'],
-        photoURL = data['photoURL'],
-        points = data['points'],
-        idGames = List<String>.from(data['idGames'].map((item) {
+  factory UserModel.fromMap(Map<String, dynamic> data) {
+    return UserModel(
+        id: data['id'],
+        pseudo: data['pseudo'],
+        email: data['email'],
+        photoURL: data['photoURL'],
+        points: data['points'],
+        idGames: List<String>.from(data['idGames'].map((item) {
           return item;
-        }).toList());
+        }).toList()));
+  }
 
   Map<String, dynamic> toJson() {
     return {

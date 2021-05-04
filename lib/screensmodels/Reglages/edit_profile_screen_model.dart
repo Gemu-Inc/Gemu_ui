@@ -5,7 +5,7 @@ import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/screensmodels/base_model.dart';
 import 'package:Gemu/services/cloud_storage_service.dart';
 import 'package:Gemu/utils/image_selector.dart';
-import 'package:Gemu/services/firestore_service.dart';
+import 'package:Gemu/services/database_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
 import 'package:Gemu/services/navigation_service.dart';
 import 'package:flutter/foundation.dart';
@@ -15,12 +15,12 @@ class EditProfileScreenModel extends BaseModel {
   final ImageSelector _imageSelector = locator<ImageSelector>();
   final CloudStorageService _cloudStorageService =
       locator<CloudStorageService>();
-  final FirestoreService _firestoreService = locator<FirestoreService>();
+  final DatabaseService _firestoreService = locator<DatabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final DialogService _dialogService = locator<DialogService>();
   final AuthService _authService = locator<AuthService>();
 
-  Stream<UserC> get userData {
+  Stream<UserModel> get userData {
     var currentUser = _authService.currentUser;
     return _firestoreService.userData(currentUser.id);
   }
