@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'package:Gemu/screensmodels/Reglages/edit_password_screen_model.dart';
 
 class EditPasswordScreen extends StatefulWidget {
-  EditPasswordScreen({Key key}) : super(key: key);
+  EditPasswordScreen({Key? key}) : super(key: key);
 
   @override
   _EditPasswordScreenState createState() => _EditPasswordScreenState();
@@ -13,8 +12,8 @@ class EditPasswordScreen extends StatefulWidget {
 
 class _EditPasswordScreenState extends State<EditPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _currentPassword;
-  String _newPassword;
+  String? _currentPassword;
+  String? _newPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -22,22 +21,29 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
         viewModelBuilder: () => EditPasswordScreenModel(),
         builder: (context, model, child) => Scaffold(
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              appBar: GradientAppBar(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).accentColor
-                  ],
-                ),
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
+              appBar: PreferredSize(
+                child: Container(
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).accentColor
+                      ])),
+                  child: AppBar(
+                    leading: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    title: Text(
+                      'Changer le mot de passe',
+                    ),
                   ),
-                  onPressed: () => Navigator.pop(context),
                 ),
-                title: Text(
-                  'Changer le mot de passe',
-                ),
+                preferredSize: Size.fromHeight(60),
               ),
               body: Form(
                   key: _formKey,
@@ -55,7 +61,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                               InputDecoration(labelText: "Current Password"),
                           obscureText: true,
                           validator: (value) =>
-                              value.isEmpty ? 'Please enter a password' : null,
+                              value!.isEmpty ? 'Please enter a password' : null,
                           onChanged: (value) =>
                               setState(() => _currentPassword = value),
                         ),
@@ -72,7 +78,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                               InputDecoration(labelText: "New Password"),
                           obscureText: true,
                           validator: (value) =>
-                              value.isEmpty ? 'Please enter a password' : null,
+                              value!.isEmpty ? 'Please enter a password' : null,
                           onChanged: (value) =>
                               setState(() => _newPassword = value),
                         ),
@@ -86,9 +92,9 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                                 ? SizedBox()
                                 : FloatingActionButton(
                                     onPressed: () async {
-                                      if (_formKey.currentState.validate()) {
+                                      if (_formKey.currentState!.validate()) {
                                         await model.updateUserPassword(
-                                            _currentPassword, _newPassword);
+                                            _currentPassword!, _newPassword!);
                                       }
                                       print("Password updated");
                                       model.navigateToEditProfile();

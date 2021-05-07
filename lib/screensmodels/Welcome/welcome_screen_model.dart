@@ -4,13 +4,13 @@ import 'package:Gemu/locator.dart';
 import 'package:Gemu/constants/route_names.dart';
 
 class WelcomeScreenModel extends BaseModel {
-  final NavigationService _navigationService = locator<NavigationService>();
+  final NavigationService? _navigationService = locator<NavigationService>();
 
   void navigateToSignIn() {
-    _navigationService.navigateTo(LoginScreenRoute);
+    _navigationService!.navigateTo(LoginScreenRoute);
   }
 
   void navigateToRegister() {
-    _navigationService.navigateTo(RegisterScreenRoute);
+    _navigationService!.navigateTo(RegisterScreenRoute);
   }
 }

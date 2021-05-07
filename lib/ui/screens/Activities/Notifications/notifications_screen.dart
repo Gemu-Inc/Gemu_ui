@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/models/notifications.dart';
 
 class NotificationsScreen extends StatefulWidget {
-  final String whatActivity;
+  final String? whatActivity;
 
   NotificationsScreen({this.whatActivity});
 
@@ -89,11 +89,11 @@ class NotificationsScreenState extends State<NotificationsScreen> {
         child: Icon(Icons.person),
       ),
       title: Text(
-        notification.text,
+        notification.text!,
         style: mystyle(12),
       ),
       subtitle: Text(
-        notification.time,
+        notification.time!,
         style: mystyle(12),
       ),
     );

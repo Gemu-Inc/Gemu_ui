@@ -15,7 +15,7 @@ class BodyState extends State<Body> {
   bool isDayMood = true;
   Duration _duration = Duration(seconds: 1);
 
-  List<Slide> slides = List();
+  List<Slide> slides = [];
 
   void timeMood() {
     int hour = DateTime.now().hour;

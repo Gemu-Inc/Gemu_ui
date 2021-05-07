@@ -6,9 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'game_focus_screen.dart';
 
 class GameView extends StatefulWidget {
-  final DocumentSnapshot game;
+  final DocumentSnapshot<Map<String, dynamic>>? game;
 
-  GameView({@required this.game});
+  GameView({required this.game});
 
   @override
   GameViewState createState() => GameViewState();
@@ -18,19 +18,19 @@ class GameViewState extends State<GameView> {
   bool dataIsThere = false;
   bool isFollow = false;
 
-  String uid;
+  String? uid;
 
   @override
   void initState() {
     super.initState();
-    uid = FirebaseAuth.instance.currentUser.uid;
+    uid = FirebaseAuth.instance.currentUser!.uid;
     getAllData();
   }
 
   getAllData() async {
-    DocumentSnapshot doc =
+    DocumentSnapshot<Map<String, dynamic>> doc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    if (doc.data()['idGames'].contains(widget.game.data()['id'])) {
+    if (doc.data()!['idGames'].contains(widget.game!.id)) {
       setState(() {
         isFollow = true;
       });
@@ -45,18 +45,18 @@ class GameViewState extends State<GameView> {
   }
 
   follow() async {
-    DocumentSnapshot doc =
+    DocumentSnapshot<Map<String, dynamic>> doc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    if (doc.data()['idGames'].contains(widget.game.data()['id'])) {
+    if (doc.data()!['idGames'].contains(widget.game!.id)) {
       await FirebaseFirestore.instance.collection('users').doc(uid).update({
-        'idGames': FieldValue.arrayRemove([widget.game.data()['id']])
+        'idGames': FieldValue.arrayRemove([widget.game!.id])
       });
       setState(() {
         isFollow = false;
       });
     } else {
       await FirebaseFirestore.instance.collection('users').doc(uid).update({
-        'idGames': FieldValue.arrayUnion([widget.game.data()['id']])
+        'idGames': FieldValue.arrayUnion([widget.game!.id])
       });
       setState(() {
         isFollow = true;
@@ -96,7 +96,7 @@ class GameViewState extends State<GameView> {
                             image: DecorationImage(
                                 fit: BoxFit.cover,
                                 image: CachedNetworkImageProvider(
-                                    widget.game.data()['imageUrl']))),
+                                    widget.game!.data()!['imageUrl']))),
                       ),
                     )),
                 Positioned(
@@ -106,7 +106,7 @@ class GameViewState extends State<GameView> {
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: Text(widget.game.data()['name']),
+                  child: Text(widget.game!.data()!['name']),
                 )
               ],
             ))

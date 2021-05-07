@@ -1,13 +1,10 @@
 import 'package:Gemu/screensmodels/Reglages/design_screen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/styles/styles.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:math';
-import 'package:Gemu/ui/widgets/busy_button.dart';
-import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+//import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
 class DesignScreen extends StatefulWidget {
   @override
@@ -17,15 +14,15 @@ class DesignScreen extends StatefulWidget {
 class _DesignScreenState extends State<DesignScreen> {
   int selectedPosition = 0;
   List themes = Constants.themes;
-  SharedPreferences prefs;
-  ThemeNotifier themeNotifier;
+  late SharedPreferences prefs;
+  late ThemeNotifier themeNotifier;
   bool isSwitched = false;
   bool createTheme = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _getSavedTheme();
     });
   }
@@ -45,17 +42,24 @@ class _DesignScreenState extends State<DesignScreen> {
       viewModelBuilder: () => DesignScreenModel(),
       builder: (context, model, child) => Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: GradientAppBar(
-            leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios),
-                onPressed: () => model.navigateToProfilMenu()),
-            title: Text('Apparence'),
-            gradient: LinearGradient(
-              colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).accentColor
-              ],
+          appBar: PreferredSize(
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).accentColor
+                  ])),
+              child: AppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.arrow_back_ios),
+                    onPressed: () => model.navigateToProfilMenu()),
+                title: Text('Apparence'),
+              ),
             ),
+            preferredSize: Size.fromHeight(60),
           ),
           body: CustomScrollView(
             slivers: [
@@ -204,7 +208,7 @@ class _DesignScreenState extends State<DesignScreen> {
                       SizedBox(
                         height: 20,
                       ),
-                      Text(
+                      /*Text(
                         "Create Theme Colors",
                         style: Theme.of(context).textTheme.headline5,
                       ),
@@ -243,7 +247,7 @@ class _DesignScreenState extends State<DesignScreen> {
                             width: 60,
                             decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                    colors: [Colors.grey[200], Colors.black]),
+                                    colors: [Colors.grey[200]!, Colors.black]),
                                 borderRadius: BorderRadius.circular(40)),
                             child: RawMaterialButton(
                                 onPressed: () {
@@ -325,7 +329,7 @@ class _DesignScreenState extends State<DesignScreen> {
                                   color: Colors.transparent,
                                 ),
                         ],
-                      )
+                      )*/
                     ],
                   ),
                 ),
@@ -393,11 +397,11 @@ class _DesignScreenState extends State<DesignScreen> {
     prefs.setInt('color_accent', value);
   }
 
-  void _openDialogLight(
-      {@required Color currentPrimaryColor,
-      @required Color currentAccentColor,
-      @required bool primaryColor,
-      @required bool accentColor}) {
+  /*void _openDialogLight(
+      {required Color currentPrimaryColor,
+      required Color currentAccentColor,
+      required bool primaryColor,
+      required bool accentColor}) {
     List<String> title = ['Primary color', 'Accent color'];
     List<Widget> content = [
       Container(
@@ -439,10 +443,10 @@ class _DesignScreenState extends State<DesignScreen> {
   }
 
   void _openDialogDark(
-      {@required Color currentPrimaryColor,
-      @required Color currentAccentColor,
-      @required bool primaryColor,
-      @required bool accentColor}) {
+      {required Color currentPrimaryColor,
+      required Color currentAccentColor,
+      required bool primaryColor,
+      required bool accentColor}) {
     List<String> title = ['Primary color', 'Accent color'];
     List<Widget> content = [
       Container(
@@ -481,14 +485,14 @@ class _DesignScreenState extends State<DesignScreen> {
               title: title,
               content: content,
             ));
-  }
+  }*/
 }
 
 class MyAlertDialog extends StatefulWidget {
   final title;
   final content;
 
-  MyAlertDialog({@required this.title, @required this.content});
+  MyAlertDialog({required this.title, required this.content});
 
   @override
   _MyAlertDialogState createState() => _MyAlertDialogState();

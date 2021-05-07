@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PictureItem extends StatefulWidget {
-  final String idUser, idPost, pictureUrl;
+  final String? idUser, idPost, pictureUrl;
 
   PictureItem({this.idUser, this.idPost, this.pictureUrl});
 
@@ -13,15 +13,15 @@ class PictureItem extends StatefulWidget {
 
 class PictureItemState extends State<PictureItem>
     with TickerProviderStateMixin {
-  String uid;
+  String? uid;
 
-  AnimationController _upController, _downController;
-  Animation _upAnimation, _downAnimation;
+  late AnimationController _upController, _downController;
+  late Animation _upAnimation, _downAnimation;
 
   @override
   void initState() {
     super.initState();
-    uid = FirebaseAuth.instance.currentUser.uid;
+    uid = FirebaseAuth.instance.currentUser!.uid;
 
     updateView();
 
@@ -55,15 +55,16 @@ class PictureItemState extends State<PictureItem>
   }
 
   updateView() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
+    DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+        .instance
         .collection('posts')
         .doc(widget.idPost)
         .get();
-    if (doc.data()['uid'] != uid) {
+    if (doc.data()!['uid'] != uid) {
       FirebaseFirestore.instance
           .collection('posts')
           .doc(widget.idPost)
-          .update({'viewcount': doc.data()['viewcount'] + 1});
+          .update({'viewcount': doc.data()!['viewcount'] + 1});
 
       var view = await FirebaseFirestore.instance
           .collection('posts')
@@ -83,13 +84,14 @@ class PictureItemState extends State<PictureItem>
   }
 
   upPost() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
+    DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+        .instance
         .collection('posts')
         .doc(widget.idPost)
         .get();
 
-    if (!doc.data()['up'].contains(uid)) {
-      if (doc.data()['down'].contains(uid)) {
+    if (!doc.data()!['up'].contains(uid)) {
+      if (doc.data()!['down'].contains(uid)) {
         FirebaseFirestore.instance
             .collection('posts')
             .doc(widget.idPost)
@@ -104,13 +106,14 @@ class PictureItemState extends State<PictureItem>
   }
 
   downPost() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
+    DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+        .instance
         .collection('posts')
         .doc(widget.idPost)
         .get();
 
-    if (!doc.data()['down'].contains(uid)) {
-      if (doc.data()['up'].contains(uid)) {
+    if (!doc.data()!['down'].contains(uid)) {
+      if (doc.data()!['up'].contains(uid)) {
         FirebaseFirestore.instance
             .collection('posts')
             .doc(widget.idPost)
@@ -133,7 +136,7 @@ class PictureItemState extends State<PictureItem>
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: Center(
-            child: Image.network(widget.pictureUrl),
+            child: Image.network(widget.pictureUrl!),
           ),
         ),
         Column(
@@ -164,7 +167,7 @@ class PictureItemState extends State<PictureItem>
         ),
         Center(
           child: FadeTransition(
-            opacity: _upAnimation,
+            opacity: _upAnimation as Animation<double>,
             child: Icon(
               Icons.arrow_upward,
               color: Colors.green,
@@ -174,7 +177,7 @@ class PictureItemState extends State<PictureItem>
         ),
         Center(
           child: FadeTransition(
-            opacity: _downAnimation,
+            opacity: _downAnimation as Animation<double>,
             child: Icon(
               Icons.arrow_downward,
               color: Colors.red,

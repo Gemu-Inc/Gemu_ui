@@ -6,11 +6,11 @@ import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/styles/styles.dart';
 
 class DesignScreenModel extends BaseModel {
-  final DialogService _dialogService = locator<DialogService>();
-  final NavigationService _navigationService = locator<NavigationService>();
+  final DialogService? _dialogService = locator<DialogService>();
+  final NavigationService? _navigationService = locator<NavigationService>();
 
   void navigateToProfilMenu() {
-    _navigationService.pop();
+    _navigationService!.pop();
   }
 
   /*Future openDialogThemeCustomLight() async {

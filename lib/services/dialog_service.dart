@@ -5,9 +5,9 @@ import 'package:Gemu/models/dialog_models.dart';
 
 class DialogService {
   GlobalKey<NavigatorState> _dialogNavigationKey = GlobalKey<NavigatorState>();
-  Function(DialogRequest) _showDialogListener;
-  Function(DialogRequest) _showDialogConfirmationListener;
-  Completer<DialogResponse> _dialogCompleter;
+  late Function(DialogRequest) _showDialogListener;
+  late Function(DialogRequest) _showDialogConfirmationListener;
+  Completer<DialogResponse>? _dialogCompleter;
 
   GlobalKey<NavigatorState> get dialogNavigationKey => _dialogNavigationKey;
 
@@ -23,8 +23,8 @@ class DialogService {
 
   /// Calls the dialog listener and returns a Future that will wait for dialogComplete.
   Future<DialogResponse> showDialog({
-    String title,
-    String description,
+    String? title,
+    String? description,
     String buttonTitle = 'Ok',
   }) {
     _dialogCompleter = Completer<DialogResponse>();
@@ -33,13 +33,13 @@ class DialogService {
       description: description,
       buttonTitle: buttonTitle,
     ));
-    return _dialogCompleter.future;
+    return _dialogCompleter!.future;
   }
 
   /// Shows a confirmation dialog
   Future<DialogResponse> showConfirmationDialog(
-      {@required String title,
-      @required String description,
+      {required String title,
+      required String description,
       String confirmationTitle = 'Ok',
       String cancelTitle = 'Cancel'}) {
     _dialogCompleter = Completer<DialogResponse>();
@@ -48,13 +48,13 @@ class DialogService {
         description: description,
         buttonTitle: confirmationTitle,
         cancelTitle: cancelTitle));
-    return _dialogCompleter.future;
+    return _dialogCompleter!.future;
   }
 
   /// Completes the _dialogCompleter to resume the Future's execution call
   void dialogComplete(DialogResponse response) {
-    _dialogNavigationKey.currentState.pop();
-    _dialogCompleter.complete(response);
+    _dialogNavigationKey.currentState!.pop();
+    _dialogCompleter!.complete(response);
     _dialogCompleter = null;
   }
 }

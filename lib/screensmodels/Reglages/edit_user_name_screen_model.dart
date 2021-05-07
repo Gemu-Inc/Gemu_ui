@@ -8,33 +8,28 @@ import 'package:Gemu/models/user.dart';
 import 'package:Gemu/services/dialog_service.dart';
 
 class EditUserNameScreenModel extends BaseModel {
-  final AuthService _authService = locator<AuthService>();
-  final DatabaseService _firestoreService = locator<DatabaseService>();
-  final NavigationService _navigationService = locator<NavigationService>();
-  final DialogService _dialogService = locator<DialogService>();
+  final AuthService? _authService = locator<AuthService>();
+  final DatabaseService? _firestoreService = locator<DatabaseService>();
+  final NavigationService? _navigationService = locator<NavigationService>();
+  final DialogService? _dialogService = locator<DialogService>();
 
   void navigateToEditProfile() {
-    _navigationService.navigateAndRemoveUntil(EditProfileScreenRoute);
+    _navigationService!.navigateAndRemoveUntil(EditProfileScreenRoute);
   }
 
-  Stream<UserModel> get userData {
-    var currentUser = _authService.currentUser;
-    return _firestoreService.userData(currentUser.id);
-  }
-
-  Future updateUserPseudo(String currentName, var currentUserID) async {
+  Future updateUserPseudo(String? currentName, var currentUserID) async {
     //var currentUser = _authService.currentUser;
 
-    var result = await _firestoreService.updateUserPseudo(
-        currentName ?? currentUser.pseudo, currentUserID);
+    var result = await _firestoreService!
+        .updateUserPseudo(currentName ?? currentUser!.pseudo, currentUserID);
 
     if (result is String) {
-      await _dialogService.showDialog(
+      await _dialogService!.showDialog(
         title: 'Could not change username',
         description: result,
       );
     } else {
-      await _dialogService.showDialog(
+      await _dialogService!.showDialog(
         title: 'Username successfully updated',
         description: 'Your username has been changed',
       );

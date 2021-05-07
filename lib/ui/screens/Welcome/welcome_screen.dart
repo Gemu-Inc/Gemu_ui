@@ -3,7 +3,7 @@ import 'package:Gemu/size_config.dart';
 import 'package:Gemu/ui/screens/Welcome/components/body.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({Key key}) : super(key: key);
+  const WelcomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

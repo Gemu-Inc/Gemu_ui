@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/size_config.dart';
 
 class Land extends StatelessWidget {
-  const Land({Key key, @required this.dayMood}) : super(key: key);
+  const Land({Key? key, required this.dayMood}) : super(key: key);
 
   final bool dayMood;
 

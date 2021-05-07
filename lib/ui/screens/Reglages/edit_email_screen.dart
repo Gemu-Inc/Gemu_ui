@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'package:Gemu/screensmodels/Reglages/edit_email_screen_model.dart';
 
 class EditEmailScreen extends StatefulWidget {
-  EditEmailScreen({Key key}) : super(key: key);
+  EditEmailScreen({Key? key}) : super(key: key);
 
   @override
   _EditEmailScreenState createState() => _EditEmailScreenState();
@@ -18,13 +17,13 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
   final _formKeyPassword = GlobalKey<FormState>();
   final _firebaseAuth = FirebaseAuth.instance;
   var currentUser;
-  String _currentEmail;
-  String _currentPassword;
+  String? _currentEmail;
+  late String _currentPassword;
 
   @override
   void initState() {
     super.initState();
-    currentUser = _firebaseAuth.currentUser.uid;
+    currentUser = _firebaseAuth.currentUser!.uid;
   }
 
   @override
@@ -33,22 +32,29 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
       viewModelBuilder: () => EditEmailScreenModel(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: GradientAppBar(
-          gradient: LinearGradient(
-            colors: [
-              Theme.of(context).primaryColor,
-              Theme.of(context).accentColor
-            ],
-          ),
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
+        appBar: PreferredSize(
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).accentColor
+                ])),
+            child: AppBar(
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: Text(
+                'Changer l\'adresse mail',
+              ),
             ),
-            onPressed: () => Navigator.pop(context),
           ),
-          title: Text(
-            'Changer l\'adresse mail',
-          ),
+          preferredSize: Size.fromHeight(60),
         ),
         body: Form(
           key: _formKeyMail,
@@ -66,12 +72,12 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                             .collection('users')
                             .doc(currentUser)
                             .snapshots(),
-                        builder: (context, snapshot) {
+                        builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
                             return TextFormField(
                               initialValue: snapshot.data['email'],
                               validator: (value) =>
-                                  value.isEmpty ? 'Please enter a mail' : null,
+                                  value!.isEmpty ? 'Please enter a mail' : null,
                               onChanged: (value) =>
                                   setState(() => _currentEmail = value),
                             );
@@ -88,7 +94,7 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                         ? SizedBox()
                         : FloatingActionButton(
                             onPressed: () async {
-                              if (_formKeyMail.currentState.validate()) {
+                              if (_formKeyMail.currentState!.validate()) {
                                 showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
@@ -99,7 +105,7 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                                                   decoration: InputDecoration(
                                                       labelText: "Password"),
                                                   obscureText: true,
-                                                  validator: (value) => value
+                                                  validator: (value) => value!
                                                           .isEmpty
                                                       ? 'Please enter a password'
                                                       : null,

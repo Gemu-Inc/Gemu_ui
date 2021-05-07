@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 enum NotificationType { comment, follow, updown }
 
 class NotificationDemo {
-  final String text, time;
+  final String? text, time;
   final NotificationType notificationType;
 
   NotificationDemo(
-      {this.text, @required this.time, @required this.notificationType});
+      {this.text, required this.time, required this.notificationType});
 }
 
 List demoNotifications = [

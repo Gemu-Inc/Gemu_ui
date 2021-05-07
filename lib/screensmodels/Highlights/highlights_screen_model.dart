@@ -7,16 +7,11 @@ import 'package:Gemu/services/database_service.dart';
 import 'package:Gemu/models/user.dart';
 
 class HighlightScreenModel extends BaseModel {
-  final AuthService _authService = locator<AuthService>();
-  final DatabaseService _firestoreService = locator<DatabaseService>();
-  final NavigationService _navigationService = locator<NavigationService>();
-
-  Stream<UserModel> get userData {
-    var currentUser = _authService.currentUser;
-    return _firestoreService.userData(currentUser.id);
-  }
+  final AuthService? _authService = locator<AuthService>();
+  final DatabaseService? _firestoreService = locator<DatabaseService>();
+  final NavigationService? _navigationService = locator<NavigationService>();
 
   void navigateToSearch() {
-    _navigationService.navigateTo(SearchScreenRoute);
+    _navigationService!.navigateTo(SearchScreenRoute);
   }
 }

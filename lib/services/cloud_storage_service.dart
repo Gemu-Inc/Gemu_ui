@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 class CloudStorageService {
   Future<CloudStorageResult> uploadImage(
-      {@required File imageToUpload, @required String title}) async {
+      {required File imageToUpload, required String title}) async {
     var imageFileName = title;
 
     final Reference firebaseStorageRef =
@@ -22,7 +22,7 @@ class CloudStorageService {
   }
 
   Future<CloudStorageResult> uploadImagePost(
-      {@required File imageToUpload, @required String title}) async {
+      {required File imageToUpload, required String title}) async {
     var imageFileName = title;
 
     final Reference firebaseStorageRef =
@@ -39,7 +39,7 @@ class CloudStorageService {
     return CloudStorageResult(imageUrl: url, imageFileName: imageFileName);
   }
 
-  Future deleteImage({@required imageFileName}) async {
+  Future deleteImage({required imageFileName}) async {
     final Reference firebaseStorageRef =
         FirebaseStorage.instance.ref().child('users/' + imageFileName);
 
@@ -53,8 +53,8 @@ class CloudStorageService {
 }
 
 class CloudStorageResult {
-  final String imageUrl;
-  final String imageFileName;
+  final String? imageUrl;
+  final String? imageFileName;
 
   CloudStorageResult({this.imageUrl, this.imageFileName});
 }

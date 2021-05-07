@@ -8,26 +8,26 @@ import 'messages_view.dart';
 
 class MessageCard extends StatelessWidget {
   MessageCard(
-      {Key key,
-      @required this.uid,
-      @required this.peer,
-      @required this.lastMessage})
+      {Key? key,
+      required this.uid,
+      required this.peer,
+      required this.lastMessage})
       : super(key: key);
 
   final String uid;
-  final UserModel peer;
-  Map<dynamic, dynamic> lastMessage;
+  final UserModel? peer;
+  Map<dynamic, dynamic>? lastMessage;
 
-  BuildContext context;
-  String groupId;
-  bool read;
+  BuildContext? context;
+  String? groupId;
+  bool? read;
 
   @override
   Widget build(BuildContext context) {
-    if (lastMessage['idFrom'] == uid) {
+    if (lastMessage!['idFrom'] == uid) {
       read = true;
     } else {
-      read = lastMessage['read'] == null ? true : lastMessage['read'];
+      read = lastMessage!['read'] == null ? true : lastMessage!['read'];
     }
     this.context = context;
     groupId = getGroupChatId();
@@ -44,7 +44,7 @@ class MessageCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                peer.photoURL == null
+                peer!.photoURL == null
                     ? Container(
                         height: 50,
                         width: 50,
@@ -63,7 +63,7 @@ class MessageCard extends StatelessWidget {
                             image: DecorationImage(
                                 fit: BoxFit.cover,
                                 image:
-                                    CachedNetworkImageProvider(peer.photoURL))),
+                                    CachedNetworkImageProvider(peer!.photoURL!))),
                       ),
               ],
             ),
@@ -76,11 +76,11 @@ class MessageCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          peer.pseudo,
+                          peer!.pseudo!,
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w500),
                         ),
-                        read
+                        read!
                             ? Container()
                             : Icon(Icons.brightness_1,
                                 color: Theme.of(context).accentColor, size: 15),
@@ -92,7 +92,7 @@ class MessageCard extends StatelessWidget {
                     Opacity(
                       opacity: 0.64,
                       child: Text(
-                        lastMessage['content'],
+                        lastMessage!['content'],
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -103,7 +103,7 @@ class MessageCard extends StatelessWidget {
             ),
             Opacity(
               opacity: 0.64,
-              child: Text(getTime(lastMessage['timestamp'])),
+              child: Text(getTime(lastMessage!['timestamp'])),
             )
           ],
         ),
@@ -125,10 +125,10 @@ class MessageCard extends StatelessWidget {
   }
 
   String getGroupChatId() {
-    if (uid.hashCode <= peer.id.hashCode) {
-      return uid + '_' + peer.id;
+    if (uid.hashCode <= peer!.id.hashCode) {
+      return uid + '_' + peer!.id!;
     } else {
-      return peer.id + '_' + uid;
+      return peer!.id! + '_' + uid;
     }
   }
 }

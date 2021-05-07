@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:Gemu/size_config.dart';
 
 class Sun extends StatelessWidget {
-  const Sun({Key key, @required this.isFullSun}) : super(key: key);
+  const Sun({Key? key, required this.isFullSun}) : super(key: key);
 
   final bool isFullSun;
 

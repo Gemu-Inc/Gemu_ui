@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:Gemu/constants/variables.dart';
@@ -9,7 +8,7 @@ import 'Notifications/notifications_screen.dart';
 import 'Messages/messages_screen.dart';
 
 class ActivitiesMenuDrawer extends StatefulWidget {
-  ActivitiesMenuDrawer({Key key}) : super(key: key);
+  ActivitiesMenuDrawer({Key? key}) : super(key: key);
 
   @override
   _ActivitiesMenuDrawerState createState() => _ActivitiesMenuDrawerState();
@@ -17,11 +16,11 @@ class ActivitiesMenuDrawer extends StatefulWidget {
 
 class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
     with TickerProviderStateMixin {
-  TabController _tabController;
+  TabController? _tabController;
   int currentTabIndex = 0;
 
-  AnimationController _activitiesController, _rotateController;
-  Animation _activitiesAnimation, _rotateAnimation;
+  late AnimationController _activitiesController, _rotateController;
+  late Animation _activitiesAnimation, _rotateAnimation;
 
   bool isDrawer = true;
 
@@ -34,10 +33,10 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
   ];
 
   void _onTabChanged() {
-    if (!_tabController.indexIsChanging)
+    if (!_tabController!.indexIsChanging)
       setState(() {
-        print('Changing to Tab: ${_tabController.index}');
-        currentTabIndex = _tabController.index;
+        print('Changing to Tab: ${_tabController!.index}');
+        currentTabIndex = _tabController!.index;
         if (currentTabIndex == 1 && _activitiesController.value == 1) {
           _rotateController.reverse();
           _activitiesController.reverse();
@@ -55,18 +54,19 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
     super.initState();
 
     _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(_onTabChanged);
+    _tabController!.addListener(_onTabChanged);
     currentTabIndex = 0;
 
     _activitiesController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    _activitiesAnimation = CurvedAnimation(
-        parent: _activitiesController, curve: Curves.easeInCubic);
-
     _rotateController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+
+    _activitiesAnimation = CurvedAnimation(
+        parent: _activitiesController, curve: Curves.easeInCubic);
     _rotateAnimation = Tween<double>(begin: 0.0, end: 180.0).animate(
         CurvedAnimation(parent: _rotateController, curve: Curves.easeOut));
+
     _rotateController.addListener(() {
       setState(() {});
     });
@@ -74,7 +74,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController!.dispose();
     _activitiesController.dispose();
     _rotateController.dispose();
     super.dispose();
@@ -82,38 +82,45 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
 
   @override
   Widget build(BuildContext context) {
-    final String uid = FirebaseAuth.instance.currentUser.uid;
+    final String uid = FirebaseAuth.instance.currentUser!.uid;
     return isDrawer
         ? Drawer(
             child: Scaffold(
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                appBar: GradientAppBar(
-                  automaticallyImplyLeading: false,
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).accentColor
-                      ]),
-                  actions: [
-                    IconButton(
-                        icon: Icon(
-                          Icons.zoom_out_map_rounded,
-                          size: 26,
-                        ),
-                        onPressed: () {
-                          if (isDrawer) {
-                            setState(() {
-                              isDrawer = false;
-                            });
-                          }
-                        }),
-                  ],
-                  bottom: PreferredSize(
-                      child: bottomAppBar(),
-                      preferredSize: Size.fromHeight(60)),
-                ),
+                appBar: PreferredSize(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).accentColor
+                          ])),
+                      child: AppBar(
+                        automaticallyImplyLeading: false,
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        actions: [
+                          IconButton(
+                              icon: Icon(
+                                Icons.zoom_out_map_rounded,
+                                size: 26,
+                              ),
+                              onPressed: () {
+                                if (isDrawer) {
+                                  setState(() {
+                                    isDrawer = false;
+                                  });
+                                }
+                              }),
+                        ],
+                        bottom: PreferredSize(
+                            child: bottomAppBar(),
+                            preferredSize: Size.fromHeight(60)),
+                      ),
+                    ),
+                    preferredSize: Size.fromHeight(120)),
                 body: Stack(
                   children: [
                     TabBarView(controller: _tabController, children: [
@@ -129,32 +136,40 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                 )))
         : Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: GradientAppBar(
-              automaticallyImplyLeading: false,
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).accentColor
-                  ]),
-              actions: [
-                IconButton(
-                    icon: Icon(
-                      Icons.close_fullscreen_rounded,
-                      size: 26,
-                    ),
-                    onPressed: () {
-                      if (!isDrawer) {
-                        setState(() {
-                          isDrawer = true;
-                        });
-                      }
-                    })
-              ],
-              bottom: PreferredSize(
-                  child: bottomAppBar(), preferredSize: Size.fromHeight(60)),
-            ),
+            appBar: PreferredSize(
+                child: Container(
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).accentColor
+                      ])),
+                  child: AppBar(
+                    automaticallyImplyLeading: false,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    actions: [
+                      IconButton(
+                          icon: Icon(
+                            Icons.close_fullscreen_rounded,
+                            size: 26,
+                          ),
+                          onPressed: () {
+                            if (!isDrawer) {
+                              setState(() {
+                                isDrawer = true;
+                              });
+                            }
+                          })
+                    ],
+                    bottom: PreferredSize(
+                        child: bottomAppBar(),
+                        preferredSize: Size.fromHeight(60)),
+                  ),
+                ),
+                preferredSize: Size.fromHeight(120)),
             body: Stack(
               children: [
                 TabBarView(controller: _tabController, children: [
@@ -219,7 +234,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
 
   Widget activitiesPanel() {
     return SizeTransition(
-        sizeFactor: _activitiesAnimation,
+        sizeFactor: _activitiesAnimation as Animation<double>,
         child: ClipRect(
             child: Container(
                 height: MediaQuery.of(context).size.height / 3,

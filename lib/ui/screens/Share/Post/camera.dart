@@ -6,9 +6,9 @@ import 'package:camera/camera.dart';
 import 'package:video_player/video_player.dart';
 
 class CameraPost extends StatefulWidget {
-  CameraPost({Key key, this.cameras}) : super(key: key);
+  CameraPost({Key? key, this.cameras}) : super(key: key);
 
-  final List<CameraDescription> cameras;
+  final List<CameraDescription>? cameras;
 
   @override
   CameraPostState createState() => CameraPostState();
@@ -26,23 +26,23 @@ IconData getCameraLensIcon(CameraLensDirection direction) {
   throw ArgumentError('Unknown lens direction');
 }
 
-void logError(String code, String message) =>
+void logError(String code, String? message) =>
     print('Error: $code\nError Message: $message');
 
 class CameraPostState extends State<CameraPost>
     with WidgetsBindingObserver, TickerProviderStateMixin {
-  CameraController controller;
-  XFile imageFile;
-  XFile videoFile;
-  VideoPlayerController videoController;
-  VoidCallback videoPlayerListener;
+  CameraController? controller;
+  XFile? imageFile;
+  late XFile videoFile;
+  VideoPlayerController? videoController;
+  late VoidCallback videoPlayerListener;
   bool enableAudio = true;
   bool activateFlash = false;
   double _minAvailableExposureOffset = 0.0;
   double _maxAvailableExposureOffset = 0.0;
 
-  double _minAvailableZoom;
-  double _maxAvailableZoom;
+  late double _minAvailableZoom;
+  late double _maxAvailableZoom;
   double _currentScale = 1.0;
   double _baseScale = 1.0;
 
@@ -52,23 +52,23 @@ class CameraPostState extends State<CameraPost>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
 
-    controller = CameraController(widget.cameras[0], ResolutionPreset.medium);
-    controller.initialize().then((_) {
+    controller = CameraController(widget.cameras![0], ResolutionPreset.medium);
+    controller!.initialize().then((_) {
       if (!mounted) {
         return;
       }
       setState(() {});
     });
 
-    print(controller.value.flashMode);
+    print(controller!.value.flashMode);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    controller.dispose();
+    WidgetsBinding.instance!.removeObserver(this);
+    controller!.dispose();
 
     super.dispose();
   }
@@ -76,14 +76,14 @@ class CameraPostState extends State<CameraPost>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // App state changed before we got the chance to initialize.
-    if (controller == null || !controller.value.isInitialized) {
+    if (controller == null || !controller!.value.isInitialized) {
       return;
     }
     if (state == AppLifecycleState.inactive) {
       controller?.dispose();
     } else if (state == AppLifecycleState.resumed) {
       if (controller != null) {
-        onNewCameraSelected(controller.description);
+        onNewCameraSelected(controller!.description);
       }
     }
   }
@@ -116,7 +116,7 @@ class CameraPostState extends State<CameraPost>
 
   /// Display the preview from the camera (or a message if the preview is not available).
   Widget _cameraPreviewWidget() {
-    if (controller == null || !controller.value.isInitialized) {
+    if (controller == null || !controller!.value.isInitialized) {
       return Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -125,7 +125,7 @@ class CameraPostState extends State<CameraPost>
         ),
       );
     } else {
-      var camera = controller.value;
+      var camera = controller!.value;
       final size = MediaQuery.of(context).size;
       var scale = size.aspectRatio * camera.aspectRatio;
       if (scale < 1) scale = 1 / scale;
@@ -136,7 +136,7 @@ class CameraPostState extends State<CameraPost>
           scale: scale,
           child: Center(
             child: CameraPreview(
-              controller,
+              controller!,
               child: LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
                 return GestureDetector(
@@ -166,7 +166,7 @@ class CameraPostState extends State<CameraPost>
     _currentScale = (_baseScale * details.scale)
         .clamp(_minAvailableZoom, _maxAvailableZoom);
 
-    await controller.setZoomLevel(_currentScale);
+    await controller!.setZoomLevel(_currentScale);
   }
 
   /// Display a bar with buttons to change the flash and exposure modes
@@ -205,8 +205,8 @@ class CameraPostState extends State<CameraPost>
           icon: const Icon(Icons.camera_alt),
           color: Colors.blue,
           onPressed: controller != null &&
-                  controller.value.isInitialized &&
-                  !controller.value.isRecordingVideo
+                  controller!.value.isInitialized &&
+                  !controller!.value.isRecordingVideo
               ? onTakePictureButtonPressed
               : null,
         ),
@@ -214,8 +214,8 @@ class CameraPostState extends State<CameraPost>
           icon: const Icon(Icons.videocam),
           color: Colors.blue,
           onPressed: controller != null &&
-                  controller.value.isInitialized &&
-                  !controller.value.isRecordingVideo
+                  controller!.value.isInitialized &&
+                  !controller!.value.isRecordingVideo
               ? onVideoRecordButtonPressed
               : null,
         ),
@@ -223,8 +223,8 @@ class CameraPostState extends State<CameraPost>
           icon: const Icon(Icons.stop),
           color: Colors.red,
           onPressed: controller != null &&
-                  controller.value.isInitialized &&
-                  controller.value.isRecordingVideo
+                  controller!.value.isInitialized &&
+                  controller!.value.isRecordingVideo
               ? onStopButtonPressed
               : null,
         )
@@ -236,10 +236,10 @@ class CameraPostState extends State<CameraPost>
   Widget _cameraTogglesRowWidget() {
     final List<Widget> toggles = <Widget>[];
 
-    if (widget.cameras.isEmpty) {
+    if (widget.cameras!.isEmpty) {
       return const Text('No camera found');
     } else {
-      for (CameraDescription cameraDescription in widget.cameras) {
+      for (CameraDescription cameraDescription in widget.cameras!) {
         toggles.add(
           SizedBox(
             width: 90.0,
@@ -247,7 +247,7 @@ class CameraPostState extends State<CameraPost>
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
               value: cameraDescription,
-              onChanged: controller != null && controller.value.isRecordingVideo
+              onChanged: controller != null && controller!.value.isRecordingVideo
                   ? null
                   : onNewCameraSelected,
             ),
@@ -263,7 +263,7 @@ class CameraPostState extends State<CameraPost>
 
   void showInSnackBar(String message) {
     // ignore: deprecated_member_use
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message)));
+    _scaffoldKey.currentState!.showSnackBar(SnackBar(content: Text(message)));
   }
 
   void onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
@@ -271,40 +271,40 @@ class CameraPostState extends State<CameraPost>
       details.localPosition.dx / constraints.maxWidth,
       details.localPosition.dy / constraints.maxHeight,
     );
-    controller.setExposurePoint(offset);
-    controller.setFocusPoint(offset);
+    controller!.setExposurePoint(offset);
+    controller!.setFocusPoint(offset);
   }
 
-  void onNewCameraSelected(CameraDescription cameraDescription) async {
+  void onNewCameraSelected(CameraDescription? cameraDescription) async {
     if (controller != null) {
-      await controller.dispose();
+      await controller!.dispose();
     }
     controller = CameraController(
-      cameraDescription,
+      cameraDescription!,
       ResolutionPreset.medium,
       enableAudio: enableAudio,
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
 
     // If the controller is updated then update the UI.
-    controller.addListener(() {
+    controller!.addListener(() {
       if (mounted) setState(() {});
-      if (controller.value.hasError) {
-        showInSnackBar('Camera error ${controller.value.errorDescription}');
+      if (controller!.value.hasError) {
+        showInSnackBar('Camera error ${controller!.value.errorDescription}');
       }
     });
 
     try {
-      await controller.initialize();
+      await controller!.initialize();
       await Future.wait([
-        controller
+        controller!
             .getMinExposureOffset()
             .then((value) => _minAvailableExposureOffset = value),
-        controller
+        controller!
             .getMaxExposureOffset()
             .then((value) => _maxAvailableExposureOffset = value),
-        controller.getMaxZoomLevel().then((value) => _maxAvailableZoom = value),
-        controller.getMinZoomLevel().then((value) => _minAvailableZoom = value),
+        controller!.getMaxZoomLevel().then((value) => _maxAvailableZoom = value),
+        controller!.getMinZoomLevel().then((value) => _minAvailableZoom = value),
       ]);
     } on CameraException catch (e) {
       _showCameraException(e);
@@ -316,7 +316,7 @@ class CameraPostState extends State<CameraPost>
   }
 
   void onTakePictureButtonPressed() {
-    takePicture().then((XFile file) {
+    takePicture().then((XFile? file) {
       if (mounted) {
         setState(() {
           imageFile = file;
@@ -345,7 +345,7 @@ class CameraPostState extends State<CameraPost>
   void onAudioModeButtonPressed() {
     enableAudio = !enableAudio;
     if (controller != null) {
-      onNewCameraSelected(controller.description);
+      onNewCameraSelected(controller!.description);
     }
   }
 
@@ -379,31 +379,31 @@ class CameraPostState extends State<CameraPost>
   }
 
   Future<void> startVideoRecording() async {
-    if (!controller.value.isInitialized) {
+    if (!controller!.value.isInitialized) {
       showInSnackBar('Error: select a camera first.');
       return;
     }
 
-    if (controller.value.isRecordingVideo) {
+    if (controller!.value.isRecordingVideo) {
       // A recording is already started, do nothing.
       return;
     }
 
     try {
-      await controller.startVideoRecording();
+      await controller!.startVideoRecording();
     } on CameraException catch (e) {
       _showCameraException(e);
       return;
     }
   }
 
-  Future<XFile> stopVideoRecording() async {
-    if (!controller.value.isRecordingVideo) {
+  Future<XFile?> stopVideoRecording() async {
+    if (!controller!.value.isRecordingVideo) {
       return null;
     }
 
     try {
-      return controller.stopVideoRecording();
+      return controller!.stopVideoRecording();
     } on CameraException catch (e) {
       _showCameraException(e);
       return null;
@@ -412,8 +412,8 @@ class CameraPostState extends State<CameraPost>
 
   Future<void> setFlashMode(FlashMode mode) async {
     try {
-      await controller.setFlashMode(mode);
-      print(controller.value.flashMode);
+      await controller!.setFlashMode(mode);
+      print(controller!.value.flashMode);
     } on CameraException catch (e) {
       _showCameraException(e);
       rethrow;
@@ -424,10 +424,10 @@ class CameraPostState extends State<CameraPost>
     final VideoPlayerController vController =
         VideoPlayerController.file(File(videoFile.path));
     videoPlayerListener = () {
-      if (videoController != null && videoController.value.size != null) {
+      if (videoController != null && videoController!.value.size != null) {
         // Refreshing the state to update video player with the correct ratio.
         if (mounted) setState(() {});
-        videoController.removeListener(videoPlayerListener);
+        videoController!.removeListener(videoPlayerListener);
       }
     };
     vController.addListener(videoPlayerListener);
@@ -443,19 +443,19 @@ class CameraPostState extends State<CameraPost>
     await vController.play();
   }
 
-  Future<XFile> takePicture() async {
-    if (!controller.value.isInitialized) {
+  Future<XFile?> takePicture() async {
+    if (!controller!.value.isInitialized) {
       showInSnackBar('Error: select a camera first.');
       return null;
     }
 
-    if (controller.value.isTakingPicture) {
+    if (controller!.value.isTakingPicture) {
       // A capture is already pending, do nothing.
       return null;
     }
 
     try {
-      XFile file = await controller.takePicture();
+      XFile file = await controller!.takePicture();
       return file;
     } on CameraException catch (e) {
       _showCameraException(e);

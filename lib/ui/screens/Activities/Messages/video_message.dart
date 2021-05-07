@@ -5,7 +5,7 @@ import 'package:Gemu/models/chat_messages.dart';
 class VideoMessage extends StatelessWidget {
   final ChatMessage message;
 
-  VideoMessage({Key key, @required this.message}) : super(key: key);
+  VideoMessage({Key? key, required this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

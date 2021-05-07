@@ -2,9 +2,9 @@ import 'package:Gemu/models/models.dart';
 import 'package:flutter/material.dart';
 
 class ChoixTags extends StatefulWidget {
-  final CategoriePost tag;
+  final CategoriePost? tag;
 
-  ChoixTags({Key key, this.tag}) : super(key: key);
+  ChoixTags({Key? key, this.tag}) : super(key: key);
 
   @override
   _ChoixTagsState createState() => _ChoixTagsState();
@@ -12,7 +12,7 @@ class ChoixTags extends StatefulWidget {
 
 class _ChoixTagsState extends State<ChoixTags>
     with SingleTickerProviderStateMixin {
-  bool isSelected;
+  late bool isSelected;
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _ChoixTagsState extends State<ChoixTags>
   @override
   Widget build(BuildContext context) {
     return FilterChip(
-        label: Text(widget.tag.name),
+        label: Text(widget.tag!.name),
         labelPadding: EdgeInsets.all(6.0),
         selected: isSelected,
         onSelected: (bool selected) {

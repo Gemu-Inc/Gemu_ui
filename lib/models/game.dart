@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 
 class Game {
-  final String name;
-  final String imageUrl;
+  final String? name;
+  final String? imageUrl;
   //final List<String> idCategories;
-  final String documentId;
-  bool selected;
+  final String? documentId;
+  bool? selected;
 
   Game(
-      {@required this.name,
-      @required this.imageUrl,
+      {required this.name,
+      required this.imageUrl,
       //@required this.idCategories,
       this.documentId,
       this.selected});
@@ -22,8 +22,6 @@ class Game {
   }
 
   static Game fromMap(Map<String, dynamic> map, String documentId) {
-    if (map == null) return null;
-
     return Game(
         /*idCategories: List<String>.from(map['idCategories'].map((item) {
           return item;

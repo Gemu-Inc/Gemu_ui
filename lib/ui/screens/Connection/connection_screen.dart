@@ -12,11 +12,11 @@ class ConnectionScreenState extends State<ConnectionScreen> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: ProviderAuth.of(context).auth.onAuthStateChanged,
+      stream: ProviderAuth.of(context)!.auth!.onAuthStateChanged,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           print('user log in');
-          ProviderAuth.of(context).auth.getCurrentUID();
+          ProviderAuth.of(context)!.auth!.getCurrentUID();
           return NavScreen();
         } else {
           print('user log out');

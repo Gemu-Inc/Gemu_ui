@@ -4,9 +4,9 @@ import 'package:Gemu/services/auth_service.dart';
 import 'package:flutter/widgets.dart';
 
 class BaseModel extends ChangeNotifier {
-  final AuthService _authenticationService = locator<AuthService>();
+  final AuthService? _authenticationService = locator<AuthService>();
 
-  UserModel get currentUser => _authenticationService.currentUser;
+  UserModel? get currentUser => _authenticationService!.currentUser;
 
   bool _busy = false;
   bool get busy => _busy;

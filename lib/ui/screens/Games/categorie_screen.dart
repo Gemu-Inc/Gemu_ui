@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -8,7 +7,7 @@ import 'package:Gemu/constants/variables.dart';
 import 'game_view.dart';
 
 class CategorieScreen extends StatefulWidget {
-  CategorieScreen({Key key, @required this.categorie}) : super(key: key);
+  CategorieScreen({Key? key, required this.categorie}) : super(key: key);
 
   final dynamic categorie;
 
@@ -18,14 +17,14 @@ class CategorieScreen extends StatefulWidget {
 
 class _CategorieScreenState extends State<CategorieScreen>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  TabController? _tabController;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   bool dataIsThere = false;
-  String uid;
-  DocumentSnapshot user;
-  Future result;
-  Stream stream;
+  String? uid;
+  late DocumentSnapshot<Map<String, dynamic>> user;
+  Future? result;
+  Stream? stream;
 
   List gameFollow = [];
   List gameNoFollow = [];
@@ -39,12 +38,12 @@ class _CategorieScreenState extends State<CategorieScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController!.dispose();
     super.dispose();
   }
 
   getAllData() async {
-    uid = _firebaseAuth.currentUser.uid;
+    uid = _firebaseAuth.currentUser!.uid;
     user = await FirebaseFirestore.instance.collection('users').doc(uid).get();
     setState(() {
       dataIsThere = true;
@@ -56,37 +55,42 @@ class _CategorieScreenState extends State<CategorieScreen>
     return dataIsThere
         ? Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: GradientAppBar(
-                elevation: 6.0,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).accentColor
-                  ],
+            appBar: PreferredSize(
+                child: Container(
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).accentColor
+                      ])),
+                  child: AppBar(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      leading: IconButton(
+                          icon: Icon(Icons.arrow_back_ios),
+                          onPressed: () => Navigator.pop(context)),
+                      title: Text(widget.categorie.data()['name']),
+                      bottom: PreferredSize(
+                          child: Container(
+                              height: 60.0,
+                              child: Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child: TabBar(
+                                  controller: _tabController,
+                                  labelColor: Theme.of(context).primaryColor,
+                                  unselectedLabelColor: Colors.grey,
+                                  indicatorSize: TabBarIndicatorSize.tab,
+                                  indicator: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Theme.of(context).canvasColor),
+                                  tabs: [Text('A découvrir'), Text('Suivis')],
+                                ),
+                              )),
+                          preferredSize: Size.fromHeight(60))),
                 ),
-                leading: IconButton(
-                    icon: Icon(Icons.arrow_back_ios),
-                    onPressed: () => Navigator.pop(context)),
-                title: Text(widget.categorie.data()['name']),
-                bottom: PreferredSize(
-                    child: Container(
-                        height: 60.0,
-                        child: Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: TabBar(
-                            controller: _tabController,
-                            labelColor: Theme.of(context).primaryColor,
-                            unselectedLabelColor: Colors.grey,
-                            indicatorSize: TabBarIndicatorSize.tab,
-                            indicator: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Theme.of(context).canvasColor),
-                            tabs: [Text('A découvrir'), Text('Suivis')],
-                          ),
-                        )),
-                    preferredSize: Size.fromHeight(60))),
+                preferredSize: Size.fromHeight(120)),
             body: TabBarView(
               controller: _tabController,
               children: [
@@ -107,22 +111,22 @@ class _CategorieScreenState extends State<CategorieScreen>
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('games')
-            .where(FieldPath.documentId, whereIn: user.data()['idGames'])
+            .where(FieldPath.documentId, whereIn: user.data()!['idGames'])
             .snapshots(),
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           }
-          print('snapshot: ${snapshot.data.docs.length}');
+          print('snapshot: ${snapshot.data!.docs.length}');
           if (gameFollow.length != 0) {
             gameFollow.clear();
           }
           for (int i = 0; i < snapshot.data.docs.length; i++) {
-            DocumentSnapshot game = snapshot.data.docs[i];
+            DocumentSnapshot? game = snapshot.data.docs[i];
             for (int j = 0;
                 j < widget.categorie.data()['idGames'].length;
                 j++) {
-              if (game.data()['id'] == widget.categorie.data()['idGames'][j]) {
+              if (game!.id == widget.categorie.data()['idGames'][j]) {
                 gameFollow.add(game);
               }
             }
@@ -146,8 +150,9 @@ class _CategorieScreenState extends State<CategorieScreen>
                   crossAxisCount: 3, childAspectRatio: 1, crossAxisSpacing: 6),
               itemCount: gameFollow.length,
               itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot game = gameFollow[index];
-                return GameView(game: game);
+                DocumentSnapshot? game = gameFollow[index];
+                return GameView(
+                    game: game as DocumentSnapshot<Map<String, dynamic>>?);
               });
         });
   }
@@ -156,9 +161,9 @@ class _CategorieScreenState extends State<CategorieScreen>
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('games')
-            .where(FieldPath.documentId, whereNotIn: user.data()['idGames'])
+            .where(FieldPath.documentId, whereNotIn: user.data()!['idGames'])
             .snapshots(),
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot snapshot) {
           {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
@@ -167,12 +172,11 @@ class _CategorieScreenState extends State<CategorieScreen>
               gameNoFollow.clear();
             }
             for (int i = 0; i < snapshot.data.docs.length; i++) {
-              DocumentSnapshot game = snapshot.data.docs[i];
+              DocumentSnapshot? game = snapshot.data.docs[i];
               for (int j = 0;
                   j < widget.categorie.data()['idGames'].length;
                   j++) {
-                if (game.data()['id'] ==
-                    widget.categorie.data()['idGames'][j]) {
+                if (game!.id == widget.categorie.data()['idGames'][j]) {
                   gameNoFollow.add(game);
                 }
               }
@@ -197,8 +201,9 @@ class _CategorieScreenState extends State<CategorieScreen>
                     crossAxisSpacing: 6),
                 itemCount: gameNoFollow.length,
                 itemBuilder: (BuildContext context, int index) {
-                  DocumentSnapshot game = gameNoFollow[index];
-                  return GameView(game: game);
+                  DocumentSnapshot? game = gameNoFollow[index];
+                  return GameView(
+                      game: game as DocumentSnapshot<Map<String, dynamic>>?);
                 });
           }
         });

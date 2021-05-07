@@ -4,7 +4,7 @@ class Convo {
   Convo({this.id, this.userIds, this.lastMessage});
 
   factory Convo.fromFirestore(DocumentSnapshot doc) {
-    final Map<String, dynamic> data = doc.data();
+    final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     return Convo(
         id: doc.id,
@@ -12,16 +12,16 @@ class Convo {
         lastMessage: data['lastMessage'] ?? <dynamic>{});
   }
 
-  String id;
-  List<dynamic> userIds;
-  Map<dynamic, dynamic> lastMessage;
+  String? id;
+  List<dynamic>? userIds;
+  Map<dynamic, dynamic>? lastMessage;
 }
 
 class Message {
   Message({this.id, this.content, this.idFrom, this.idTo, this.timestamp});
 
   factory Message.fromFirestore(DocumentSnapshot doc) {
-    final Map<String, dynamic> data = doc.data();
+    final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     return Message(
         id: doc.id,
@@ -31,9 +31,9 @@ class Message {
         timestamp: data['timestamp']);
   }
 
-  String id;
-  String content;
-  String idFrom;
-  String idTo;
-  DateTime timestamp;
+  String? id;
+  String? content;
+  String? idFrom;
+  String? idTo;
+  DateTime? timestamp;
 }

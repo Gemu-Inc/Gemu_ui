@@ -1,8 +1,7 @@
 import 'package:Gemu/constants/route_names.dart';
-import 'package:Gemu/ui/screens/GetStarted/get_started_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/size_config.dart';
-import 'package:slider_button/slider_button.dart';
+//import 'package:slider_button/slider_button.dart';
 import 'package:Gemu/constants/variables.dart';
 
 import 'land.dart';
@@ -81,7 +80,7 @@ class BodyState extends State<Body> {
                   VerticalSpacing(of: 50),
                   Text(
                     "Welcome to Gemu",
-                    style: Theme.of(context).textTheme.headline3.copyWith(
+                    style: Theme.of(context).textTheme.headline3!.copyWith(
                         fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   VerticalSpacing(of: 10),
@@ -90,11 +89,21 @@ class BodyState extends State<Body> {
                     style: TextStyle(color: Colors.white),
                   ),
                   VerticalSpacing(of: 40),
-                  SliderButton(
+                  GestureDetector(
+                    onTap: () =>
+                        Navigator.of(context).pushNamed(GetStartedRoute),
+                    child: Container(
+                      height: 50,
+                      width: 150,
+                      color: Colors.pink,
+                      child: Text('Slider button'),
+                    ),
+                  )
+                  /*SliderButton(
                     dismissible: false,
                     vibrationFlag: false,
                     height: 50,
-                    width: SizeConfig.screenWidth / 2,
+                    width: SizeConfig.screenWidth! / 2,
                     buttonSize: 50,
                     action: () {
                       Navigator.of(context).pushNamed(GetStartedRoute);
@@ -113,7 +122,7 @@ class BodyState extends State<Body> {
                     baseColor: Colors.white,
                     highlightedColor:
                         isDayMood ? Color(0xFFB27D75) : Color(0xFF6E78B1),
-                  )
+                  )*/
                 ],
               ),
             ),

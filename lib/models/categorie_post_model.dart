@@ -6,7 +6,7 @@ class CategoriePost {
   bool selected;
 
   CategoriePost(
-      {@required this.idCategorie,
-      @required this.name,
-      @required this.selected});
+      {required this.idCategorie,
+      required this.name,
+      required this.selected});
 }

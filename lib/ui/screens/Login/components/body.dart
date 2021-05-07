@@ -12,8 +12,8 @@ class Body extends StatefulWidget {
 class BodyState extends State<Body> {
   Duration _duration = Duration(seconds: 1);
   bool isDayMood = false;
-  TextEditingController _emailController;
-  TextEditingController _passwordController;
+  TextEditingController? _emailController;
+  TextEditingController? _passwordController;
 
   void timeMood() {
     int hour = DateTime.now().hour;
@@ -109,12 +109,12 @@ class BodyState extends State<Body> {
                 InkWell(
                   onTap: () async {
                     try {
-                      print(_emailController.text);
-                      print(_passwordController.text);
+                      print(_emailController!.text);
+                      print(_passwordController!.text);
                       var result = await FirebaseAuth.instance
                           .signInWithEmailAndPassword(
-                              email: _emailController.text,
-                              password: _passwordController.text);
+                              email: _emailController!.text,
+                              password: _passwordController!.text);
                       if (result != null) {
                         Navigator.pushNamedAndRemoveUntil(
                             context, ConnectionScreenRoute, (route) => false);
@@ -135,7 +135,7 @@ class BodyState extends State<Body> {
                     }
                   },
                   child: Container(
-                    width: SizeConfig.screenWidth / 2,
+                    width: SizeConfig.screenWidth! / 2,
                     height: 50,
                     decoration: BoxDecoration(
                         color: Colors.red,
@@ -179,8 +179,8 @@ class BodyState extends State<Body> {
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _emailController!.dispose();
+    _passwordController!.dispose();
     super.dispose();
   }
 }

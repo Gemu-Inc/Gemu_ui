@@ -8,9 +8,9 @@ import 'package:Gemu/ui/screens/Home/comments_view.dart';
 import '../profile_view.dart';
 
 class ActionsPostBar extends StatefulWidget {
-  final String idUser, profilPicture, commentsCounts, idPost;
+  final String? idUser, profilPicture, commentsCounts, idPost;
 
-  final List up, down;
+  final List? up, down;
 
   ActionsPostBar(
       {this.idUser,
@@ -31,14 +31,14 @@ class ActionsPostBarState extends State<ActionsPostBar> {
   static const double ProfileImageSize = 50.0;
   static const double PlusIconSize = 20.0;
 
-  String uid;
+  String? uid;
   bool isFollowing = false;
   bool dataIsThere = false;
 
   @override
   void initState() {
     super.initState();
-    uid = FirebaseAuth.instance.currentUser.uid;
+    uid = FirebaseAuth.instance.currentUser!.uid;
 
     //check if the online user is already follow
     FirebaseFirestore.instance
@@ -64,10 +64,10 @@ class ActionsPostBarState extends State<ActionsPostBar> {
     });
   }
 
-  pointUpPost(String id) async {
-    DocumentSnapshot doc =
+  pointUpPost(String? id) async {
+    DocumentSnapshot<Map<String, dynamic>> doc =
         await FirebaseFirestore.instance.collection('posts').doc(id).get();
-    if (doc.data()['up'].contains(uid)) {
+    if (doc.data()!['up'].contains(uid)) {
       FirebaseFirestore.instance.collection('posts').doc(id).update({
         'up': FieldValue.arrayRemove([uid])
       });
@@ -81,10 +81,10 @@ class ActionsPostBarState extends State<ActionsPostBar> {
     }
   }
 
-  pointsDownPost(String id) async {
-    DocumentSnapshot doc =
+  pointsDownPost(String? id) async {
+    DocumentSnapshot<Map<String, dynamic>> doc =
         await FirebaseFirestore.instance.collection('posts').doc(id).get();
-    if (doc.data()['down'].contains(uid)) {
+    if (doc.data()!['down'].contains(uid)) {
       FirebaseFirestore.instance.collection('posts').doc(id).update({
         'down': FieldValue.arrayRemove([uid])
       });
@@ -147,7 +147,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
 
   @override
   Widget build(BuildContext context) {
-    int points = (widget.up.length - widget.down.length);
+    int points = (widget.up!.length - widget.down!.length);
     return dataIsThere
         ? Container(
             alignment: Alignment.center,
@@ -163,7 +163,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                       title: points.toString()),
                   _getSocialAction(
                       icon: Icons.insert_comment_outlined,
-                      title: widget.commentsCounts,
+                      title: widget.commentsCounts!,
                       context: context),
                   _getFollowAction(context: context),
                 ]),
@@ -174,7 +174,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
   }
 
   Widget _getSocialReferencement(
-      {String title, IconData iconUp, IconData iconDown}) {
+      {required String title, IconData? iconUp, IconData? iconDown}) {
     return Container(
         height: 60.0,
         child: Column(
@@ -191,7 +191,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                   },
                   child: Icon(iconUp,
                       size: 28,
-                      color: widget.up.contains(uid)
+                      color: widget.up!.contains(uid)
                           ? Colors.green
                           : Colors.grey[300]),
                 ),
@@ -206,7 +206,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                   },
                   child: Icon(iconDown,
                       size: 28,
-                      color: widget.down.contains(uid)
+                      color: widget.down!.contains(uid)
                           ? Colors.red
                           : Colors.grey[300]),
                 ),
@@ -220,13 +220,13 @@ class ActionsPostBarState extends State<ActionsPostBar> {
         ));
   }
 
-  Widget _getSocialAction({String title, IconData icon, BuildContext context}) {
+  Widget _getSocialAction({required String title, IconData? icon, BuildContext? context}) {
     return Container(
         height: 60.0,
         child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
           InkWell(
             onTap: () => showModalBottomSheet(
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                backgroundColor: Theme.of(context!).scaffoldBackgroundColor,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
@@ -248,7 +248,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
         ]));
   }
 
-  Widget _getFollowAction({BuildContext context}) {
+  Widget _getFollowAction({BuildContext? context}) {
     return Container(
         margin: EdgeInsets.only(top: 10.0),
         width: 55.0,
@@ -263,11 +263,11 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                   )
                 : Stack(children: [
                     _getProfilePicture(context),
-                    _getPlusIcon(context: context)
+                    _getPlusIcon(context: context!)
                   ]));
   }
 
-  Widget _getPlusIcon({BuildContext context}) {
+  Widget _getPlusIcon({required BuildContext context}) {
     return Positioned(
       bottom: 0,
       left: ((ActionWidgetSize / 2) - (PlusIconSize / 2)),
@@ -294,12 +294,12 @@ class ActionsPostBarState extends State<ActionsPostBar> {
     );
   }
 
-  Widget _getProfilePicture(BuildContext context) {
+  Widget _getProfilePicture(BuildContext? context) {
     return Positioned(
       left: (ActionWidgetSize / 2) - (ProfileImageSize / 2),
       child: GestureDetector(
           onTap: () => Navigator.push(
-              context,
+              context!,
               MaterialPageRoute(
                   builder: (context) => ProfileView(
                         idUser: widget.idUser,
@@ -328,7 +328,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                       image: DecorationImage(
                           fit: BoxFit.cover,
                           image: CachedNetworkImageProvider(
-                              widget.profilPicture))),
+                              widget.profilPicture!))),
                 )),
     );
   }

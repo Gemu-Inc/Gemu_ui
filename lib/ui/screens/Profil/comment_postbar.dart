@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CommentPostBar extends StatefulWidget {
-  final String idPost;
-  final FocusNode focusNode;
+  final String? idPost;
+  final FocusNode? focusNode;
 
-  CommentPostBar({@required this.idPost, @required this.focusNode});
+  CommentPostBar({required this.idPost, required this.focusNode});
 
   @override
   CommentPostBarState createState() => CommentPostBarState();
@@ -16,14 +16,14 @@ class CommentPostBar extends StatefulWidget {
 class CommentPostBarState extends State<CommentPostBar>
     with SingleTickerProviderStateMixin {
   TextEditingController _commentController = TextEditingController();
-  AnimationController _animationController;
+  late AnimationController _animationController;
 
-  String uid;
+  String? uid;
 
   @override
   void initState() {
     super.initState();
-    uid = FirebaseAuth.instance.currentUser.uid;
+    uid = FirebaseAuth.instance.currentUser!.uid;
     _animationController = _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 5))
           ..repeat();
@@ -36,7 +36,7 @@ class CommentPostBarState extends State<CommentPostBar>
   }
 
   publishComment() async {
-    DocumentSnapshot userdoc =
+    DocumentSnapshot<Map<String, dynamic>> userdoc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
     var alldocs = await FirebaseFirestore.instance
         .collection('posts')
@@ -51,9 +51,9 @@ class CommentPostBarState extends State<CommentPostBar>
         .collection('comments')
         .doc('Comment$length')
         .set({
-      'username': userdoc.data()['pseudo'],
+      'username': userdoc.data()!['pseudo'],
       'uid': uid,
-      'profilpicture': userdoc.data()['photoURL'],
+      'profilpicture': userdoc.data()!['photoURL'],
       'comment': _commentController.text,
       'up': [],
       'down': [],
@@ -61,19 +61,20 @@ class CommentPostBarState extends State<CommentPostBar>
       'id': 'Comment$length'
     });
     _commentController.clear();
-    DocumentSnapshot doc = await FirebaseFirestore.instance
+    DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+        .instance
         .collection('posts')
         .doc(widget.idPost)
         .get();
     FirebaseFirestore.instance
         .collection('posts')
         .doc(widget.idPost)
-        .update({'commentcount': doc.data()['commentcount'] + 1});
+        .update({'commentcount': doc.data()!['commentcount'] + 1});
   }
 
   @override
   Widget build(BuildContext context) {
-    Animatable<Color> background = TweenSequence<Color>([
+    Animatable<Color?> background = TweenSequence<Color?>([
       TweenSequenceItem(
         weight: 1.0,
         tween: ColorTween(
@@ -123,8 +124,8 @@ class CommentPostBarState extends State<CommentPostBar>
                         child: InkWell(
                           onTap: () {
                             publishComment();
-                            if (widget.focusNode.hasFocus) {
-                              widget.focusNode.unfocus();
+                            if (widget.focusNode!.hasFocus) {
+                              widget.focusNode!.unfocus();
                             }
                           },
                           child: Text(

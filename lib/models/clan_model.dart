@@ -6,7 +6,7 @@ class Clan {
   final String imageUrl;
 
   const Clan(
-      {@required this.nameClan,
-      @required this.pointsClan,
-      @required this.imageUrl});
+      {required this.nameClan,
+      required this.pointsClan,
+      required this.imageUrl});
 }

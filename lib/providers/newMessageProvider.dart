@@ -9,6 +9,7 @@ class NewMessageProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<UserModel>>.value(
+      initialData: [],
       value: DatabaseService.streamUsers(),
       child: ContactsScreen(),
     );

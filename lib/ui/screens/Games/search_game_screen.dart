@@ -11,7 +11,7 @@ class SearchGameScreen extends StatefulWidget {
 class SearchGameScreenState extends State<SearchGameScreen> {
   TextEditingController _searchGame = TextEditingController();
 
-  Future resultsLoaded;
+  Future? resultsLoaded;
   List _allResults = [];
   List _resultsList = [];
 
@@ -94,7 +94,7 @@ class SearchGameScreenState extends State<SearchGameScreen> {
         body: ListView.builder(
             itemCount: _resultsList.length,
             itemBuilder: (BuildContext context, int index) {
-              DocumentSnapshot game = _resultsList[index];
+              DocumentSnapshot<Map<String, dynamic>> game = _resultsList[index];
               return Padding(
                 padding: EdgeInsets.only(top: 5.0),
                 child: ListTile(
@@ -110,9 +110,9 @@ class SearchGameScreenState extends State<SearchGameScreen> {
                         border: Border.all(color: Colors.black),
                         image: DecorationImage(
                             image: CachedNetworkImageProvider(
-                                game.data()['imageUrl']))),
+                                game.data()!['imageUrl']))),
                   ),
-                  title: Text(game.data()['name']),
+                  title: Text(game.data()!['name']),
                 ),
               );
             }));

@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'package:Gemu/models/user.dart';
@@ -61,7 +59,8 @@ class DatabaseService {
     _postsCollectionReference.snapshots().listen((postsSnapshot) {
       if (postsSnapshot.docs.isNotEmpty) {
         var posts = postsSnapshot.docs
-            .map((snapshot) => Post.fromMap(snapshot.data(), snapshot.id))
+            .map((snapshot) => Post.fromMap(
+                snapshot.data() as Map<String, dynamic>, snapshot.id))
             .where((mappedItem) => mappedItem.imageFileName != null)
             .toList();
 
@@ -78,7 +77,8 @@ class DatabaseService {
     _categoriesCollectionReference.snapshots().listen((categoriesSnapshot) {
       if (categoriesSnapshot.docs.isNotEmpty) {
         var categories = categoriesSnapshot.docs
-            .map((snapshot) => Categorie.fromMap(snapshot.data(), snapshot.id))
+            .map((snapshot) => Categorie.fromMap(
+                snapshot.data() as Map<String, dynamic>, snapshot.id))
             .toList();
 
         // Add the posts onto the controller
@@ -87,33 +87,6 @@ class DatabaseService {
     });
 
     return _categoriesController.stream;
-  }
-
-  UserModel _userDataFromSnapshot(DocumentSnapshot snapshot) {
-    return UserModel(
-        id: snapshot.data()['id'],
-        email: snapshot.data()['email'],
-        pseudo: snapshot.data()['pseudo'],
-        photoURL: snapshot.data()['photoURL'],
-        idGames: List<String>.from(snapshot.data()['idGames'].map((item) {
-          return item;
-        }).toList()));
-  }
-
-  Stream<UserModel> userData(String uid) {
-    return _usersCollectionReference
-        .doc(uid)
-        .snapshots()
-        .map(_userDataFromSnapshot);
-  }
-
-  Stream<List<Game>> getGamesFollow(List<dynamic> snapshot) {
-    return _gamesCollectionReference
-        .where(FieldPath.documentId, whereIn: snapshot)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((document) => Game.fromMap(document.data(), document.id))
-            .toList());
   }
 
   Future createUser(UserModel user) async {
@@ -133,7 +106,7 @@ class DatabaseService {
       var userData = await _usersCollectionReference.doc(uid).get();
       print('${userData.data()}');
 
-      return UserModel.fromMap(userData.data());
+      return UserModel.fromMap(userData.data() as Map<String, dynamic>);
     } catch (e) {
       if (e is PlatformException) {
         return e.message;
@@ -143,20 +116,34 @@ class DatabaseService {
     }
   }
 
-  Future updateUserPseudo(String name, String uid) async {
+  Future updateUserPseudo(String? name, String? uid) async {
     return await _usersCollectionReference.doc(uid).update({'pseudo': name});
   }
 
-  Future updateUserImgProfile(String image, String uid) async {
+  Future updateUserImgProfile(String? image, String uid) async {
     return await _usersCollectionReference.doc(uid).update({'photoURL': image});
   }
 
-  Future updateUserEmail(String email, String uid) async {
+  Future updateUserEmail(String? email, String? uid) async {
     return await _usersCollectionReference.doc(uid).update({'email': email});
   }
 
   Future deleteUserImgProfile(String uid) async {
     return await _usersCollectionReference.doc(uid).update({'photoURL': null});
+  }
+
+  static Stream<List<Game>> getGamesFollow(List<dynamic>? snapshot) {
+    return FirebaseFirestore.instance
+        .collection('games')
+        .where(FieldPath.documentId, whereIn: snapshot)
+        .snapshots()
+        .map((QuerySnapshot snapshot) => snapshot.docs
+            .map((DocumentSnapshot document) => Game.fromMap(
+                document.data() as Map<String, dynamic>, document.id))
+            .toList())
+        .handleError((dynamic e) {
+      print(e);
+    });
   }
 
   //Partie messagerie
@@ -166,7 +153,8 @@ class DatabaseService {
         .collection('users')
         .snapshots()
         .map((QuerySnapshot list) => list.docs
-            .map((DocumentSnapshot snap) => UserModel.fromMap(snap.data()))
+            .map((DocumentSnapshot snap) =>
+                UserModel.fromMap(snap.data() as Map<String, dynamic>))
             .toList())
         .handleError((dynamic e) {
       print(e);
@@ -174,13 +162,14 @@ class DatabaseService {
   }
 
   static Stream<List<UserModel>> getUsersByList(List<String> userIds) {
-    final List<Stream<UserModel>> streams = List();
+    final List<Stream<UserModel>> streams = [];
     for (String id in userIds) {
       streams.add(FirebaseFirestore.instance
           .collection('users')
           .doc(id)
           .snapshots()
-          .map((DocumentSnapshot snap) => UserModel.fromMap(snap.data())));
+          .map((DocumentSnapshot snap) =>
+              UserModel.fromMap(snap.data() as Map<String, dynamic>)));
     }
     return StreamZip<UserModel>(streams).asBroadcastStream();
   }
@@ -196,8 +185,8 @@ class DatabaseService {
             .toList());
   }
 
-  static void sendMessage(
-      String convoID, String id, String pid, String content, String timestamp) {
+  static void sendMessage(String? convoID, String? id, String? pid,
+      String content, String timestamp) {
     final DocumentReference convoDoc =
         FirebaseFirestore.instance.collection('messages').doc(convoID);
 
@@ -209,12 +198,12 @@ class DatabaseService {
         'content': content,
         'read': false
       },
-      'users': <String>[id, pid]
+      'users': <String?>[id, pid]
     }).then((dynamic success) {
       final DocumentReference messageDoc = FirebaseFirestore.instance
           .collection('messages')
           .doc(convoID)
-          .collection(convoID)
+          .collection(convoID!)
           .doc(timestamp);
 
       FirebaseFirestore.instance

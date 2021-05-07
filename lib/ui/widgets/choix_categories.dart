@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ChoixCategories extends StatefulWidget {
-  final String categorie;
+  final String? categorie;
   final List tags;
 
-  ChoixCategories({Key key, @required this.categorie, @required this.tags})
+  ChoixCategories({Key? key, required this.categorie, required this.tags})
       : super(key: key);
 
   @override
@@ -13,7 +13,7 @@ class ChoixCategories extends StatefulWidget {
 
 class ChoixCategoriesState extends State<ChoixCategories>
     with SingleTickerProviderStateMixin {
-  bool isSelected;
+  bool? isSelected;
 
   @override
   void initState() {
@@ -29,12 +29,12 @@ class ChoixCategoriesState extends State<ChoixCategories>
   @override
   Widget build(BuildContext context) {
     return FilterChip(
-      label: Text(widget.categorie),
+      label: Text(widget.categorie!),
       labelPadding: EdgeInsets.all(6.0),
-      selected: isSelected,
+      selected: isSelected!,
       onSelected: (bool selected) {
         setState(() {
-          isSelected = !isSelected;
+          isSelected = !isSelected!;
           if (isSelected == false) {
             widget.tags.remove(widget.categorie);
           } else {

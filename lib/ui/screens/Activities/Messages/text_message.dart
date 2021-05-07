@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/models/chat_messages.dart';
 
 class TextMessage extends StatelessWidget {
-  final ChatMessage message;
+  final ChatMessage? message;
 
-  TextMessage({Key key, this.message}) : super(key: key);
+  TextMessage({Key? key, this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +15,12 @@ class TextMessage extends StatelessWidget {
         vertical: 15 / 2,
       ),
       decoration: BoxDecoration(
-          color: message.isSender
+          color: message!.isSender
               ? Theme.of(context).primaryColor
               : Theme.of(context).canvasColor,
           borderRadius: BorderRadius.circular(30)),
       child: Text(
-        message.text,
+        message!.text!,
         style: TextStyle(color: Colors.white),
       ),
     );

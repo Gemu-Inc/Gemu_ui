@@ -14,7 +14,7 @@ import 'package:Gemu/models/game.dart';
 import 'package:Gemu/constants/route_names.dart';
 
 class PictureEditorScreen extends StatefulWidget {
-  final File file;
+  final File? file;
 
   PictureEditorScreen({this.file});
 
@@ -27,21 +27,21 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
   bool isUploading = false;
   bool isCaption = false;
   bool isHashtags = false;
-  String choixGameId = "";
-  String choixGameName = "";
+  String? choixGameId = "";
+  String? choixGameName = "";
   String privacy = "Public";
 
   TextEditingController _captionController = TextEditingController();
   TextEditingController _hashtagsController = TextEditingController();
 
-  FocusNode _focusNodeCaption, _focusNodeHashtags;
+  FocusNode? _focusNodeCaption, _focusNodeHashtags;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  AnimationController animationController;
-  Animation degOneTranslationAnimation, degTwoTranslationAnimation;
-  Animation rotationAnimationCircularButton;
-  Animation rotationAnimationFlatButton;
+  late AnimationController animationController;
+  late Animation degOneTranslationAnimation, degTwoTranslationAnimation;
+  late Animation rotationAnimationCircularButton;
+  late Animation rotationAnimationFlatButton;
 
   List<String> hashtagsSelected = [];
   List<String> hashtagsListTest = [
@@ -69,8 +69,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
     '45'
   ];
 
-  String id;
-  int postsCount;
+  String? id;
+  int? postsCount;
 
   bool expandContainer = false;
 
@@ -108,8 +108,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
   void dispose() {
     _captionController.dispose();
     _hashtagsController.dispose();
-    _focusNodeCaption.dispose();
-    _focusNodeHashtags.dispose();
+    _focusNodeCaption!.dispose();
+    _focusNodeHashtags!.dispose();
     animationController.dispose();
     super.dispose();
   }
@@ -136,13 +136,14 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
     return downloadUrl;
   }
 
-  uploadPicture(String imagePath, String gameId, String gameName) async {
+  uploadPicture(String imagePath, String? gameId, String? gameName) async {
     setState(() {
       isUploading = true;
     });
     try {
-      var currentUser = FirebaseAuth.instance.currentUser.uid;
-      DocumentSnapshot userdoc = await FirebaseFirestore.instance
+      var currentUser = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot<Map<String, dynamic>> userdoc = await FirebaseFirestore
+          .instance
           .collection('users')
           .doc(currentUser)
           .get();
@@ -159,14 +160,14 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
           .get();
       if (!doc.exists) {
         String picture = await uploadPictureToStorage(
-            imagePath, "Picture$currentUser-$length", gameName);
+            imagePath, "Picture$currentUser-$length", gameName!);
         FirebaseFirestore.instance
             .collection('posts')
             .doc("Picture$currentUser-$length")
             .set({
           'uid': currentUser,
-          'username': userdoc.data()['pseudo'],
-          'profilepicture': userdoc.data()['photoURL'],
+          'username': userdoc.data()!['pseudo'],
+          'profilepicture': userdoc.data()!['photoURL'],
           'id': "Picture$currentUser-$length",
           'game': gameName,
           'up': [],
@@ -212,7 +213,7 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
               FirebaseFirestore.instance
                   .collection('hashtags')
                   .doc(id)
-                  .update({'postsCount': postsCount + 1});
+                  .update({'postsCount': postsCount! + 1});
               FirebaseFirestore.instance
                   .collection('hashtags')
                   .doc(id)
@@ -238,14 +239,14 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
             .get();
         if (!doc.exists) {
           String picture = await uploadPictureToStorage(
-              imagePath, "Picture$currentUser-$length", gameName);
+              imagePath, "Picture$currentUser-$length", gameName!);
           FirebaseFirestore.instance
               .collection('posts')
               .doc("Picture$currentUser-$length")
               .set({
             'uid': currentUser,
-            'username': userdoc.data()['pseudo'],
-            'profilepicture': userdoc.data()['photoURL'],
+            'username': userdoc.data()!['pseudo'],
+            'profilepicture': userdoc.data()!['photoURL'],
             'id': "Picture$currentUser-$length",
             'game': gameName,
             'up': [],
@@ -291,7 +292,7 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                 FirebaseFirestore.instance
                     .collection('hashtags')
                     .doc(id)
-                    .update({'postsCount': postsCount + 1});
+                    .update({'postsCount': postsCount! + 1});
                 FirebaseFirestore.instance
                     .collection('hashtags')
                     .doc(id)
@@ -317,7 +318,7 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
   }
 
   void showInSnackBar(String message) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    _scaffoldKey.currentState!.showSnackBar(SnackBar(
         backgroundColor: Theme.of(context).canvasColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         content: Text(
@@ -336,7 +337,7 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
         child: isUploading
             ? Stack(
                 children: [
-                  Center(child: Image.file(widget.file)),
+                  Center(child: Image.file(widget.file!)),
                   Center(
                       child: Container(
                     color: Theme.of(context)
@@ -363,13 +364,13 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
             : isCaption || isHashtags
                 ? Stack(
                     children: [
-                      Center(child: Image.file(widget.file)),
+                      Center(child: Image.file(widget.file!)),
                       isCaption ? _caption() : _hashtags(),
                     ],
                   )
                 : Stack(
                     children: [
-                      Center(child: Image.file(widget.file)),
+                      Center(child: Image.file(widget.file!)),
                       Align(alignment: Alignment.topCenter, child: _topBar()),
                       Positioned(bottom: 20, left: 10, child: _edit()),
                       Positioned(
@@ -717,7 +718,7 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                             }
                           });
                         })
-                    : null;
+                    : Container();
               },
             ),
           )
@@ -754,8 +755,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                 ),
                 GestureDetector(
                   onTap: () async {
-                    File cropped = await ImageCropper.cropImage(
-                        sourcePath: widget.file.path,
+                    File? cropped = await ImageCropper.cropImage(
+                        sourcePath: widget.file!.path,
                         aspectRatioPresets: [
                           CropAspectRatioPreset.square,
                           CropAspectRatioPreset.ratio3x2,
@@ -889,7 +890,7 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
               showInSnackBar('Choose hashtags');
             }
           } else {
-            uploadPicture(widget.file.path, choixGameId, choixGameName);
+            uploadPicture(widget.file!.path, choixGameId, choixGameName);
           }
         },
         child: Container(
@@ -958,9 +959,9 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                   child: FutureBuilder(
                       future: FirebaseFirestore.instance
                           .collection('users')
-                          .doc(FirebaseAuth.instance.currentUser.uid)
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
                           .get(),
-                      builder: (context, snapshotGamesID) {
+                      builder: (context, AsyncSnapshot snapshotGamesID) {
                         if (!snapshotGamesID.hasData) {
                           return CircularProgressIndicator();
                         }
@@ -974,9 +975,10 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
                               return Wrap(
-                                children: snapshot.data.docs.map((snapshot) {
+                                children: snapshot.data!.docs.map((snapshot) {
                                   Game game = Game.fromMap(
-                                      snapshot.data(), snapshot.id);
+                                      snapshot.data() as Map<String, dynamic>,
+                                      snapshot.id);
                                   return Container(
                                       margin: EdgeInsets.only(
                                           bottom: 10.0, top: 10.0),
@@ -1017,12 +1019,12 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                                                       image: DecorationImage(
                                                           fit: BoxFit.cover,
                                                           image: CachedNetworkImageProvider(
-                                                              game.imageUrl))),
+                                                              game.imageUrl!))),
                                                 ),
                                               )),
                                           Align(
                                             alignment: Alignment.bottomCenter,
-                                            child: Text(game.name),
+                                            child: Text(game.name!),
                                           )
                                         ],
                                       ));

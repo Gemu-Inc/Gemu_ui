@@ -11,9 +11,9 @@ import 'package:Gemu/ui/screens/Home/components/video_player_item.dart';
 import 'package:Gemu/ui/screens/Profil/comment_postbar.dart';
 
 class GameFocusScreen extends StatefulWidget {
-  const GameFocusScreen({Key key, @required this.game}) : super(key: key);
+  const GameFocusScreen({Key? key, required this.game}) : super(key: key);
 
-  final DocumentSnapshot game;
+  final DocumentSnapshot<Map<String, dynamic>>? game;
 
   @override
   _GameFocusScreenState createState() => _GameFocusScreenState();
@@ -22,12 +22,12 @@ class GameFocusScreen extends StatefulWidget {
 class _GameFocusScreenState extends State<GameFocusScreen> {
   bool dataIsThere = false;
 
-  PageController _pageController;
+  PageController? _pageController;
 
-  FocusNode _focusNode;
+  FocusNode? _focusNode;
 
-  String uid;
-  Stream stream;
+  String? uid;
+  Stream? stream;
 
   @override
   void initState() {
@@ -39,16 +39,16 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _pageController!.dispose();
     super.dispose();
   }
 
   getAllData() async {
-    uid = FirebaseAuth.instance.currentUser.uid;
+    uid = FirebaseAuth.instance.currentUser!.uid;
 
     stream = FirebaseFirestore.instance
         .collection('posts')
-        .where('game', isEqualTo: widget.game.data()['name'])
+        .where('game', isEqualTo: widget.game!.data()!['name'])
         .where('privacy', isEqualTo: 'Public')
         .snapshots();
 
@@ -64,27 +64,29 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
         body: dataIsThere
             ? GestureDetector(
                 onTap: () {
-                  if (_focusNode.hasFocus) {
-                    _focusNode.unfocus();
+                  if (_focusNode!.hasFocus) {
+                    _focusNode!.unfocus();
                   }
                 },
                 child: Stack(
                   children: [
                     StreamBuilder(
                       stream: stream,
-                      builder: (context, snapshot) {
+                      builder: (context, AsyncSnapshot snapshot) {
                         if (!snapshot.hasData) {
                           return Center(
                             child: CircularProgressIndicator(),
                           );
                         }
+
                         List posts = snapshot.data.docs;
                         int i = 0;
 
                         while (i != posts.length) {
-                          DocumentSnapshot post = posts[i];
-                          if (post.data()['uid'] ==
-                              FirebaseAuth.instance.currentUser.uid) {
+                          DocumentSnapshot<Map<String, dynamic>> post =
+                              posts[i];
+                          if (post.data()!['uid'] ==
+                              FirebaseAuth.instance.currentUser!.uid) {
                             posts.remove(posts[i]);
                           } else {
                             i++;
@@ -105,45 +107,46 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                             scrollDirection: Axis.vertical,
                             itemCount: posts.length,
                             itemBuilder: (context, index) {
-                              DocumentSnapshot post = posts[index];
+                              DocumentSnapshot<Map<String, dynamic>> post =
+                                  posts[index];
 
                               return Stack(children: [
-                                post.data()['videoUrl'] == null
+                                post.data()!['videoUrl'] == null
                                     ? PictureItem(
-                                        idPost: post.data()['id'],
-                                        pictureUrl: post.data()['pictureUrl'],
+                                        idPost: post.data()!['id'],
+                                        pictureUrl: post.data()!['pictureUrl'],
                                       )
                                     : VideoPlayerItem(
-                                        idPost: post.data()['id'],
-                                        videoUrl: post.data()['videoUrl'],
+                                        idPost: post.data()!['id'],
+                                        videoUrl: post.data()!['videoUrl'],
                                       ),
                                 Positioned(
                                     left: 0,
                                     bottom: 70,
                                     child: ContentPostDescription(
-                                      idUser: post.data()['uid'],
-                                      username: post.data()['username'],
-                                      caption: post.data()['caption'],
-                                      hashtags: post.data()['hashtags'],
+                                      idUser: post.data()!['uid'],
+                                      username: post.data()!['username'],
+                                      caption: post.data()!['caption'],
+                                      hashtags: post.data()!['hashtags'],
                                     )),
                                 Positioned(
                                     right: 0,
                                     bottom: 50,
                                     child: ActionsPostBar(
-                                      idUser: post.data()['uid'],
-                                      idPost: post.data()['id'],
+                                      idUser: post.data()!['uid'],
+                                      idPost: post.data()!['id'],
                                       profilPicture:
-                                          post.data()['profilepicture'],
+                                          post.data()!['profilepicture'],
                                       commentsCounts: post
-                                          .data()['commentcount']
+                                          .data()!['commentcount']
                                           .toString(),
-                                      up: post.data()['up'],
-                                      down: post.data()['down'],
+                                      up: post.data()!['up'],
+                                      down: post.data()!['down'],
                                     )),
                                 Positioned(
                                     bottom: 0,
                                     child: CommentPostBar(
-                                      idPost: post.data()['id'],
+                                      idPost: post.data()!['id'],
                                       focusNode: _focusNode,
                                     ))
                               ]);
@@ -180,7 +183,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                               image: DecorationImage(
                                   fit: BoxFit.cover,
                                   image: CachedNetworkImageProvider(
-                                      widget.game.data()['imageUrl']))),
+                                      widget.game!.data()!['imageUrl']))),
                         ),
                       ),
                     )

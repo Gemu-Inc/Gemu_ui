@@ -8,7 +8,7 @@ import 'package:helpers/helpers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_video_compress/flutter_video_compress.dart';
+//import 'package:flutter_video_compress/flutter_video_compress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
@@ -18,7 +18,7 @@ import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/models/game.dart';
 
 class VideoEditorScreen extends StatefulWidget {
-  final File file;
+  final File? file;
 
   VideoEditorScreen({this.file});
 
@@ -32,30 +32,30 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
   final _isExporting = ValueNotifier<bool>(false);
   final double height = 60;
 
-  int durationVideo;
+  int? durationVideo;
 
   bool _exported = false;
   bool isUploading = false;
   bool isCaption = false;
   bool isHashtags = false;
   String _exportText = "";
-  String choixGameName = "";
-  String choixGameId = "";
+  String? choixGameName = "";
+  String? choixGameId = "";
   String privacy = "Public";
 
-  FlutterVideoCompress flutterVideoCompress = FlutterVideoCompress();
+  //FlutterVideoCompress flutterVideoCompress = FlutterVideoCompress();
 
-  VideoEditorController _videoEditorController;
+  VideoEditorController? _videoEditorController;
   TextEditingController _captionController = TextEditingController();
   TextEditingController _hashtagsController = TextEditingController();
-  FocusNode _focusNodeCaption, _focusNodeHashtags;
+  FocusNode? _focusNodeCaption, _focusNodeHashtags;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  AnimationController animationController;
-  Animation degOneTranslationAnimation, degTwoTranslationAnimation;
-  Animation rotationAnimationCircularButton;
-  Animation rotationAnimationFlatButton;
+  late AnimationController animationController;
+  late Animation degOneTranslationAnimation, degTwoTranslationAnimation;
+  late Animation rotationAnimationCircularButton;
+  late Animation rotationAnimationFlatButton;
 
   List<String> hashtagsSelected = [];
   List<String> hashtagsListTest = [
@@ -83,18 +83,18 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
     '45'
   ];
 
-  String id;
-  int postsCount;
+  String? id;
+  int? postsCount;
 
   bool extendContainer = false;
 
-  compressVideo(String videoPath) async {
+  /*compressVideo(String videoPath) async {
     final compressedVideo = await flutterVideoCompress.compressVideo(videoPath,
         quality: VideoQuality.MediumQuality);
     return File(compressedVideo.path);
-  }
+  }*/
 
-  getPreviewImage(String videoPath) async {
+  /*getPreviewImage(String videoPath) async {
     final previewImage =
         await flutterVideoCompress.getThumbnailWithFile(videoPath);
 
@@ -105,9 +105,9 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
         previewImage.path, outPath);
 
     return compressImage;
-  }
+  }*/
 
-  uploadVideoToStorage(String videoPath, String id, String nameGame) async {
+  /*uploadVideoToStorage(String videoPath, String id, String nameGame) async {
     UploadTask storageUploadTask = FirebaseStorage.instance
         .ref()
         .child('posts')
@@ -119,9 +119,9 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
         await storageUploadTask.whenComplete(() {});
     String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
     return downloadUrl;
-  }
+  }*/
 
-  uploadImagePreviewToStorage(
+  /*uploadImagePreviewToStorage(
       String videoPath, String id, String nameGame) async {
     UploadTask storageUploadTask = FirebaseStorage.instance
         .ref()
@@ -134,15 +134,16 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
         await storageUploadTask.whenComplete(() {});
     String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
     return downloadUrl;
-  }
+  }*/
 
-  uploadVideo(String videoPath, String idGame, String nameGame) async {
+  uploadVideo(String videoPath, String? idGame, String? nameGame) async {
     setState(() {
       isUploading = true;
     });
     try {
-      var currentUser = FirebaseAuth.instance.currentUser.uid;
-      DocumentSnapshot userdoc = await FirebaseFirestore.instance
+      var currentUser = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot<Map<String, dynamic>> userdoc = await FirebaseFirestore
+          .instance
           .collection('users')
           .doc(currentUser)
           .get();
@@ -157,17 +158,17 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
           .doc('Video$currentUser-$length')
           .get();
       if (!doc.exists) {
-        String video = await uploadVideoToStorage(
-            videoPath, "Video$currentUser-$length", nameGame);
+        /*String video = await uploadVideoToStorage(
+            videoPath, "Video$currentUser-$length", nameGame!);
         String previewImage = await uploadImagePreviewToStorage(
-            videoPath, "Video$currentUser-$length", nameGame);
+            videoPath, "Video$currentUser-$length", nameGame);*/
         FirebaseFirestore.instance
             .collection('posts')
             .doc("Video$currentUser-$length")
             .set({
           'uid': currentUser,
-          'username': userdoc.data()['pseudo'],
-          'profilpicture': userdoc.data()['photoURL'],
+          'username': userdoc.data()!['pseudo'],
+          'profilpicture': userdoc.data()!['photoURL'],
           'id': "Video$currentUser-$length",
           'game': nameGame,
           'up': [],
@@ -175,8 +176,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
           'commentcount': 0,
           'caption': _captionController.text,
           'hashtags': hashtagsSelected,
-          'videoUrl': video,
-          'previewImage': previewImage,
+          //'videoUrl': video,
+          //'previewImage': previewImage,
           'privacy': privacy,
           'viewcount': 0
         });
@@ -214,7 +215,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
               FirebaseFirestore.instance
                   .collection('hashtags')
                   .doc(id)
-                  .update({'postsCount': postsCount + 1});
+                  .update({'postsCount': postsCount! + 1});
               FirebaseFirestore.instance
                   .collection('hashtags')
                   .doc(id)
@@ -238,17 +239,17 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
             .doc('Video$currentUser-$length')
             .get();
         if (!doc.exists) {
-          String video = await uploadVideoToStorage(
-              videoPath, "Video$currentUser-$length", nameGame);
+          /*String video = await uploadVideoToStorage(
+              videoPath, "Video$currentUser-$length", nameGame!);
           String previewImage = await uploadImagePreviewToStorage(
-              videoPath, "Video$currentUser-$length", nameGame);
+              videoPath, "Video$currentUser-$length", nameGame);*/
           FirebaseFirestore.instance
               .collection('posts')
               .doc("Video$currentUser-$length")
               .set({
             'uid': currentUser,
-            'username': userdoc.data()['pseudo'],
-            'profilpicture': userdoc.data()['photoURL'],
+            'username': userdoc.data()!['pseudo'],
+            'profilpicture': userdoc.data()!['photoURL'],
             'id': "Video$currentUser-$length",
             'game': nameGame,
             'up': [],
@@ -256,8 +257,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
             'commentcount': 0,
             'caption': _captionController.text,
             'hashtags': hashtagsSelected,
-            'videoUrl': video,
-            'previewImage': previewImage,
+            //'videoUrl': video,
+            //'previewImage': previewImage,
             'privacy': privacy,
             'viewcount': 0
           });
@@ -295,7 +296,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                 FirebaseFirestore.instance
                     .collection('hashtags')
                     .doc(id)
-                    .update({'postsCount': postsCount + 1});
+                    .update({'postsCount': postsCount! + 1});
                 FirebaseFirestore.instance
                     .collection('hashtags')
                     .doc(id)
@@ -322,13 +323,13 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
 
   void _exportVideo() async {
     Misc.delayed(1000, () => _isExporting.value = true);
-    final File file = await _videoEditorController.exportVideo(
+    final File? file = await _videoEditorController!.exportVideo(
       customInstruction: "-crf 17",
       preset: VideoExportPreset.medium,
-      progressCallback: (statics) {
-        if (_videoEditorController.video != null)
+      onProgress: (statics) {
+        if (_videoEditorController!.video != null)
           _exportingProgress.value = statics.time /
-              _videoEditorController.video.value.duration.inMilliseconds;
+              _videoEditorController!.video.value.duration.inMilliseconds;
       },
     );
     _isExporting.value = false;
@@ -351,7 +352,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
   }
 
   void showInSnackBar(String message) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    _scaffoldKey.currentState!.showSnackBar(SnackBar(
         backgroundColor: Theme.of(context).canvasColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         content: Text(
@@ -368,7 +369,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
   @override
   void initState() {
     super.initState();
-    _videoEditorController = VideoEditorController.file(widget.file)
+    _videoEditorController = VideoEditorController.file(widget.file!)
       ..initialize().then((_) {
         setState(() {});
       });
@@ -403,12 +404,12 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
   @override
   void dispose() async {
     if (mounted) {
-      await _videoEditorController.dispose();
+      await _videoEditorController!.dispose();
     }
     _captionController.dispose();
     _hashtagsController.dispose();
-    _focusNodeCaption.dispose();
-    _focusNodeHashtags.dispose();
+    _focusNodeCaption!.dispose();
+    _focusNodeHashtags!.dispose();
     animationController.dispose();
     animationController.removeListener(() {
       setState(() {});
@@ -422,17 +423,17 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
       resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: _videoEditorController.initialized
+      body: _videoEditorController!.initialized
           ? SafeArea(
               child: isUploading
                   ? AnimatedBuilder(
-                      animation: _videoEditorController,
+                      animation: _videoEditorController!,
                       builder: (_, __) {
                         return Stack(
                           children: [
                             ClipRRect(
                               child: CropGridViewer(
-                                controller: _videoEditorController,
+                                controller: _videoEditorController!,
                                 showGrid: false,
                               ),
                             ),
@@ -461,7 +462,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                         );
                       })
                   : AnimatedBuilder(
-                      animation: _videoEditorController,
+                      animation: _videoEditorController!,
                       builder: (_, __) {
                         return isCaption || isHashtags
                             ? Stack(
@@ -469,7 +470,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                                   Center(
                                     child: ClipRRect(
                                       child: CropGridViewer(
-                                        controller: _videoEditorController,
+                                        controller: _videoEditorController!,
                                         showGrid: false,
                                       ),
                                     ),
@@ -482,17 +483,17 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                                   Center(
                                     child: ClipRRect(
                                       child: CropGridViewer(
-                                        controller: _videoEditorController,
+                                        controller: _videoEditorController!,
                                         showGrid: false,
                                       ),
                                     ),
                                   ),
                                   Center(
                                       child: OpacityTransition(
-                                          visible:
-                                              !_videoEditorController.isPlaying,
+                                          visible: !_videoEditorController!
+                                              .isPlaying,
                                           child: GestureDetector(
-                                            onTap: _videoEditorController
+                                            onTap: _videoEditorController!
                                                 .video.play,
                                             child: Container(
                                               width: 40,
@@ -651,7 +652,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
               _captionController.text == "" ||
               choixGameId == null ||
               choixGameId == "" ||
-              durationVideo > 10 ||
+              durationVideo! > 10 ||
               hashtagsSelected.length == 0) {
             if (_captionController.text == null ||
                 _captionController.text == "") {
@@ -663,7 +664,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
             if (hashtagsSelected.length == 0) {
               showInSnackBar('Choose hashtags');
             }
-            if (durationVideo > 10) {
+            if (durationVideo! > 10) {
               showInSnackBar('Maximum video seconds: 10');
             }
           } else {
@@ -738,9 +739,9 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                   child: FutureBuilder(
                       future: FirebaseFirestore.instance
                           .collection('users')
-                          .doc(FirebaseAuth.instance.currentUser.uid)
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
                           .get(),
-                      builder: (context, snapshotGamesID) {
+                      builder: (context, AsyncSnapshot snapshotGamesID) {
                         if (!snapshotGamesID.hasData) {
                           return CircularProgressIndicator();
                         }
@@ -754,9 +755,10 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
                               return Wrap(
-                                children: snapshot.data.docs.map((snapshot) {
+                                children: snapshot.data!.docs.map((snapshot) {
                                   Game game = Game.fromMap(
-                                      snapshot.data(), snapshot.id);
+                                      snapshot.data() as Map<String, dynamic>,
+                                      snapshot.id);
                                   return Container(
                                       margin: EdgeInsets.only(
                                           bottom: 10.0, top: 10.0),
@@ -797,12 +799,12 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                                                       image: DecorationImage(
                                                           fit: BoxFit.cover,
                                                           image: CachedNetworkImageProvider(
-                                                              game.imageUrl))),
+                                                              game.imageUrl!))),
                                                 ),
                                               )),
                                           Align(
                                             alignment: Alignment.bottomCenter,
-                                            child: Text(game.name),
+                                            child: Text(game.name!),
                                           )
                                         ],
                                       ));
@@ -899,7 +901,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                       height: 10.0,
                     ),
                     GestureDetector(
-                      onTap: () => _videoEditorController
+                      onTap: () => _videoEditorController!
                           .rotate90Degrees(RotateDirection.left),
                       child: Icon(
                         Icons.rotate_left,
@@ -910,7 +912,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                       height: 10.0,
                     ),
                     GestureDetector(
-                      onTap: () => _videoEditorController
+                      onTap: () => _videoEditorController!
                           .rotate90Degrees(RotateDirection.right),
                       child: Icon(
                         Icons.rotate_right,
@@ -1143,7 +1145,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                             }
                           });
                         })
-                    : null;
+                    : Container();
               },
             ),
           )
@@ -1226,10 +1228,10 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
   }
 
   List<Widget> _trimSlider() {
-    final duration = _videoEditorController.videoDuration.inSeconds;
-    final pos = _videoEditorController.trimPosition * duration;
-    final start = _videoEditorController.minTrim * duration;
-    final end = _videoEditorController.maxTrim * duration;
+    final duration = _videoEditorController!.videoDuration.inSeconds;
+    final pos = _videoEditorController!.trimPosition * duration;
+    final start = _videoEditorController!.minTrim * duration;
+    final end = _videoEditorController!.maxTrim * duration;
 
     durationVideo = end.toInt() - start.toInt();
 
@@ -1250,7 +1252,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
               ),
               Expanded(child: SizedBox()),
               OpacityTransition(
-                visible: _videoEditorController.isTrimming,
+                visible: _videoEditorController!.isTrimming,
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   TextDesigned(
                     formatter(Duration(seconds: start.toInt())),
@@ -1271,7 +1273,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
           height: height,
           margin: Margin.all(height / 4),
           child: TrimSlider(
-            controller: _videoEditorController,
+            controller: _videoEditorController!,
             height: height,
           ),
         ),

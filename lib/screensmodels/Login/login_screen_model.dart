@@ -7,17 +7,17 @@ import 'package:Gemu/services/navigation_service.dart';
 import 'package:flutter/foundation.dart';
 
 class LoginScreenModel extends BaseModel {
-  final AuthService _authService = locator<AuthService>();
-  final NavigationService _navigationService = locator<NavigationService>();
-  final DialogService _dialogService = locator<DialogService>();
+  final AuthService? _authService = locator<AuthService>();
+  final NavigationService? _navigationService = locator<NavigationService>();
+  final DialogService? _dialogService = locator<DialogService>();
 
   Future login({
-    @required String email,
-    @required String password,
+    required String email,
+    required String password,
   }) async {
     setBusy(true);
 
-    var result = await _authService.loginWithEmail(
+    var result = await _authService!.loginWithEmail(
       email: email,
       password: password,
     );
@@ -26,15 +26,15 @@ class LoginScreenModel extends BaseModel {
 
     if (result is bool) {
       if (result) {
-        _navigationService.navigateAndRemoveUntil(NavScreenRoute);
+        _navigationService!.navigateAndRemoveUntil(NavScreenRoute);
       } else {
-        await _dialogService.showDialog(
+        await _dialogService!.showDialog(
           title: 'Login Failure',
           description: 'General login failure. Please try again later',
         );
       }
     } else {
-      await _dialogService.showDialog(
+      await _dialogService!.showDialog(
         title: 'Login Failure',
         description: result,
       );

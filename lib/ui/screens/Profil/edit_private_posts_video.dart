@@ -14,7 +14,7 @@ import 'package:Gemu/ui/screens/Home/profile_view.dart';
 import 'package:video_player/video_player.dart';
 
 class EditPrivatePostsVideo extends StatefulWidget {
-  final DocumentSnapshot post;
+  final DocumentSnapshot<Map<String, dynamic>>? post;
 
   EditPrivatePostsVideo({this.post});
 
@@ -25,18 +25,18 @@ class EditPrivatePostsVideo extends StatefulWidget {
 class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
   bool isUploading = false;
 
-  String nameGame, caption;
+  String? nameGame, caption;
 
   bool _isCaption = false;
   bool _isHashtags = false;
 
-  VideoPlayerController _videoPlayerController;
+  late VideoPlayerController _videoPlayerController;
 
   TextEditingController _captionController = TextEditingController();
   TextEditingController _hashtagsController = TextEditingController();
-  FocusNode _focusNodeCaption, _focusNodeHashtags;
+  FocusNode? _focusNodeCaption, _focusNodeHashtags;
 
-  List hashtagsSelected = [];
+  List? hashtagsSelected = [];
   List<String> hashtagsListTest = [
     'Test1',
     'Test2',
@@ -62,11 +62,11 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
     '45'
   ];
 
-  String choixGameName = "";
+  String? choixGameName = "";
   String privacy = "Private";
 
-  String id;
-  int postsCount;
+  String? id;
+  int? postsCount;
 
   uploadVideo() {
     setState(() {
@@ -78,21 +78,21 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
         print('private');
         FirebaseFirestore.instance
             .collection('posts')
-            .doc(widget.post.data()['id'])
+            .doc(widget.post!.data()!['id'])
             .update({'privacy': 'Public'});
       }
-      if (nameGame != widget.post.data()['game']) {
+      if (nameGame != widget.post!.data()!['game']) {
         print('name game');
         FirebaseFirestore.instance
             .collection('posts')
-            .doc(widget.post.data()['id'])
+            .doc(widget.post!.data()!['id'])
             .update({'game': nameGame});
       }
-      if (caption != widget.post.data()['caption']) {
+      if (caption != widget.post!.data()!['caption']) {
         print('caption');
         FirebaseFirestore.instance
             .collection('posts')
-            .doc(widget.post.data()['id'])
+            .doc(widget.post!.data()!['id'])
             .update({'caption': caption});
       }
 
@@ -106,7 +106,7 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
   addHashtags(String hastagsText) async {
     FirebaseFirestore.instance
         .collection('posts')
-        .doc(widget.post.data()['id'])
+        .doc(widget.post!.data()!['id'])
         .update({
       'hashtags': FieldValue.arrayUnion([_hashtagsController.text])
     });
@@ -138,18 +138,18 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
           .collection('hashtags')
           .doc('Hashtag$hashtagsLength')
           .collection('posts')
-          .doc(widget.post.data()['id'])
+          .doc(widget.post!.data()!['id'])
           .set({});
     } else {
       FirebaseFirestore.instance
           .collection('hashtags')
           .doc(id)
-          .update({'postsCount': postsCount + 1});
+          .update({'postsCount': postsCount! + 1});
       FirebaseFirestore.instance
           .collection('hashtags')
           .doc(id)
           .collection('posts')
-          .doc(widget.post.data()['id'])
+          .doc(widget.post!.data()!['id'])
           .set({});
     }
   }
@@ -157,7 +157,7 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
   deleteHashtags(String hash) async {
     FirebaseFirestore.instance
         .collection('posts')
-        .doc(widget.post.data()['id'])
+        .doc(widget.post!.data()!['id'])
         .update({
       'hashtags': FieldValue.arrayRemove([hash])
     });
@@ -174,12 +174,12 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
     FirebaseFirestore.instance
         .collection('hashtags')
         .doc(id)
-        .update({'postsCount': postsCount - 1});
+        .update({'postsCount': postsCount! - 1});
     FirebaseFirestore.instance
         .collection('hashtags')
         .doc(id)
         .collection('posts')
-        .doc(widget.post.data()['id'])
+        .doc(widget.post!.data()!['id'])
         .delete();
   }
 
@@ -188,19 +188,19 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
     super.initState();
 
     _videoPlayerController =
-        VideoPlayerController.network(widget.post.data()['videoUrl'])
+        VideoPlayerController.network(widget.post!.data()!['videoUrl'])
           ..initialize().then((_) {
             setState(() {});
           });
 
-    nameGame = widget.post.data()['game'];
-    caption = widget.post.data()['caption'];
-    hashtagsSelected = widget.post.data()['hashtags'];
+    nameGame = widget.post!.data()!['game'];
+    caption = widget.post!.data()!['caption'];
+    hashtagsSelected = widget.post!.data()!['hashtags'];
 
     _focusNodeCaption = FocusNode();
     _focusNodeHashtags = FocusNode();
 
-    _captionController.text = caption;
+    _captionController.text = caption!;
   }
 
   @override
@@ -210,8 +210,8 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
     }
     _captionController.dispose();
     _hashtagsController.dispose();
-    _focusNodeCaption.dispose();
-    _focusNodeHashtags.dispose();
+    _focusNodeCaption!.dispose();
+    _focusNodeHashtags!.dispose();
     super.dispose();
   }
 
@@ -315,15 +315,15 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
                                 right: 0,
                                 bottom: 10,
                                 child: ActionsPostBar(
-                                  idUser: widget.post.data()['uid'],
-                                  idPost: widget.post.data()['id'],
+                                  idUser: widget.post!.data()!['uid'],
+                                  idPost: widget.post!.data()!['id'],
                                   profilPicture:
-                                      widget.post.data()['profilepicture'],
-                                  commentsCounts: widget.post
-                                      .data()['commentcount']
+                                      widget.post!.data()!['profilepicture'],
+                                  commentsCounts: widget.post!
+                                      .data()!['commentcount']
                                       .toString(),
-                                  up: widget.post.data()['up'],
-                                  down: widget.post.data()['down'],
+                                  up: widget.post!.data()!['up'],
+                                  down: widget.post!.data()!['down'],
                                 )),
                           ],
                         ),
@@ -350,7 +350,7 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
                         onTap: () {
                           setState(() {
                             _isCaption = !_isCaption;
-                            _captionController.text = caption;
+                            _captionController.text = caption!;
                           });
                         },
                         child: Icon(
@@ -416,10 +416,10 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
               contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
               suffixIcon: InkWell(
                 onTap: () {
-                  if (!hashtagsSelected
+                  if (!hashtagsSelected!
                       .contains(_hashtagsController.text.toLowerCase())) {
                     setState(() {
-                      hashtagsSelected.add(_hashtagsController.text);
+                      hashtagsSelected!.add(_hashtagsController.text);
                     });
                     addHashtags(_hashtagsController.text);
                   }
@@ -432,7 +432,7 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
           SizedBox(
             height: 10.0,
           ),
-          hashtagsSelected.length < 1
+          hashtagsSelected!.length < 1
               ? Container(
                   height: 50,
                   decoration: BoxDecoration(
@@ -450,7 +450,7 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
                     child: Wrap(
                         spacing: 5,
                         runSpacing: 5,
-                        children: hashtagsSelected.map((hashtag) {
+                        children: hashtagsSelected!.map((hashtag) {
                           return Chip(
                             backgroundColor: Theme.of(context).primaryColor,
                             shape: RoundedRectangleBorder(
@@ -458,7 +458,7 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
                             label: Text('#$hashtag', style: mystyle(11)),
                             onDeleted: () {
                               setState(() {
-                                hashtagsSelected.remove(hashtag);
+                                hashtagsSelected!.remove(hashtag);
                               });
                               deleteHashtags(hashtag);
                             },
@@ -503,14 +503,14 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
                         ),
                         onTap: () {
                           setState(() {
-                            if (!hashtagsSelected
+                            if (!hashtagsSelected!
                                 .contains(hashtagsListTest[index])) {
-                              hashtagsSelected.add(hashtagsListTest[index]);
+                              hashtagsSelected!.add(hashtagsListTest[index]);
                               _hashtagsController.clear();
                             }
                           });
                         })
-                    : null;
+                    : Container();
               },
             ),
           )
@@ -666,9 +666,9 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
                   child: FutureBuilder(
                       future: FirebaseFirestore.instance
                           .collection('users')
-                          .doc(FirebaseAuth.instance.currentUser.uid)
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
                           .get(),
-                      builder: (context, snapshotGamesID) {
+                      builder: (context, AsyncSnapshot snapshotGamesID) {
                         if (!snapshotGamesID.hasData) {
                           return CircularProgressIndicator();
                         }
@@ -682,9 +682,10 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
                               return Wrap(
-                                children: snapshot.data.docs.map((snapshot) {
+                                children: snapshot.data!.docs.map((snapshot) {
                                   Game game = Game.fromMap(
-                                      snapshot.data(), snapshot.id);
+                                      snapshot.data() as Map<String, dynamic>,
+                                      snapshot.id);
                                   return Container(
                                       margin: EdgeInsets.only(
                                           bottom: 10.0, top: 10.0),
@@ -721,12 +722,12 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
                                                       image: DecorationImage(
                                                           fit: BoxFit.cover,
                                                           image: CachedNetworkImageProvider(
-                                                              game.imageUrl))),
+                                                              game.imageUrl!))),
                                                 ),
                                               )),
                                           Align(
                                             alignment: Alignment.bottomCenter,
-                                            child: Text(game.name),
+                                            child: Text(game.name!),
                                           )
                                         ],
                                       ));
@@ -783,118 +784,121 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
   Widget _postDescriptionEdit() {
     return Container(
         width: MediaQuery.of(context).size.width / 2,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-            Widget>[
-          InkWell(
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ProfileView(
-                            idUser: widget.post.data()['uid'],
-                          ))),
-              child: Text(widget.post.data()['username'], style: mystyle(15))),
-          SizedBox(
-            height: 5.0,
-          ),
-          Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).primaryColor),
-                  borderRadius: BorderRadius.circular(5.0)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SingleChildScrollView(
-                      child: Container(
-                    width: MediaQuery.of(context).size.width / 4,
-                    child: Text(
-                      caption,
-                      style: TextStyle(color: Colors.grey),
-                    ),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              InkWell(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfileView(
+                                idUser: widget.post!.data()!['uid'],
+                              ))),
+                  child: Text(widget.post!.data()!['username'],
+                      style: mystyle(15))),
+              SizedBox(
+                height: 5.0,
+              ),
+              Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.circular(5.0)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SingleChildScrollView(
+                          child: Container(
+                        width: MediaQuery.of(context).size.width / 4,
+                        child: Text(
+                          caption!,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isCaption = !_isCaption;
+                          });
+                        },
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).accentColor
+                                  ])),
+                          child: Icon(
+                            Icons.edit,
+                            size: 15,
+                          ),
+                        ),
+                      )
+                    ],
                   )),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isCaption = !_isCaption;
-                      });
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
-                              ])),
-                      child: Icon(
-                        Icons.edit,
-                        size: 15,
+              SizedBox(
+                height: 10.0,
+              ),
+              Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.circular(5.0)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        height: hashtagsSelected!.length > 5 ? 75 : null,
+                        width: MediaQuery.of(context).size.width / 4,
+                        child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2, childAspectRatio: 1.5),
+                            shrinkWrap: true,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            itemCount: hashtagsSelected!.length,
+                            itemBuilder: (context, index) {
+                              return Text(
+                                '#${hashtagsSelected![index]}',
+                                style: TextStyle(color: Colors.grey),
+                              );
+                            }),
                       ),
-                    ),
-                  )
-                ],
-              )),
-          SizedBox(
-            height: 10.0,
-          ),
-          Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).primaryColor),
-                  borderRadius: BorderRadius.circular(5.0)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    height: hashtagsSelected.length > 5 ? 75 : null,
-                    width: MediaQuery.of(context).size.width / 4,
-                    child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, childAspectRatio: 1.5),
-                        shrinkWrap: true,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        itemCount: hashtagsSelected.length,
-                        itemBuilder: (context, index) {
-                          return Text(
-                            '#${hashtagsSelected[index]}',
-                            style: TextStyle(color: Colors.grey),
-                          );
-                        }),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isHashtags = !_isHashtags;
-                      });
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
-                              ])),
-                      child: Icon(
-                        Icons.edit,
-                        size: 15,
-                      ),
-                    ),
-                  )
-                ],
-              )),
-          SizedBox(
-            height: 10.0,
-          )
-        ]));
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isHashtags = !_isHashtags;
+                          });
+                        },
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).accentColor
+                                  ])),
+                          child: Icon(
+                            Icons.edit,
+                            size: 15,
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
+              SizedBox(
+                height: 10.0,
+              )
+            ]));
   }
 }

@@ -2,12 +2,11 @@ import 'package:Gemu/constants/variables.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'package:Gemu/ui/screens/Home/profile_view.dart';
 
 class Followers extends StatefulWidget {
-  final String idUser;
+  final String? idUser;
 
   Followers({this.idUser});
 
@@ -21,7 +20,7 @@ class FollowersState extends State<Followers> {
   List result = [];
   List resultFinal = [];
 
-  ScrollController _scrollController;
+  ScrollController? _scrollController;
 
   @override
   void initState() {
@@ -32,7 +31,7 @@ class FollowersState extends State<Followers> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollController!.dispose();
     super.dispose();
   }
 
@@ -64,22 +63,27 @@ class FollowersState extends State<Followers> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: GradientAppBar(
-        gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).primaryColor,
-              Theme.of(context).accentColor
-            ]),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () => Navigator.pop(context)),
-        title: Text(
-          'Followers',
-          style: mystyle(15),
-        ),
-      ),
+      appBar: PreferredSize(
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).accentColor
+                ])),
+            child: AppBar(
+              leading: IconButton(
+                  icon: Icon(Icons.arrow_back_ios),
+                  onPressed: () => Navigator.pop(context)),
+              title: Text(
+                'Followers',
+                style: mystyle(15),
+              ),
+            ),
+          ),
+          preferredSize: Size.fromHeight(60)),
       body: dataIsThere
           ? Padding(
               padding: EdgeInsets.symmetric(vertical: 10.0),
@@ -90,13 +94,14 @@ class FollowersState extends State<Followers> {
                     controller: _scrollController,
                     itemCount: resultFinal.length,
                     itemBuilder: (context, index) {
-                      DocumentSnapshot documentSnapshot = resultFinal[index];
+                      DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+                          resultFinal[index];
                       return ListTile(
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ProfileView(
-                                      idUser: documentSnapshot.data()['id'],
+                                      idUser: documentSnapshot.data()!['id'],
                                     ))),
                         leading: Container(
                           height: 50,
@@ -107,9 +112,9 @@ class FollowersState extends State<Followers> {
                               image: DecorationImage(
                                   fit: BoxFit.cover,
                                   image: CachedNetworkImageProvider(
-                                      documentSnapshot.data()['photoURL']))),
+                                      documentSnapshot.data()!['photoURL']))),
                         ),
-                        title: Text(documentSnapshot.data()['pseudo']),
+                        title: Text(documentSnapshot.data()!['pseudo']),
                       );
                     },
                   )),

@@ -21,7 +21,7 @@ Future<void> main() async {
   prefs.then((value) {
     runApp(ChangeNotifierProvider<ThemeNotifier>(
         create: (_) {
-          String theme = value.getString(Constants.appTheme);
+          String? theme = value.getString(Constants.appTheme);
           print(theme);
           ThemeData themeData;
           if (theme == 'DarkPurple') {

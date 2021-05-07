@@ -1,6 +1,6 @@
 class Chat {
-  final String name, lastMessage, time;
-  final bool isActive;
+  final String? name, lastMessage, time;
+  final bool? isActive;
 
   Chat({
     this.name,

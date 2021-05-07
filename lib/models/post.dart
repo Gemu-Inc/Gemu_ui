@@ -1,19 +1,19 @@
 import 'package:flutter/foundation.dart';
 
 class Post {
-  final String game;
-  final String section;
-  final String content;
-  final String imageUrl;
-  final String userId;
-  final String documentId;
-  final String imageFileName;
+  final String? game;
+  final String? section;
+  final String? content;
+  final String? imageUrl;
+  final String? userId;
+  final String? documentId;
+  final String? imageFileName;
 
   Post({
-    @required this.userId,
-    @required this.game,
-    @required this.section,
-    @required this.content,
+    required this.userId,
+    required this.game,
+    required this.section,
+    required this.content,
     this.documentId,
     this.imageUrl,
     this.imageFileName,
@@ -31,8 +31,6 @@ class Post {
   }
 
   static Post fromMap(Map<String, dynamic> map, String documentId) {
-    if (map == null) return null;
-
     return Post(
       game: map['game'],
       section: map['section'],

@@ -13,16 +13,16 @@ import 'package:Gemu/ui/widgets/choix_categories.dart';
 import 'search_screen.dart';
 
 class HighlightsScreen extends StatefulWidget {
-  const HighlightsScreen({Key key}) : super(key: key);
+  const HighlightsScreen({Key? key}) : super(key: key);
 
   HighlightsScreenState createState() => HighlightsScreenState();
 }
 
 class HighlightsScreenState extends State<HighlightsScreen>
     with TickerProviderStateMixin {
-  AnimationController _controllerRotate;
-  PanelController _panelController;
-  Animation _animationRotate;
+  late AnimationController _controllerRotate;
+  PanelController? _panelController;
+  late Animation _animationRotate;
   bool padding = true;
 
   List tagsRecommended = [];
@@ -165,13 +165,13 @@ class HighlightsScreenState extends State<HighlightsScreen>
                   child: GestureDetector(
                     onTap: () {
                       if (_controllerRotate.isCompleted) {
-                        _panelController.close();
+                        _panelController!.close();
                         _controllerRotate.reverse();
                         setState(() {
                           padding = true;
                         });
                       } else {
-                        _panelController.open();
+                        _panelController!.open();
                         _controllerRotate.forward();
                         setState(() {
                           padding = false;

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:Gemu/models/chat_messages.dart';
 
 class AudioMessage extends StatelessWidget {
-  final ChatMessage message;
+  final ChatMessage? message;
 
-  AudioMessage({Key key, this.message}) : super(key: key);
+  AudioMessage({Key? key, this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class AudioMessage extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 15 * 0.75, vertical: 15 / 2.5),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
-          color: message.isSender
+          color: message!.isSender
               ? Theme.of(context).primaryColor
               : Theme.of(context).canvasColor),
       child: Row(
@@ -47,7 +47,7 @@ class AudioMessage extends StatelessWidget {
           Text(
             "0.37",
             style: TextStyle(
-                fontSize: 12, color: message.isSender ? Colors.white : null),
+                fontSize: 12, color: message!.isSender ? Colors.white : null),
           )
         ],
       ),

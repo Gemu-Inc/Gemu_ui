@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Color myColor;
+Color? myColor;
 
 void getColor() async {
   Future<SharedPreferences> prefs = SharedPreferences.getInstance();

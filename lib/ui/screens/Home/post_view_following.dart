@@ -15,14 +15,14 @@ class PostViewFollowing extends StatefulWidget {
 }
 
 class PostViewFollowingState extends State<PostViewFollowing> {
-  PageController _pageFollowingController;
-  int currentPageFollowingIndex;
+  PageController? _pageFollowingController;
+  int? currentPageFollowingIndex;
 
-  String uid;
+  String? uid;
   bool dataIsThere = false;
   List posts = [];
 
-  Stream stream;
+  Stream? stream;
 
   @override
   void initState() {
@@ -34,12 +34,12 @@ class PostViewFollowingState extends State<PostViewFollowing> {
 
   @override
   void dispose() {
-    _pageFollowingController.dispose();
+    _pageFollowingController!.dispose();
     super.dispose();
   }
 
   getAllData() async {
-    uid = FirebaseAuth.instance.currentUser.uid;
+    uid = FirebaseAuth.instance.currentUser!.uid;
 
     var following = await FirebaseFirestore.instance
         .collection('users')
@@ -75,7 +75,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
               )
             : StreamBuilder(
                 stream: stream,
-                builder: (context, snapshot) {
+                builder: (context, AsyncSnapshot snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
                       child: CircularProgressIndicator(),
@@ -103,39 +103,40 @@ class PostViewFollowingState extends State<PostViewFollowing> {
                       },
                       itemCount: snapshot.data.docs.length,
                       itemBuilder: (context, index) {
-                        DocumentSnapshot post = snapshot.data.docs[index];
+                        DocumentSnapshot<Map<String, dynamic>> post =
+                            snapshot.data.docs[index];
                         return Stack(children: [
-                          post.data()['videoUrl'] == null
+                          post.data()!['videoUrl'] == null
                               ? PictureItem(
-                                  idUser: post.data()['uid'],
-                                  idPost: post.data()['id'],
-                                  pictureUrl: post.data()['pictureUrl'],
+                                  idUser: post.data()!['uid'],
+                                  idPost: post.data()!['id'],
+                                  pictureUrl: post.data()!['pictureUrl'],
                                 )
                               : VideoPlayerItem(
-                                  idUser: post.data()['uid'],
-                                  idPost: post.data()['id'],
-                                  videoUrl: post.data()['videoUrl'],
+                                  idUser: post.data()!['uid'],
+                                  idPost: post.data()!['id'],
+                                  videoUrl: post.data()!['videoUrl'],
                                 ),
                           Positioned(
                               left: 0,
                               bottom: 90,
                               child: ContentPostDescription(
-                                idUser: post.data()['uid'],
-                                username: post.data()['username'],
-                                caption: post.data()['caption'],
-                                hashtags: post.data()['hashtags'],
+                                idUser: post.data()!['uid'],
+                                username: post.data()!['username'],
+                                caption: post.data()!['caption'],
+                                hashtags: post.data()!['hashtags'],
                               )),
                           Positioned(
                               right: 0,
                               bottom: 75,
                               child: ActionsPostBar(
-                                idUser: post.data()['uid'],
-                                idPost: post.data()['id'],
-                                profilPicture: post.data()['profilpicture'],
+                                idUser: post.data()!['uid'],
+                                idPost: post.data()!['id'],
+                                profilPicture: post.data()!['profilpicture'],
                                 commentsCounts:
-                                    post.data()['commentcount'].toString(),
-                                up: post.data()['up'],
-                                down: post.data()['down'],
+                                    post.data()!['commentcount'].toString(),
+                                up: post.data()!['up'],
+                                down: post.data()!['down'],
                               )),
                         ]);
                       });

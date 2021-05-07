@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'package:Gemu/screensmodels/Reglages/edit_user_name_screen_model.dart';
 
 class EditUserNameScreen extends StatefulWidget {
-  EditUserNameScreen({Key key}) : super(key: key);
+  EditUserNameScreen({Key? key}) : super(key: key);
 
   @override
   _EditUserNameScreenState createState() => _EditUserNameScreenState();
@@ -16,13 +15,13 @@ class EditUserNameScreen extends StatefulWidget {
 class _EditUserNameScreenState extends State<EditUserNameScreen> {
   final _formKey = GlobalKey<FormState>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  String _currentName;
+  String? _currentName;
   var currentUser;
 
   @override
   void initState() {
     super.initState();
-    currentUser = _firebaseAuth.currentUser.uid;
+    currentUser = _firebaseAuth.currentUser!.uid;
   }
 
   @override
@@ -31,23 +30,29 @@ class _EditUserNameScreenState extends State<EditUserNameScreen> {
       viewModelBuilder: () => EditUserNameScreenModel(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: GradientAppBar(
-          gradient: LinearGradient(
-            colors: [
-              Theme.of(context).primaryColor,
-              Theme.of(context).accentColor
-            ],
-          ),
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
+        appBar: PreferredSize(
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).accentColor
+                  ])),
+              child: AppBar(
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                title: Text(
+                  'Changer le nom d\'utilisateur',
+                ),
+              ),
             ),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Text(
-            'Changer le nom d\'utilisateur',
-          ),
-        ),
+            preferredSize: Size.fromHeight(60)),
         body: Form(
           key: _formKey,
           child: Stack(
@@ -64,12 +69,12 @@ class _EditUserNameScreenState extends State<EditUserNameScreen> {
                             .collection('users')
                             .doc(currentUser)
                             .snapshots(),
-                        builder: (context, snapshot) {
+                        builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
                             return TextFormField(
                               initialValue: snapshot.data['pseudo'],
                               validator: (value) =>
-                                  value.isEmpty ? 'Please enter a name' : null,
+                                  value!.isEmpty ? 'Please enter a name' : null,
                               onChanged: (value) =>
                                   setState(() => _currentName = value),
                             );
@@ -86,7 +91,7 @@ class _EditUserNameScreenState extends State<EditUserNameScreen> {
                         ? SizedBox()
                         : FloatingActionButton(
                             onPressed: () async {
-                              if (_formKey.currentState.validate()) {
+                              if (_formKey.currentState!.validate()) {
                                 print("Username updated");
                                 await model.updateUserPseudo(
                                     _currentName, currentUser);

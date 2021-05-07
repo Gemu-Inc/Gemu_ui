@@ -9,18 +9,18 @@ import 'package:flutter/foundation.dart';
 import 'package:Gemu/models/game.dart';
 
 class RegisterScreenModel extends BaseModel {
-  final AuthService _authService = locator<AuthService>();
-  final NavigationService _navigationService = locator<NavigationService>();
-  final DialogService _dialogService = locator<DialogService>();
-  final DatabaseService _firestoreService = locator<DatabaseService>();
+  final AuthService? _authService = locator<AuthService>();
+  final NavigationService? _navigationService = locator<NavigationService>();
+  final DialogService? _dialogService = locator<DialogService>();
+  final DatabaseService? _firestoreService = locator<DatabaseService>();
 
-  List<Game> _gameList;
-  List<Game> get gameList => _gameList;
+  List<Game>? _gameList;
+  List<Game>? get gameList => _gameList;
 
   void listenToGames() {
     setBusy(true);
 
-    _firestoreService.listenToGamesRealTime().listen((gamesData) {
+    _firestoreService!.listenToGamesRealTime().listen((gamesData) {
       List<Game> games = gamesData;
       if (games != null && games.length > 0) {
         _gameList = games;
@@ -32,12 +32,12 @@ class RegisterScreenModel extends BaseModel {
   }
 
   Future signUp(
-      {@required String pseudo,
-      @required String email,
-      @required String password}) async {
+      {required String pseudo,
+      required String email,
+      required String password}) async {
     setBusy(true);
 
-    var result = await _authService.signUpWithEmail(
+    var result = await _authService!.signUpWithEmail(
         email: email,
         password: password,
         pseudo: pseudo,
@@ -48,15 +48,15 @@ class RegisterScreenModel extends BaseModel {
 
     if (result is bool) {
       if (result) {
-        _navigationService.navigateAndRemoveUntil(NavScreenRoute);
+        _navigationService!.navigateAndRemoveUntil(NavScreenRoute);
       } else {
-        await _dialogService.showDialog(
+        await _dialogService!.showDialog(
           title: 'Sign Up Failure',
           description: 'General sign up failure. Please try again later',
         );
       }
     } else {
-      await _dialogService.showDialog(
+      await _dialogService!.showDialog(
         title: 'Sign Up Failure',
         description: result,
       );

@@ -1,10 +1,10 @@
 class UserModel {
-  final String id;
-  final String pseudo;
-  final String email;
-  final String photoURL;
-  final String points;
-  final List<String> idGames;
+  final String? id;
+  final String? pseudo;
+  final String? email;
+  final String? photoURL;
+  final String? points;
+  final List<String>? idGames;
 
   UserModel(
       {this.id,

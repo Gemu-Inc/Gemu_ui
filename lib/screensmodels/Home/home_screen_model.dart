@@ -10,30 +10,25 @@ import 'package:Gemu/models/user.dart';
 import 'package:Gemu/constants/route_names.dart';
 
 class HomeScreenModel extends BaseModel {
-  final AuthService _authService = locator<AuthService>();
-  final NavigationService _navigationService = locator<NavigationService>();
-  final DatabaseService _firestoreService = locator<DatabaseService>();
-  final DialogService _dialogService = locator<DialogService>();
-  final CloudStorageService _cloudStorageService =
+  final AuthService? _authService = locator<AuthService>();
+  final NavigationService? _navigationService = locator<NavigationService>();
+  final DatabaseService? _firestoreService = locator<DatabaseService>();
+  final DialogService? _dialogService = locator<DialogService>();
+  final CloudStorageService? _cloudStorageService =
       locator<CloudStorageService>();
 
-  Stream<UserModel> get userData {
-    var currentUser = _authService.currentUser;
-    return _firestoreService.userData(currentUser.id);
-  }
+  List<Post>? _posts;
+  List<Post>? get posts => _posts;
 
-  List<Post> _posts;
-  List<Post> get posts => _posts;
-
-  UserModel _user;
-  UserModel get user => _user;
+  UserModel? _user;
+  UserModel? get user => _user;
 
   void listenToPosts() {
     setBusy(true);
 
-    _firestoreService.listenToPostsRealTime().listen((postsData) {
+    _firestoreService!.listenToPostsRealTime().listen((postsData) {
       List<Post> updatedPosts = postsData;
-      if (updatedPosts != null && updatedPosts.length > 0) {
+      if (updatedPosts.length > 0) {
         _posts = updatedPosts;
         notifyListeners();
       }
@@ -42,7 +37,7 @@ class HomeScreenModel extends BaseModel {
     });
   }
 
-  Future<UserModel> getUserPost(String uid) async {
-    return await _firestoreService.getUser(uid);
+  Future<UserModel?> getUserPost(String uid) async {
+    return await (_firestoreService!.getUser(uid));
   }
 }

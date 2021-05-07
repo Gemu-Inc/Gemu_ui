@@ -9,10 +9,10 @@ import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/models/user.dart';
 
 class NavScreenModel extends BaseModel {
-  final AuthService _authService = locator<AuthService>();
-  final NavigationService _navigationService = locator<NavigationService>();
-  final DatabaseService _firestoreService = locator<DatabaseService>();
-  final DialogService _dialogService = locator<DialogService>();
-  final CloudStorageService _cloudStorageService =
+  final AuthService? _authService = locator<AuthService>();
+  final NavigationService? _navigationService = locator<NavigationService>();
+  final DatabaseService? _firestoreService = locator<DatabaseService>();
+  final DialogService? _dialogService = locator<DialogService>();
+  final CloudStorageService? _cloudStorageService =
       locator<CloudStorageService>();
 }

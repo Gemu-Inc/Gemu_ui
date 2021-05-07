@@ -10,7 +10,7 @@ import 'package:Gemu/ui/screens/Games/game_focus_screen.dart';
 import 'search_game_screen.dart';
 
 class GamesScreen extends StatefulWidget {
-  const GamesScreen({Key key}) : super(key: key);
+  const GamesScreen({Key? key}) : super(key: key);
 
   @override
   _GamesScreenState createState() => _GamesScreenState();
@@ -18,14 +18,14 @@ class GamesScreen extends StatefulWidget {
 
 class _GamesScreenState extends State<GamesScreen>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
+  late AnimationController _animationController;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  String uid;
-  DocumentSnapshot user;
-  Future result;
-  Stream<QuerySnapshot> panelGames;
+  String? uid;
+  late DocumentSnapshot<Map<String, dynamic>> user;
+  Future? result;
+  Stream<QuerySnapshot>? panelGames;
   List categories = [];
   bool dataIsThere = false;
 
@@ -60,7 +60,7 @@ class _GamesScreenState extends State<GamesScreen>
   }
 
   getAllData() async {
-    uid = _firebaseAuth.currentUser.uid;
+    uid = _firebaseAuth.currentUser!.uid;
 
     var data = await FirebaseFirestore.instance.collection('categories').get();
     setState(() {
@@ -70,7 +70,7 @@ class _GamesScreenState extends State<GamesScreen>
 
   @override
   Widget build(BuildContext context) {
-    Animatable<Color> background = TweenSequence<Color>([
+    Animatable<Color?> background = TweenSequence<Color?>([
       TweenSequenceItem(
         weight: 1.0,
         tween: ColorTween(
@@ -203,15 +203,16 @@ class _GamesScreenState extends State<GamesScreen>
                   stream: FirebaseFirestore.instance
                       .collection('games')
                       .where(FieldPath.documentId,
-                          whereIn: user.data()['idGames'])
+                          whereIn: user.data()!['idGames'])
                       .snapshots(),
-                  builder: (context, snapshot) {
+                  builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       return ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: snapshot.data.docs.length,
                           itemBuilder: (BuildContext context, int index) {
-                            DocumentSnapshot game = snapshot.data.docs[index];
+                            DocumentSnapshot<Map<String, dynamic>> game =
+                                snapshot.data.docs[index];
                             return Container(
                                 margin: EdgeInsets.all(10.0),
                                 width: 100,
@@ -247,14 +248,14 @@ class _GamesScreenState extends State<GamesScreen>
                                                     fit: BoxFit.cover,
                                                     image:
                                                         CachedNetworkImageProvider(
-                                                            game.data()[
+                                                            game.data()![
                                                                 'imageUrl'])))),
                                       ),
                                     ),
                                     Align(
                                       alignment: Alignment.bottomCenter,
                                       child: Text(
-                                        '${game.data()['name']}',
+                                        '${game.data()!['name']}',
                                       ),
                                     )
                                   ],

@@ -10,10 +10,10 @@ import 'package:Gemu/ui/screens/Home/components/content_postdescription.dart';
 import 'comment_postbar.dart';
 
 class PostsProfilScreen extends StatefulWidget {
-  final String userID;
-  final int indexPost;
+  final String? userID;
+  final int? indexPost;
 
-  PostsProfilScreen({@required this.userID, this.indexPost});
+  PostsProfilScreen({required this.userID, this.indexPost});
 
   @override
   PostsProfilScreenState createState() => PostsProfilScreenState();
@@ -22,16 +22,16 @@ class PostsProfilScreen extends StatefulWidget {
 class PostsProfilScreenState extends State<PostsProfilScreen> {
   bool dataIsThere = false;
 
-  PageController _pageController;
-  FocusNode _focusNode;
+  PageController? _pageController;
+  FocusNode? _focusNode;
 
-  Stream stream;
-  String uid;
+  Stream? stream;
+  String? uid;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: widget.indexPost);
+    _pageController = PageController(initialPage: widget.indexPost!);
     _focusNode = FocusNode();
 
     getAllData();
@@ -39,13 +39,13 @@ class PostsProfilScreenState extends State<PostsProfilScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
-    _focusNode.dispose();
+    _pageController!.dispose();
+    _focusNode!.dispose();
     super.dispose();
   }
 
   getAllData() async {
-    uid = FirebaseAuth.instance.currentUser.uid;
+    uid = FirebaseAuth.instance.currentUser!.uid;
 
     stream = FirebaseFirestore.instance
         .collection('posts')
@@ -64,15 +64,15 @@ class PostsProfilScreenState extends State<PostsProfilScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: GestureDetector(
           onTap: () {
-            if (_focusNode.hasFocus) {
-              _focusNode.unfocus();
+            if (_focusNode!.hasFocus) {
+              _focusNode!.unfocus();
             }
           },
           child: Stack(
             children: [
               StreamBuilder(
                 stream: stream,
-                builder: (context, snapshot) {
+                builder: (context, AsyncSnapshot snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
                       child: CircularProgressIndicator(),
@@ -83,44 +83,45 @@ class PostsProfilScreenState extends State<PostsProfilScreen> {
                       scrollDirection: Axis.vertical,
                       itemCount: snapshot.data.docs.length,
                       itemBuilder: (BuildContext context, int index) {
-                        DocumentSnapshot post = snapshot.data.docs[index];
+                        DocumentSnapshot<Map<String, dynamic>> post =
+                            snapshot.data.docs[index];
 
                         return Stack(
                           children: [
-                            post.data()['videoUrl'] == null
+                            post.data()!['videoUrl'] == null
                                 ? PictureItem(
-                                    idUser: post.data()['uid'],
-                                    idPost: post.data()['id'],
-                                    pictureUrl: post.data()['pictureUrl'])
+                                    idUser: post.data()!['uid'],
+                                    idPost: post.data()!['id'],
+                                    pictureUrl: post.data()!['pictureUrl'])
                                 : VideoPlayerItem(
-                                    idUser: post.data()['uid'],
-                                    idPost: post.data()['id'],
-                                    videoUrl: post.data()['videoUrl']),
+                                    idUser: post.data()!['uid'],
+                                    idPost: post.data()!['id'],
+                                    videoUrl: post.data()!['videoUrl']),
                             Positioned(
                                 left: 0,
                                 bottom: 70,
                                 child: ContentPostDescription(
-                                  idUser: post.data()['uid'],
-                                  username: post.data()['username'],
-                                  caption: post.data()['caption'],
-                                  hashtags: post.data()['hashtags'],
+                                  idUser: post.data()!['uid'],
+                                  username: post.data()!['username'],
+                                  caption: post.data()!['caption'],
+                                  hashtags: post.data()!['hashtags'],
                                 )),
                             Positioned(
                                 right: 0,
                                 bottom: 50,
                                 child: ActionsPostBar(
-                                  idUser: post.data()['uid'],
-                                  idPost: post.data()['id'],
-                                  profilPicture: post.data()['profilepicture'],
+                                  idUser: post.data()!['uid'],
+                                  idPost: post.data()!['id'],
+                                  profilPicture: post.data()!['profilepicture'],
                                   commentsCounts:
-                                      post.data()['commentcount'].toString(),
-                                  up: post.data()['up'],
-                                  down: post.data()['down'],
+                                      post.data()!['commentcount'].toString(),
+                                  up: post.data()!['up'],
+                                  down: post.data()!['down'],
                                 )),
                             Positioned(
                                 bottom: 0,
                                 child: CommentPostBar(
-                                  idPost: post.data()['id'],
+                                  idPost: post.data()!['id'],
                                   focusNode: _focusNode,
                                 ))
                           ],

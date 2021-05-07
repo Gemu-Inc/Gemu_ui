@@ -13,23 +13,24 @@ import 'components/content_postdescription.dart';
 class PostViewGame extends StatefulWidget {
   final Game game;
 
-  final AnimationController animationRotateController, animationGamesController;
+  final AnimationController? animationRotateController,
+      animationGamesController;
 
   PostViewGame(
-      {@required this.game,
-      @required this.animationGamesController,
-      @required this.animationRotateController});
+      {required this.game,
+      required this.animationGamesController,
+      required this.animationRotateController});
 
   @override
   PostViewGameState createState() => PostViewGameState();
 }
 
 class PostViewGameState extends State<PostViewGame> {
-  PageController _pageGamesController;
+  PageController? _pageGamesController;
 
-  int currentPageGamesIndex;
+  int? currentPageGamesIndex;
 
-  Stream stream;
+  Stream? stream;
 
   @override
   void initState() {
@@ -46,7 +47,7 @@ class PostViewGameState extends State<PostViewGame> {
 
   @override
   void dispose() {
-    _pageGamesController.dispose();
+    _pageGamesController!.dispose();
     super.dispose();
   }
 
@@ -54,7 +55,7 @@ class PostViewGameState extends State<PostViewGame> {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: stream,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot snapshot) {
         if (!snapshot.hasData) {
           return Center(
             child: CircularProgressIndicator(),
@@ -65,8 +66,8 @@ class PostViewGameState extends State<PostViewGame> {
         int i = 0;
 
         while (i != posts.length) {
-          DocumentSnapshot post = posts[i];
-          if (post.data()['uid'] == FirebaseAuth.instance.currentUser.uid) {
+          DocumentSnapshot<Map<String, dynamic>> post = posts[i];
+          if (post.data()!['uid'] == FirebaseAuth.instance.currentUser!.uid) {
             posts.remove(posts[i]);
           } else {
             i++;
@@ -90,46 +91,46 @@ class PostViewGameState extends State<PostViewGame> {
                 currentPageGamesIndex = index;
                 print('currentPageGamesIndex est à: $currentPageGamesIndex');
               });
-              if (widget.animationRotateController.isCompleted) {
-                widget.animationRotateController.reverse();
-                widget.animationGamesController.reverse();
+              if (widget.animationRotateController!.isCompleted) {
+                widget.animationRotateController!.reverse();
+                widget.animationGamesController!.reverse();
               }
             },
             itemCount: posts.length,
             itemBuilder: (context, index) {
-              DocumentSnapshot post = posts[index];
+              DocumentSnapshot<Map<String, dynamic>> post = posts[index];
 
               return Stack(children: [
-                post.data()['videoUrl'] == null
+                post.data()!['videoUrl'] == null
                     ? PictureItem(
-                        idUser: post.data()['uid'],
-                        idPost: post.data()['id'],
-                        pictureUrl: post.data()['pictureUrl'],
+                        idUser: post.data()!['uid'],
+                        idPost: post.data()!['id'],
+                        pictureUrl: post.data()!['pictureUrl'],
                       )
                     : VideoPlayerItem(
-                        idUser: post.data()['uid'],
-                        idPost: post.data()['id'],
-                        videoUrl: post.data()['videoUrl'],
+                        idUser: post.data()!['uid'],
+                        idPost: post.data()!['id'],
+                        videoUrl: post.data()!['videoUrl'],
                       ),
                 Positioned(
                     left: 0,
                     bottom: 90,
                     child: ContentPostDescription(
-                      idUser: post.data()['uid'],
-                      username: post.data()['username'],
-                      caption: post.data()['caption'],
-                      hashtags: post.data()['hashtags'],
+                      idUser: post.data()!['uid'],
+                      username: post.data()!['username'],
+                      caption: post.data()!['caption'],
+                      hashtags: post.data()!['hashtags'],
                     )),
                 Positioned(
                     right: 0,
                     bottom: 75,
                     child: ActionsPostBar(
-                      idUser: post.data()['uid'],
-                      idPost: post.data()['id'],
-                      profilPicture: post.data()['profilepicture'],
-                      commentsCounts: post.data()['commentcount'].toString(),
-                      up: post.data()['up'],
-                      down: post.data()['down'],
+                      idUser: post.data()!['uid'],
+                      idPost: post.data()!['id'],
+                      profilPicture: post.data()!['profilepicture'],
+                      commentsCounts: post.data()!['commentcount'].toString(),
+                      up: post.data()!['up'],
+                      down: post.data()!['down'],
                     )),
               ]);
             });

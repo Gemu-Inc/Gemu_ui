@@ -7,49 +7,49 @@ import 'package:Gemu/services/database_service.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final DatabaseService _firestoreService = locator<DatabaseService>();
+  final DatabaseService? _firestoreService = locator<DatabaseService>();
 
   // GET change about status connection
-  Stream<User> get onAuthStateChanged => _firebaseAuth.authStateChanges();
+  Stream<User?> get onAuthStateChanged => _firebaseAuth.authStateChanges();
 
   // GET UID
   Future<String> getCurrentUID() async {
-    var currentUser = _firebaseAuth.currentUser.uid;
+    var currentUser = _firebaseAuth.currentUser!.uid;
     print(currentUser);
     return currentUser;
   }
 
-  UserModel _currentUser;
-  UserModel get currentUser => _currentUser;
+  UserModel? _currentUser;
+  UserModel? get currentUser => _currentUser;
 
   Future updateEmail(
-      {@required String password, @required String newEmail}) async {
-    var user = _firebaseAuth.currentUser;
+      {required String password, required String newEmail}) async {
+    var user = _firebaseAuth.currentUser!;
     try {
       var authResult = await user.reauthenticateWithCredential(
-          EmailAuthProvider.credential(email: user.email, password: password));
-      await authResult.user.updateEmail(newEmail);
+          EmailAuthProvider.credential(email: user.email!, password: password));
+      await authResult.user!.updateEmail(newEmail);
     } catch (e) {
-      return e.message;
+      return print(e);
     }
   }
 
   Future updatePassword(
-      {@required String currentPassword, @required String newPassword}) async {
-    var user = _firebaseAuth.currentUser;
+      {required String currentPassword, required String newPassword}) async {
+    var user = _firebaseAuth.currentUser!;
     try {
       var authResult = await user.reauthenticateWithCredential(
           EmailAuthProvider.credential(
-              email: user.email, password: currentPassword));
-      await authResult.user.updatePassword(newPassword);
+              email: user.email!, password: currentPassword));
+      await authResult.user!.updatePassword(newPassword);
     } catch (e) {
-      return e.message;
+      return print(e);
     }
   }
 
   Future loginWithEmail({
-    @required String email,
-    @required String password,
+    required String email,
+    required String password,
   }) async {
     try {
       var authResult = await _firebaseAuth.signInWithEmailAndPassword(
@@ -59,16 +59,16 @@ class AuthService {
       await _populateCurrentUser(authResult.user);
       return authResult.user != null;
     } catch (e) {
-      return e.message;
+      return print(e);
     }
   }
 
   Future signUpWithEmail({
-    @required String email,
-    @required String password,
-    @required String pseudo,
-    @required String photoURL,
-    @required String points,
+    required String email,
+    required String password,
+    required String pseudo,
+    required String? photoURL,
+    required String points,
   }) async {
     try {
       var authResult = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -78,17 +78,17 @@ class AuthService {
 
       // create a new user profile on firestore
       _currentUser = UserModel(
-          id: authResult.user.uid,
+          id: authResult.user!.uid,
           email: email,
           pseudo: pseudo,
           photoURL: photoURL,
           points: points);
 
-      await _firestoreService.createUser(_currentUser);
+      await _firestoreService!.createUser(_currentUser!);
 
       return authResult.user != null;
     } catch (e) {
-      return e.message;
+      return print(e);
     }
   }
 
@@ -103,10 +103,11 @@ class AuthService {
     print('Signing out user');
   }
 
-  Future _populateCurrentUser(User user) async {
+  Future _populateCurrentUser(User? user) async {
     if (user != null) {
-      _currentUser = await _firestoreService.getUser(user.uid);
-      print('${_currentUser.pseudo} is log');
+      _currentUser =
+          await (_firestoreService!.getUser(user.uid) as FutureOr<UserModel?>);
+      print('${_currentUser!.pseudo} is log');
       return user;
     } else {
       print('No user log');

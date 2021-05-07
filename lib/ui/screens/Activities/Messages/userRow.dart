@@ -7,7 +7,7 @@ import 'package:Gemu/models/user.dart';
 import 'messages_view.dart';
 
 class UserRow extends StatelessWidget {
-  const UserRow({@required this.uid, @required this.contact});
+  const UserRow({required this.uid, required this.contact});
 
   final String uid;
   final UserModel contact;
@@ -35,10 +35,10 @@ class UserRow extends StatelessWidget {
                         image: DecorationImage(
                             fit: BoxFit.cover,
                             image:
-                                CachedNetworkImageProvider(contact.photoURL))),
+                                CachedNetworkImageProvider(contact.photoURL!))),
                   ),
             title: Text(
-              contact.pseudo,
+              contact.pseudo!,
               style: mystyle(12),
             ),
             trailing: Icon(Icons.message)));
@@ -53,7 +53,7 @@ class UserRow extends StatelessWidget {
                 uid: uid, contact: contact, convoID: convoID)));
   }
 
-  static String getConvoID(String uid, String pid) {
-    return uid.hashCode <= pid.hashCode ? uid + '_' + pid : pid + '_' + uid;
+  static String getConvoID(String uid, String? pid) {
+    return uid.hashCode <= pid.hashCode ? uid + '_' + pid! : pid! + '_' + uid;
   }
 }

@@ -11,18 +11,18 @@ class BottomShare extends StatefulWidget {
 }
 
 class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
-  AnimationController animationController;
-  Animation degOneTranslationAnimation, degTwoTranslationAnimation;
-  Animation rotationAnimationCircularButton;
-  Animation rotationAnimationFlatButton;
-  List<CameraDescription> _cameras;
+  late AnimationController animationController;
+  late Animation degOneTranslationAnimation, degTwoTranslationAnimation;
+  late Animation rotationAnimationCircularButton;
+  late Animation rotationAnimationFlatButton;
+  List<CameraDescription>? _cameras;
 
   double getRadianFromDegree(double degree) {
     double unitRadian = 57.295779513;
     return degree / unitRadian;
   }
 
-  void logError(String code, String message) =>
+  void logError(String code, String? message) =>
       print('Error: $code\nError Message: $message');
 
   Future<void> initializeCamera() async {

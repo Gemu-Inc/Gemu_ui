@@ -2,12 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
-import 'package:stacked/stacked.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:Gemu/screensmodels/Profil/profil_screen_model.dart';
 import 'package:Gemu/constants/variables.dart';
+import 'package:Gemu/ui/screens/Reglages/reglages_screen.dart';
 
 import 'posts_profil_screen.dart';
 import 'edit_private_posts_picture.dart';
@@ -24,15 +22,15 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
     with SingleTickerProviderStateMixin {
   int selectedIndex = 0;
 
-  TabController _tabController;
+  TabController? _tabController;
 
   bool isDrawer = true;
 
-  String uid;
-  DocumentSnapshot user;
-  Future mypostspublic, mypostsprivate;
-  int followers, following;
-  int points = 0;
+  String? uid;
+  late DocumentSnapshot<Map<String, dynamic>> user;
+  Future? mypostspublic, mypostsprivate;
+  int? followers, following;
+  int? points = 0;
   bool dataIsThere = false;
 
   List postsProfil = [];
@@ -47,12 +45,12 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController!.dispose();
     super.dispose();
   }
 
   getAllData() async {
-    uid = FirebaseAuth.instance.currentUser.uid;
+    uid = FirebaseAuth.instance.currentUser!.uid;
 
     user = await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
@@ -100,150 +98,176 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<ProfilScreenModel>.reactive(
-      viewModelBuilder: () => ProfilScreenModel(),
-      builder: (context, model, child) => isDrawer
-          ? Drawer(
-              child: dataIsThere
-                  ? Scaffold(
-                      backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      body: NestedScrollView(
-                          headerSliverBuilder:
-                              (BuildContext context, bool innerBoxIsScrolled) {
-                            return <Widget>[
-                              SliverGradientAppBar(
-                                automaticallyImplyLeading: false,
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Theme.of(context).primaryColor,
-                                      Theme.of(context).accentColor
-                                    ]),
-                                elevation: 6.0,
-                                forceElevated: true,
-                                pinned: true,
-                                leading: IconButton(
+    return isDrawer
+        ? Drawer(
+            child: dataIsThere
+                ? Scaffold(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    body: NestedScrollView(
+                        headerSliverBuilder:
+                            (BuildContext context, bool innerBoxIsScrolled) {
+                          return <Widget>[
+                            SliverAppBar(
+                              backgroundColor:
+                                  Theme.of(context).scaffoldBackgroundColor,
+                              automaticallyImplyLeading: false,
+                              elevation: 6.0,
+                              forceElevated: true,
+                              pinned: true,
+                              leading: IconButton(
+                                  icon: Icon(
+                                    Icons.zoom_out_map_rounded,
+                                    size: 26,
+                                  ),
+                                  onPressed: () {
+                                    if (isDrawer) {
+                                      setState(() {
+                                        isDrawer = false;
+                                      });
+                                    }
+                                  }),
+                              centerTitle: true,
+                              title: Text(
+                                user.data()!['pseudo'],
+                                style: TextStyle(fontSize: 23),
+                              ),
+                              actions: [
+                                IconButton(
                                     icon: Icon(
-                                      Icons.zoom_out_map_rounded,
-                                      size: 26,
+                                      Icons.settings,
+                                      size: 25,
                                     ),
-                                    onPressed: () {
-                                      if (isDrawer) {
-                                        setState(() {
-                                          isDrawer = false;
-                                        });
-                                      }
-                                    }),
-                                centerTitle: true,
-                                title: Text(
-                                  user.data()['pseudo'],
-                                  style: TextStyle(fontSize: 23),
-                                ),
-                                actions: [
-                                  IconButton(
-                                      icon: Icon(
-                                        Icons.settings,
-                                        size: 25,
-                                      ),
-                                      onPressed: () =>
-                                          model.navigateToReglages())
-                                ],
-                                expandedHeight: 250,
-                                flexibleSpace: FlexibleSpaceBar(
-                                  collapseMode: CollapseMode.parallax,
-                                  background: Container(
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                          Theme.of(context).primaryColor,
-                                          Theme.of(context).accentColor
-                                        ])),
-                                    child: Stack(
-                                      children: [
-                                        Align(
-                                            alignment: Alignment.center,
-                                            child: user.data()['photoURL'] ==
-                                                    null
-                                                ? Container(
-                                                    height: 90,
-                                                    width: 90,
-                                                    decoration: BoxDecoration(
+                                    onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                ReglagesScreen())))
+                              ],
+                              expandedHeight: 250,
+                              flexibleSpace: FlexibleSpaceBar(
+                                collapseMode: CollapseMode.parallax,
+                                background: Container(
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                        Theme.of(context).primaryColor,
+                                        Theme.of(context).accentColor
+                                      ])),
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                          alignment: Alignment.center,
+                                          child: user.data()!['photoURL'] ==
+                                                  null
+                                              ? Container(
+                                                  height: 90,
+                                                  width: 90,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                        color: Colors.black,
+                                                        width: 2.0),
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.person,
+                                                    size: 50,
+                                                  ))
+                                              : Container(
+                                                  margin: EdgeInsets.all(3.0),
+                                                  width: 90,
+                                                  height: 90,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.transparent,
                                                       shape: BoxShape.circle,
                                                       border: Border.all(
-                                                          color: Colors.black,
-                                                          width: 2.0),
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.person,
-                                                      size: 50,
-                                                    ))
-                                                : Container(
-                                                    margin: EdgeInsets.all(3.0),
-                                                    width: 90,
-                                                    height: 90,
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.transparent,
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                            color: Color(
-                                                                0xFF222831)),
-                                                        image: DecorationImage(
-                                                            fit: BoxFit.cover,
-                                                            image: NetworkImage(
-                                                                user.data()[
-                                                                    'photoURL']))),
-                                                  )),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                right: 15.0, bottom: 10.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () => Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Followers(
-                                                                idUser:
-                                                                    user.data()[
-                                                                        'id'],
-                                                              ))),
-                                                  child: Container(
-                                                    color: Colors.transparent,
-                                                    height: 60,
-                                                    width: 70,
-                                                    child: Stack(
-                                                      children: [
-                                                        Align(
-                                                            alignment: Alignment
-                                                                .topCenter,
-                                                            child: Text(
-                                                              'Followers',
-                                                            )),
-                                                        Align(
+                                                          color: Color(
+                                                              0xFF222831)),
+                                                      image: DecorationImage(
+                                                          fit: BoxFit.cover,
+                                                          image: NetworkImage(
+                                                              user.data()![
+                                                                  'photoURL']))),
+                                                )),
+                                      Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              right: 15.0, bottom: 10.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () => Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Followers(
+                                                              idUser:
+                                                                  user.data()![
+                                                                      'id'],
+                                                            ))),
+                                                child: Container(
+                                                  color: Colors.transparent,
+                                                  height: 60,
+                                                  width: 70,
+                                                  child: Stack(
+                                                    children: [
+                                                      Align(
                                                           alignment: Alignment
-                                                              .bottomCenter,
+                                                              .topCenter,
                                                           child: Text(
-                                                            followers
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                fontSize: 23),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
+                                                            'Followers',
+                                                          )),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .bottomCenter,
+                                                        child: Text(
+                                                          followers.toString(),
+                                                          style: TextStyle(
+                                                              fontSize: 23),
+                                                        ),
+                                                      )
+                                                    ],
                                                   ),
                                                 ),
-                                                Container(
+                                              ),
+                                              Container(
+                                                color: Colors.transparent,
+                                                height: 60,
+                                                width: 50,
+                                                child: Stack(
+                                                  children: [
+                                                    Align(
+                                                        alignment:
+                                                            Alignment.topCenter,
+                                                        child: Text(
+                                                          'Points',
+                                                        )),
+                                                    Align(
+                                                      alignment: Alignment
+                                                          .bottomCenter,
+                                                      child: Text(
+                                                        points.toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 23),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () => Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Follows(
+                                                                idUser: user
+                                                                        .data()![
+                                                                    'id']))),
+                                                child: Container(
                                                   color: Colors.transparent,
                                                   height: 60,
                                                   width: 50,
@@ -253,13 +277,13 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                                           alignment: Alignment
                                                               .topCenter,
                                                           child: Text(
-                                                            'Points',
+                                                            'Follows',
                                                           )),
                                                       Align(
                                                         alignment: Alignment
                                                             .bottomCenter,
                                                         child: Text(
-                                                          points.toString(),
+                                                          following.toString(),
                                                           style: TextStyle(
                                                               fontSize: 23),
                                                         ),
@@ -267,215 +291,206 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                                     ],
                                                   ),
                                                 ),
-                                                GestureDetector(
-                                                  onTap: () => Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Follows(
-                                                                  idUser: user
-                                                                          .data()[
-                                                                      'id']))),
-                                                  child: Container(
-                                                    color: Colors.transparent,
-                                                    height: 60,
-                                                    width: 50,
-                                                    child: Stack(
-                                                      children: [
-                                                        Align(
-                                                            alignment: Alignment
-                                                                .topCenter,
-                                                            child: Text(
-                                                              'Follows',
-                                                            )),
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .bottomCenter,
-                                                          child: Text(
-                                                            following
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                fontSize: 23),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
+                                              )
+                                            ],
                                           ),
-                                        )
-                                      ],
-                                    ),
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
-                              SliverPersistentHeader(
-                                  pinned: true,
-                                  delegate: _SliverAppBarDelegate(TabBar(
-                                      controller: _tabController,
-                                      isScrollable: true,
-                                      indicatorSize: TabBarIndicatorSize.tab,
-                                      labelColor:
-                                          Theme.of(context).primaryColor,
-                                      unselectedLabelColor: Colors.grey,
-                                      indicator: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Theme.of(context).canvasColor),
-                                      tabs: [
-                                        Tab(
-                                          text: 'Public',
-                                        ),
-                                        Tab(
-                                          text: 'Private',
-                                        ),
-                                      ])))
-                            ];
-                          },
-                          body: Stack(
-                            children: [
-                              TabBarView(
-                                  controller: _tabController,
-                                  children: [postsPublic(), postsPrivate()]),
-                            ],
-                          )),
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(),
-                    ),
-            )
-          : Scaffold(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              body: NestedScrollView(
-                  headerSliverBuilder:
-                      (BuildContext context, bool innerBoxIsScrolled) {
-                    return <Widget>[
-                      SliverGradientAppBar(
-                        automaticallyImplyLeading: false,
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).accentColor
-                            ]),
-                        elevation: 6.0,
-                        forceElevated: true,
-                        pinned: true,
-                        leading: IconButton(
-                            icon: Icon(
-                              Icons.close_fullscreen_rounded,
-                              size: 26,
                             ),
-                            onPressed: () {
-                              if (!isDrawer) {
-                                setState(() {
-                                  isDrawer = true;
-                                });
-                              }
-                            }),
-                        centerTitle: true,
-                        title: Text(
-                          user.data()['pseudo'],
-                          style: TextStyle(fontSize: 23),
-                        ),
-                        actions: [
-                          IconButton(
-                              icon: Icon(
-                                Icons.settings,
-                                size: 25,
-                              ),
-                              onPressed: () => model.navigateToReglages())
-                        ],
-                        expandedHeight: 250,
-                        flexibleSpace: FlexibleSpaceBar(
-                          collapseMode: CollapseMode.parallax,
-                          background: Container(
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                  Theme.of(context).primaryColor,
-                                  Theme.of(context).accentColor
-                                ])),
-                            child: Stack(
-                              children: [
-                                Align(
-                                    alignment: Alignment.center,
-                                    child: user.data()['photoURL'] == null
-                                        ? Container(
-                                            height: 90,
-                                            width: 90,
-                                            decoration: BoxDecoration(
+                            SliverPersistentHeader(
+                                pinned: true,
+                                delegate: _SliverAppBarDelegate(TabBar(
+                                    controller: _tabController,
+                                    isScrollable: true,
+                                    indicatorSize: TabBarIndicatorSize.tab,
+                                    labelColor: Theme.of(context).primaryColor,
+                                    unselectedLabelColor: Colors.grey,
+                                    indicator: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Theme.of(context).canvasColor),
+                                    tabs: [
+                                      Tab(
+                                        text: 'Public',
+                                      ),
+                                      Tab(
+                                        text: 'Private',
+                                      ),
+                                    ])))
+                          ];
+                        },
+                        body: Stack(
+                          children: [
+                            TabBarView(
+                                controller: _tabController,
+                                children: [postsPublic(), postsPrivate()]),
+                          ],
+                        )),
+                  )
+                : Center(
+                    child: CircularProgressIndicator(),
+                  ),
+          )
+        : Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: NestedScrollView(
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return <Widget>[
+                    SliverAppBar(
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
+                      automaticallyImplyLeading: false,
+                      elevation: 6.0,
+                      forceElevated: true,
+                      pinned: true,
+                      leading: IconButton(
+                          icon: Icon(
+                            Icons.close_fullscreen_rounded,
+                            size: 26,
+                          ),
+                          onPressed: () {
+                            if (!isDrawer) {
+                              setState(() {
+                                isDrawer = true;
+                              });
+                            }
+                          }),
+                      centerTitle: true,
+                      title: Text(
+                        user.data()!['pseudo'],
+                        style: TextStyle(fontSize: 23),
+                      ),
+                      actions: [
+                        IconButton(
+                            icon: Icon(
+                              Icons.settings,
+                              size: 25,
+                            ),
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ReglagesScreen())))
+                      ],
+                      expandedHeight: 250,
+                      flexibleSpace: FlexibleSpaceBar(
+                        collapseMode: CollapseMode.parallax,
+                        background: Container(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                Theme.of(context).primaryColor,
+                                Theme.of(context).accentColor
+                              ])),
+                          child: Stack(
+                            children: [
+                              Align(
+                                  alignment: Alignment.center,
+                                  child: user.data()!['photoURL'] == null
+                                      ? Container(
+                                          height: 90,
+                                          width: 90,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: Colors.black,
+                                                width: 2.0),
+                                          ),
+                                          child: Icon(
+                                            Icons.person,
+                                            size: 50,
+                                          ))
+                                      : Container(
+                                          margin: EdgeInsets.all(3.0),
+                                          width: 90,
+                                          height: 90,
+                                          decoration: BoxDecoration(
+                                              color: Colors.transparent,
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  color: Colors.black,
-                                                  width: 2.0),
-                                            ),
-                                            child: Icon(
-                                              Icons.person,
-                                              size: 50,
-                                            ))
-                                        : Container(
-                                            margin: EdgeInsets.all(3.0),
-                                            width: 90,
-                                            height: 90,
-                                            decoration: BoxDecoration(
-                                                color: Colors.transparent,
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                    color: Color(0xFF222831)),
-                                                image: DecorationImage(
-                                                    fit: BoxFit.cover,
-                                                    image: NetworkImage(user
-                                                        .data()['photoURL']))),
-                                          )),
-                                Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        right: 15.0, bottom: 10.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Followers(
-                                                          idUser: user
-                                                              .data()['id']))),
-                                          child: Container(
-                                            color: Colors.transparent,
-                                            height: 60,
-                                            width: 70,
-                                            child: Stack(
-                                              children: [
-                                                Align(
-                                                    alignment:
-                                                        Alignment.topCenter,
-                                                    child: Text(
-                                                      'Followers',
-                                                    )),
-                                                Align(
+                                                  color: Color(0xFF222831)),
+                                              image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: NetworkImage(user
+                                                      .data()!['photoURL']))),
+                                        )),
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: 15.0, bottom: 10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Followers(
+                                                      idUser:
+                                                          user.data()!['id'],
+                                                    ))),
+                                        child: Container(
+                                          color: Colors.transparent,
+                                          height: 60,
+                                          width: 70,
+                                          child: Stack(
+                                            children: [
+                                              Align(
                                                   alignment:
-                                                      Alignment.bottomCenter,
+                                                      Alignment.topCenter,
                                                   child: Text(
-                                                    followers.toString(),
-                                                    style:
-                                                        TextStyle(fontSize: 23),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
+                                                    'Followers',
+                                                  )),
+                                              Align(
+                                                alignment:
+                                                    Alignment.bottomCenter,
+                                                child: Text(
+                                                  followers.toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 23),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         ),
-                                        Container(
+                                      ),
+                                      Container(
+                                        color: Colors.transparent,
+                                        height: 60,
+                                        width: 50,
+                                        child: Stack(
+                                          children: [
+                                            Align(
+                                                alignment: Alignment.topCenter,
+                                                child: Text(
+                                                  'Points',
+                                                )),
+                                            Align(
+                                              alignment: Alignment.bottomCenter,
+                                              child: Text(
+                                                points.toString(),
+                                                style: TextStyle(fontSize: 23),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Follows(
+                                                    idUser:
+                                                        user.data()!['id']))),
+                                        child: Container(
                                           color: Colors.transparent,
                                           height: 60,
                                           width: 50,
@@ -485,13 +500,13 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                                   alignment:
                                                       Alignment.topCenter,
                                                   child: Text(
-                                                    'Points',
+                                                    'Follows',
                                                   )),
                                               Align(
                                                 alignment:
                                                     Alignment.bottomCenter,
                                                 child: Text(
-                                                  points.toString(),
+                                                  following.toString(),
                                                   style:
                                                       TextStyle(fontSize: 23),
                                                 ),
@@ -499,84 +514,52 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                             ],
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => Follows(
-                                                      idUser:
-                                                          user.data()['id']))),
-                                          child: Container(
-                                            color: Colors.transparent,
-                                            height: 60,
-                                            width: 50,
-                                            child: Stack(
-                                              children: [
-                                                Align(
-                                                    alignment:
-                                                        Alignment.topCenter,
-                                                    child: Text(
-                                                      'Follows',
-                                                    )),
-                                                Align(
-                                                  alignment:
-                                                      Alignment.bottomCenter,
-                                                  child: Text(
-                                                    following.toString(),
-                                                    style:
-                                                        TextStyle(fontSize: 23),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      )
+                                    ],
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
-                      SliverPersistentHeader(
-                          pinned: true,
-                          delegate: _SliverAppBarDelegate(TabBar(
-                              controller: _tabController,
-                              isScrollable: true,
-                              indicatorSize: TabBarIndicatorSize.tab,
-                              labelColor: Theme.of(context).primaryColor,
-                              unselectedLabelColor: Colors.grey,
-                              indicator: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Theme.of(context).canvasColor),
-                              tabs: [
-                                Tab(
-                                  text: 'Publications',
-                                ),
-                                Tab(
-                                  text: 'Private',
-                                )
-                              ])))
-                    ];
-                  },
-                  body: Stack(
-                    children: [
-                      TabBarView(controller: _tabController, children: [
-                        postsPublic(),
-                        postsPrivate(),
-                      ]),
-                    ],
-                  )),
-            ),
-    );
+                    ),
+                    SliverPersistentHeader(
+                        pinned: true,
+                        delegate: _SliverAppBarDelegate(TabBar(
+                            controller: _tabController,
+                            isScrollable: true,
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            labelColor: Theme.of(context).primaryColor,
+                            unselectedLabelColor: Colors.grey,
+                            indicator: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Theme.of(context).canvasColor),
+                            tabs: [
+                              Tab(
+                                text: 'Publications',
+                              ),
+                              Tab(
+                                text: 'Private',
+                              )
+                            ])))
+                  ];
+                },
+                body: Stack(
+                  children: [
+                    TabBarView(controller: _tabController, children: [
+                      postsPublic(),
+                      postsPrivate(),
+                    ]),
+                  ],
+                )),
+          );
   }
 
   Widget postsPublic() {
     return FutureBuilder(
         future: mypostspublic,
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           }
@@ -598,14 +581,15 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6),
               itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot post = snapshot.data.docs[index];
-                return post.data()['previewImage'] == null
+                DocumentSnapshot<Map<String, dynamic>> post =
+                    snapshot.data.docs[index];
+                return post.data()!['previewImage'] == null
                     ? GestureDetector(
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => PostsProfilScreen(
-                                      userID: user.data()['id'],
+                                      userID: user.data()!['id'],
                                       indexPost: index,
                                     ))),
                         child: Container(
@@ -619,7 +603,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                 child: Image(
                                     fit: BoxFit.cover,
                                     image: CachedNetworkImageProvider(
-                                        post.data()['pictureUrl'])),
+                                        post.data()!['pictureUrl'])),
                               ),
                               Positioned(
                                 top: 0,
@@ -642,7 +626,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                       Icons.remove_red_eye,
                                       color: Colors.white,
                                     ),
-                                    Text(post.data()['viewcount'].toString()),
+                                    Text(post.data()!['viewcount'].toString()),
                                   ],
                                 ),
                               ),
@@ -655,7 +639,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                             context,
                             MaterialPageRoute(
                                 builder: (context) => PostsProfilScreen(
-                                    userID: user.data()['id'],
+                                    userID: user.data()!['id'],
                                     indexPost: index))),
                         child: Container(
                           height: 150,
@@ -668,7 +652,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                 child: Image(
                                     fit: BoxFit.cover,
                                     image: CachedNetworkImageProvider(
-                                        post.data()['previewImage'])),
+                                        post.data()!['previewImage'])),
                               ),
                               Positioned(
                                 top: 0,
@@ -691,7 +675,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                       Icons.remove_red_eye,
                                       color: Colors.white,
                                     ),
-                                    Text(post.data()['viewcount'].toString()),
+                                    Text(post.data()!['viewcount'].toString()),
                                   ],
                                 ),
                               ),
@@ -714,7 +698,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
   Widget postsPrivate() {
     return FutureBuilder(
         future: mypostsprivate,
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           }
@@ -733,8 +717,9 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6),
               itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot post = snapshot.data.docs[index];
-                return post.data()['previewImage'] == null
+                DocumentSnapshot<Map<String, dynamic>> post =
+                    snapshot.data.docs[index];
+                return post.data()!['previewImage'] == null
                     ? GestureDetector(
                         onTap: () => Navigator.push(
                             context,
@@ -753,7 +738,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                 child: Image(
                                     fit: BoxFit.cover,
                                     image: CachedNetworkImageProvider(
-                                        post.data()['pictureUrl'])),
+                                        post.data()!['pictureUrl'])),
                               ),
                               Positioned(
                                 top: 0,
@@ -789,7 +774,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                 child: Image(
                                     fit: BoxFit.cover,
                                     image: CachedNetworkImageProvider(
-                                        post.data()['previewImage'])),
+                                        post.data()!['previewImage'])),
                               ),
                               Positioned(
                                 top: 0,

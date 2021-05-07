@@ -2,7 +2,6 @@ import 'package:Gemu/constants/variables.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:bubble/bubble.dart';
 
 import 'package:Gemu/models/chat_messages.dart';
@@ -15,53 +14,58 @@ import 'video_message.dart';
 
 class NewConversationScreen extends StatelessWidget {
   const NewConversationScreen(
-      {@required this.uid, @required this.contact, @required this.convoID});
+      {required this.uid, required this.contact, required this.convoID});
 
-  final String uid, convoID;
-  final UserModel contact;
+  final String? uid, convoID;
+  final UserModel? contact;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: GradientAppBar(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).accentColor
-              ]),
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios),
-              onPressed: () => Navigator.pop(context)),
-          title: Row(
-            children: [
-              Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(contact.photoURL))),
-              ),
-              SizedBox(width: 10.0),
-              Text(contact.pseudo)
-            ],
-          )),
+      appBar: PreferredSize(
+          child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).accentColor
+                  ])),
+              child: AppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.arrow_back_ios),
+                    onPressed: () => Navigator.pop(context)),
+                title: Row(
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(
+                                  contact!.photoURL!))),
+                    ),
+                    SizedBox(width: 10.0),
+                    Text(contact!.pseudo!)
+                  ],
+                ),
+              )),
+          preferredSize: Size.fromHeight(60)),
       body: ChatScreen(uid: uid, contact: contact, convoID: convoID),
     );
   }
 }
 
 class ChatScreen extends StatefulWidget {
-  ChatScreen(
-      {@required this.uid, @required this.contact, @required this.convoID});
+  ChatScreen({required this.uid, required this.contact, required this.convoID});
 
-  final String uid, convoID;
-  final UserModel contact;
+  final String? uid, convoID;
+  final UserModel? contact;
 
   @override
   ChatScreenState createState() => ChatScreenState();
@@ -71,9 +75,9 @@ class ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _listScrollController = ScrollController();
 
-  String uid, convoID;
-  UserModel contact;
-  List<DocumentSnapshot> listMessage;
+  String? uid, convoID;
+  UserModel? contact;
+  late List<DocumentSnapshot> listMessage;
 
   bool isWritting = false;
 
@@ -104,7 +108,7 @@ class ChatScreenState extends State<ChatScreen> {
         stream: FirebaseFirestore.instance
             .collection('messages')
             .doc(convoID)
-            .collection(convoID)
+            .collection(convoID!)
             .orderBy('timestamp', descending: true)
             .limit(20)
             .snapshots(),
@@ -114,7 +118,7 @@ class ChatScreenState extends State<ChatScreen> {
               child: CircularProgressIndicator(),
             );
           }
-          listMessage = snapshot.data.docs;
+          listMessage = snapshot.data!.docs;
           if (listMessage.length == 0) {
             return Center(
               child: Text('Pas encore de message avec cet utilisateur'),
@@ -135,7 +139,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildItem(int index, DocumentSnapshot document) {
     if (!document['read'] && document['idTo'] == uid) {
-      DatabaseService.updateMessageRead(document, convoID);
+      DatabaseService.updateMessageRead(document, convoID!);
     }
 
     if (document['idTo'] == uid) {
@@ -252,7 +256,7 @@ class ChatScreenState extends State<ChatScreen> {
     if (content.trim() != '') {
       _messageController.clear();
       content = content.trim();
-      DatabaseService.sendMessage(convoID, uid, contact.id, content,
+      DatabaseService.sendMessage(convoID, uid, contact!.id, content,
           DateTime.now().millisecondsSinceEpoch.toString());
       _listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
@@ -279,9 +283,9 @@ class ChatScreenState extends State<ChatScreen> {
 }
 
 class MessageStatusDot extends StatelessWidget {
-  final MessageStatus status;
+  final MessageStatus? status;
 
-  MessageStatusDot({Key key, this.status}) : super(key: key);
+  MessageStatusDot({Key? key, this.status}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -301,7 +305,7 @@ class MessageStatusDot extends StatelessWidget {
     );
   }
 
-  Color dotColor(MessageStatus status, BuildContext context) {
+  Color? dotColor(MessageStatus? status, BuildContext context) {
     switch (status) {
       case MessageStatus.not_sent:
         return Colors.red[400];

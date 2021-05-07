@@ -5,8 +5,8 @@ import 'package:Gemu/constants/variables.dart';
 import '../profile_view.dart';
 
 class ContentPostDescription extends StatelessWidget {
-  final String idUser, username, caption;
-  final List hashtags;
+  final String? idUser, username, caption;
+  final List? hashtags;
 
   ContentPostDescription(
       {this.idUser, this.username, this.caption, this.hashtags});
@@ -26,11 +26,11 @@ class ContentPostDescription extends StatelessWidget {
                           builder: (context) => ProfileView(
                                 idUser: idUser,
                               ))),
-                  child: Text(username, style: mystyle(15))),
+                  child: Text(username!, style: mystyle(15))),
               Container(
                   child: SingleChildScrollView(
                 child: Text(
-                  caption,
+                  caption!,
                   style: TextStyle(color: Colors.grey),
                 ),
               )),
@@ -42,10 +42,10 @@ class ContentPostDescription extends StatelessWidget {
                         shrinkWrap: true,
                         physics: AlwaysScrollableScrollPhysics(),
                         scrollDirection: Axis.vertical,
-                        itemCount: hashtags.length,
+                        itemCount: hashtags!.length,
                         itemBuilder: (context, index) {
                           return Text(
-                            '#${hashtags[index]}',
+                            '#${hashtags![index]}',
                             style: TextStyle(color: Colors.grey),
                           );
                         })),

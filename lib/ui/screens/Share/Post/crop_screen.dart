@@ -2,25 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:video_editor/video_editor.dart';
 
 class CropScreen extends StatefulWidget {
-  final VideoEditorController videoEditorController;
+  final VideoEditorController? videoEditorController;
 
-  CropScreen({Key key, this.videoEditorController}) : super(key: key);
+  CropScreen({Key? key, this.videoEditorController}) : super(key: key);
 
   @override
   CropScreenState createState() => CropScreenState();
 }
 
 class CropScreenState extends State<CropScreen> {
-  Offset _minCrop;
-  Offset _maxCrop;
-
-  @override
-  void initState() {
-    super.initState();
-    _minCrop = widget.videoEditorController.minCrop;
-    _maxCrop = widget.videoEditorController.maxCrop;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,8 +34,7 @@ class CropScreenState extends State<CropScreen> {
                     padding: EdgeInsets.only(right: 10.0),
                     child: GestureDetector(
                         onTap: () {
-                          widget.videoEditorController
-                              .updateCrop(_minCrop, _maxCrop);
+                          widget.videoEditorController!.updateCrop();
                           Navigator.of(context).pop();
                         },
                         child: Icon(
@@ -60,11 +49,8 @@ class CropScreenState extends State<CropScreen> {
               ),
               Expanded(
                 child: CropGridViewer(
-                  controller: widget.videoEditorController,
-                  onChangeCrop: (min, max) {
-                    _minCrop = min;
-                    _maxCrop = max;
-                  },
+                  controller: widget.videoEditorController!,
+                  showGrid: true,
                 ),
               ),
             ],

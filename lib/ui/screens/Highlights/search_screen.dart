@@ -13,10 +13,10 @@ class SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
   TextEditingController _searchController = TextEditingController();
 
-  TabController _tabController;
-  int currentTabIndex;
+  TabController? _tabController;
+  int? currentTabIndex;
 
-  Future resultsGamesLoaded, resultsUsersLoaded, resultAllLoaded;
+  Future? resultsGamesLoaded, resultsUsersLoaded, resultAllLoaded;
   List _allResults = [];
   List _resultsList = [];
   List _allResultsUsers = [];
@@ -29,7 +29,7 @@ class SearchScreenState extends State<SearchScreen>
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
     currentTabIndex = 0;
-    _tabController.addListener(_onTabChanged);
+    _tabController!.addListener(_onTabChanged);
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -37,8 +37,8 @@ class SearchScreenState extends State<SearchScreen>
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
-    _tabController.removeListener(_onTabChanged);
-    _tabController.dispose();
+    _tabController!.removeListener(_onTabChanged);
+    _tabController!.dispose();
     super.dispose();
   }
 
@@ -51,22 +51,22 @@ class SearchScreenState extends State<SearchScreen>
   }
 
   void _onTabChanged() {
-    if (!_tabController.indexIsChanging) {
+    if (!_tabController!.indexIsChanging) {
       setState(() {
-        print('Changing to Tab: ${_tabController.index}');
-        currentTabIndex = _tabController.index;
+        print('Changing to Tab: ${_tabController!.index}');
+        currentTabIndex = _tabController!.index;
       });
     }
   }
 
   _onSearchChanged() {
-    if (_tabController.index == 0) {
+    if (_tabController!.index == 0) {
       searchResultsListAll();
     }
-    if (_tabController.index == 1) {
+    if (_tabController!.index == 1) {
       searchResultsListUsers();
     }
-    if (_tabController.index == 2) {
+    if (_tabController!.index == 2) {
       searchResultsListGames();
     }
   }
@@ -217,12 +217,12 @@ class SearchScreenState extends State<SearchScreen>
     return ListView.builder(
         itemCount: _resultsList.length,
         itemBuilder: (BuildContext context, int index) {
-          DocumentSnapshot all = _resultsList[index];
+          DocumentSnapshot<Map<String, dynamic>> all = _resultsList[index];
           return Padding(
             padding: EdgeInsets.only(top: 5.0),
             child: ListTile(
               onTap: () {
-                if (all.data()['photoURL'] == null) {
+                if (all.data()!['photoURL'] == null) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -232,7 +232,7 @@ class SearchScreenState extends State<SearchScreen>
                       context,
                       MaterialPageRoute(
                           builder: (context) => ProfileView(
-                                idUser: all.data()['id'],
+                                idUser: all.data()!['id'],
                               )));
                 }
               },
@@ -245,13 +245,13 @@ class SearchScreenState extends State<SearchScreen>
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: CachedNetworkImageProvider(
-                            all.data()['photoURL'] == null
-                                ? all.data()['imageUrl']
-                                : all.data()['photoURL']))),
+                            all.data()!['photoURL'] == null
+                                ? all.data()!['imageUrl']
+                                : all.data()!['photoURL']))),
               ),
-              title: Text(all.data()['pseudo'] == null
-                  ? all.data()['name']
-                  : all.data()['pseudo']),
+              title: Text(all.data()!['pseudo'] == null
+                  ? all.data()!['name']
+                  : all.data()!['pseudo']),
             ),
           );
         });
@@ -261,7 +261,8 @@ class SearchScreenState extends State<SearchScreen>
     return ListView.builder(
         itemCount: _resultsListUsers.length,
         itemBuilder: (BuildContext context, int index) {
-          DocumentSnapshot user = _resultsListUsers[index];
+          DocumentSnapshot<Map<String, dynamic>> user =
+              _resultsListUsers[index];
           return Padding(
             padding: EdgeInsets.only(top: 5.0),
             child: ListTile(
@@ -269,7 +270,7 @@ class SearchScreenState extends State<SearchScreen>
                   context,
                   MaterialPageRoute(
                       builder: (context) => ProfileView(
-                            idUser: user.data()['id'],
+                            idUser: user.data()!['id'],
                           ))),
               leading: Container(
                 height: 50,
@@ -280,9 +281,9 @@ class SearchScreenState extends State<SearchScreen>
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: CachedNetworkImageProvider(
-                            user.data()['photoURL']))),
+                            user.data()!['photoURL']))),
               ),
-              title: Text(user.data()['pseudo']),
+              title: Text(user.data()!['pseudo']),
             ),
           );
         });
@@ -292,7 +293,8 @@ class SearchScreenState extends State<SearchScreen>
     return ListView.builder(
         itemCount: _resultsListGames.length,
         itemBuilder: (BuildContext context, int index) {
-          DocumentSnapshot game = _resultsListGames[index];
+          DocumentSnapshot<Map<String, dynamic>> game =
+              _resultsListGames[index];
           return Padding(
             padding: EdgeInsets.only(top: 5.0),
             child: ListTile(
@@ -309,9 +311,9 @@ class SearchScreenState extends State<SearchScreen>
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: CachedNetworkImageProvider(
-                            game.data()['imageUrl']))),
+                            game.data()!['imageUrl']))),
               ),
-              title: Text(game.data()['name']),
+              title: Text(game.data()!['name']),
             ),
           );
         });

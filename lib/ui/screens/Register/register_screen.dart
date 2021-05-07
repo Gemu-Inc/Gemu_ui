@@ -31,9 +31,9 @@ class RegisterFirstScreen extends StatefulWidget {
 class RegisterFirstScreenState extends State<RegisterFirstScreen> {
   Duration _duration = Duration(seconds: 1);
   bool isDayMood = false;
-  TextEditingController _emailController;
-  TextEditingController _passwordController;
-  TextEditingController _usernameController;
+  TextEditingController? _emailController;
+  TextEditingController? _passwordController;
+  TextEditingController? _usernameController;
 
   void timeMood() {
     int hour = DateTime.now().hour;
@@ -162,9 +162,9 @@ class RegisterFirstScreenState extends State<RegisterFirstScreen> {
                           MaterialPageRoute(builder: (context) {
                         return RegisterSecondScreen(
                           previousFields: [
-                            _emailController.text,
-                            _passwordController.text,
-                            _usernameController.text
+                            _emailController!.text,
+                            _passwordController!.text,
+                            _usernameController!.text
                           ],
                         );
                       })),
@@ -190,17 +190,17 @@ class RegisterFirstScreenState extends State<RegisterFirstScreen> {
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _usernameController.dispose();
+    _emailController!.dispose();
+    _passwordController!.dispose();
+    _usernameController!.dispose();
     super.dispose();
   }
 }
 
 class RegisterSecondScreen extends StatefulWidget {
-  const RegisterSecondScreen({Key key, this.previousFields}) : super(key: key);
+  const RegisterSecondScreen({Key? key, this.previousFields}) : super(key: key);
 
-  final List<String> previousFields;
+  final List<String>? previousFields;
 
   @override
   RegisterSecondScreenState createState() => RegisterSecondScreenState();
@@ -209,10 +209,10 @@ class RegisterSecondScreen extends StatefulWidget {
 class RegisterSecondScreenState extends State<RegisterSecondScreen> {
   Duration _duration = Duration(seconds: 1);
   bool isDayMood = false;
-  Future games;
+  Future? games;
 
-  List<String> test = List<String>();
-  List<Game> testGame = List<Game>();
+  List<String?> test = [];
+  List<Game> testGame = [];
 
   void timeMood() {
     int hour = DateTime.now().hour;
@@ -232,16 +232,16 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen> {
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-              email: widget.previousFields[0],
-              password: widget.previousFields[1])
+              email: widget.previousFields![0],
+              password: widget.previousFields![1])
           .then((userCredential) {
         FirebaseFirestore.instance
             .collection('users')
-            .doc(userCredential.user.uid)
+            .doc(userCredential.user!.uid)
             .set({
-          'id': userCredential.user.uid,
-          'email': widget.previousFields[0],
-          'pseudo': widget.previousFields[2],
+          'id': userCredential.user!.uid,
+          'email': widget.previousFields![0],
+          'pseudo': widget.previousFields![2],
           'photoURL': null,
           'idGames': test
         });
@@ -331,7 +331,7 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen> {
                                           ),
                                           Container(
                                               height:
-                                                  SizeConfig.screenHeight / 8,
+                                                  SizeConfig.screenHeight! / 8,
                                               width: SizeConfig.screenWidth,
                                               child: ListView(
                                                 scrollDirection:
@@ -348,7 +348,7 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen> {
                                                               game.selected =
                                                                   false;
                                                               setState(() {
-                                                                model.gameList
+                                                                model.gameList!
                                                                     .add(game);
                                                                 test.remove(game
                                                                     .documentId);
@@ -368,7 +368,7 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen> {
                                                                               10),
                                                                   image: DecorationImage(
                                                                       image: CachedNetworkImageProvider(game
-                                                                          .imageUrl),
+                                                                          .imageUrl!),
                                                                       fit: BoxFit
                                                                           .cover)),
                                                             ),
@@ -382,7 +382,7 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen> {
                                                               game.selected =
                                                                   false;
                                                               setState(() {
-                                                                model.gameList
+                                                                model.gameList!
                                                                     .add(game);
                                                                 test.remove(game
                                                                     .documentId);
@@ -459,8 +459,8 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen> {
                                     : Wrap(
                                         direction: Axis.horizontal,
                                         spacing: 5.0,
-                                        children: model.gameList.map((game) {
-                                          print(model.gameList.length);
+                                        children: model.gameList!.map((game) {
+                                          print(model.gameList!.length);
                                           return Container(
                                               margin: EdgeInsets.only(
                                                   bottom: 10.0, top: 10.0),
@@ -475,7 +475,7 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen> {
                                                       onTap: () {
                                                         game.selected = true;
                                                         setState(() {
-                                                          model.gameList
+                                                          model.gameList!
                                                               .remove(game);
                                                           test.add(
                                                               game.documentId);
@@ -507,7 +507,7 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen> {
                                                                 fit: BoxFit
                                                                     .cover,
                                                                 image: CachedNetworkImageProvider(
-                                                                    game.imageUrl))),
+                                                                    game.imageUrl!))),
                                                       ),
                                                     ),
                                                   ),
@@ -518,7 +518,7 @@ class RegisterSecondScreenState extends State<RegisterSecondScreen> {
                                                         onTap: () {
                                                           game.selected = true;
                                                           setState(() {
-                                                            model.gameList
+                                                            model.gameList!
                                                                 .remove(game);
                                                             test.add(game
                                                                 .documentId);
