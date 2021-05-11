@@ -122,7 +122,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                                       ),
                                 Positioned(
                                     left: 0,
-                                    bottom: 70,
+                                    bottom: 50,
                                     child: ContentPostDescription(
                                       idUser: post.data()!['uid'],
                                       username: post.data()!['username'],
@@ -131,7 +131,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                                     )),
                                 Positioned(
                                     right: 0,
-                                    bottom: 50,
+                                    bottom: 45,
                                     child: ActionsPostBar(
                                       idUser: post.data()!['uid'],
                                       idPost: post.data()!['id'],

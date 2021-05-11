@@ -73,11 +73,13 @@ class VideoPlayerItemState extends State<VideoPlayerItem>
         .doc(widget.idPost)
         .get();
 
-    if (doc.data()!['uid'] != uid) {
-      FirebaseFirestore.instance
-          .collection('posts')
-          .doc(widget.idPost)
-          .update({'viewcount': doc.data()!['viewcount'] + 1});
+    if (doc.exists) {
+      if (doc.data()!['uid'] != uid) {
+        FirebaseFirestore.instance
+            .collection('posts')
+            .doc(widget.idPost)
+            .update({'viewcount': doc.data()!['viewcount'] + 1});
+      }
 
       var view = await FirebaseFirestore.instance
           .collection('posts')

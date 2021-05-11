@@ -99,7 +99,7 @@ class PostsProfilScreenState extends State<PostsProfilScreen> {
                                     videoUrl: post.data()!['videoUrl']),
                             Positioned(
                                 left: 0,
-                                bottom: 70,
+                                bottom: 50,
                                 child: ContentPostDescription(
                                   idUser: post.data()!['uid'],
                                   username: post.data()!['username'],
@@ -108,7 +108,7 @@ class PostsProfilScreenState extends State<PostsProfilScreen> {
                                 )),
                             Positioned(
                                 right: 0,
-                                bottom: 50,
+                                bottom: 45,
                                 child: ActionsPostBar(
                                   idUser: post.data()!['uid'],
                                   idPost: post.data()!['id'],

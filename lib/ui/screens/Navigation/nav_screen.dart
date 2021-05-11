@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,26 +23,41 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
   int? page;
   String? uid;
 
-  List<dynamic> test = [
-    '2gR5FFB6k8CpSD8SWjZw',
-    'IOkVvznk9wFTsDUOwOYb',
-    'hPcqLphFAhhna9qMUWp7'
-  ];
+  List game = [];
+  bool isUserThere = false;
 
   @override
   void initState() {
     super.initState();
     page = 0;
     uid = FirebaseAuth.instance.currentUser!.uid;
+    getGames();
+  }
+
+  getGames() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((snapshot) {
+      return game = snapshot.data()!['idGames'];
+    });
+
+    setState(() {
+      isUserThere = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> screenNav = [
-      StreamProvider<List<Game>>.value(
-          initialData: [],
-          value: DatabaseService.getGamesFollow(test),
-          child: HomeScreen()),
+      isUserThere
+          ? StreamProvider<List<Game>>.value(
+              initialData: [],
+              value: DatabaseService.getGamesFollow(game),
+              child: HomeScreen(),
+            )
+          : Container(),
       HighlightsScreen(),
       GamesScreen(),
       DirectScreen()

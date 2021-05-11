@@ -43,6 +43,8 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                   Theme.of(context).accentColor
                 ])),
             child: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
               leading: IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,

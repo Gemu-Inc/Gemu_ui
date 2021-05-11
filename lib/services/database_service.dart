@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 import 'package:Gemu/models/user.dart';
@@ -132,10 +133,14 @@ class DatabaseService {
     return await _usersCollectionReference.doc(uid).update({'photoURL': null});
   }
 
-  static Stream<List<Game>> getGamesFollow(List<dynamic>? snapshot) {
+  static Future getGames(String? uid) {
+    return FirebaseFirestore.instance.collection('users').doc(uid).get();
+  }
+
+  static Stream<List<Game>> getGamesFollow(List<dynamic>? game) {
     return FirebaseFirestore.instance
         .collection('games')
-        .where(FieldPath.documentId, whereIn: snapshot)
+        .where(FieldPath.documentId, whereIn: game)
         .snapshots()
         .map((QuerySnapshot snapshot) => snapshot.docs
             .map((DocumentSnapshot document) => Game.fromMap(

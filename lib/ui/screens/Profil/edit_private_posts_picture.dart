@@ -122,15 +122,11 @@ class EditPrivatePostsPictureState extends State<EditPrivatePostsPicture> {
     if (docHashtags.docs.isEmpty) {
       FirebaseFirestore.instance
           .collection('hashtags')
-          .doc('Hashtag$hashtagsLength')
-          .set({
-        'id': 'Hashtag$hashtagsLength',
-        'name': hastagsText,
-        'postsCount': 1
-      });
+          .doc(hastagsText)
+          .set({'id': hastagsText, 'name': hastagsText, 'postsCount': 1});
       FirebaseFirestore.instance
           .collection('hashtags')
-          .doc('Hashtag$hashtagsLength')
+          .doc(hastagsText)
           .collection('posts')
           .doc(widget.post!.data()!['id'])
           .set({});

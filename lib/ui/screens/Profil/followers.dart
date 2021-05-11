@@ -74,6 +74,8 @@ class FollowersState extends State<Followers> {
                   Theme.of(context).accentColor
                 ])),
             child: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
               leading: IconButton(
                   icon: Icon(Icons.arrow_back_ios),
                   onPressed: () => Navigator.pop(context)),
@@ -94,14 +96,14 @@ class FollowersState extends State<Followers> {
                     controller: _scrollController,
                     itemCount: resultFinal.length,
                     itemBuilder: (context, index) {
-                      DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+                      DocumentSnapshot<Map<String, dynamic>>? documentSnapshot =
                           resultFinal[index];
                       return ListTile(
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ProfileView(
-                                      idUser: documentSnapshot.data()!['id'],
+                                      idUser: documentSnapshot!.data()!['id'],
                                     ))),
                         leading: Container(
                           height: 50,
@@ -112,7 +114,7 @@ class FollowersState extends State<Followers> {
                               image: DecorationImage(
                                   fit: BoxFit.cover,
                                   image: CachedNetworkImageProvider(
-                                      documentSnapshot.data()!['photoURL']))),
+                                      documentSnapshot!.data()!['photoURL']))),
                         ),
                         title: Text(documentSnapshot.data()!['pseudo']),
                       );

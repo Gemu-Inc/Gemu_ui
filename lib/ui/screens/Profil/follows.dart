@@ -20,7 +20,7 @@ class FollowsState extends State<Follows> {
   List result = [];
   List resultFinal = [];
 
-  ScrollController? _scrollController;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class FollowsState extends State<Follows> {
 
   @override
   void dispose() {
-    _scrollController!.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -74,6 +74,8 @@ class FollowsState extends State<Follows> {
                   Theme.of(context).accentColor
                 ])),
             child: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
               leading: IconButton(
                   icon: Icon(Icons.arrow_back_ios),
                   onPressed: () => Navigator.pop(context)),

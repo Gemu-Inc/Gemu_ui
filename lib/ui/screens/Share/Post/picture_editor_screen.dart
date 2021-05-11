@@ -197,15 +197,15 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
             if (docHashtags.docs.isEmpty) {
               FirebaseFirestore.instance
                   .collection('hashtags')
-                  .doc('Hashtag$hashtagsLength')
+                  .doc(hashtagsSelected[i])
                   .set({
-                'id': 'Hashtag$hashtagsLength',
+                'id': hashtagsSelected[i],
                 'name': hashtagsSelected[i],
                 'postsCount': 1
               });
               FirebaseFirestore.instance
                   .collection('hashtags')
-                  .doc('Hashtag$hashtagsLength')
+                  .doc(hashtagsSelected[i])
                   .collection('posts')
                   .doc("Picture$currentUser-$length")
                   .set({});
@@ -276,15 +276,15 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
               if (docHashtags.docs.isEmpty) {
                 FirebaseFirestore.instance
                     .collection('hashtags')
-                    .doc('Hashtag$hashtagsLength')
+                    .doc(hashtagsSelected[i])
                     .set({
-                  'id': 'Hashtag$hashtagsLength',
+                  'id': hashtagsSelected[i],
                   'name': hashtagsSelected[i],
                   'postsCount': 1
                 });
                 FirebaseFirestore.instance
                     .collection('hashtags')
-                    .doc('Hashtag$hashtagsLength')
+                    .doc(hashtagsSelected[i])
                     .collection('posts')
                     .doc("Picture$currentUser-$length")
                     .set({});

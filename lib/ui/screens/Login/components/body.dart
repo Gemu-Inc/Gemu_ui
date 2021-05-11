@@ -12,8 +12,10 @@ class Body extends StatefulWidget {
 class BodyState extends State<Body> {
   Duration _duration = Duration(seconds: 1);
   bool isDayMood = false;
-  TextEditingController? _emailController;
-  TextEditingController? _passwordController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+
+  UserCredential? result;
 
   void timeMood() {
     int hour = DateTime.now().hour;
@@ -109,12 +111,12 @@ class BodyState extends State<Body> {
                 InkWell(
                   onTap: () async {
                     try {
-                      print(_emailController!.text);
-                      print(_passwordController!.text);
-                      var result = await FirebaseAuth.instance
+                      print(_emailController.text);
+                      print(_passwordController.text);
+                      result = await FirebaseAuth.instance
                           .signInWithEmailAndPassword(
-                              email: _emailController!.text,
-                              password: _passwordController!.text);
+                              email: _emailController.text,
+                              password: _passwordController.text);
                       if (result != null) {
                         Navigator.pushNamedAndRemoveUntil(
                             context, ConnectionScreenRoute, (route) => false);
@@ -131,7 +133,7 @@ class BodyState extends State<Body> {
                               style: mystyle(12, Colors.white),
                             ),
                           ));
-                      Scaffold.of(context).showSnackBar(snackBar);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
                   },
                   child: Container(
@@ -179,8 +181,8 @@ class BodyState extends State<Body> {
 
   @override
   void dispose() {
-    _emailController!.dispose();
-    _passwordController!.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 }

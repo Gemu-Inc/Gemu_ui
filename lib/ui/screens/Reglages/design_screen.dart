@@ -53,6 +53,8 @@ class _DesignScreenState extends State<DesignScreen> {
                     Theme.of(context).accentColor
                   ])),
               child: AppBar(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
                 leading: IconButton(
                     icon: Icon(Icons.arrow_back_ios),
                     onPressed: () => model.navigateToProfilMenu()),

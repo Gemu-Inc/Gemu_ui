@@ -22,6 +22,8 @@ class ReglagesScreen extends StatelessWidget {
                           Theme.of(context).accentColor
                         ])),
                     child: AppBar(
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
                       leading: IconButton(
                           icon: Icon(Icons.arrow_back_ios),
                           onPressed: () => model.navigateToProfile()),

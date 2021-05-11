@@ -114,7 +114,7 @@ class PostViewGameState extends State<PostViewGame> {
                       ),
                 Positioned(
                     left: 0,
-                    bottom: 90,
+                    bottom: 65,
                     child: ContentPostDescription(
                       idUser: post.data()!['uid'],
                       username: post.data()!['username'],
@@ -123,7 +123,7 @@ class PostViewGameState extends State<PostViewGame> {
                     )),
                 Positioned(
                     right: 0,
-                    bottom: 75,
+                    bottom: 55,
                     child: ActionsPostBar(
                       idUser: post.data()!['uid'],
                       idPost: post.data()!['id'],
