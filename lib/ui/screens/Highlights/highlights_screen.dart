@@ -1,16 +1,16 @@
-import 'package:Gemu/constants/variables.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:stacked/stacked.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:Gemu/screensmodels/Highlights/highlights_screen_model.dart';
 import 'package:Gemu/ui/widgets/clipper_appbar.dart';
 import 'package:Gemu/size_config.dart';
-import 'package:Gemu/ui/widgets/choix_categories.dart';
+import 'package:Gemu/ui/screens/Highlights/choix_categories.dart';
+import 'package:Gemu/constants/variables.dart';
 
 import 'search_screen.dart';
+import 'hashtag_post_view.dart';
 
 class HighlightsScreen extends StatefulWidget {
   const HighlightsScreen({Key? key}) : super(key: key);
@@ -28,6 +28,10 @@ class HighlightsScreenState extends State<HighlightsScreen>
   List tagsRecommended = [];
   List tags = [];
   bool dataIsThere = false;
+
+  List carousselTitle = ['Views', 'Up&Down', 'Latest'];
+
+  List posts = [];
 
   @override
   void initState() {
@@ -52,13 +56,14 @@ class HighlightsScreenState extends State<HighlightsScreen>
   }
 
   getData() async {
-    var documents =
-        await FirebaseFirestore.instance.collection('categories').get();
+    var documents = await FirebaseFirestore.instance
+        .collection('hashtags')
+        .orderBy('postsCount', descending: true)
+        .get();
     for (var item in documents.docs) {
       tags.add(item.data()['name']);
       tagsRecommended.add(item.data()['name']);
     }
-    print(tags);
     setState(() {
       dataIsThere = true;
     });
@@ -73,142 +78,137 @@ class HighlightsScreenState extends State<HighlightsScreen>
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return dataIsThere
-        ? ViewModelBuilder<HighlightScreenModel>.reactive(
-            viewModelBuilder: () => HighlightScreenModel(),
-            builder: (context, model, child) => SlidingUpPanel(
-                minHeight: 70,
-                controller: _panelController,
-                color: Colors.transparent,
-                boxShadow: [BoxShadow(color: Colors.transparent)],
-                slideDirection: SlideDirection.DOWN,
-                backdropTapClosesPanel: true,
-                panel: ClipPath(
-                  clipper: ClipperCustomAppBar(),
-                  child: Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                            Theme.of(context).primaryColor,
-                            Theme.of(context).accentColor
-                          ])),
-                      child: Stack(
-                        children: [
-                          SafeArea(
-                            child: Container(
-                                alignment: Alignment.topCenter,
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 10.0),
-                                  child: Text(
-                                    'Custom your highlights',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                )),
-                          ),
-                          Padding(
-                            padding: padding
-                                ? EdgeInsets.only(top: 60.0, bottom: 100.0)
-                                : EdgeInsets.only(top: 60.0, bottom: 50.0),
-                            child: CustomScrollView(
-                              slivers: [
-                                SliverToBoxAdapter(
-                                  child: Container(
-                                      margin: EdgeInsets.only(top: 10.0),
-                                      height:
-                                          MediaQuery.of(context).size.height -
-                                              60,
-                                      child: Align(
-                                          alignment: Alignment.topCenter,
-                                          child: GridView.builder(
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: tags.length,
-                                              gridDelegate:
-                                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                                      crossAxisCount: 3,
-                                                      childAspectRatio: 2,
-                                                      crossAxisSpacing: 3),
-                                              itemBuilder: (context, index) {
-                                                return ChoixCategories(
-                                                  categorie: tags[index],
-                                                  tags: tagsRecommended,
-                                                );
-                                              }))),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-                onPanelSlide: (value) {
-                  if (value == 0.0) {
+        ? SlidingUpPanel(
+            minHeight: 70,
+            controller: _panelController,
+            color: Colors.transparent,
+            boxShadow: [BoxShadow(color: Colors.transparent)],
+            slideDirection: SlideDirection.DOWN,
+            backdropTapClosesPanel: true,
+            panel: panel(),
+            onPanelSlide: (value) {
+              if (value == 0.0) {
+                _controllerRotate.reverse();
+                setState(() {
+                  padding = true;
+                });
+              }
+              if (value == 1.0) {
+                _controllerRotate.forward();
+                setState(() {
+                  padding = false;
+                });
+              }
+            },
+            header: Padding(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width / 4 + 70.0),
+              child: GestureDetector(
+                onTap: () {
+                  if (_controllerRotate.isCompleted) {
+                    _panelController!.close();
                     _controllerRotate.reverse();
                     setState(() {
                       padding = true;
                     });
-                  }
-                  if (value == 1.0) {
+                  } else {
+                    _panelController!.open();
                     _controllerRotate.forward();
                     setState(() {
                       padding = false;
                     });
                   }
                 },
-                header: Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width / 4 + 70.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      if (_controllerRotate.isCompleted) {
-                        _panelController!.close();
-                        _controllerRotate.reverse();
-                        setState(() {
-                          padding = true;
-                        });
-                      } else {
-                        _panelController!.open();
-                        _controllerRotate.forward();
-                        setState(() {
-                          padding = false;
-                        });
-                      }
-                    },
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadianFromDegree(_animationRotate.value)),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.expand_more,
-                        size: 35,
-                        color: Colors.black,
-                      ),
-                    ),
+                child: Transform(
+                  transform: Matrix4.rotationZ(
+                      getRadianFromDegree(_animationRotate.value)),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.expand_more,
+                    size: 35,
+                    color: Colors.black,
                   ),
                 ),
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 85, bottom: 85),
-                    child: Column(
-                      children: [
-                        search(),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        popular(context),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        recommended()
-                      ],
+              ),
+            ),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(top: 85, bottom: 85),
+                child: Column(
+                  children: [
+                    search(),
+                    SizedBox(
+                      height: 20.0,
                     ),
-                  ),
-                )))
+                    popular(context),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    recommended()
+                  ],
+                ),
+              ),
+            ))
         : Center(child: CircularProgressIndicator());
+  }
+
+  Widget panel() {
+    return ClipPath(
+      clipper: ClipperCustomAppBar(),
+      child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                Theme.of(context).primaryColor,
+                Theme.of(context).accentColor
+              ])),
+          child: Stack(
+            children: [
+              SafeArea(
+                child: Container(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        'Custom your highlights',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )),
+              ),
+              Padding(
+                padding: padding
+                    ? EdgeInsets.only(top: 60.0, bottom: 100.0)
+                    : EdgeInsets.only(top: 60.0, bottom: 50.0),
+                child: SingleChildScrollView(
+                  child: Container(
+                      margin: EdgeInsets.only(top: 10.0),
+                      height: MediaQuery.of(context).size.height - 60,
+                      child: Align(
+                          alignment: Alignment.topCenter,
+                          child: GridView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: tags.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      childAspectRatio: 2,
+                                      crossAxisSpacing: 3),
+                              itemBuilder: (context, index) {
+                                return ChoixCategories(
+                                  categorie: tags[index],
+                                  tags: tagsRecommended,
+                                );
+                              }))),
+                ),
+              ),
+            ],
+          )),
+    );
   }
 
   Widget search() {
@@ -253,7 +253,10 @@ class HighlightsScreenState extends State<HighlightsScreen>
       children: [
         Align(
           alignment: Alignment.topLeft,
-          child: Text('Popular', style: mystyle(15)),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text('Popular', style: mystyle(15)),
+          ),
         ),
         SizedBox(
           height: 10.0,
@@ -272,10 +275,27 @@ class HighlightsScreenState extends State<HighlightsScreen>
                     ]),
                 borderRadius: BorderRadius.circular(10.0),
               ),
+              child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 20.0,
+                    ),
+                    child: Text(
+                      carousselTitle[index],
+                      style: mystyle(15),
+                    ),
+                  )),
             );
           },
           options: CarouselOptions(
-              aspectRatio: 2.0, enlargeCenterPage: true, viewportFraction: 0.8),
+              aspectRatio: 2.5,
+              enlargeCenterPage: true,
+              viewportFraction: 0.8,
+              autoPlay: true,
+              autoPlayInterval: Duration(seconds: 10),
+              autoPlayAnimationDuration: Duration(seconds: 2)),
         )
       ],
     );
@@ -286,10 +306,10 @@ class HighlightsScreenState extends State<HighlightsScreen>
       children: [
         Align(
           alignment: Alignment.topLeft,
-          child: Text('Recommended', style: mystyle(15)),
-        ),
-        SizedBox(
-          height: 10.0,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text('Recommended', style: mystyle(15)),
+          ),
         ),
         GridView.builder(
             physics: NeverScrollableScrollPhysics(),
@@ -301,6 +321,8 @@ class HighlightsScreenState extends State<HighlightsScreen>
                 crossAxisSpacing: 6,
                 mainAxisSpacing: 6),
             itemBuilder: (BuildContext context, int index) {
+              String hashtag = tagsRecommended[index];
+
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -326,7 +348,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
                         SizedBox(
                           height: 2.0,
                         ),
-                        Text(tagsRecommended[index].toString())
+                        Text(hashtag)
                       ],
                     ),
                   ),
@@ -336,31 +358,106 @@ class HighlightsScreenState extends State<HighlightsScreen>
                   Container(
                     height: 150,
                     width: MediaQuery.of(context).size.width / 1.50,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: 15,
-                      itemBuilder: (BuildContext contex, int index) {
-                        return Container(
-                          margin: EdgeInsets.all(5.0),
-                          width: 100,
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Theme.of(context).primaryColor,
-                                    Theme.of(context).accentColor
-                                  ]),
-                              borderRadius: BorderRadius.circular(10.0)),
-                        );
-                      },
-                    ),
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('hashtags')
+                            .doc(hashtag)
+                            .collection('posts')
+                            .snapshots(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            itemCount: snapshot.data.docs.length,
+                            itemBuilder: (BuildContext contex, int index) {
+                              DocumentSnapshot<Map<String, dynamic>>
+                                  documentSnapshot = snapshot.data.docs[index];
+
+                              return documentSnapshot.data()!['pictureUrl'] !=
+                                      null
+                                  ? picture(hashtag, index, documentSnapshot,
+                                      snapshot)
+                                  : video(hashtag, index, documentSnapshot,
+                                      snapshot);
+                            },
+                          );
+                        }),
                   ),
                 ],
               );
             })
       ],
+    );
+  }
+
+  Widget picture(
+      String hashtag,
+      int indexPost,
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
+      AsyncSnapshot snpashot) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HashtagPostView(
+                    hashtag: hashtag,
+                    index: indexPost,
+                    snapshot: snpashot,
+                  ))),
+      child: Container(
+        margin: EdgeInsets.all(5.0),
+        width: 100,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).accentColor
+                ]),
+            borderRadius: BorderRadius.circular(10.0),
+            image: DecorationImage(
+                fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(
+                    documentSnapshot.data()!['pictureUrl']))),
+      ),
+    );
+  }
+
+  Widget video(
+      String hashtag,
+      int indexPost,
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
+      AsyncSnapshot snapshot) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => HashtagPostView(
+                    hashtag: hashtag,
+                  ))),
+      child: Container(
+        margin: EdgeInsets.all(5.0),
+        width: 100,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).accentColor
+                ]),
+            borderRadius: BorderRadius.circular(10.0),
+            image: DecorationImage(
+                fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(
+                    documentSnapshot.data()!['previewImage']))),
+      ),
     );
   }
 }

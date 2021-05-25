@@ -247,9 +247,10 @@ class CameraPostState extends State<CameraPost>
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
               value: cameraDescription,
-              onChanged: controller != null && controller!.value.isRecordingVideo
-                  ? null
-                  : onNewCameraSelected,
+              onChanged:
+                  controller != null && controller!.value.isRecordingVideo
+                      ? null
+                      : onNewCameraSelected,
             ),
           ),
         );
@@ -303,8 +304,12 @@ class CameraPostState extends State<CameraPost>
         controller!
             .getMaxExposureOffset()
             .then((value) => _maxAvailableExposureOffset = value),
-        controller!.getMaxZoomLevel().then((value) => _maxAvailableZoom = value),
-        controller!.getMinZoomLevel().then((value) => _minAvailableZoom = value),
+        controller!
+            .getMaxZoomLevel()
+            .then((value) => _maxAvailableZoom = value),
+        controller!
+            .getMinZoomLevel()
+            .then((value) => _minAvailableZoom = value),
       ]);
     } on CameraException catch (e) {
       _showCameraException(e);

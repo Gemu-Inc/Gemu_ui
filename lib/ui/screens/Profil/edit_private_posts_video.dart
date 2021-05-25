@@ -37,30 +37,10 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
   FocusNode? _focusNodeCaption, _focusNodeHashtags;
 
   List? hashtagsSelected = [];
-  List<String> hashtagsListTest = [
-    'Test1',
-    'Test2',
-    'Expérience 1',
-    'Expérience 2',
-    'Expérience 3',
-    'Expérience 4',
-    'Expérience 5',
-    'Expérience 6',
-    'Expérience 7',
-    'Expérience 8'
-  ];
-  List<String> hastagsListNbPostsTest = [
-    '2 000',
-    '2',
-    '30 000',
-    '45',
-    '45',
-    '45',
-    '45',
-    '45',
-    '45',
-    '45'
-  ];
+  List _allResults = [];
+  List _resultList = [];
+
+  Future? resultLoaded;
 
   String? choixGameName = "";
   String privacy = "Private";
@@ -197,6 +177,14 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
     _focusNodeHashtags = FocusNode();
 
     _captionController.text = caption!;
+
+    _hashtagsController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    resultLoaded = getHashtagsStreamSnapshots();
   }
 
   @override
@@ -205,10 +193,43 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
       await _videoPlayerController.dispose();
     }
     _captionController.dispose();
+    _hashtagsController.removeListener(_onSearchChanged);
     _hashtagsController.dispose();
     _focusNodeCaption!.dispose();
     _focusNodeHashtags!.dispose();
     super.dispose();
+  }
+
+  _onSearchChanged() {
+    searchResultsListHashtags();
+  }
+
+  getHashtagsStreamSnapshots() async {
+    var data = await FirebaseFirestore.instance.collection('hashtags').get();
+    setState(() {
+      _allResults = data.docs;
+    });
+    searchResultsListHashtags();
+    return "complete";
+  }
+
+  searchResultsListHashtags() {
+    var showResults = [];
+
+    if (_hashtagsController.text != "") {
+      for (var hashtagSnapshot in _allResults) {
+        var name = hashtagSnapshot.data()['name'].toLowerCase();
+
+        if (name.contains(_hashtagsController.text.toLowerCase())) {
+          showResults.add(hashtagSnapshot);
+        }
+      }
+    } else {
+      showResults = List.from(_allResults);
+    }
+    setState(() {
+      _resultList = showResults;
+    });
   }
 
   @override
@@ -468,45 +489,42 @@ class EditPrivatePostsVideoState extends State<EditPrivatePostsVideo> {
             child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
-              itemCount: hashtagsListTest.length,
+              itemCount: _resultList.length,
               itemBuilder: (context, index) {
-                return hashtagsListTest[index]
-                        .toLowerCase()
-                        .contains(_hashtagsController.text.toLowerCase())
-                    ? ListTile(
-                        leading: Container(
-                            alignment: Alignment.center,
-                            height: 25,
-                            width: 25,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Theme.of(context).primaryColor,
-                                      Theme.of(context).accentColor
-                                    ])),
-                            child: Icon(Icons.tag, size: 15)),
-                        title: Text(
-                          hashtagsListTest[index],
-                          style: mystyle(12),
-                        ),
-                        trailing: Text(
-                          '${hastagsListNbPostsTest[index]} publications',
-                          style: mystyle(11, Colors.white.withOpacity(0.6)),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            if (!hashtagsSelected!
-                                .contains(hashtagsListTest[index])) {
-                              hashtagsSelected!.add(hashtagsListTest[index]);
-                              _hashtagsController.clear();
-                            }
-                          });
-                        })
-                    : Container();
+                return ListTile(
+                    leading: Container(
+                        alignment: Alignment.center,
+                        height: 25,
+                        width: 25,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Theme.of(context).primaryColor,
+                                  Theme.of(context).accentColor
+                                ])),
+                        child: Icon(Icons.tag, size: 15)),
+                    title: Text(
+                      _resultList[index].data()['name'],
+                      style: mystyle(12),
+                    ),
+                    trailing: Text(
+                      '${_resultList[index].data()['postsCount']} publications',
+                      style: mystyle(11, Colors.white.withOpacity(0.6)),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        if (!hashtagsSelected!
+                            .contains(_resultList[index].data()['name'])) {
+                          hashtagsSelected!
+                              .add(_resultList[index].data()['name']);
+                          _hashtagsController.clear();
+                        }
+                      });
+                    });
               },
             ),
           )

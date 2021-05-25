@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
+
 import 'package:Gemu/services/auth_service.dart';
 import 'package:Gemu/ui/router.dart';
 import 'package:Gemu/ui/screens/Connection/connection_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:Gemu/styles/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:Gemu/locator.dart';
 import 'package:Gemu/services/navigation_service.dart';
 import 'package:Gemu/services/dialog_service.dart';
@@ -14,6 +16,8 @@ import 'package:Gemu/services/provider_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   await Firebase.initializeApp().catchError((error) => print(error));
   Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   setupLocator();

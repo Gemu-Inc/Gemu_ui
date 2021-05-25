@@ -44,35 +44,15 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
   late Animation rotationAnimationFlatButton;
 
   List<String> hashtagsSelected = [];
-  List<String> hashtagsListTest = [
-    'Test1',
-    'Test2',
-    'Expérience 1',
-    'Expérience 2',
-    'Expérience 3',
-    'Expérience 4',
-    'Expérience 5',
-    'Expérience 6',
-    'Expérience 7',
-    'Expérience 8'
-  ];
-  List<String> hastagsListNbPostsTest = [
-    '2 000',
-    '2',
-    '30 000',
-    '45',
-    '45',
-    '45',
-    '45',
-    '45',
-    '45',
-    '45'
-  ];
+  List _allResults = [];
+  List _resultList = [];
+
+  Future? resultLoaded;
 
   String? id;
   int? postsCount;
 
-  bool expandContainer = false;
+  bool extendContainer = false;
 
   @override
   void initState() {
@@ -102,16 +82,57 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
     animationController.addListener(() {
       setState(() {});
     });
+
+    _hashtagsController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    resultLoaded = getHashtagsStreamSnapshots();
   }
 
   @override
   void dispose() {
     _captionController.dispose();
+    _hashtagsController.removeListener(_onSearchChanged);
     _hashtagsController.dispose();
     _focusNodeCaption!.dispose();
     _focusNodeHashtags!.dispose();
     animationController.dispose();
     super.dispose();
+  }
+
+  _onSearchChanged() {
+    searchResultsListHashtags();
+  }
+
+  getHashtagsStreamSnapshots() async {
+    var data = await FirebaseFirestore.instance.collection('hashtags').get();
+    setState(() {
+      _allResults = data.docs;
+    });
+    searchResultsListHashtags();
+    return "complete";
+  }
+
+  searchResultsListHashtags() {
+    var showResults = [];
+
+    if (_hashtagsController.text != "") {
+      for (var hashtagSnapshot in _allResults) {
+        var name = hashtagSnapshot.data()['name'].toLowerCase();
+
+        if (name.contains(_hashtagsController.text.toLowerCase())) {
+          showResults.add(hashtagSnapshot);
+        }
+      }
+    } else {
+      showResults = List.from(_allResults);
+    }
+    setState(() {
+      _resultList = showResults;
+    });
   }
 
   double getRadianFromDegree(double degree) {
@@ -208,7 +229,21 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                   .doc(hashtagsSelected[i])
                   .collection('posts')
                   .doc("Picture$currentUser-$length")
-                  .set({});
+                  .set({
+                'uid': currentUser,
+                'username': userdoc.data()!['pseudo'],
+                'profilepicture': userdoc.data()!['photoURL'],
+                'id': "Picture$currentUser-$length",
+                'game': gameName,
+                'up': [],
+                'down': [],
+                'commentcount': 0,
+                'caption': _captionController.text,
+                'hashtags': hashtagsSelected,
+                'pictureUrl': picture,
+                'privacy': privacy,
+                'viewcount': 0
+              });
             } else {
               FirebaseFirestore.instance
                   .collection('hashtags')
@@ -219,7 +254,21 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                   .doc(id)
                   .collection('posts')
                   .doc("Picture$currentUser-$length")
-                  .set({});
+                  .set({
+                'uid': currentUser,
+                'username': userdoc.data()!['pseudo'],
+                'profilepicture': userdoc.data()!['photoURL'],
+                'id': "Picture$currentUser-$length",
+                'game': gameName,
+                'up': [],
+                'down': [],
+                'commentcount': 0,
+                'caption': _captionController.text,
+                'hashtags': hashtagsSelected,
+                'pictureUrl': picture,
+                'privacy': privacy,
+                'viewcount': 0
+              });
             }
             if (hashtagsSelected.length > 1) {
               setState(() {
@@ -287,7 +336,21 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                     .doc(hashtagsSelected[i])
                     .collection('posts')
                     .doc("Picture$currentUser-$length")
-                    .set({});
+                    .set({
+                  'uid': currentUser,
+                  'username': userdoc.data()!['pseudo'],
+                  'profilepicture': userdoc.data()!['photoURL'],
+                  'id': "Picture$currentUser-$length",
+                  'game': gameName,
+                  'up': [],
+                  'down': [],
+                  'commentcount': 0,
+                  'caption': _captionController.text,
+                  'hashtags': hashtagsSelected,
+                  'pictureUrl': picture,
+                  'privacy': privacy,
+                  'viewcount': 0
+                });
               } else {
                 FirebaseFirestore.instance
                     .collection('hashtags')
@@ -298,7 +361,21 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
                     .doc(id)
                     .collection('posts')
                     .doc("Picture$currentUser-$length")
-                    .set({});
+                    .set({
+                  'uid': currentUser,
+                  'username': userdoc.data()!['pseudo'],
+                  'profilepicture': userdoc.data()!['photoURL'],
+                  'id': "Picture$currentUser-$length",
+                  'game': gameName,
+                  'up': [],
+                  'down': [],
+                  'commentcount': 0,
+                  'caption': _captionController.text,
+                  'hashtags': hashtagsSelected,
+                  'pictureUrl': picture,
+                  'privacy': privacy,
+                  'viewcount': 0
+                });
               }
               if (hashtagsSelected.length > 1) {
                 setState(() {
@@ -680,45 +757,42 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
             child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
-              itemCount: hashtagsListTest.length,
+              itemCount: _resultList.length,
               itemBuilder: (context, index) {
-                return hashtagsListTest[index]
-                        .toLowerCase()
-                        .contains(_hashtagsController.text.toLowerCase())
-                    ? ListTile(
-                        leading: Container(
-                            alignment: Alignment.center,
-                            height: 25,
-                            width: 25,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Theme.of(context).primaryColor,
-                                      Theme.of(context).accentColor
-                                    ])),
-                            child: Icon(Icons.tag, size: 15)),
-                        title: Text(
-                          hashtagsListTest[index],
-                          style: mystyle(12),
-                        ),
-                        trailing: Text(
-                          '${hastagsListNbPostsTest[index]} publications',
-                          style: mystyle(11, Colors.white.withOpacity(0.6)),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            if (!hashtagsSelected
-                                .contains(hashtagsListTest[index])) {
-                              hashtagsSelected.add(hashtagsListTest[index]);
-                              _hashtagsController.clear();
-                            }
-                          });
-                        })
-                    : Container();
+                return ListTile(
+                    leading: Container(
+                        alignment: Alignment.center,
+                        height: 25,
+                        width: 25,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Theme.of(context).primaryColor,
+                                  Theme.of(context).accentColor
+                                ])),
+                        child: Icon(Icons.tag, size: 15)),
+                    title: Text(
+                      _resultList[index].data()['name'],
+                      style: mystyle(12),
+                    ),
+                    trailing: Text(
+                      '${_resultList[index].data()['postsCount']} publications',
+                      style: mystyle(11, Colors.white.withOpacity(0.6)),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        if (!hashtagsSelected
+                            .contains(_resultList[index].data()['name'])) {
+                          hashtagsSelected
+                              .add(_resultList[index].data()['name']);
+                          _hashtagsController.clear();
+                        }
+                      });
+                    });
               },
             ),
           )
@@ -729,98 +803,129 @@ class PictureEditorScreenState extends State<PictureEditorScreen>
 
   Widget _designBar() {
     return AnimatedContainer(
-      height: expandContainer ? 150 : 90,
-      width: 45,
-      duration: Duration(seconds: 1),
-      curve: Curves.fastOutSlowIn,
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
-          borderRadius: BorderRadius.circular(25),
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).primaryColor.withOpacity(0.3),
-                Theme.of(context).accentColor.withOpacity(0.3)
-              ])),
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: ListView(
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                SizedBox(
-                  height: 10.0,
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    File? cropped = await ImageCropper.cropImage(
-                        sourcePath: widget.file!.path,
-                        aspectRatioPresets: [
-                          CropAspectRatioPreset.square,
-                          CropAspectRatioPreset.ratio3x2,
-                          CropAspectRatioPreset.original,
-                          CropAspectRatioPreset.ratio4x3,
-                          CropAspectRatioPreset.ratio16x9
+        height: extendContainer ? 250 : 100,
+        width: 45,
+        duration: Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(25),
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Theme.of(context).primaryColor.withOpacity(0.3),
+                  Theme.of(context).accentColor.withOpacity(0.3)
+                ])),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: extendContainer
+                  ? ListView(children: [
+                      Container(
+                        height: 75,
+                        decoration: BoxDecoration(
+                            border:
+                                Border(bottom: BorderSide(color: Colors.grey))),
+                        child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                print('Filtres');
+                              },
+                              child: Icon(Icons.filter),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                print('Musiques');
+                              },
+                              child: Icon(Icons.music_note),
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 145,
+                        child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  print('Rotate right');
+                                },
+                                child: Icon(Icons.rotate_right)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  print('Rotate left');
+                                },
+                                child: Icon(Icons.rotate_left)),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  print('Crop');
+                                },
+                                child: Icon(Icons.crop))
+                          ],
+                        ),
+                      )
+                    ])
+                  : Container(
+                      height: 75,
+                      child: ListView(
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(
+                            height: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              print('Filtres');
+                            },
+                            child: Icon(Icons.filter_rounded),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              print('Musiques');
+                            },
+                            child: Icon(Icons.music_note),
+                          )
                         ],
-                        compressQuality: 100,
-                        compressFormat: ImageCompressFormat.jpg,
-                        maxHeight: 1080,
-                        maxWidth: 1080,
-                        androidUiSettings: AndroidUiSettings(
-                            toolbarTitle: '',
-                            initAspectRatio: CropAspectRatioPreset.original,
-                            lockAspectRatio: false,
-                            statusBarColor:
-                                Theme.of(context).scaffoldBackgroundColor,
-                            toolbarColor:
-                                Theme.of(context).scaffoldBackgroundColor,
-                            toolbarWidgetColor: Colors.grey,
-                            backgroundColor:
-                                Theme.of(context).scaffoldBackgroundColor,
-                            activeControlsWidgetColor:
-                                Theme.of(context).primaryColor));
-                    if (cropped != null) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return PictureEditorScreen(
-                          file: cropped,
-                        );
-                      }));
-                    } else {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return PictureEditorScreen(
-                          file: widget.file,
-                        );
-                      }));
-                    }
-                  },
-                  child: Icon(
-                    Icons.crop,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-              ],
+                      ),
+                    ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    expandContainer = !expandContainer;
-                  });
-                },
-                child: Icon(Icons.expand_more)),
-          )
-        ],
-      ),
-    );
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      extendContainer = !extendContainer;
+                    });
+                  },
+                  child: extendContainer
+                      ? Icon(Icons.expand_less)
+                      : Icon(Icons.expand_more),
+                )),
+          ],
+        ));
   }
 
   Widget _topBar() {

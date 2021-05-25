@@ -1,26 +1,27 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:Gemu/constants/variables.dart';
 import 'package:flutter/material.dart';
-import 'package:video_editor/video_editor.dart';
+//import 'package:video_editor/video_editor.dart';
 import 'package:helpers/helpers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-//import 'package:flutter_video_compress/flutter_video_compress.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-
-import 'crop_screen.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:video_player/video_player.dart';
 
 import 'package:Gemu/constants/route_names.dart';
 import 'package:Gemu/models/game.dart';
+import 'package:Gemu/constants/variables.dart';
+
+import 'crop_screen.dart';
 
 class VideoEditorScreen extends StatefulWidget {
   final File? file;
 
-  VideoEditorScreen({this.file});
+  VideoEditorScreen({@required this.file});
 
   @override
   VideoEditorScreenState createState() => VideoEditorScreenState();
@@ -28,8 +29,6 @@ class VideoEditorScreen extends StatefulWidget {
 
 class VideoEditorScreenState extends State<VideoEditorScreen>
     with TickerProviderStateMixin {
-  final _exportingProgress = ValueNotifier<double>(0.0);
-  final _isExporting = ValueNotifier<bool>(false);
   final double height = 60;
 
   int? durationVideo;
@@ -43,9 +42,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
   String? choixGameId = "";
   String privacy = "Public";
 
-  //FlutterVideoCompress flutterVideoCompress = FlutterVideoCompress();
-
-  VideoEditorController? _videoEditorController;
+  late VideoPlayerController _videoPlayerController;
   TextEditingController _captionController = TextEditingController();
   TextEditingController _hashtagsController = TextEditingController();
   FocusNode? _focusNodeCaption, _focusNodeHashtags;
@@ -58,56 +55,39 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
   late Animation rotationAnimationFlatButton;
 
   List<String> hashtagsSelected = [];
-  List<String> hashtagsListTest = [
-    'Test1',
-    'Test2',
-    'Expérience 1',
-    'Expérience 2',
-    'Expérience 3',
-    'Expérience 4',
-    'Expérience 5',
-    'Expérience 6',
-    'Expérience 7',
-    'Expérience 8'
-  ];
-  List<String> hastagsListNbPostsTest = [
-    '2 000',
-    '2',
-    '30 000',
-    '45',
-    '45',
-    '45',
-    '45',
-    '45',
-    '45',
-    '45'
-  ];
+  List _allResults = [];
+  List _resultList = [];
+
+  Future? resultLoaded;
 
   String? id;
   int? postsCount;
 
   bool extendContainer = false;
 
-  /*compressVideo(String videoPath) async {
-    final compressedVideo = await flutterVideoCompress.compressVideo(videoPath,
-        quality: VideoQuality.MediumQuality);
-    return File(compressedVideo.path);
-  }*/
+  compressVideo(String videoPath) async {
+    MediaInfo? compressedVideo = await VideoCompress.compressVideo(videoPath,
+        quality: VideoQuality.MediumQuality,
+        deleteOrigin: false,
+        includeAudio: true);
+    return File(compressedVideo!.path!);
+  }
 
-  /*getPreviewImage(String videoPath) async {
-    final previewImage =
-        await flutterVideoCompress.getThumbnailWithFile(videoPath);
+  getPreviewImage(String videoPath) async {
+    final previewImagePath = await VideoThumbnail.thumbnailFile(
+        video: videoPath, imageFormat: ImageFormat.JPEG, quality: 50);
 
-    final lastIndex = previewImage.path.lastIndexOf(RegExp(r'.jp'));
-    final splitted = previewImage.path.substring(0, lastIndex);
-    final outPath = "${splitted}_out${previewImage.path.substring(lastIndex)}";
-    var compressImage = await FlutterImageCompress.compressAndGetFile(
-        previewImage.path, outPath);
+    /*final lastIndex = previewImagePath?.lastIndexOf(RegExp(r'.jp'));
+    final splitted = previewImagePath?.substring(0, lastIndex);
+    final outPath = "${splitted}_out${previewImagePath?.substring(lastIndex!)}";
+    File? compressImage = await FlutterImageCompress.compressAndGetFile(
+        previewImagePath!, outPath);*/
+    File? compressImage = File(previewImagePath!);
 
     return compressImage;
-  }*/
+  }
 
-  /*uploadVideoToStorage(String videoPath, String id, String nameGame) async {
+  uploadVideoToStorage(String videoPath, String id, String nameGame) async {
     UploadTask storageUploadTask = FirebaseStorage.instance
         .ref()
         .child('posts')
@@ -119,9 +99,9 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
         await storageUploadTask.whenComplete(() {});
     String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
     return downloadUrl;
-  }*/
+  }
 
-  /*uploadImagePreviewToStorage(
+  uploadImagePreviewToStorage(
       String videoPath, String id, String nameGame) async {
     UploadTask storageUploadTask = FirebaseStorage.instance
         .ref()
@@ -134,7 +114,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
         await storageUploadTask.whenComplete(() {});
     String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
     return downloadUrl;
-  }*/
+  }
 
   uploadVideo(String videoPath, String? idGame, String? nameGame) async {
     setState(() {
@@ -158,10 +138,10 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
           .doc('Video$currentUser-$length')
           .get();
       if (!doc.exists) {
-        /*String video = await uploadVideoToStorage(
+        String video = await uploadVideoToStorage(
             videoPath, "Video$currentUser-$length", nameGame!);
         String previewImage = await uploadImagePreviewToStorage(
-            videoPath, "Video$currentUser-$length", nameGame);*/
+            videoPath, "Video$currentUser-$length", nameGame);
         FirebaseFirestore.instance
             .collection('posts')
             .doc("Video$currentUser-$length")
@@ -176,8 +156,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
           'commentcount': 0,
           'caption': _captionController.text,
           'hashtags': hashtagsSelected,
-          //'videoUrl': video,
-          //'previewImage': previewImage,
+          'videoUrl': video,
+          'previewImage': previewImage,
           'privacy': privacy,
           'viewcount': 0
         });
@@ -210,7 +190,22 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                   .doc(hashtagsSelected[i])
                   .collection('posts')
                   .doc("Video$currentUser-$length")
-                  .set({});
+                  .set({
+                'uid': currentUser,
+                'username': userdoc.data()!['pseudo'],
+                'profilpicture': userdoc.data()!['photoURL'],
+                'id': "Video$currentUser-$length",
+                'game': nameGame,
+                'up': [],
+                'down': [],
+                'commentcount': 0,
+                'caption': _captionController.text,
+                'hashtags': hashtagsSelected,
+                'videoUrl': video,
+                'previewImage': previewImage,
+                'privacy': privacy,
+                'viewcount': 0
+              });
             } else {
               FirebaseFirestore.instance
                   .collection('hashtags')
@@ -221,7 +216,22 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                   .doc(id)
                   .collection('posts')
                   .doc("Video$currentUser-$length")
-                  .set({});
+                  .set({
+                'uid': currentUser,
+                'username': userdoc.data()!['pseudo'],
+                'profilpicture': userdoc.data()!['photoURL'],
+                'id': "Video$currentUser-$length",
+                'game': nameGame,
+                'up': [],
+                'down': [],
+                'commentcount': 0,
+                'caption': _captionController.text,
+                'hashtags': hashtagsSelected,
+                'videoUrl': video,
+                'previewImage': previewImage,
+                'privacy': privacy,
+                'viewcount': 0
+              });
             }
             if (hashtagsSelected.length > 1) {
               setState(() {
@@ -239,10 +249,10 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
             .doc('Video$currentUser-$length')
             .get();
         if (!doc.exists) {
-          /*String video = await uploadVideoToStorage(
+          String video = await uploadVideoToStorage(
               videoPath, "Video$currentUser-$length", nameGame!);
           String previewImage = await uploadImagePreviewToStorage(
-              videoPath, "Video$currentUser-$length", nameGame);*/
+              videoPath, "Video$currentUser-$length", nameGame);
           FirebaseFirestore.instance
               .collection('posts')
               .doc("Video$currentUser-$length")
@@ -257,8 +267,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
             'commentcount': 0,
             'caption': _captionController.text,
             'hashtags': hashtagsSelected,
-            //'videoUrl': video,
-            //'previewImage': previewImage,
+            'videoUrl': video,
+            'previewImage': previewImage,
             'privacy': privacy,
             'viewcount': 0
           });
@@ -291,7 +301,22 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                     .doc(hashtagsSelected[i])
                     .collection('posts')
                     .doc("Video$currentUser-$length")
-                    .set({});
+                    .set({
+                  'uid': currentUser,
+                  'username': userdoc.data()!['pseudo'],
+                  'profilpicture': userdoc.data()!['photoURL'],
+                  'id': "Video$currentUser-$length",
+                  'game': nameGame,
+                  'up': [],
+                  'down': [],
+                  'commentcount': 0,
+                  'caption': _captionController.text,
+                  'hashtags': hashtagsSelected,
+                  'videoUrl': video,
+                  'previewImage': previewImage,
+                  'privacy': privacy,
+                  'viewcount': 0
+                });
               } else {
                 FirebaseFirestore.instance
                     .collection('hashtags')
@@ -302,7 +327,22 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                     .doc(id)
                     .collection('posts')
                     .doc("Video$currentUser-$length")
-                    .set({});
+                    .set({
+                  'uid': currentUser,
+                  'username': userdoc.data()!['pseudo'],
+                  'profilpicture': userdoc.data()!['photoURL'],
+                  'id': "Video$currentUser-$length",
+                  'game': nameGame,
+                  'up': [],
+                  'down': [],
+                  'commentcount': 0,
+                  'caption': _captionController.text,
+                  'hashtags': hashtagsSelected,
+                  'videoUrl': video,
+                  'previewImage': previewImage,
+                  'privacy': privacy,
+                  'viewcount': 0
+                });
               }
               if (hashtagsSelected.length > 1) {
                 setState(() {
@@ -321,35 +361,16 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
     }
   }
 
-  void _exportVideo() async {
-    Misc.delayed(1000, () => _isExporting.value = true);
-    final File? file = await _videoEditorController!.exportVideo(
-      customInstruction: "-crf 17",
-      preset: VideoExportPreset.medium,
-      onProgress: (statics) {
-        if (_videoEditorController!.video != null)
-          _exportingProgress.value = statics.time /
-              _videoEditorController!.video.value.duration.inMilliseconds;
-      },
-    );
-    _isExporting.value = false;
-
-    if (file != null) {
-      _exportText = "Video success export!";
-      uploadVideo(file.path, choixGameId, choixGameName);
-    } else {
-      _exportText = "Error on export video";
-    }
-
-    setState(() => _exported = true);
-    Misc.delayed(2000, () => setState(() => _exported = false));
+  void _exportVideo() {
+    final File file = widget.file!;
+    uploadVideo(file.path, choixGameId, choixGameName);
   }
 
-  void _openCropScren() {
+  /*void _openCropScren() {
     context.to(CropScreen(
       videoEditorController: _videoEditorController,
     ));
-  }
+  }*/
 
   void showInSnackBar(String message) {
     _scaffoldKey.currentState!.showSnackBar(SnackBar(
@@ -369,7 +390,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
   @override
   void initState() {
     super.initState();
-    _videoEditorController = VideoEditorController.file(widget.file!)
+    _videoPlayerController = VideoPlayerController.file(widget.file!)
       ..initialize().then((_) {
         setState(() {});
       });
@@ -399,14 +420,23 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
     animationController.addListener(() {
       setState(() {});
     });
+
+    _hashtagsController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    resultLoaded = getHashtagsStreamSnapshots();
   }
 
   @override
   void dispose() async {
     if (mounted) {
-      await _videoEditorController!.dispose();
+      await _videoPlayerController.dispose();
     }
     _captionController.dispose();
+    _hashtagsController.removeListener(_onSearchChanged);
     _hashtagsController.dispose();
     _focusNodeCaption!.dispose();
     _focusNodeHashtags!.dispose();
@@ -417,130 +447,159 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
     super.dispose();
   }
 
+  _onSearchChanged() {
+    searchResultsListHashtags();
+  }
+
+  getHashtagsStreamSnapshots() async {
+    var data = await FirebaseFirestore.instance.collection('hashtags').get();
+    setState(() {
+      _allResults = data.docs;
+    });
+    searchResultsListHashtags();
+    return "complete";
+  }
+
+  searchResultsListHashtags() {
+    var showResults = [];
+
+    if (_hashtagsController.text != "") {
+      for (var hashtagSnapshot in _allResults) {
+        var name = hashtagSnapshot.data()['name'].toLowerCase();
+
+        if (name.contains(_hashtagsController.text.toLowerCase())) {
+          showResults.add(hashtagSnapshot);
+        }
+      }
+    } else {
+      showResults = List.from(_allResults);
+    }
+    setState(() {
+      _resultList = showResults;
+    });
+  }
+
   @override
   Widget build(BuildContext contex) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      key: _scaffoldKey,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: _videoEditorController!.initialized
-          ? SafeArea(
-              child: isUploading
-                  ? AnimatedBuilder(
-                      animation: _videoEditorController!,
-                      builder: (_, __) {
-                        return Stack(
-                          children: [
-                            ClipRRect(
-                              child: CropGridViewer(
-                                controller: _videoEditorController!,
-                                showGrid: false,
+    return SafeArea(
+        child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            key: _scaffoldKey,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: isUploading
+                ? AnimatedBuilder(
+                    animation: _videoPlayerController,
+                    builder: (_, __) {
+                      return Stack(
+                        children: [
+                          AspectRatio(
+                            aspectRatio:
+                                _videoPlayerController.value.aspectRatio,
+                            child: VideoPlayer(_videoPlayerController),
+                          ),
+                          Center(
+                              child: Container(
+                            color: Theme.of(context)
+                                .scaffoldBackgroundColor
+                                .withOpacity(0.7),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Uploading..',
+                                    style: mystyle(18),
+                                  ),
+                                  SizedBox(
+                                    height: 20.0,
+                                  ),
+                                  CircularProgressIndicator()
+                                ],
                               ),
                             ),
-                            Center(
-                                child: Container(
-                              color: Theme.of(context)
-                                  .scaffoldBackgroundColor
-                                  .withOpacity(0.7),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Uploading..',
-                                      style: mystyle(18),
-                                    ),
-                                    SizedBox(
-                                      height: 20.0,
-                                    ),
-                                    CircularProgressIndicator()
-                                  ],
+                          )),
+                        ],
+                      );
+                    })
+                : AnimatedBuilder(
+                    animation: _videoPlayerController,
+                    builder: (_, __) {
+                      return isCaption || isHashtags
+                          ? Stack(
+                              children: [
+                                Center(
+                                  child: AspectRatio(
+                                    aspectRatio: _videoPlayerController
+                                        .value.aspectRatio,
+                                    child: VideoPlayer(_videoPlayerController),
+                                  ),
                                 ),
-                              ),
-                            )),
-                          ],
-                        );
-                      })
-                  : AnimatedBuilder(
-                      animation: _videoEditorController!,
-                      builder: (_, __) {
-                        return isCaption || isHashtags
-                            ? Stack(
-                                children: [
-                                  Center(
-                                    child: ClipRRect(
-                                      child: CropGridViewer(
-                                        controller: _videoEditorController!,
-                                        showGrid: false,
-                                      ),
+                                isCaption ? _caption() : _hashtags()
+                              ],
+                            )
+                          : Stack(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if (_videoPlayerController
+                                          .value.isPlaying) {
+                                        _videoPlayerController.pause();
+                                      } else {
+                                        _videoPlayerController.play();
+                                        _videoPlayerController.setLooping(true);
+                                      }
+                                    });
+                                  },
+                                  child: Center(
+                                    child: AspectRatio(
+                                      aspectRatio: _videoPlayerController
+                                          .value.aspectRatio,
+                                      child:
+                                          VideoPlayer(_videoPlayerController),
                                     ),
                                   ),
-                                  isCaption ? _caption() : _hashtags()
-                                ],
-                              )
-                            : Stack(
-                                children: [
-                                  Center(
-                                    child: ClipRRect(
-                                      child: CropGridViewer(
-                                        controller: _videoEditorController!,
-                                        showGrid: false,
-                                      ),
-                                    ),
-                                  ),
-                                  Center(
-                                      child: OpacityTransition(
-                                          visible: !_videoEditorController!
-                                              .isPlaying,
-                                          child: GestureDetector(
-                                            onTap: _videoEditorController!
-                                                .video.play,
-                                            child: Container(
-                                              width: 40,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  shape: BoxShape.circle),
-                                              child: Icon(
-                                                Icons.play_arrow,
-                                                color: Colors.black,
-                                              ),
+                                ),
+                                Center(
+                                    child: OpacityTransition(
+                                        visible: !_videoPlayerController
+                                            .value.isPlaying,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _videoPlayerController.play();
+                                              _videoPlayerController
+                                                  .setLooping(true);
+                                            });
+                                          },
+                                          child: Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                    color: Colors.black),
+                                                shape: BoxShape.circle),
+                                            child: Icon(
+                                              _videoPlayerController
+                                                      .value.isPlaying
+                                                  ? Icons.pause
+                                                  : Icons.play_arrow,
+                                              color: Colors.black,
                                             ),
-                                          ))),
-                                  Align(
-                                      alignment: Alignment.topCenter,
-                                      child: _topBar()),
-                                  ..._trimSlider(),
-                                  Positioned(
-                                      bottom: 100, left: 10, child: _edit()),
-                                  Positioned(
-                                      bottom: 100, right: 10, child: _save()),
-                                  _customSnackBar(),
-                                  ValueListenableBuilder(
-                                    valueListenable: _isExporting,
-                                    builder: (_, bool export, __) =>
-                                        OpacityTransition(
-                                      visible: export,
-                                      child: AlertDialog(
-                                        title: ValueListenableBuilder(
-                                          valueListenable: _exportingProgress,
-                                          builder: (_, double value, __) =>
-                                              TextDesigned(
-                                            "Exporting video ${(value * 100).ceil()}%",
-                                            color: Colors.black,
-                                            bold: true,
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              );
-                      }))
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
-    );
+                                        ))),
+                                Align(
+                                    alignment: Alignment.topCenter,
+                                    child: _topBar()),
+                                Positioned(
+                                    bottom: 20, left: 10, child: _edit()),
+                                Positioned(
+                                    bottom: 20, right: 10, child: _save()),
+                                _customSnackBar(),
+                              ],
+                            );
+                    })));
   }
 
   Widget _edit() {
@@ -648,14 +707,12 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
   Widget _save() {
     return GestureDetector(
         onTap: () {
-          if (_captionController.text == null ||
-              _captionController.text == "" ||
+          if (_captionController.text == "" ||
               choixGameId == null ||
               choixGameId == "" ||
-              durationVideo! > 10 ||
+              /*durationVideo! > 10 ||*/
               hashtagsSelected.length == 0) {
-            if (_captionController.text == null ||
-                _captionController.text == "") {
+            if (_captionController.text == "") {
               showInSnackBar('Write caption');
             }
             if (choixGameId == null || choixGameId == "") {
@@ -668,7 +725,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
               showInSnackBar('Maximum video seconds: 10');
             }
           } else {
-            print(durationVideo);
+            //print(durationVideo);
             _exportVideo();
           }
         },
@@ -876,7 +933,7 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
 
   Widget _designBar() {
     return AnimatedContainer(
-        height: extendContainer ? 150 : 90,
+        height: extendContainer ? 250 : 100,
         width: 45,
         duration: Duration(seconds: 1),
         curve: Curves.fastOutSlowIn,
@@ -893,47 +950,107 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
         child: Stack(
           children: [
             Align(
-                alignment: Alignment.topCenter,
-                child: ListView(
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    GestureDetector(
-                      onTap: () => _videoEditorController!
-                          .rotate90Degrees(RotateDirection.left),
-                      child: Icon(
-                        Icons.rotate_left,
-                        color: Colors.white,
+              alignment: Alignment.topCenter,
+              child: extendContainer
+                  ? ListView(children: [
+                      Container(
+                        height: 75,
+                        decoration: BoxDecoration(
+                            border:
+                                Border(bottom: BorderSide(color: Colors.grey))),
+                        child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                print('Filtres');
+                              },
+                              child: Icon(Icons.filter),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                print('Musiques');
+                              },
+                              child: Icon(Icons.music_note),
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 145,
+                        child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                print('Trimmer');
+                              },
+                              child: Icon(Icons.video_settings),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  print('Rotate right');
+                                },
+                                child: Icon(Icons.rotate_right)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  print('Rotate left');
+                                },
+                                child: Icon(Icons.rotate_left)),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  print('Crop');
+                                },
+                                child: Icon(Icons.crop))
+                          ],
+                        ),
+                      )
+                    ])
+                  : Container(
+                      height: 75,
+                      child: ListView(
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(
+                            height: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              print('Filtres');
+                            },
+                            child: Icon(Icons.filter_rounded),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              print('Musiques');
+                            },
+                            child: Icon(Icons.music_note),
+                          )
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    GestureDetector(
-                      onTap: () => _videoEditorController!
-                          .rotate90Degrees(RotateDirection.right),
-                      child: Icon(
-                        Icons.rotate_right,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    GestureDetector(
-                      onTap: _openCropScren,
-                      child: Icon(
-                        Icons.crop,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                  ],
-                )),
+            ),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: GestureDetector(
@@ -942,7 +1059,9 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
                       extendContainer = !extendContainer;
                     });
                   },
-                  child: Icon(Icons.expand_more),
+                  child: extendContainer
+                      ? Icon(Icons.expand_less)
+                      : Icon(Icons.expand_more),
                 )),
           ],
         ));
@@ -1107,45 +1226,42 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
             child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
-              itemCount: hashtagsListTest.length,
+              itemCount: _resultList.length,
               itemBuilder: (context, index) {
-                return hashtagsListTest[index]
-                        .toLowerCase()
-                        .contains(_hashtagsController.text.toLowerCase())
-                    ? ListTile(
-                        leading: Container(
-                            alignment: Alignment.center,
-                            height: 25,
-                            width: 25,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Theme.of(context).primaryColor,
-                                      Theme.of(context).accentColor
-                                    ])),
-                            child: Icon(Icons.tag, size: 15)),
-                        title: Text(
-                          hashtagsListTest[index],
-                          style: mystyle(12),
-                        ),
-                        trailing: Text(
-                          '${hastagsListNbPostsTest[index]} publications',
-                          style: mystyle(11, Colors.white.withOpacity(0.6)),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            if (!hashtagsSelected
-                                .contains(hashtagsListTest[index])) {
-                              hashtagsSelected.add(hashtagsListTest[index]);
-                              _hashtagsController.clear();
-                            }
-                          });
-                        })
-                    : Container();
+                return ListTile(
+                    leading: Container(
+                        alignment: Alignment.center,
+                        height: 25,
+                        width: 25,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Theme.of(context).primaryColor,
+                                  Theme.of(context).accentColor
+                                ])),
+                        child: Icon(Icons.tag, size: 15)),
+                    title: Text(
+                      _resultList[index].data()['name'],
+                      style: mystyle(12),
+                    ),
+                    trailing: Text(
+                      '${_resultList[index].data()['postsCount']} publications',
+                      style: mystyle(11, Colors.white.withOpacity(0.6)),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        if (!hashtagsSelected
+                            .contains(_resultList[index].data()['name'])) {
+                          hashtagsSelected
+                              .add(_resultList[index].data()['name']);
+                          _hashtagsController.clear();
+                        }
+                      });
+                    });
               },
             ),
           )
@@ -1225,59 +1341,5 @@ class VideoEditorScreenState extends State<VideoEditorScreen>
         ),
       ),
     );
-  }
-
-  List<Widget> _trimSlider() {
-    final duration = _videoEditorController!.videoDuration.inSeconds;
-    final pos = _videoEditorController!.trimPosition * duration;
-    final start = _videoEditorController!.minTrim * duration;
-    final end = _videoEditorController!.maxTrim * duration;
-
-    durationVideo = end.toInt() - start.toInt();
-
-    String formatter(Duration duration) =>
-        duration.inMinutes.remainder(60).toString().padLeft(2, '0') +
-        ":" +
-        (duration.inSeconds.remainder(60)).toString().padLeft(2, '0');
-
-    return [
-      Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: Margin.symmetric(horizontal: height / 4, vertical: 80),
-            child: Row(children: [
-              TextDesigned(
-                formatter(Duration(seconds: pos.toInt())),
-                color: Colors.white,
-              ),
-              Expanded(child: SizedBox()),
-              OpacityTransition(
-                visible: _videoEditorController!.isTrimming,
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  TextDesigned(
-                    formatter(Duration(seconds: start.toInt())),
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 10),
-                  TextDesigned(
-                    formatter(Duration(seconds: end.toInt())),
-                    color: Colors.white,
-                  ),
-                ]),
-              )
-            ]),
-          )),
-      Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          height: height,
-          margin: Margin.all(height / 4),
-          child: TrimSlider(
-            controller: _videoEditorController!,
-            height: height,
-          ),
-        ),
-      )
-    ];
   }
 }

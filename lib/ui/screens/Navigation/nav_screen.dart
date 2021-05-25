@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:helpers/helpers/misc.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 
 import 'package:Gemu/services/database_service.dart';
 import 'package:Gemu/ui/screens/screens.dart';
@@ -26,11 +28,24 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
   List game = [];
   bool isUserThere = false;
 
+  bool bottomNavigationBarIsThere = true;
+
   @override
   void initState() {
     super.initState();
     page = 0;
     uid = FirebaseAuth.instance.currentUser!.uid;
+    getGames();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print('dans le change dependencies');
+    if (game.length != 0) {
+      game.clear();
+      isUserThere = false;
+    }
     getGames();
   }
 
@@ -57,7 +72,9 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
               value: DatabaseService.getGamesFollow(game),
               child: HomeScreen(),
             )
-          : Container(),
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
       HighlightsScreen(),
       GamesScreen(),
       DirectScreen()
@@ -69,72 +86,125 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: ProfilMenuDrawer(),
       endDrawer: ActivitiesMenuDrawer(),
-      body: Stack(
-        children: [
-          screenNav[page!],
-          Positioned(
-              left: 0,
-              bottom: 0,
-              child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 60,
-                  decoration: page == 0
-                      ? BoxDecoration(
-                          color: Colors.transparent,
-                          border:
-                              Border(top: BorderSide(color: Colors.white60)))
-                      : BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          boxShadow: [
+      body: page == 0
+          ? GestureDetector(
+              onTap: () {
+                setState(() {
+                  bottomNavigationBarIsThere = !bottomNavigationBarIsThere;
+                });
+              },
+              child: Column(
+                children: [
+                  Expanded(child: screenNav[page!]),
+                  bottomNavigationBarIsThere
+                      ? Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  border: Border(
+                                      top: BorderSide(color: Colors.white60))),
+                              child: BottomNavigationBar(
+                                  backgroundColor: Colors.transparent,
+                                  elevation: 0,
+                                  type: BottomNavigationBarType.fixed,
+                                  onTap: (index) {
+                                    setState(() {
+                                      page = index;
+                                      print('Page: $page');
+                                    });
+                                  },
+                                  currentIndex: page!,
+                                  fixedColor: Theme.of(context).primaryColor,
+                                  selectedIconTheme: IconThemeData(size: 26),
+                                  unselectedIconTheme: IconThemeData(size: 24),
+                                  selectedLabelStyle: TextStyle(fontSize: 14.0),
+                                  unselectedLabelStyle:
+                                      TextStyle(fontSize: 12.0),
+                                  items: [
+                                    BottomNavigationBarItem(
+                                        activeIcon: Icon(Icons.home),
+                                        icon: Icon(Icons.home_outlined),
+                                        label: 'Home'),
+                                    BottomNavigationBarItem(
+                                        activeIcon: Icon(Icons.highlight),
+                                        icon: Icon(Icons.highlight_outlined),
+                                        label: 'Highlights'),
+                                    BottomNavigationBarItem(
+                                        activeIcon: Icon(Icons.videogame_asset),
+                                        icon: Icon(
+                                            Icons.videogame_asset_outlined),
+                                        label: 'Games'),
+                                    BottomNavigationBarItem(
+                                        activeIcon: Icon(Icons.play_arrow),
+                                        icon: Icon(Icons.play_arrow_outlined),
+                                        label: 'Direct')
+                                  ])),
+                        )
+                      : SizedBox()
+                ],
+              ),
+            )
+          : Stack(
+              children: [
+                screenNav[page!],
+                Positioned(
+                    left: 0,
+                    bottom: 0,
+                    child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            boxShadow: [
                               BoxShadow(
                                 color: Theme.of(context).shadowColor,
                                 blurRadius: 1,
                                 spreadRadius: 3,
                               )
                             ]),
-                  child: BottomNavigationBar(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      type: BottomNavigationBarType.fixed,
-                      onTap: (index) {
-                        setState(() {
-                          page = index;
-                          print('Page: $page');
-                        });
-                      },
-                      currentIndex: page!,
-                      fixedColor: Theme.of(context).primaryColor,
-                      selectedIconTheme: IconThemeData(size: 26),
-                      unselectedIconTheme: IconThemeData(size: 24),
-                      selectedLabelStyle: TextStyle(fontSize: 14.0),
-                      unselectedLabelStyle: TextStyle(fontSize: 12.0),
-                      items: [
-                        BottomNavigationBarItem(
-                            activeIcon: Icon(Icons.home),
-                            icon: Icon(Icons.home_outlined),
-                            label: 'Home'),
-                        BottomNavigationBarItem(
-                            activeIcon: Icon(Icons.highlight),
-                            icon: Icon(Icons.highlight_outlined),
-                            label: 'Highlights'),
-                        BottomNavigationBarItem(
-                            activeIcon: Icon(Icons.videogame_asset),
-                            icon: Icon(Icons.videogame_asset_outlined),
-                            label: 'Games'),
-                        BottomNavigationBarItem(
-                            activeIcon: Icon(Icons.play_arrow),
-                            icon: Icon(Icons.play_arrow_outlined),
-                            label: 'Direct')
-                      ])))
-        ],
-      ),
+                        child: BottomNavigationBar(
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            type: BottomNavigationBarType.fixed,
+                            onTap: (index) {
+                              setState(() {
+                                page = index;
+                                print('Page: $page');
+                              });
+                            },
+                            currentIndex: page!,
+                            fixedColor: Theme.of(context).primaryColor,
+                            selectedIconTheme: IconThemeData(size: 26),
+                            unselectedIconTheme: IconThemeData(size: 24),
+                            selectedLabelStyle: TextStyle(fontSize: 14.0),
+                            unselectedLabelStyle: TextStyle(fontSize: 12.0),
+                            items: [
+                              BottomNavigationBarItem(
+                                  activeIcon: Icon(Icons.home),
+                                  icon: Icon(Icons.home_outlined),
+                                  label: 'Home'),
+                              BottomNavigationBarItem(
+                                  activeIcon: Icon(Icons.highlight),
+                                  icon: Icon(Icons.highlight_outlined),
+                                  label: 'Highlights'),
+                              BottomNavigationBarItem(
+                                  activeIcon: Icon(Icons.videogame_asset),
+                                  icon: Icon(Icons.videogame_asset_outlined),
+                                  label: 'Games'),
+                              BottomNavigationBarItem(
+                                  activeIcon: Icon(Icons.play_arrow),
+                                  icon: Icon(Icons.play_arrow_outlined),
+                                  label: 'Direct')
+                            ])))
+              ],
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: BottomShare(),
+      floatingActionButton:
+          bottomNavigationBarIsThere ? BottomShare() : SizedBox(),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

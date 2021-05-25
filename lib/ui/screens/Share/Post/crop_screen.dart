@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:video_editor/video_editor.dart';
+//import 'package:video_editor/video_editor.dart';
 
-class CropScreen extends StatefulWidget {
+/*class CropScreen extends StatefulWidget {
   final VideoEditorController? videoEditorController;
 
   CropScreen({Key? key, this.videoEditorController}) : super(key: key);
@@ -57,4 +57,4 @@ class CropScreenState extends State<CropScreen> {
           ),
         ));
   }
-}
+}*/

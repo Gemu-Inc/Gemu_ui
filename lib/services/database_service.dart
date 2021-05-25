@@ -151,6 +151,8 @@ class DatabaseService {
     });
   }
 
+  //Partie Highlights
+
   //Partie messagerie
 
   static Stream<List<UserModel>> streamUsers() {

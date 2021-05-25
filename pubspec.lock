@@ -148,6 +148,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.0"
+  file_picker:
+    dependency: transitive
+    description:
+      name: file_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.1"
   firebase_auth:
     dependency: "direct main"
     description:
@@ -665,13 +672,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
-  video_editor:
-    dependency: "direct main"
-    description:
-      name: video_editor
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   video_player:
     dependency: "direct main"
     description:
@@ -694,12 +694,19 @@ packages:
     source: hosted
     version: "2.0.0"
   video_thumbnail:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: video_thumbnail
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.3"
+  video_trimmer:
+    dependency: "direct main"
+    description:
+      name: video_trimmer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   win32:
     dependency: transitive
     description:
