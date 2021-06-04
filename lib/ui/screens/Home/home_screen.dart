@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late int currentTabIndex;
   late int currentTabGamesIndex;
 
-  List<Game> gamesList = [];
+  List gamesList = [];
   String? uid;
   late DocumentSnapshot<Map<String, dynamic>> user;
 
@@ -55,6 +55,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
 
     getAllData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (gamesList.length != 0) {
+      gamesList.clear();
+    }
+    getUserGames();
   }
 
   @override
@@ -87,6 +96,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   getAllData() async {
     uid = FirebaseAuth.instance.currentUser!.uid;
     user = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  }
+
+  getUserGames() async {
+    var games = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('games')
+        .get();
+
+    for (var item in games.docs) {
+      var game = await FirebaseFirestore.instance
+          .collection('games')
+          .doc(item.id)
+          .get();
+      gamesList.add(game);
+    }
 
     if (mounted) {
       setState(() {
@@ -97,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    gamesList = Provider.of<List<Game>>(context);
+    //gamesList = Provider.of<List<Game>>(context);
     return dataIsThere && gamesList.length != 0
         ? Stack(
             children: <Widget>[
@@ -169,13 +194,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                       fit: BoxFit.cover,
                                                       image:
                                                           CachedNetworkImageProvider(
-                                                              game.imageUrl!))),
+                                                              game.data()[
+                                                                  'imageUrl']))),
                                             ),
                                             SizedBox(
                                               height: 5.0,
                                             ),
                                             Text(
-                                              '${game.name}',
+                                              '${game.data()['name']}',
                                               style: TextStyle(
                                                 fontSize: 10,
                                               ),
@@ -200,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           );
   }
 
-  Widget topBarHome(List<Game> game, int index) {
+  Widget topBarHome(List game, int index) {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -262,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       image: DecorationImage(
                           fit: BoxFit.cover,
                           image: CachedNetworkImageProvider(
-                              game[index].imageUrl!)))),
+                              game[index].data()['imageUrl'])))),
           preferredSize: Size.fromHeight(50)),
       centerTitle: true,
     );

@@ -25,7 +25,7 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
   int? page;
   String? uid;
 
-  List game = [];
+  //List game = [];
   bool isUserThere = false;
 
   bool bottomNavigationBarIsThere = true;
@@ -35,10 +35,9 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
     super.initState();
     page = 0;
     uid = FirebaseAuth.instance.currentUser!.uid;
-    getGames();
   }
 
-  @override
+  /*@override
   void didChangeDependencies() {
     super.didChangeDependencies();
     print('dans le change dependencies');
@@ -61,12 +60,12 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
     setState(() {
       isUserThere = true;
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> screenNav = [
-      isUserThere
+      /*isUserThere
           ? StreamProvider<List<Game>>.value(
               initialData: [],
               value: DatabaseService.getGamesFollow(game),
@@ -74,7 +73,8 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin {
             )
           : Center(
               child: CircularProgressIndicator(),
-            ),
+            ),*/
+      HomeScreen(),
       HighlightsScreen(),
       GamesScreen(),
       DirectScreen()

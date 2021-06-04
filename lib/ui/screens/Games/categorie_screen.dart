@@ -22,10 +22,9 @@ class _CategorieScreenState extends State<CategorieScreen>
 
   bool dataIsThere = false;
   String? uid;
-  late DocumentSnapshot<Map<String, dynamic>> user;
-  Future? result;
-  Stream? stream;
 
+  List gamesUser = [];
+  List gamesCategories = [];
   List gameFollow = [];
   List gameNoFollow = [];
 
@@ -44,7 +43,53 @@ class _CategorieScreenState extends State<CategorieScreen>
 
   getAllData() async {
     uid = _firebaseAuth.currentUser!.uid;
-    user = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    var myGames = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('games')
+        .get();
+    for (var item in myGames.docs) {
+      var myGame = await FirebaseFirestore.instance
+          .collection('games')
+          .doc(item.id)
+          .get();
+      gamesUser.add(myGame);
+    }
+
+    var gamesCat = await FirebaseFirestore.instance
+        .collection('categories')
+        .doc(widget.categorie.id)
+        .collection('games')
+        .get();
+    for (var item in gamesCat.docs) {
+      var gameCat = await FirebaseFirestore.instance
+          .collection('games')
+          .doc(item.id)
+          .get();
+      gamesCategories.add(gameCat);
+    }
+
+    for (var i = 0; i < gamesUser.length; i++) {
+      for (var j = 0; j < gamesCategories.length; j++) {
+        if (gamesUser[i].id == gamesCategories[j].id) {
+          gameFollow.add(gamesUser[i]);
+        }
+      }
+    }
+
+    for (var i = 0; i < gamesCategories.length; i++) {
+      gameNoFollow.add(gamesCategories[i]);
+    }
+
+    for (var i = 0; i < gamesUser.length; i++) {
+      for (var j = 0; j < gameNoFollow.length; j++) {
+        if (gameNoFollow[j].id == gamesUser[i].id) {
+          gameNoFollow.remove(gameNoFollow[j]);
+        }
+      }
+    }
+
     setState(() {
       dataIsThere = true;
     });
@@ -52,160 +97,86 @@ class _CategorieScreenState extends State<CategorieScreen>
 
   @override
   Widget build(BuildContext context) {
-    return dataIsThere
-        ? Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: PreferredSize(
-                child: Container(
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).accentColor
-                      ])),
-                  child: AppBar(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      leading: IconButton(
-                          icon: Icon(Icons.arrow_back_ios),
-                          onPressed: () => Navigator.pop(context)),
-                      title: Text(widget.categorie.data()['name']),
-                      bottom: PreferredSize(
-                          child: Container(
-                              height: 60.0,
-                              child: Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: TabBar(
-                                  controller: _tabController,
-                                  labelColor: Theme.of(context).primaryColor,
-                                  unselectedLabelColor: Colors.grey,
-                                  indicatorSize: TabBarIndicatorSize.tab,
-                                  indicator: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Theme.of(context).canvasColor),
-                                  tabs: [Text('A découvrir'), Text('Suivis')],
-                                ),
-                              )),
-                          preferredSize: Size.fromHeight(60))),
-                ),
-                preferredSize: Size.fromHeight(120)),
-            body: TabBarView(
-              controller: _tabController,
-              children: [
-                SingleChildScrollView(
-                  child: gamesNoDiscover(),
-                ),
-                SingleChildScrollView(
-                  child: gamesFollow(),
-                )
-              ],
-            ))
-        : Center(
-            child: CircularProgressIndicator(),
-          );
+    return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: PreferredSize(
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).accentColor
+                  ])),
+              child: AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: IconButton(
+                      icon: Icon(Icons.arrow_back_ios),
+                      onPressed: () => Navigator.pop(context)),
+                  title: Text(widget.categorie.data()['name']),
+                  bottom: PreferredSize(
+                      child: Container(
+                          height: 60.0,
+                          child: Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: TabBar(
+                              controller: _tabController,
+                              labelColor: Theme.of(context).primaryColor,
+                              unselectedLabelColor: Colors.grey,
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              indicator: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Theme.of(context).canvasColor),
+                              tabs: [Text('A découvrir'), Text('Suivis')],
+                            ),
+                          )),
+                      preferredSize: Size.fromHeight(60))),
+            ),
+            preferredSize: Size.fromHeight(120)),
+        body: dataIsThere
+            ? TabBarView(
+                controller: _tabController,
+                children: [
+                  SingleChildScrollView(
+                    child: gamesNoDiscover(),
+                  ),
+                  SingleChildScrollView(
+                    child: gamesFollow(),
+                  )
+                ],
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              ));
   }
 
   Widget gamesFollow() {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('games')
-            .where(FieldPath.documentId, whereIn: user.data()!['idGames'])
-            .snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          }
-          print('snapshot: ${snapshot.data!.docs.length}');
-          if (gameFollow.length != 0) {
-            gameFollow.clear();
-          }
-          for (int i = 0; i < snapshot.data.docs.length; i++) {
-            DocumentSnapshot? game = snapshot.data.docs[i];
-            for (int j = 0;
-                j < widget.categorie.data()['idGames'].length;
-                j++) {
-              if (game!.id == widget.categorie.data()['idGames'][j]) {
-                gameFollow.add(game);
-              }
-            }
-          }
-          print(gameFollow.length);
-          if (gameFollow.length == 0) {
-            return Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 3),
-                child: Center(
-                  child: Text(
-                    'Pas encore de jeu suivis dans cette catégorie',
-                    style: mystyle(11),
-                  ),
-                ));
-          }
-          return GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, childAspectRatio: 1, crossAxisSpacing: 6),
-              itemCount: gameFollow.length,
-              itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot? game = gameFollow[index];
-                return GameView(
-                    game: game as DocumentSnapshot<Map<String, dynamic>>?);
-              });
+    return GridView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3, childAspectRatio: 1, crossAxisSpacing: 6),
+        itemCount: gameFollow.length,
+        itemBuilder: (BuildContext context, int index) {
+          DocumentSnapshot? game = gameFollow[index];
+          return GameView(
+              game: game as DocumentSnapshot<Map<String, dynamic>>?);
         });
   }
 
   Widget gamesNoDiscover() {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('games')
-            .where(FieldPath.documentId, whereNotIn: user.data()!['idGames'])
-            .snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
-          {
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (gameNoFollow.length != 0) {
-              gameNoFollow.clear();
-            }
-            for (int i = 0; i < snapshot.data.docs.length; i++) {
-              DocumentSnapshot? game = snapshot.data.docs[i];
-              for (int j = 0;
-                  j < widget.categorie.data()['idGames'].length;
-                  j++) {
-                if (game!.id == widget.categorie.data()['idGames'][j]) {
-                  gameNoFollow.add(game);
-                }
-              }
-            }
-            if (gameNoFollow.length == 0) {
-              return Padding(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height / 3),
-                  child: Center(
-                    child: Text(
-                      'Pas encore de jeu dans cette catégorie',
-                      style: mystyle(11),
-                    ),
-                  ));
-            }
-            return GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 1,
-                    crossAxisSpacing: 6),
-                itemCount: gameNoFollow.length,
-                itemBuilder: (BuildContext context, int index) {
-                  DocumentSnapshot? game = gameNoFollow[index];
-                  return GameView(
-                      game: game as DocumentSnapshot<Map<String, dynamic>>?);
-                });
-          }
+    return GridView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3, childAspectRatio: 1, crossAxisSpacing: 6),
+        itemCount: gameNoFollow.length,
+        itemBuilder: (BuildContext context, int index) {
+          DocumentSnapshot? game = gameNoFollow[index];
+          return GameView(
+              game: game as DocumentSnapshot<Map<String, dynamic>>?);
         });
   }
 }

@@ -11,7 +11,8 @@ import 'components/actions_postbar.dart';
 import 'components/content_postdescription.dart';
 
 class PostViewGame extends StatefulWidget {
-  final Game game;
+  //final Game game;
+  final DocumentSnapshot<Map<String, dynamic>> game;
 
   final AnimationController? animationRotateController,
       animationGamesController;
@@ -26,7 +27,7 @@ class PostViewGame extends StatefulWidget {
 }
 
 class PostViewGameState extends State<PostViewGame> {
-  PageController? _pageGamesController;
+  late PageController _pageGamesController;
 
   int? currentPageGamesIndex;
 
@@ -40,14 +41,14 @@ class PostViewGameState extends State<PostViewGame> {
 
     stream = FirebaseFirestore.instance
         .collection('posts')
-        .where('game', isEqualTo: widget.game.name)
+        .where('game', isEqualTo: widget.game.data()!['name'])
         .where('privacy', isEqualTo: 'Public')
         .snapshots();
   }
 
   @override
   void dispose() {
-    _pageGamesController!.dispose();
+    _pageGamesController.dispose();
     super.dispose();
   }
 

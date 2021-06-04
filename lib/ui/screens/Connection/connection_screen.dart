@@ -1,7 +1,7 @@
 import 'package:Gemu/services/provider_auth.dart';
+import 'package:Gemu/ui/screens/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/ui/screens/Navigation/nav_screen.dart';
-import 'package:Gemu/ui/screens/Welcome/welcome_screen.dart';
 
 class ConnectionScreen extends StatefulWidget {
   @override

@@ -1,10 +1,9 @@
-import 'package:Gemu/constants/route_names.dart';
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/ui/screens/Register/register_screen.dart';
-import 'package:intro_slider/intro_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:Gemu/size_config.dart';
+import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
+
+import 'package:Gemu/constants/variables.dart';
+import 'package:Gemu/size_config.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -32,7 +31,7 @@ class BodyState extends State<Body> {
   }
 
   void onDonePress() {
-    Navigator.pushNamed(context, RegisterScreenRoute);
+    Navigator.pop(context);
   }
 
   @override
@@ -51,7 +50,7 @@ class BodyState extends State<Body> {
         title: 'RECORD',
         styleTitle: mystyle(15),
         pathImage: 'lib/assets/images/login.png',
-        description: "Record and save everywhere and evrything",
+        description: "Record and save everywhere and everything",
         styleDescription: mystyle(11),
         backgroundColor: Colors.transparent));
     slides.add(Slide(
@@ -87,6 +86,34 @@ class BodyState extends State<Body> {
             colors: isDayMood ? lightBgColors : darkBgColors,
           ),
         ),
-        child: IntroSlider(slides: this.slides, onDonePress: this.onDonePress));
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
+                Theme.of(context).scaffoldBackgroundColor
+              ])),
+          child: IntroSlider(
+            colorDot: Theme.of(context).accentColor.withOpacity(0.5),
+            colorActiveDot: Theme.of(context).accentColor,
+            sizeDot: 13.0,
+
+            // Skip button
+            colorSkipBtn: Color(0x33000000),
+            highlightColorSkipBtn: Color(0xff000000),
+
+            // Next button
+            showNextBtn: true,
+
+            // Done button
+            colorDoneBtn: Color(0x33000000),
+            highlightColorDoneBtn: Color(0xff000000),
+            onDonePress: this.onDonePress,
+
+            slides: this.slides,
+          ),
+        ));
   }
 }

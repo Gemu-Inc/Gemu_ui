@@ -8,7 +8,7 @@ import 'game_focus_screen.dart';
 class GameView extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>>? game;
 
-  GameView({required this.game});
+  GameView({@required this.game});
 
   @override
   GameViewState createState() => GameViewState();
@@ -28,9 +28,16 @@ class GameViewState extends State<GameView> {
   }
 
   getAllData() async {
-    DocumentSnapshot<Map<String, dynamic>> doc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    if (doc.data()!['idGames'].contains(widget.game!.id)) {
+    List games = [];
+    var doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('games')
+        .get();
+    for (var item in doc.docs) {
+      games.add(item.id);
+    }
+    if (games.contains(widget.game!.id)) {
       setState(() {
         isFollow = true;
       });
@@ -45,19 +52,32 @@ class GameViewState extends State<GameView> {
   }
 
   follow() async {
-    DocumentSnapshot<Map<String, dynamic>> doc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    if (doc.data()!['idGames'].contains(widget.game!.id)) {
-      await FirebaseFirestore.instance.collection('users').doc(uid).update({
-        'idGames': FieldValue.arrayRemove([widget.game!.id])
-      });
+    List games = [];
+    var doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('games')
+        .get();
+    for (var item in doc.docs) {
+      games.add(item.id);
+    }
+    if (games.contains(widget.game!.id)) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('games')
+          .doc(widget.game!.id)
+          .delete();
       setState(() {
         isFollow = false;
       });
     } else {
-      await FirebaseFirestore.instance.collection('users').doc(uid).update({
-        'idGames': FieldValue.arrayUnion([widget.game!.id])
-      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('games')
+          .doc(widget.game!.id)
+          .set({});
       setState(() {
         isFollow = true;
       });

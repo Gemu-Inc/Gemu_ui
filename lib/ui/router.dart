@@ -1,4 +1,5 @@
 import 'package:Gemu/ui/screens/Connection/connection_screen.dart';
+import 'package:Gemu/ui/screens/Welcome/welcome_screen.dart';
 import 'package:Gemu/ui/screens/Reglages/edit_email_screen.dart';
 import 'package:Gemu/ui/screens/Reglages/edit_password_screen.dart';
 import 'package:Gemu/ui/screens/Reglages/edit_user_name_screen.dart';
@@ -11,7 +12,6 @@ import 'package:Gemu/ui/screens/Register/register_screen.dart';
 import 'package:Gemu/ui/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:Gemu/constants/route_names.dart';
-import 'package:Gemu/ui/screens/Welcome/welcome_screen.dart';
 import 'package:Gemu/ui/screens/Share/Post/create_post_screen.dart';
 import 'package:Gemu/ui/screens/GetStarted/get_started_screen.dart';
 
@@ -20,20 +20,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case ConnectionScreenRoute:
       return _getPageRoute(
           routeName: settings.name, viewToShow: ConnectionScreen());
+    case LoginScreenRoute:
+      return _getPageRoute(routeName: settings.name, viewToShow: LoginScreen());
     case WelcomeScreenRoute:
       return _getPageRoute(
           routeName: settings.name, viewToShow: WelcomeScreen());
-    case LoginScreenRoute:
-      return _getPageRoute(routeName: settings.name, viewToShow: LoginScreen());
     case RegisterScreenRoute:
       return _getPageRoute(
           routeName: settings.name, viewToShow: RegisterScreen());
-    case RegisterFirstScreenRoute:
-      return _getPageRoute(
-          routeName: settings.name, viewToShow: RegisterFirstScreen());
-    case RegisterSecondScreenRoute:
-      return _getPageRoute(
-          routeName: settings.name, viewToShow: RegisterSecondScreen());
     case NavScreenRoute:
       return _getPageRoute(routeName: settings.name, viewToShow: NavScreen());
     case ProfilMenuDrawerRoute:

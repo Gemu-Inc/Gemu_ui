@@ -1,11 +1,8 @@
-import 'package:Gemu/constants/route_names.dart';
 import 'package:flutter/material.dart';
-import 'package:Gemu/size_config.dart';
-//import 'package:slider_button/slider_button.dart';
-import 'package:Gemu/constants/variables.dart';
 
-import 'land.dart';
-import 'sun.dart';
+import 'package:Gemu/size_config.dart';
+import 'package:Gemu/constants/variables.dart';
+import 'package:Gemu/constants/route_names.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -13,15 +10,8 @@ class Body extends StatefulWidget {
 }
 
 class BodyState extends State<Body> {
-  bool isFullSun = true;
-  bool isDayMood = true;
   Duration _duration = Duration(seconds: 1);
-
-  @override
-  void initState() {
-    super.initState();
-    timeMood();
-  }
+  bool isDayMood = false;
 
   void timeMood() {
     int hour = DateTime.now().hour;
@@ -29,14 +19,18 @@ class BodyState extends State<Body> {
     if (hour >= 8 && hour <= 18) {
       setState(() {
         isDayMood = true;
-        isFullSun = true;
       });
     } else {
       setState(() {
-        isFullSun = false;
         isDayMood = false;
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    timeMood();
   }
 
   @override
@@ -45,13 +39,11 @@ class BodyState extends State<Body> {
       Color(0xFF947B8F),
       Color(0xFFB27D75),
       Color(0xFFE38048),
-      if (isFullSun) Color(0xFFFF9D80),
     ];
     var darkBgColors = [
       Color(0xFF4075DA),
       Color(0xFF6E78B1),
       Color(0xFF947B8F),
-      if (isFullSun) Color(0xFFE3DDB9)
     ];
     return AnimatedContainer(
       duration: _duration,
@@ -65,69 +57,197 @@ class BodyState extends State<Body> {
           colors: isDayMood ? lightBgColors : darkBgColors,
         ),
       ),
-      child: Stack(
-        children: [
-          Sun(isFullSun: isFullSun),
-          Land(
-            dayMood: isDayMood,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
+                Theme.of(context).scaffoldBackgroundColor
+              ]),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                    icon: Icon(Icons.info_outline),
+                    onPressed: () =>
+                        Navigator.pushNamed(context, GetStartedRoute)),
+              ),
+              VerticalSpacing(
+                of: 30.0,
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Container(
+                  height: 130,
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 30.0, bottom: 10.0),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            height: 60,
+                            width: 60,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black),
+                                borderRadius: BorderRadius.circular(10.0),
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                        "lib/assets/icons/icon.png"))),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "Welcome to Gemu",
+                        style: Theme.of(context).textTheme.headline3!.copyWith(
+                            fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              VerticalSpacing(
+                of: 60.0,
+              ),
+              Expanded(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  VerticalSpacing(of: 50),
-                  Text(
-                    "Welcome to Gemu",
-                    style: Theme.of(context).textTheme.headline3!.copyWith(
-                        fontWeight: FontWeight.bold, color: Colors.white),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 2,
+                        width: MediaQuery.of(context).size.width / 4,
+                        color: Theme.of(context).canvasColor,
+                      ),
+                      Text(
+                        'Start the adventure',
+                        style: mystyle(12),
+                      ),
+                      Container(
+                        height: 2,
+                        width: MediaQuery.of(context).size.width / 4,
+                        color: Theme.of(context).canvasColor,
+                      )
+                    ],
                   ),
-                  VerticalSpacing(of: 10),
-                  Text(
-                    "Create your own virtual world",
-                    style: TextStyle(color: Colors.white),
+                  VerticalSpacing(
+                    of: 40,
                   ),
-                  VerticalSpacing(of: 40),
-                  GestureDetector(
+                  InkWell(
                     onTap: () =>
-                        Navigator.of(context).pushNamed(GetStartedRoute),
+                        Navigator.pushNamed(context, RegisterScreenRoute),
                     child: Container(
+                      width: MediaQuery.of(context).size.width / 1.5,
                       height: 50,
-                      width: 150,
-                      color: Colors.pink,
-                      child: Text('Slider button'),
-                    ),
-                  )
-                  /*SliderButton(
-                    dismissible: false,
-                    vibrationFlag: false,
-                    height: 50,
-                    width: SizeConfig.screenWidth! / 2,
-                    buttonSize: 50,
-                    action: () {
-                      Navigator.of(context).pushNamed(GetStartedRoute);
-                    },
-                    label:
-                        Text('Get started', style: mystyle(12, Colors.white)),
-                    icon: Center(
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Color(0xFF222831),
-                        size: 23,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).canvasColor,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).shadowColor,
+                              offset: Offset(-5.0, 5.0),
+                            )
+                          ]),
+                      child: Center(
+                        child: Text(
+                          "Sign Up",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ),
-                    buttonColor: Colors.white,
-                    backgroundColor: Color(0xFF222831),
-                    baseColor: Colors.white,
-                    highlightedColor:
-                        isDayMood ? Color(0xFFB27D75) : Color(0xFF6E78B1),
-                  )*/
+                  ),
+                  VerticalSpacing(
+                    of: 60,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 2,
+                        width: MediaQuery.of(context).size.width / 4,
+                        color: Theme.of(context).canvasColor,
+                      ),
+                      Text(
+                        'Already an account?',
+                        style: mystyle(12),
+                      ),
+                      Container(
+                        height: 2,
+                        width: MediaQuery.of(context).size.width / 4,
+                        color: Theme.of(context).canvasColor,
+                      )
+                    ],
+                  ),
+                  VerticalSpacing(
+                    of: 40,
+                  ),
+                  InkWell(
+                    onTap: () => Navigator.pushNamed(context, LoginScreenRoute),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 1.5,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).canvasColor,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).shadowColor,
+                              offset: Offset(-5.0, 5.0),
+                            )
+                          ]),
+                      child: Center(
+                        child: Text(
+                          "Login",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                  )
                 ],
+              )),
+              VerticalSpacing(
+                of: 60.0,
               ),
-            ),
-          )
-        ],
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 5,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).accentColor
+                      ])),
+                    ),
+                    VerticalSpacing(
+                      of: 10.0,
+                    ),
+                    InkWell(
+                      onTap: () => print('Terms and Conditions'),
+                      child: Text(
+                        'Terms and Conditions',
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
