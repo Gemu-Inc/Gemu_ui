@@ -24,7 +24,6 @@ class _GamesScreenState extends State<GamesScreen>
 
   String? uid;
   List categories = [];
-  List panelGames = [];
   bool dataIsThere = false;
 
   @override
@@ -42,40 +41,13 @@ class _GamesScreenState extends State<GamesScreen>
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (panelGames.length != 0) {
-      panelGames.clear();
-    }
-    getUserGames();
-  }
-
-  getUserGames() async {
-    var games = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('games')
-        .get();
-    for (var item in games.docs) {
-      var game = await FirebaseFirestore.instance
-          .collection('games')
-          .doc(item.id)
-          .get();
-      panelGames.add(game);
-    }
-
-    setState(() {
-      dataIsThere = true;
-    });
-  }
-
   getAllData() async {
     uid = _firebaseAuth.currentUser!.uid;
 
     var data = await FirebaseFirestore.instance.collection('categories').get();
     setState(() {
       categories = data.docs;
+      dataIsThere = true;
     });
   }
 
@@ -210,56 +182,74 @@ class _GamesScreenState extends State<GamesScreen>
             Container(
                 margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
                 height: 120,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: panelGames.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      DocumentSnapshot<Map<String, dynamic>> game =
-                          panelGames[index];
-                      return Container(
-                          margin: EdgeInsets.all(10.0),
-                          width: 100,
-                          child: Stack(
-                            children: [
-                              Align(
-                                alignment: Alignment.center,
-                                child: GestureDetector(
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) =>
-                                            GameFocusScreen(game: game)),
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(uid)
+                      .collection('games')
+                      .snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          DocumentSnapshot<Map<String, dynamic>> game =
+                              snapshot.data.docs[index];
+                          return Container(
+                              margin: EdgeInsets.all(10.0),
+                              width: 100,
+                              child: Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: GestureDetector(
+                                      onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) =>
+                                                GameFocusScreen(game: game)),
+                                      ),
+                                      child: Container(
+                                          margin: EdgeInsets.fromLTRB(
+                                              11.0, 11.0, 11.0, 11.0),
+                                          height: 60,
+                                          width: 60,
+                                          decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    Theme.of(context)
+                                                        .primaryColor,
+                                                    Theme.of(context)
+                                                        .accentColor
+                                                  ]),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image:
+                                                      CachedNetworkImageProvider(
+                                                          game.data()![
+                                                              'imageUrl'])))),
+                                    ),
                                   ),
-                                  child: Container(
-                                      margin: EdgeInsets.fromLTRB(
-                                          11.0, 11.0, 11.0, 11.0),
-                                      height: 60,
-                                      width: 60,
-                                      decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Theme.of(context).primaryColor,
-                                                Theme.of(context).accentColor
-                                              ]),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: CachedNetworkImageProvider(
-                                                  game.data()!['imageUrl'])))),
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Text(
-                                  '${game.data()!['name']}',
-                                ),
-                              )
-                            ],
-                          ));
-                    }))
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Text(
+                                      '${game.data()!['name']}',
+                                    ),
+                                  )
+                                ],
+                              ));
+                        });
+                  },
+                ))
           ],
         ),
       );

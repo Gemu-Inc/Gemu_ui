@@ -1,12 +1,11 @@
 import 'dart:io';
 
+import 'package:Gemu/ui/screens/Share/Post/Video/video_editor_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:video_trimmer/video_trimmer.dart';
 
 import 'package:Gemu/constants/variables.dart';
-import 'picture_editor_screen.dart';
-import 'trimmer_screen.dart';
+import 'Picture/picture_editor_screen.dart';
 
 class AddPostScreen extends StatefulWidget {
   @override
@@ -14,20 +13,15 @@ class AddPostScreen extends StatefulWidget {
 }
 
 class AddPostScreenState extends State<AddPostScreen> {
-  final Trimmer _trimmer = Trimmer();
-
   pickVideo(ImageSource src) async {
     try {
       final video = await ImagePicker()
           .getVideo(source: src, maxDuration: Duration(seconds: 10));
       if (video != null) {
-        await _trimmer.loadVideo(videoFile: File(video.path));
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TrimmerScreen(
-                trimmer: _trimmer,
-              ),
+              builder: (context) => VideoEditorScreen(file: File(video.path)),
             ));
       } else {
         Navigator.pop(context);

@@ -6,9 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'game_focus_screen.dart';
 
 class GameView extends StatefulWidget {
-  final DocumentSnapshot<Map<String, dynamic>>? game;
+  final DocumentSnapshot<Map<String, dynamic>> game;
 
-  GameView({@required this.game});
+  GameView({required this.game});
 
   @override
   GameViewState createState() => GameViewState();
@@ -37,7 +37,7 @@ class GameViewState extends State<GameView> {
     for (var item in doc.docs) {
       games.add(item.id);
     }
-    if (games.contains(widget.game!.id)) {
+    if (games.contains(widget.game.id)) {
       setState(() {
         isFollow = true;
       });
@@ -61,12 +61,12 @@ class GameViewState extends State<GameView> {
     for (var item in doc.docs) {
       games.add(item.id);
     }
-    if (games.contains(widget.game!.id)) {
+    if (games.contains(widget.game.id)) {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
           .collection('games')
-          .doc(widget.game!.id)
+          .doc(widget.game.id)
           .delete();
       setState(() {
         isFollow = false;
@@ -76,8 +76,11 @@ class GameViewState extends State<GameView> {
           .collection('users')
           .doc(uid)
           .collection('games')
-          .doc(widget.game!.id)
-          .set({});
+          .doc(widget.game.id)
+          .set({
+        'name': widget.game.data()!['name'],
+        'imageUrl': widget.game.data()!['imageUrl']
+      });
       setState(() {
         isFollow = true;
       });
@@ -116,7 +119,7 @@ class GameViewState extends State<GameView> {
                             image: DecorationImage(
                                 fit: BoxFit.cover,
                                 image: CachedNetworkImageProvider(
-                                    widget.game!.data()!['imageUrl']))),
+                                    widget.game.data()!['imageUrl']))),
                       ),
                     )),
                 Positioned(
@@ -126,7 +129,7 @@ class GameViewState extends State<GameView> {
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: Text(widget.game!.data()!['name']),
+                  child: Text(widget.game.data()!['name']),
                 )
               ],
             ))

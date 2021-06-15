@@ -11,6 +11,9 @@ import 'package:Gemu/constants/variables.dart';
 
 import 'search_screen.dart';
 import 'hashtag_post_view.dart';
+import 'spotlights_screen.dart';
+import 'trendings_screen.dart';
+import 'discover_screen.dart';
 
 class HighlightsScreen extends StatefulWidget {
   const HighlightsScreen({Key? key}) : super(key: key);
@@ -21,7 +24,7 @@ class HighlightsScreen extends StatefulWidget {
 class HighlightsScreenState extends State<HighlightsScreen>
     with TickerProviderStateMixin {
   late AnimationController _controllerRotate;
-  PanelController? _panelController;
+  late PanelController _panelController;
   late Animation _animationRotate;
   bool padding = true;
 
@@ -29,9 +32,17 @@ class HighlightsScreenState extends State<HighlightsScreen>
   List tags = [];
   bool dataIsThere = false;
 
-  List carousselTitle = ['Views', 'Up&Down', 'Latest'];
-
-  List posts = [];
+  List carousselTitle = ['Spotlights', 'Trendings', 'Discover'];
+  List carousselDescription = [
+    'Tous les nouveaux posts',
+    'Les posts les plus populaires',
+    'Les posts pouvant vous interesser'
+  ];
+  List carousselNavigation = [
+    SpotlightsScreen(),
+    TrendingsScreen(),
+    DiscoverScreen()
+  ];
 
   @override
   void initState() {
@@ -106,13 +117,13 @@ class HighlightsScreenState extends State<HighlightsScreen>
               child: GestureDetector(
                 onTap: () {
                   if (_controllerRotate.isCompleted) {
-                    _panelController!.close();
+                    _panelController.close();
                     _controllerRotate.reverse();
                     setState(() {
                       padding = true;
                     });
                   } else {
-                    _panelController!.open();
+                    _panelController.open();
                     _controllerRotate.forward();
                     setState(() {
                       padding = false;
@@ -131,24 +142,23 @@ class HighlightsScreenState extends State<HighlightsScreen>
                 ),
               ),
             ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.only(top: 85, bottom: 85),
-                child: Column(
-                  children: [
-                    search(),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    popular(context),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    recommended()
-                  ],
-                ),
+            body: Padding(
+              padding: EdgeInsets.only(top: 85, bottom: 85),
+              child: Column(
+                children: [
+                  search(),
+                  SizedBox(
+                    height: 40.0,
+                  ),
+                  slider(context),
+                  SizedBox(
+                    height: 40.0,
+                  ),
+                  Expanded(child: referencements())
+                ],
               ),
-            ))
+            ),
+          )
         : Center(child: CircularProgressIndicator());
   }
 
@@ -181,16 +191,17 @@ class HighlightsScreenState extends State<HighlightsScreen>
                     )),
               ),
               Padding(
-                padding: padding
-                    ? EdgeInsets.only(top: 60.0, bottom: 100.0)
-                    : EdgeInsets.only(top: 60.0, bottom: 50.0),
-                child: SingleChildScrollView(
+                  padding: padding
+                      ? EdgeInsets.only(top: 60.0, bottom: 100.0)
+                      : EdgeInsets.only(top: 60.0, bottom: 50.0),
                   child: Container(
-                      margin: EdgeInsets.only(top: 10.0),
                       height: MediaQuery.of(context).size.height - 60,
-                      child: Align(
-                          alignment: Alignment.topCenter,
-                          child: GridView.builder(
+                      child: tags.length == 0
+                          ? Center(
+                              child:
+                                  Text('Pas encore de customisation possible'),
+                            )
+                          : GridView.builder(
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: tags.length,
                               gridDelegate:
@@ -204,8 +215,6 @@ class HighlightsScreenState extends State<HighlightsScreen>
                                   tags: tagsRecommended,
                                 );
                               }))),
-                ),
-              ),
             ],
           )),
     );
@@ -248,149 +257,158 @@ class HighlightsScreenState extends State<HighlightsScreen>
     );
   }
 
-  Widget popular(BuildContext context) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.topLeft,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Text('Popular', style: mystyle(15)),
-          ),
-        ),
-        SizedBox(
-          height: 10.0,
-        ),
-        CarouselSlider.builder(
-          itemCount: 3,
-          itemBuilder: (context, index, realIndex) {
-            return Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).accentColor
-                    ]),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 20.0,
-                    ),
-                    child: Text(
-                      carousselTitle[index],
-                      style: mystyle(15),
-                    ),
+  Widget slider(BuildContext context) {
+    return CarouselSlider.builder(
+      itemCount: 3,
+      itemBuilder: (context, index, realIndex) {
+        return GestureDetector(
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => carousselNavigation[index])),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).accentColor
+                  ]),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        carousselTitle[index],
+                        style: mystyle(15),
+                      ),
+                      Text(
+                        carousselDescription[index],
+                        style: mystyle(11),
+                      )
+                    ],
                   )),
-            );
-          },
-          options: CarouselOptions(
-              aspectRatio: 2.5,
-              enlargeCenterPage: true,
-              viewportFraction: 0.8,
-              autoPlay: true,
-              autoPlayInterval: Duration(seconds: 10),
-              autoPlayAnimationDuration: Duration(seconds: 2)),
-        )
-      ],
+            ),
+          ),
+        );
+      },
+      options: CarouselOptions(
+          aspectRatio: 2.2,
+          enlargeCenterPage: true,
+          viewportFraction: 0.8,
+          autoPlay: true,
+          autoPlayInterval: Duration(seconds: 6),
+          autoPlayAnimationDuration: Duration(seconds: 2)),
     );
   }
 
-  Widget recommended() {
+  Widget referencements() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Align(
           alignment: Alignment.topLeft,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Text('Recommended', style: mystyle(15)),
+            child: Text('Référencements', style: mystyle(15)),
           ),
         ),
-        GridView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: tagsRecommended.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 3,
-                crossAxisSpacing: 6,
-                mainAxisSpacing: 6),
-            itemBuilder: (BuildContext context, int index) {
-              String hashtag = tagsRecommended[index];
-
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 100,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Theme.of(context).primaryColor,
-                                    Theme.of(context).accentColor
-                                  ]),
-                              shape: BoxShape.circle),
-                          child: Icon(Icons.tag),
+        tagsRecommended.length == 0
+            ? Expanded(
+                child: Container(
+                child: Center(
+                  child: Text('Pas encore de hashtags'),
+                ),
+              ))
+            : GridView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: tagsRecommended.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    childAspectRatio: 3,
+                    crossAxisSpacing: 6,
+                    mainAxisSpacing: 6),
+                itemBuilder: (BuildContext context, int index) {
+                  String hashtag = tagsRecommended[index];
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 100,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Theme.of(context).primaryColor,
+                                        Theme.of(context).accentColor
+                                      ]),
+                                  shape: BoxShape.circle),
+                              child: Icon(Icons.tag),
+                            ),
+                            SizedBox(
+                              height: 2.0,
+                            ),
+                            Text(hashtag)
+                          ],
                         ),
-                        SizedBox(
-                          height: 2.0,
-                        ),
-                        Text(hashtag)
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Container(
-                    height: 150,
-                    width: MediaQuery.of(context).size.width / 1.50,
-                    child: StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('hashtags')
-                            .doc(hashtag)
-                            .collection('posts')
-                            .snapshots(),
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (!snapshot.hasData) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            itemCount: snapshot.data.docs.length,
-                            itemBuilder: (BuildContext contex, int index) {
-                              DocumentSnapshot<Map<String, dynamic>>
-                                  documentSnapshot = snapshot.data.docs[index];
+                      ),
+                      SizedBox(
+                        width: 5.0,
+                      ),
+                      Container(
+                        height: 150,
+                        width: MediaQuery.of(context).size.width / 1.50,
+                        child: StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection('hashtags')
+                                .doc(hashtag)
+                                .collection('posts')
+                                .snapshots(),
+                            builder: (context, AsyncSnapshot snapshot) {
+                              if (!snapshot.hasData) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                itemCount: snapshot.data.docs.length,
+                                itemBuilder: (BuildContext contex, int index) {
+                                  DocumentSnapshot<Map<String, dynamic>>
+                                      documentSnapshot =
+                                      snapshot.data.docs[index];
 
-                              return documentSnapshot.data()!['pictureUrl'] !=
-                                      null
-                                  ? picture(hashtag, index, documentSnapshot,
-                                      snapshot)
-                                  : video(hashtag, index, documentSnapshot,
-                                      snapshot);
-                            },
-                          );
-                        }),
-                  ),
-                ],
-              );
-            })
+                                  return documentSnapshot
+                                              .data()!['pictureUrl'] !=
+                                          null
+                                      ? picture(hashtag, index,
+                                          documentSnapshot, snapshot)
+                                      : video(hashtag, index, documentSnapshot,
+                                          snapshot);
+                                },
+                              );
+                            }),
+                      ),
+                    ],
+                  );
+                })
       ],
     );
   }

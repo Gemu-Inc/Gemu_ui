@@ -94,7 +94,10 @@ class RegisterScreenState extends State<RegisterScreen> {
                 .doc(userCredential.user!.uid)
                 .collection('games')
                 .doc(gamesFollow[i].data()['name'])
-                .set({});
+                .set({
+              'name': gamesFollow[i].data()['name'],
+              'imageUrl': gamesFollow[i].data()['imageUrl']
+            });
           }
         });
         Navigator.pushNamedAndRemoveUntil(

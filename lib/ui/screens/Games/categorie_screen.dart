@@ -90,9 +90,11 @@ class _CategorieScreenState extends State<CategorieScreen>
       }
     }
 
-    setState(() {
-      dataIsThere = true;
-    });
+    if (mounted) {
+      setState(() {
+        dataIsThere = true;
+      });
+    }
   }
 
   @override
@@ -161,8 +163,7 @@ class _CategorieScreenState extends State<CategorieScreen>
         itemCount: gameFollow.length,
         itemBuilder: (BuildContext context, int index) {
           DocumentSnapshot? game = gameFollow[index];
-          return GameView(
-              game: game as DocumentSnapshot<Map<String, dynamic>>?);
+          return GameView(game: game as DocumentSnapshot<Map<String, dynamic>>);
         });
   }
 
@@ -175,8 +176,7 @@ class _CategorieScreenState extends State<CategorieScreen>
         itemCount: gameNoFollow.length,
         itemBuilder: (BuildContext context, int index) {
           DocumentSnapshot? game = gameNoFollow[index];
-          return GameView(
-              game: game as DocumentSnapshot<Map<String, dynamic>>?);
+          return GameView(game: game as DocumentSnapshot<Map<String, dynamic>>);
         });
   }
 }
