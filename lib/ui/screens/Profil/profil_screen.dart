@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:Gemu/constants/variables.dart';
 import 'package:Gemu/ui/screens/Reglages/reglages_screen.dart';
+import 'package:Gemu/ui/screens/Support/panel_support_screen.dart';
 
 import 'posts_profil_screen.dart';
 import 'edit_private_posts_picture.dart';
@@ -59,6 +60,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
         .collection('posts')
         .where('uid', isEqualTo: uid)
         .where('privacy', isEqualTo: "Public")
+        .orderBy('time', descending: true)
         .get();
 
     //posts private user
@@ -66,6 +68,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
         .collection('posts')
         .where('uid', isEqualTo: uid)
         .where('privacy', isEqualTo: "Private")
+        .orderBy('time', descending: true)
         .get();
 
     //get points user
@@ -141,7 +144,14 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                         context,
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                ReglagesScreen())))
+                                                ReglagesScreen()))),
+                                IconButton(
+                                    onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) =>
+                                                PanelSupportScreen())),
+                                    icon: Icon(Icons.support))
                               ],
                               expandedHeight: 250,
                               flexibleSpace: FlexibleSpaceBar(
@@ -374,7 +384,13 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        ReglagesScreen())))
+                                        ReglagesScreen()))),
+                        IconButton(
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => PanelSupportScreen())),
+                            icon: Icon(Icons.support))
                       ],
                       expandedHeight: 250,
                       flexibleSpace: FlexibleSpaceBar(

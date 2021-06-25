@@ -32,6 +32,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
   List tags = [];
   bool dataIsThere = false;
 
+  List carousselIcon = [Icons.light, Icons.trending_up, Icons.new_releases];
   List carousselTitle = ['Spotlights', 'Trendings', 'Discover'];
   List carousselDescription = [
     'Tous les nouveaux posts',
@@ -73,7 +74,8 @@ class HighlightsScreenState extends State<HighlightsScreen>
         .get();
     for (var item in documents.docs) {
       tags.add(item.data()['name']);
-      tagsRecommended.add(item.data()['name']);
+      tagsRecommended.add(item);
+      print(tagsRecommended);
     }
     setState(() {
       dataIsThere = true;
@@ -152,7 +154,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
                   ),
                   slider(context),
                   SizedBox(
-                    height: 40.0,
+                    height: 30.0,
                   ),
                   Expanded(child: referencements())
                 ],
@@ -277,25 +279,40 @@ class HighlightsScreenState extends State<HighlightsScreen>
                   ]),
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        carousselTitle[index],
-                        style: mystyle(15),
+            child: Stack(
+              children: [
+                Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 25.0),
+                      child: Icon(
+                        carousselIcon[index],
+                        color: Colors.white,
+                        size: 30,
                       ),
-                      Text(
-                        carousselDescription[index],
-                        style: mystyle(11),
-                      )
-                    ],
-                  )),
+                    )),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 25.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            carousselTitle[index],
+                            style: mystyle(15),
+                          ),
+                          Text(
+                            carousselDescription[index],
+                            style: mystyle(11),
+                          )
+                        ],
+                      )),
+                )
+              ],
             ),
           ),
         );
@@ -317,7 +334,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
         Align(
           alignment: Alignment.topLeft,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
             child: Text('Référencements', style: mystyle(15)),
           ),
         ),
@@ -328,96 +345,101 @@ class HighlightsScreenState extends State<HighlightsScreen>
                   child: Text('Pas encore de hashtags'),
                 ),
               ))
-            : GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: tagsRecommended.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    childAspectRatio: 3,
-                    crossAxisSpacing: 6,
-                    mainAxisSpacing: 6),
-                itemBuilder: (BuildContext context, int index) {
-                  String hashtag = tagsRecommended[index];
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Theme.of(context).primaryColor,
-                                        Theme.of(context).accentColor
-                                      ]),
-                                  shape: BoxShape.circle),
-                              child: Icon(Icons.tag),
+            : Expanded(
+                child: GridView.builder(
+                    shrinkWrap: true,
+                    itemCount: tagsRecommended.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        childAspectRatio: 3,
+                        crossAxisSpacing: 6,
+                        mainAxisSpacing: 6),
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot<Map<String, dynamic>> hashtag =
+                          tagsRecommended[index];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 100,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Theme.of(context).primaryColor,
+                                            Theme.of(context).accentColor
+                                          ]),
+                                      shape: BoxShape.circle),
+                                  child: Icon(Icons.tag),
+                                ),
+                                SizedBox(
+                                  height: 2.0,
+                                ),
+                                Text(hashtag.data()!['name']),
+                                Text(
+                                    '${hashtag.data()!['postsCount'].toString()} publications')
+                              ],
                             ),
-                            SizedBox(
-                              height: 2.0,
-                            ),
-                            Text(hashtag)
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5.0,
-                      ),
-                      Container(
-                        height: 150,
-                        width: MediaQuery.of(context).size.width / 1.50,
-                        child: StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('hashtags')
-                                .doc(hashtag)
-                                .collection('posts')
-                                .snapshots(),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (!snapshot.hasData) {
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                shrinkWrap: true,
-                                itemCount: snapshot.data.docs.length,
-                                itemBuilder: (BuildContext contex, int index) {
-                                  DocumentSnapshot<Map<String, dynamic>>
-                                      documentSnapshot =
-                                      snapshot.data.docs[index];
+                          ),
+                          SizedBox(
+                            width: 5.0,
+                          ),
+                          Container(
+                            height: 150,
+                            width: MediaQuery.of(context).size.width / 1.50,
+                            child: StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('hashtags')
+                                    .doc(hashtag.data()!['name'])
+                                    .collection('posts')
+                                    .orderBy('time', descending: true)
+                                    .snapshots(),
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  return ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    shrinkWrap: true,
+                                    itemCount: snapshot.data.docs.length,
+                                    itemBuilder:
+                                        (BuildContext contex, int index) {
+                                      DocumentSnapshot<Map<String, dynamic>>
+                                          documentSnapshot =
+                                          snapshot.data.docs[index];
 
-                                  return documentSnapshot
-                                              .data()!['pictureUrl'] !=
-                                          null
-                                      ? picture(hashtag, index,
-                                          documentSnapshot, snapshot)
-                                      : video(hashtag, index, documentSnapshot,
-                                          snapshot);
-                                },
-                              );
-                            }),
-                      ),
-                    ],
-                  );
-                })
+                                      return documentSnapshot
+                                                  .data()!['pictureUrl'] !=
+                                              null
+                                          ? picture(hashtag, index,
+                                              documentSnapshot, snapshot)
+                                          : video(hashtag, index,
+                                              documentSnapshot, snapshot);
+                                    },
+                                  );
+                                }),
+                          ),
+                        ],
+                      );
+                    }))
       ],
     );
   }
 
   Widget picture(
-      String hashtag,
+      DocumentSnapshot<Map<String, dynamic>> hashtag,
       int indexPost,
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
-      AsyncSnapshot snpashot) {
+      AsyncSnapshot snapshot) {
     return GestureDetector(
       onTap: () => Navigator.push(
           context,
@@ -425,7 +447,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
               builder: (context) => HashtagPostView(
                     hashtag: hashtag,
                     index: indexPost,
-                    snapshot: snpashot,
+                    snapshot: snapshot,
                   ))),
       child: Container(
         margin: EdgeInsets.all(5.0),
@@ -448,7 +470,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
   }
 
   Widget video(
-      String hashtag,
+      DocumentSnapshot<Map<String, dynamic>> hashtag,
       int indexPost,
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
       AsyncSnapshot snapshot) {
@@ -458,6 +480,8 @@ class HighlightsScreenState extends State<HighlightsScreen>
           MaterialPageRoute(
               builder: (BuildContext context) => HashtagPostView(
                     hashtag: hashtag,
+                    index: indexPost,
+                    snapshot: snapshot,
                   ))),
       child: Container(
         margin: EdgeInsets.all(5.0),
@@ -475,6 +499,13 @@ class HighlightsScreenState extends State<HighlightsScreen>
                 fit: BoxFit.cover,
                 image: CachedNetworkImageProvider(
                     documentSnapshot.data()!['previewImage']))),
+        child: Align(
+          alignment: Alignment.topRight,
+          child: Icon(
+            Icons.play_arrow,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }

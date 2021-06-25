@@ -58,7 +58,10 @@ class SearchGameScreenState extends State<SearchGameScreen> {
   }
 
   getGamesStreamSnapshots() async {
-    var data = await FirebaseFirestore.instance.collection('games').get();
+    var data = await FirebaseFirestore.instance
+        .collection('games')
+        .where('verified', isEqualTo: true)
+        .get();
     setState(() {
       _allResults = data.docs;
     });

@@ -1,16 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:helpers/helpers/misc.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 
-import 'package:Gemu/services/database_service.dart';
 import 'package:Gemu/ui/screens/screens.dart';
 import 'package:Gemu/ui/screens/Direct/direct_screen.dart';
 import 'package:Gemu/ui/screens/Highlights/highlights_screen.dart';
 import 'package:Gemu/ui/widgets/bottom_share.dart';
-import 'package:Gemu/models/game.dart';
 
 class NavScreen extends StatefulWidget {
   NavScreen({Key? key}) : super(key: key);

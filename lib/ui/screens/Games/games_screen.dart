@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:Gemu/models/game.dart';
 import 'package:Gemu/ui/screens/Games/categorie_screen.dart';
 import 'package:Gemu/ui/screens/Games/game_focus_screen.dart';
 
 import 'search_game_screen.dart';
+import 'add_game_screen.dart';
 
 class GamesScreen extends StatefulWidget {
   const GamesScreen({Key? key}) : super(key: key);
@@ -121,7 +121,10 @@ class _GamesScreenState extends State<GamesScreen>
                     AnimatedBuilder(
                         animation: _animationController,
                         builder: (context, child) => GestureDetector(
-                              onTap: () => print('Add a game'),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => AddGameScreen())),
                               child: Container(
                                 margin: EdgeInsets.only(
                                     top: 5.0, bottom: 5.0, right: 10.0),
@@ -316,6 +319,7 @@ class _GamesScreenState extends State<GamesScreen>
                                             Theme.of(context).accentColor
                                           ]),
                                       borderRadius: BorderRadius.circular(10)),
+                                  child: Icon(Icons.category),
                                 ),
                               )),
                           Align(

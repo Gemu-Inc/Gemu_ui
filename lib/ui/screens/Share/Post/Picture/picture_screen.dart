@@ -200,7 +200,8 @@ class PictureScreenState extends State<PictureScreen>
           'pictureUrl': picture,
           'privacy': privacy,
           'viewcount': 0,
-          'time': DateTime.now()
+          'time': DateTime.now(),
+          'popularity': 0
         });
 
         if (hashtagsSelected.length != 0) {
@@ -245,7 +246,8 @@ class PictureScreenState extends State<PictureScreen>
                 'pictureUrl': picture,
                 'privacy': privacy,
                 'viewcount': 0,
-                'time': DateTime.now()
+                'time': DateTime.now(),
+                'popularity': 0
               });
             } else {
               FirebaseFirestore.instance
@@ -271,7 +273,8 @@ class PictureScreenState extends State<PictureScreen>
                 'pictureUrl': picture,
                 'privacy': privacy,
                 'viewcount': 0,
-                'time': DateTime.now()
+                'time': DateTime.now(),
+                'popularity': 0
               });
             }
             if (hashtagsSelected.length > 1) {
@@ -310,7 +313,8 @@ class PictureScreenState extends State<PictureScreen>
             'pictureUrl': picture,
             'privacy': privacy,
             'viewcount': 0,
-            'time': DateTime.now()
+            'time': DateTime.now(),
+            'popularity': 0
           });
 
           if (hashtagsSelected.length != 0) {
@@ -355,7 +359,8 @@ class PictureScreenState extends State<PictureScreen>
                   'pictureUrl': picture,
                   'privacy': privacy,
                   'viewcount': 0,
-                  'time': DateTime.now()
+                  'time': DateTime.now(),
+                  'popularity': 0
                 });
               } else {
                 FirebaseFirestore.instance
@@ -381,7 +386,8 @@ class PictureScreenState extends State<PictureScreen>
                   'pictureUrl': picture,
                   'privacy': privacy,
                   'viewcount': 0,
-                  'time': DateTime.now()
+                  'time': DateTime.now(),
+                  'popularity': 0
                 });
               }
               if (hashtagsSelected.length > 1) {

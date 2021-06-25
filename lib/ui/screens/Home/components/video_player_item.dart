@@ -29,7 +29,8 @@ class VideoPlayerItemState extends State<VideoPlayerItem>
 
     updateView();
 
-    _videoPlayerController = VideoPlayerController.network(widget.videoUrl!);
+    _videoPlayerController = VideoPlayerController.network(widget.videoUrl!,
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
     _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.play();
@@ -57,10 +58,9 @@ class VideoPlayerItemState extends State<VideoPlayerItem>
   }
 
   @override
-  void dispose() async {
-    if (mounted) {
-      await _videoPlayerController.dispose();
-    }
+  void dispose() {
+    _videoPlayerController.dispose();
+
     _upController.dispose();
     _downController.dispose();
     super.dispose();

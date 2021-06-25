@@ -171,7 +171,8 @@ class VideoScreenState extends State<VideoScreen>
           'previewImage': previewImage,
           'privacy': privacy,
           'viewcount': 0,
-          'time': DateTime.now()
+          'time': DateTime.now(),
+          'popularity': 0
         });
 
         if (hashtagsSelected.length != 0) {
@@ -217,7 +218,8 @@ class VideoScreenState extends State<VideoScreen>
                 'previewImage': previewImage,
                 'privacy': privacy,
                 'viewcount': 0,
-                'time': DateTime.now()
+                'time': DateTime.now(),
+                'popularity': 0
               });
             } else {
               FirebaseFirestore.instance
@@ -244,7 +246,8 @@ class VideoScreenState extends State<VideoScreen>
                 'previewImage': previewImage,
                 'privacy': privacy,
                 'viewcount': 0,
-                'time': DateTime.now()
+                'time': DateTime.now(),
+                'popularity': 0
               });
             }
             if (hashtagsSelected.length > 1) {
@@ -285,7 +288,8 @@ class VideoScreenState extends State<VideoScreen>
             'previewImage': previewImage,
             'privacy': privacy,
             'viewcount': 0,
-            'time': DateTime.now()
+            'time': DateTime.now(),
+            'popularity': 0
           });
 
           if (hashtagsSelected.length != 0) {
@@ -331,7 +335,8 @@ class VideoScreenState extends State<VideoScreen>
                   'previewImage': previewImage,
                   'privacy': privacy,
                   'viewcount': 0,
-                  'time': DateTime.now()
+                  'time': DateTime.now(),
+                  'popularity': 0
                 });
               } else {
                 FirebaseFirestore.instance
@@ -358,7 +363,8 @@ class VideoScreenState extends State<VideoScreen>
                   'previewImage': previewImage,
                   'privacy': privacy,
                   'viewcount': 0,
-                  'time': DateTime.now()
+                  'time': DateTime.now(),
+                  'popularity': 0
                 });
               }
               if (hashtagsSelected.length > 1) {
@@ -425,9 +431,9 @@ class VideoScreenState extends State<VideoScreen>
   }
 
   @override
-  void dispose() async {
+  void dispose() {
     if (mounted) {
-      await _videoPlayerController.dispose();
+      _videoPlayerController.dispose();
     }
     _captionController.dispose();
     _hashtagsController.removeListener(_onSearchChanged);

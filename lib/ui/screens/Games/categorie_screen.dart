@@ -58,16 +58,13 @@ class _CategorieScreenState extends State<CategorieScreen>
     }
 
     var gamesCat = await FirebaseFirestore.instance
-        .collection('categories')
-        .doc(widget.categorie.id)
         .collection('games')
+        .where('categories', arrayContains: widget.categorie.data()['name'])
         .get();
     for (var item in gamesCat.docs) {
-      var gameCat = await FirebaseFirestore.instance
-          .collection('games')
-          .doc(item.id)
-          .get();
-      gamesCategories.add(gameCat);
+      if (item.data()['verified'] == true) {
+        gamesCategories.add(item);
+      }
     }
 
     for (var i = 0; i < gamesUser.length; i++) {
@@ -175,8 +172,8 @@ class _CategorieScreenState extends State<CategorieScreen>
             crossAxisCount: 3, childAspectRatio: 1, crossAxisSpacing: 6),
         itemCount: gameNoFollow.length,
         itemBuilder: (BuildContext context, int index) {
-          DocumentSnapshot? game = gameNoFollow[index];
-          return GameView(game: game as DocumentSnapshot<Map<String, dynamic>>);
+          DocumentSnapshot<Map<String, dynamic>> game = gameNoFollow[index];
+          return GameView(game: game);
         });
   }
 }
