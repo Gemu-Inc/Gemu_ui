@@ -3,22 +3,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:Gemu/ui/screens/Home/comments_view.dart';
+import 'package:gemu/ui/screens/Home/comments_view.dart';
+import 'package:gemu/services/database_service.dart';
 
 import '../profile_view.dart';
 
 class ActionsPostBar extends StatefulWidget {
-  final String? idUser, profilPicture, commentsCounts, idPost;
+  final String idUser, profilPicture, commentsCounts, idPost;
 
   final List? up, down;
 
   ActionsPostBar(
-      {this.idUser,
-      this.idPost,
-      this.profilPicture,
-      this.commentsCounts,
-      this.up,
-      this.down});
+      {required this.idUser,
+      required this.idPost,
+      required this.profilPicture,
+      required this.commentsCounts,
+      required this.up,
+      required this.down});
 
   @override
   ActionsPostBarState createState() => ActionsPostBarState();
@@ -31,7 +32,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
   static const double ProfileImageSize = 50.0;
   static const double PlusIconSize = 20.0;
 
-  String? uid;
+  late String uid;
   bool isFollowing = false;
   bool dataIsThere = false;
 
@@ -79,6 +80,9 @@ class ActionsPostBarState extends State<ActionsPostBar> {
         'up': FieldValue.arrayUnion([uid])
       });
     }
+
+    DatabaseService.addNotification(
+        uid, widget.idUser, "a up votre post", "updown");
   }
 
   pointsDownPost(String? id) async {
@@ -96,6 +100,9 @@ class ActionsPostBarState extends State<ActionsPostBar> {
         'down': FieldValue.arrayUnion([uid])
       });
     }
+
+    DatabaseService.addNotification(
+        uid, widget.idUser, "a down votre post", "updown");
   }
 
   followUser() async {
@@ -120,6 +127,9 @@ class ActionsPostBarState extends State<ActionsPostBar> {
           .collection('following')
           .doc(widget.idUser)
           .set({});
+
+      DatabaseService.addNotification(
+          uid, widget.idUser, "a commencé à vous suivre", "follow");
 
       setState(() {
         isFollowing = true;
@@ -163,7 +173,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                       title: points.toString()),
                   _getSocialAction(
                       icon: Icons.insert_comment_outlined,
-                      title: widget.commentsCounts!,
+                      title: widget.commentsCounts,
                       context: context),
                   _getFollowAction(context: context),
                 ]),
@@ -220,7 +230,8 @@ class ActionsPostBarState extends State<ActionsPostBar> {
         ));
   }
 
-  Widget _getSocialAction({required String title, IconData? icon, BuildContext? context}) {
+  Widget _getSocialAction(
+      {required String title, IconData? icon, BuildContext? context}) {
     return Container(
         height: 60.0,
         child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -235,8 +246,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                 context: context,
                 builder: (BuildContext context) {
                   return CommentsView(
-                    idPost: widget.idPost,
-                  );
+                      idPost: widget.idPost, idUser: widget.idUser);
                 }),
             child: Icon(icon, size: 28, color: Colors.grey[300]),
           ),
@@ -328,7 +338,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                       image: DecorationImage(
                           fit: BoxFit.cover,
                           image: CachedNetworkImageProvider(
-                              widget.profilPicture!))),
+                              widget.profilPicture))),
                 )),
     );
   }

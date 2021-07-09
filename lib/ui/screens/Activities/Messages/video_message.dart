@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:Gemu/models/chat_messages.dart';
+import 'package:gemu/models/chat_messages.dart';
 
 class VideoMessage extends StatelessWidget {
   final ChatMessage message;

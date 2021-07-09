@@ -1,11 +1,12 @@
 import 'dart:io';
 
-import 'package:Gemu/ui/screens/Share/Post/Video/video_editor_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:Gemu/constants/variables.dart';
+import 'package:gemu/ui/constants/constants.dart';
+
 import 'Picture/picture_editor_screen.dart';
+import 'Video/video_editor_screen.dart';
 
 class AddPostScreen extends StatefulWidget {
   @override

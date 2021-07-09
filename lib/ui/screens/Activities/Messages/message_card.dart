@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:Gemu/models/user.dart';
+import 'package:gemu/models/user.dart';
 
 import 'messages_view.dart';
 
@@ -44,7 +44,7 @@ class MessageCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                peer!.photoURL == null
+                peer!.imageUrl == null
                     ? Container(
                         height: 50,
                         width: 50,
@@ -62,8 +62,8 @@ class MessageCard extends StatelessWidget {
                             border: Border.all(color: Colors.black),
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image:
-                                    CachedNetworkImageProvider(peer!.photoURL!))),
+                                image: CachedNetworkImageProvider(
+                                    peer!.imageUrl!))),
                       ),
               ],
             ),
@@ -76,7 +76,7 @@ class MessageCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          peer!.pseudo!,
+                          peer!.username,
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w500),
                         ),
@@ -125,10 +125,10 @@ class MessageCard extends StatelessWidget {
   }
 
   String getGroupChatId() {
-    if (uid.hashCode <= peer!.id.hashCode) {
-      return uid + '_' + peer!.id!;
+    if (uid.hashCode <= peer!.uid.hashCode) {
+      return uid + '_' + peer!.uid;
     } else {
-      return peer!.id! + '_' + uid;
+      return peer!.uid + '_' + uid;
     }
   }
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/size_config.dart';
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/constants/size_config.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -42,21 +42,21 @@ class BodyState extends State<Body> {
     slides.add(Slide(
         title: 'COMMUNITY',
         styleTitle: mystyle(15),
-        pathImage: 'lib/assets/images/signup.png',
+        pathImage: 'assets/images/signup.png',
         description: "Create, share, watch and more",
         styleDescription: mystyle(11),
         backgroundColor: Colors.transparent));
     slides.add(Slide(
         title: 'RECORD',
         styleTitle: mystyle(15),
-        pathImage: 'lib/assets/images/login.png',
+        pathImage: 'assets/images/login.png',
         description: "Record and save everywhere and everything",
         styleDescription: mystyle(11),
         backgroundColor: Colors.transparent));
     slides.add(Slide(
         title: 'DISCOVER',
         styleTitle: mystyle(15),
-        pathImage: 'lib/assets/images/chat.png',
+        pathImage: 'assets/images/chat.png',
         description: "Discover new games and communities",
         styleDescription: mystyle(11),
         backgroundColor: Colors.transparent));

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:Gemu/models/user.dart';
-import 'package:Gemu/models/convo.dart';
-import 'package:Gemu/providers/newMessageProvider.dart';
+import 'package:gemu/models/user.dart';
+import 'package:gemu/models/convo.dart';
+import 'package:gemu/ui/providers/newMessageProvider.dart';
 
 import 'message_card.dart';
 
@@ -75,13 +75,13 @@ class MessagesScreenState extends State<MessagesScreen> {
   Map<String?, UserModel> getUserMap(List<UserModel> users) {
     final Map<String?, UserModel> userMap = Map();
     for (UserModel u in users) {
-      userMap[u.id] = u;
+      userMap[u.uid] = u;
     }
     return userMap;
   }
 
-  List<Widget> getWidgets(BuildContext context, String uid, List<Convo> _convos,
-      List<UserModel> _users) {
+  List<Widget> getWidgets(BuildContext context, String? uid,
+      List<Convo>? _convos, List<UserModel>? _users) {
     final List<Widget> list = <Widget>[];
 
     if (_convos != null && _users != null && uid != null) {

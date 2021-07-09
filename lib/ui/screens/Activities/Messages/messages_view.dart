@@ -1,12 +1,12 @@
-import 'package:Gemu/constants/variables.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:bubble/bubble.dart';
 
-import 'package:Gemu/models/chat_messages.dart';
-import 'package:Gemu/models/user.dart';
-import 'package:Gemu/services/database_service.dart';
+import 'package:gemu/models/chat_messages.dart';
+import 'package:gemu/models/user.dart';
+import 'package:gemu/services/database_service.dart';
+import 'package:gemu/ui/constants/constants.dart';
 
 import 'text_message.dart';
 import 'audio_message.dart';
@@ -50,10 +50,10 @@ class NewConversationScreen extends StatelessWidget {
                           image: DecorationImage(
                               fit: BoxFit.cover,
                               image: CachedNetworkImageProvider(
-                                  contact!.photoURL!))),
+                                  contact!.imageUrl!))),
                     ),
                     SizedBox(width: 10.0),
-                    Text(contact!.pseudo!)
+                    Text(contact!.username)
                   ],
                 ),
               )),
@@ -258,7 +258,7 @@ class ChatScreenState extends State<ChatScreen> {
     if (content.trim() != '') {
       _messageController.clear();
       content = content.trim();
-      DatabaseService.sendMessage(convoID, uid, contact!.id, content,
+      DatabaseService.sendMessage(convoID, uid, contact!.uid, content,
           DateTime.now().millisecondsSinceEpoch.toString());
       _listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);

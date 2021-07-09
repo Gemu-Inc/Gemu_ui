@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/models/user.dart';
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/models/user.dart';
 
 import 'userRow.dart';
 
@@ -56,7 +56,7 @@ class ContactsScreenState extends State<ContactsScreen> {
   List<Widget> getListViewItems(List<UserModel> userDirectory, String uid) {
     final List<Widget> list = [];
     for (UserModel contact in userDirectory) {
-      if (contact.id != uid) {
+      if (contact.uid != uid) {
         list.add(UserRow(
           uid: uid,
           contact: contact,

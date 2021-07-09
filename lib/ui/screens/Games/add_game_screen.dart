@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/ui/screens/Games/select_category.dart';
-import 'package:Gemu/ui/screens/Navigation/nav_screen.dart';
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/screens/Games/select_category.dart';
+import 'package:gemu/ui/controller/navigation_controller.dart';
 
 class AddGameScreen extends StatefulWidget {
   @override
@@ -69,8 +70,6 @@ class AddGameScreenState extends State<AddGameScreen> {
       isSave = !isSave;
     });
 
-    String? categoryID;
-
     String pictureLogo = await saveLogoToStorage();
 
     FirebaseFirestore.instance
@@ -84,24 +83,13 @@ class AddGameScreenState extends State<AddGameScreen> {
       'verified': false
     });
 
-    for (var i = 0; i < gameCategories.length; i++) {
-      var data = await FirebaseFirestore.instance
-          .collection('categories')
-          .where('name', isEqualTo: gameCategories[i])
-          .get();
-      for (var item in data.docs) {
-        categoryID = item.id;
-      }
-      FirebaseFirestore.instance
-          .collection('categories')
-          .doc(categoryID)
-          .collection('games')
-          .doc(_nameGameController.text)
-          .set({});
-    }
-
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (_) => NavScreen()), (route) => false);
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (_) => NavController(
+                  uid: FirebaseAuth.instance.currentUser!.uid,
+                )),
+        (route) => false);
   }
 
   @override
@@ -231,7 +219,9 @@ class AddGameScreenState extends State<AddGameScreen> {
                               SizedBox(
                                 height: 20.0,
                               ),
-                              CircularProgressIndicator()
+                              CircularProgressIndicator(
+                                color: Theme.of(context).primaryColor,
+                              )
                             ],
                           ),
                         ),

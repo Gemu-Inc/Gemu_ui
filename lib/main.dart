@@ -3,25 +3,26 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 
-import 'package:Gemu/services/auth_service.dart';
-import 'package:Gemu/ui/router.dart';
-import 'package:Gemu/ui/screens/Connection/connection_screen.dart';
-import 'package:Gemu/styles/styles.dart';
+import 'package:gemu/ui/router.dart';
+import 'package:gemu/ui/constants/app_constants.dart';
+import 'package:gemu/ui/screens/Reglages/Design/theme_notifier.dart';
+import 'package:gemu/ui/screens/Reglages/Design/theme_values.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Gemu/locator.dart';
-import 'package:Gemu/services/navigation_service.dart';
-import 'package:Gemu/services/dialog_service.dart';
-import 'package:Gemu/managers/dialog_manager.dart';
-import 'package:Gemu/services/provider_auth.dart';
+import 'package:gemu/ui/controller/log_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  await Firebase.initializeApp().catchError((error) => print(error));
-  Future<SharedPreferences> prefs = SharedPreferences.getInstance();
-  setupLocator();
+  await Firebase.initializeApp().catchError((error) {
+    print(error);
+  });
 
+  //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Color(0xFF1A1C25)));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   prefs.then((value) {
     runApp(ChangeNotifierProvider<ThemeNotifier>(
         create: (_) {
@@ -40,38 +41,6 @@ Future<void> main() async {
           } else if (theme == 'DarkOrange') {
             themeData = darkThemeOrange;
             return ThemeNotifier(themeData);
-          } else if (theme == 'ThemeCustomLight') {
-            themeData = ThemeData(
-                brightness: themeCustomLight.brightness,
-                scaffoldBackgroundColor:
-                    themeCustomLight.scaffoldBackgroundColor,
-                primaryColor:
-                    Color(value.getInt('color_primary') ?? Colors.blue.value),
-                accentColor:
-                    Color(value.getInt('color_accent') ?? Colors.blue.value),
-                canvasColor: themeCustomLight.canvasColor,
-                shadowColor: themeCustomLight.shadowColor,
-                iconTheme: themeCustomLight.iconTheme,
-                appBarTheme: themeCustomLight.appBarTheme,
-                bottomNavigationBarTheme:
-                    themeCustomLight.bottomNavigationBarTheme);
-            return ThemeNotifier(themeData);
-          } else if (theme == 'ThemeCustomDark') {
-            themeData = ThemeData(
-                brightness: themeCustomDark.brightness,
-                scaffoldBackgroundColor:
-                    themeCustomLight.scaffoldBackgroundColor,
-                primaryColor:
-                    Color(value.getInt('color_primary') ?? Colors.blue.value),
-                accentColor:
-                    Color(value.getInt('color_accent') ?? Colors.blue.value),
-                canvasColor: themeCustomDark.canvasColor,
-                shadowColor: themeCustomDark.shadowColor,
-                iconTheme: themeCustomDark.iconTheme,
-                appBarTheme: themeCustomDark.appBarTheme,
-                bottomNavigationBarTheme:
-                    themeCustomDark.bottomNavigationBarTheme);
-            return ThemeNotifier(themeData);
           }
           return ThemeNotifier(darkThemeOrange);
         },
@@ -83,21 +52,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
-    return ProviderAuth(
-      auth: AuthService(),
-      child: MaterialApp(
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Gemu',
-        builder: (context, child) => Navigator(
-          key: locator<DialogService>().dialogNavigationKey,
-          onGenerateRoute: (settings) => MaterialPageRoute(
-              builder: (context) => DialogManager(child: child)),
-        ),
-        navigatorKey: locator<NavigationService>().navigationKey,
         theme: themeNotifier.getTheme(),
-        home: ConnectionScreen(),
         onGenerateRoute: generateRoute,
-      ),
-    );
+        home: LogController());
   }
 }

@@ -1,8 +1,11 @@
-import 'package:Gemu/constants/variables.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/models/game.dart';
+import 'package:gemu/ui/widgets/app_bar_custom.dart';
 
 class PanelSupportScreen extends StatefulWidget {
   @override
@@ -21,22 +24,6 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
 
   decline(String idGame, String imageUrl, List gameCategories) async {
     await FirebaseStorage.instance.refFromURL(imageUrl).delete();
-
-    for (var i = 0; i < gameCategories.length; i++) {
-      var data = await FirebaseFirestore.instance
-          .collection('categories')
-          .where('name', isEqualTo: gameCategories[i])
-          .get();
-
-      for (var item in data.docs) {
-        await FirebaseFirestore.instance
-            .collection('categories')
-            .doc(item.id)
-            .collection('games')
-            .doc(idGame)
-            .delete();
-      }
-    }
     await FirebaseFirestore.instance.collection('games').doc(idGame).delete();
 
     print('success');
@@ -47,25 +34,10 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
     return Scaffold(
       extendBodyBehindAppBar: false,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        elevation: 6,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).accentColor
-              ])),
-        ),
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back_ios)),
-        title: Text(
-          'Panel support',
-          style: mystyle(15),
-        ),
+      appBar: AppBarCustom(
+        context: context,
+        title: 'Panel support',
+        actions: [],
       ),
       body: Center(
         child: Container(
@@ -80,13 +52,15 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
             builder: (_, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor,
+                  ),
                 );
               }
               if (snapshot.data.docs.length == 0) {
                 return Center(
                   child: Text(
-                    'Pas de demande d\'ajout de jeu',
+                    'Aucunes demandes récentes',
                     style: mystyle(12),
                   ),
                 );
@@ -97,8 +71,9 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
                   scrollDirection: Axis.vertical,
                   itemCount: snapshot.data.docs.length,
                   itemBuilder: (_, int index) {
-                    DocumentSnapshot<Map<String, dynamic>> gameNoVerified =
-                        snapshot.data.docs[index];
+                    Game gameNoVerified = Game.fromMap(
+                        snapshot.data.docs[index],
+                        snapshot.data.docs[index].data());
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 10.0),
                       child: Container(
@@ -132,8 +107,7 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
                                           image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: CachedNetworkImageProvider(
-                                                  gameNoVerified
-                                                      .data()!['imageUrl']))),
+                                                  gameNoVerified.imageUrl))),
                                     )),
                                 Expanded(
                                   child: Padding(
@@ -154,7 +128,7 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
                                                 horizontal: 10.0,
                                                 vertical: 10.0),
                                             child: Text(
-                                              gameNoVerified.data()!['name'],
+                                              gameNoVerified.name,
                                               style: mystyle(14),
                                             ),
                                           ),
@@ -171,12 +145,10 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
                                               scrollDirection: Axis.vertical,
                                               shrinkWrap: true,
                                               itemCount: gameNoVerified
-                                                  .data()!['categories']
-                                                  .length,
+                                                  .categories.length,
                                               itemBuilder: (_, int index) {
                                                 String category = gameNoVerified
-                                                        .data()!['categories']
-                                                    [index];
+                                                    .categories[index];
                                                 return Text(
                                                   category,
                                                   style: mystyle(14),
@@ -196,7 +168,8 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
                                     MainAxisAlignment.spaceAround,
                                 children: [
                                   GestureDetector(
-                                    onTap: () => validate(gameNoVerified.id),
+                                    onTap: () =>
+                                        validate(gameNoVerified.documentId!),
                                     child: Container(
                                       height: 45,
                                       width: 45,
@@ -220,9 +193,9 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
                                   ),
                                   GestureDetector(
                                     onTap: () => decline(
-                                        gameNoVerified.id,
-                                        gameNoVerified.data()!['imageUrl'],
-                                        gameNoVerified.data()!['categories']),
+                                        gameNoVerified.documentId!,
+                                        gameNoVerified.imageUrl,
+                                        gameNoVerified.categories),
                                     child: Container(
                                       height: 45,
                                       width: 45,

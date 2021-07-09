@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/providers/conversationProvider.dart';
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/providers/conversationProvider.dart';
 
 import 'Notifications/notifications_screen.dart';
-import 'Messages/messages_screen.dart';
 
 class ActivitiesMenuDrawer extends StatefulWidget {
   ActivitiesMenuDrawer({Key? key}) : super(key: key);

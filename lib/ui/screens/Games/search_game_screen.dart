@@ -1,7 +1,8 @@
-import 'package:Gemu/ui/screens/Games/game_focus_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:gemu/ui/screens/Games/game_focus_screen.dart';
 
 class SearchGameScreen extends StatefulWidget {
   @override

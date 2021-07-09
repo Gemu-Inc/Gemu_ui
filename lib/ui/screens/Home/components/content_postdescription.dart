@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:expandable/expandable.dart';
 
-import 'package:Gemu/constants/variables.dart';
+import 'package:gemu/ui/constants/constants.dart';
 
 import '../profile_view.dart';
 

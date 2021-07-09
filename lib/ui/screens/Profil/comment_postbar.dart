@@ -1,7 +1,8 @@
-import 'package:Gemu/constants/variables.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:gemu/ui/constants/constants.dart';
 
 class CommentPostBar extends StatefulWidget {
   final String? idPost;

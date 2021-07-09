@@ -2,8 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/models/game.dart';
+import 'package:gemu/ui/constants/constants.dart';
 
 import 'components/picture_item.dart';
 import 'components/video_player_item.dart';
@@ -11,7 +10,6 @@ import 'components/actions_postbar.dart';
 import 'components/content_postdescription.dart';
 
 class PostViewGame extends StatefulWidget {
-  //final Game game;
   final DocumentSnapshot<Map<String, dynamic>> game;
 
   final AnimationController? animationRotateController,

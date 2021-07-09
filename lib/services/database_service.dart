@@ -1,154 +1,57 @@
 import 'dart:async';
 import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 
-import 'package:Gemu/models/user.dart';
-import 'package:Gemu/models/convo.dart';
-import 'package:Gemu/models/post.dart';
-import 'package:Gemu/models/categorie.dart';
-import 'package:Gemu/models/game.dart';
+import 'package:gemu/models/user.dart';
+import 'package:gemu/models/convo.dart';
 
 class DatabaseService {
-  final CollectionReference _usersCollectionReference =
+  static final instance = DatabaseService._();
+  DatabaseService._();
+
+  //references des collections de la bdd
+  static final CollectionReference usersCollectionReference =
       FirebaseFirestore.instance.collection('users');
-  final CollectionReference _postsCollectionReference =
-      FirebaseFirestore.instance.collection('posts');
-  final CollectionReference _categoriesCollectionReference =
-      FirebaseFirestore.instance.collection('categories');
-  final CollectionReference _gamesCollectionReference =
-      FirebaseFirestore.instance.collection('games');
 
-  final StreamController<List<Post>> _postsController =
-      StreamController<List<Post>>.broadcast();
-  final StreamController<List<Categorie>> _categoriesController =
-      StreamController<List<Categorie>>.broadcast();
-  final StreamController<List<Game>> _gamesController =
-      StreamController<List<Game>>.broadcast();
-
-  Future addPost(Post post) async {
-    try {
-      await _postsCollectionReference.add(post.toMap());
-    } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-
-      return e.toString();
+  //add user dans la bdd
+  addUser(String uid, List gamesFollow, Map<String, dynamic> map) {
+    usersCollectionReference.doc(uid).set(map);
+    for (var i = 0; i < gamesFollow.length; i++) {
+      usersCollectionReference
+          .doc(uid)
+          .collection('games')
+          .doc(gamesFollow[i].data()['name'])
+          .set({
+        'name': gamesFollow[i].data()['name'],
+        'imageUrl': gamesFollow[i].data()['imageUrl']
+      });
     }
   }
 
-  Stream listenToGamesRealTime() {
-    FirebaseFirestore.instance
-        .collection('games')
-        .snapshots()
-        .listen((gamesSnapshot) {
-      if (gamesSnapshot.docs.isNotEmpty) {
-        var games = gamesSnapshot.docs
-            .map((snapshot) => Game.fromMap(snapshot.data(), snapshot.id))
-            .toList();
-        _gamesController.add(games);
-      }
-    });
-
-    return _gamesController.stream;
+  //partie réglages "Mon compte"
+  static Future updateUserImgProfile(String? image, String uid) async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({'imageUrl': image});
   }
 
-  Stream listenToPostsRealTime() {
-    // Register the handler for when the posts data changes
-    _postsCollectionReference.snapshots().listen((postsSnapshot) {
-      if (postsSnapshot.docs.isNotEmpty) {
-        var posts = postsSnapshot.docs
-            .map((snapshot) => Post.fromMap(
-                snapshot.data() as Map<String, dynamic>, snapshot.id))
-            .where((mappedItem) => mappedItem.imageFileName != null)
-            .toList();
-
-        // Add the posts onto the controller
-        _postsController.add(posts);
-      }
-    });
-
-    return _postsController.stream;
+  static Future deleteUserImgProfile(String uid) async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({'imageUrl': null});
   }
 
-  Stream listenToCategoriesRealTime() {
-    // Register the handler for when the posts data changes
-    _categoriesCollectionReference.snapshots().listen((categoriesSnapshot) {
-      if (categoriesSnapshot.docs.isNotEmpty) {
-        var categories = categoriesSnapshot.docs
-            .map((snapshot) => Categorie.fromMap(
-                snapshot.data() as Map<String, dynamic>, snapshot.id))
-            .toList();
-
-        // Add the posts onto the controller
-        _categoriesController.add(categories);
-      }
-    });
-
-    return _categoriesController.stream;
+  static Future updateUserPseudo(String? name, String? uid) async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({'username': name});
   }
 
-  Future createUser(UserModel user) async {
-    try {
-      await _usersCollectionReference.doc(user.id).set(user.toJson());
-    } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-
-      return e.toString();
-    }
-  }
-
-  Future getUser(String uid) async {
-    try {
-      var userData = await _usersCollectionReference.doc(uid).get();
-      print('${userData.data()}');
-
-      return UserModel.fromMap(userData.data() as Map<String, dynamic>);
-    } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-
-      return e.toString();
-    }
-  }
-
-  Future updateUserPseudo(String? name, String? uid) async {
-    return await _usersCollectionReference.doc(uid).update({'pseudo': name});
-  }
-
-  Future updateUserImgProfile(String? image, String uid) async {
-    return await _usersCollectionReference.doc(uid).update({'photoURL': image});
-  }
-
-  Future updateUserEmail(String? email, String? uid) async {
-    return await _usersCollectionReference.doc(uid).update({'email': email});
-  }
-
-  Future deleteUserImgProfile(String uid) async {
-    return await _usersCollectionReference.doc(uid).update({'photoURL': null});
-  }
-
-  static Future getGames(String? uid) {
-    return FirebaseFirestore.instance.collection('users').doc(uid).get();
-  }
-
-  static Stream<List<Game>> getGamesFollow(List<dynamic>? game) {
-    return FirebaseFirestore.instance
-        .collection('games')
-        .where(FieldPath.documentId, whereIn: game)
-        .snapshots()
-        .map((QuerySnapshot snapshot) => snapshot.docs
-            .map((DocumentSnapshot document) => Game.fromMap(
-                document.data() as Map<String, dynamic>, document.id))
-            .toList())
-        .handleError((dynamic e) {
-      print(e);
-    });
+  static Future updateUserEmail(String? email, String? uid) async {
+    return await usersCollectionReference.doc(uid).update({'email': email});
   }
 
   //Partie Highlights
@@ -161,7 +64,7 @@ class DatabaseService {
         .snapshots()
         .map((QuerySnapshot list) => list.docs
             .map((DocumentSnapshot snap) =>
-                UserModel.fromMap(snap.data() as Map<String, dynamic>))
+                UserModel.fromMap(snap, snap.data() as Map<String, dynamic>))
             .toList())
         .handleError((dynamic e) {
       print(e);
@@ -175,8 +78,9 @@ class DatabaseService {
           .collection('users')
           .doc(id)
           .snapshots()
-          .map((DocumentSnapshot snap) =>
-              UserModel.fromMap(snap.data() as Map<String, dynamic>)));
+          .map((DocumentSnapshot snap) {
+        return UserModel.fromMap(snap, snap.data() as Map<String, dynamic>);
+      }));
     }
     return StreamZip<UserModel>(streams).asBroadcastStream();
   }
@@ -257,5 +161,21 @@ class DatabaseService {
         .catchError((dynamic error) {
           print(error);
         });
+  }
+
+  //Partie Notifications
+  static void addNotification(
+      String from, String to, String text, String type) {
+    FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(to)
+        .collection('singleNotif')
+        .add({
+      'from': from,
+      'text': text,
+      'type': type,
+      'seen': false,
+      'date': DateTime.now().millisecondsSinceEpoch.toInt()
+    });
   }
 }

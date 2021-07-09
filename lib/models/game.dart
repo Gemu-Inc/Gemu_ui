@@ -1,34 +1,27 @@
-import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Game {
-  final String? name;
-  final String? imageUrl;
-  //final List<String> idCategories;
+  final String name;
+  final String imageUrl;
+  final List categories;
   final String? documentId;
-  bool? selected;
 
   Game(
       {required this.name,
       required this.imageUrl,
-      //@required this.idCategories,
-      this.documentId,
-      this.selected});
+      required this.categories,
+      this.documentId});
 
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'imageUrl': imageUrl, /*'idCategories': idCategories*/
-    };
+  factory Game.fromMap(DocumentSnapshot snapshot, Map<String, dynamic> map) {
+    return Game(
+      name: map['name'],
+      imageUrl: map['imageUrl'],
+      categories: map['categories'],
+      documentId: snapshot.id,
+    );
   }
 
-  static Game fromMap(Map<String, dynamic> map, String documentId) {
-    return Game(
-        /*idCategories: List<String>.from(map['idCategories'].map((item) {
-          return item;
-        }).toList()),*/
-        name: map['name'],
-        imageUrl: map['imageUrl'],
-        documentId: documentId,
-        selected: false);
+  Map<String, dynamic> toMap() {
+    return {'name': name, 'imageUrl': imageUrl, 'categories': categories};
   }
 }

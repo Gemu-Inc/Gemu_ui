@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:gemu/services/auth_service.dart';
 
-import 'package:Gemu/size_config.dart';
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/constants/route_names.dart';
+import 'package:gemu/ui/constants/size_config.dart';
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/screens/Welcome/welcome_screen.dart';
+import 'package:gemu/ui/widgets/snack_bar_custom.dart';
+import 'package:gemu/ui/widgets/text_field_custom.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -55,67 +57,26 @@ class RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  registerUser() async {
+  Future<bool> _willPopCallback() async {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
+        (route) => false);
+    return true;
+  }
+
+  _hideKeyboard() {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  _registerAccount(
+      String email, String password, String username, List gamesFollow) async {
     if (gamesFollow.length == 0 || gamesFollow.length == 1) {
-      SnackBar snackBar = SnackBar(
-          backgroundColor: Theme.of(context).canvasColor,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: Colors.black)),
-          content: Container(
-            height: 30,
-            width: SizeConfig.screenWidth,
-            alignment: Alignment.center,
-            child: Text(
-              'Selects at least two games',
-              style: mystyle(12),
-            ),
-          ));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBarCustom(error: 'Selects at least two games'));
     } else {
-      try {
-        await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: _emailController.text,
-                password: _passwordController.text)
-            .then((userCredential) {
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(userCredential.user!.uid)
-              .set({
-            'id': userCredential.user!.uid,
-            'email': _emailController.text,
-            'pseudo': _usernameController.text,
-            'photoURL': null,
-          });
-          for (var i = 0; i < gamesFollow.length; i++) {
-            FirebaseFirestore.instance
-                .collection('users')
-                .doc(userCredential.user!.uid)
-                .collection('games')
-                .doc(gamesFollow[i].data()['name'])
-                .set({
-              'name': gamesFollow[i].data()['name'],
-              'imageUrl': gamesFollow[i].data()['imageUrl']
-            });
-          }
-        });
-        Navigator.pushNamedAndRemoveUntil(
-            context, NavScreenRoute, (route) => false);
-      } catch (e) {
-        SnackBar snackBar = SnackBar(
-            backgroundColor: Color(0xFF222831),
-            content: Container(
-              height: 30,
-              width: SizeConfig.screenWidth,
-              alignment: Alignment.center,
-              child: Text(
-                'Try again',
-                style: mystyle(12, Colors.white),
-              ),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
+      AuthService.instance
+          .registerUser(context, gamesFollow, username, email, password);
     }
   }
 
@@ -153,68 +114,86 @@ class RegisterScreenState extends State<RegisterScreen> {
       Color(0xFF947B8F),
     ];
 
-    return Scaffold(
-      body: AnimatedContainer(
-        duration: _duration,
-        curve: Curves.easeInOut,
-        width: double.infinity,
-        height: SizeConfig.screenHeight,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDayMood ? lightBgColors : darkBgColors,
-          ),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
+    return WillPopScope(
+        child: Scaffold(
+          body: AnimatedContainer(
+            duration: _duration,
+            curve: Curves.easeInOut,
+            width: double.infinity,
+            height: SizeConfig.screenHeight,
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
-                Theme.of(context).scaffoldBackgroundColor
-              ])),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: 75,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 25.0, left: 15.0),
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.arrow_back_ios,
-                          size: 25,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: isDayMood ? lightBgColors : darkBgColors,
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
+                    Theme.of(context).scaffoldBackgroundColor
+                  ])),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 75,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 25.0, left: 15.0),
+                      child: GestureDetector(
+                        onTap: () => Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    WelcomeScreen()),
+                            (route) => false),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.arrow_back_ios,
+                              size: 25,
+                            ),
+                            Text(
+                              'Back',
+                              style: mystyle(16, Colors.white60),
+                            )
+                          ],
                         ),
-                        Text(
-                          'Back',
-                          style: mystyle(16, Colors.black38),
-                        )
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                  Expanded(
+                      child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      if (index == 0) {
+                        setState(() {
+                          currentPageIndex = 0;
+                        });
+                      } else {
+                        _hideKeyboard();
+                        setState(() {
+                          currentPageIndex = 1;
+                        });
+                      }
+                    },
+                    children: [firstPage(), secondPage()],
+                  )),
+                  Container(
+                    height: 50,
+                    alignment: Alignment.center,
+                    child: bottomBar(),
+                  ),
+                ],
               ),
-              Expanded(
-                  child: PageView(
-                physics: NeverScrollableScrollPhysics(),
-                controller: _pageController,
-                children: [firstPage(), secondPage()],
-              )),
-              Container(
-                height: 50,
-                alignment: Alignment.center,
-                child: bottomBar(),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-    );
+        onWillPop: () => _willPopCallback());
   }
 
   Widget firstPage() {
@@ -222,7 +201,7 @@ class RegisterScreenState extends State<RegisterScreen> {
       children: [
         Container(
           width: MediaQuery.of(context).size.width,
-          height: 80,
+          height: 100,
           child: Column(
             children: [
               Text(
@@ -233,6 +212,9 @@ class RegisterScreenState extends State<RegisterScreen> {
                 of: 20,
               ),
               Text('Enter your personnal information'),
+              VerticalSpacing(
+                of: 20.0,
+              )
             ],
           ),
         ),
@@ -243,17 +225,12 @@ class RegisterScreenState extends State<RegisterScreen> {
               Container(
                 width: SizeConfig.screenWidth,
                 margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                child: TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                      fillColor: Theme.of(context).canvasColor,
-                      filled: true,
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email),
-                      labelStyle: mystyle(15),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                ),
+                child: TextFieldCustom(
+                    context: context,
+                    controller: _emailController,
+                    label: 'Email',
+                    obscure: false,
+                    icon: Icons.mail),
               ),
               VerticalSpacing(
                 of: 20,
@@ -261,37 +238,25 @@ class RegisterScreenState extends State<RegisterScreen> {
               Container(
                 width: SizeConfig.screenWidth,
                 margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                child: TextField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                      fillColor: Theme.of(context).canvasColor,
-                      filled: true,
-                      labelText: 'Username',
-                      prefixIcon: Icon(Icons.person),
-                      labelStyle: mystyle(15),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                ),
+                child: TextFieldCustom(
+                    context: context,
+                    controller: _usernameController,
+                    label: 'Username',
+                    obscure: false,
+                    icon: Icons.person),
               ),
               VerticalSpacing(
                 of: 20,
               ),
               Container(
-                width: SizeConfig.screenWidth,
-                margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                child: TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      fillColor: Theme.of(context).canvasColor,
-                      filled: true,
-                      labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
-                      labelStyle: mystyle(15),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                ),
-              ),
+                  width: SizeConfig.screenWidth,
+                  margin: EdgeInsets.only(left: 20.0, right: 20.0),
+                  child: TextFieldCustom(
+                      context: context,
+                      controller: _passwordController,
+                      label: 'Password',
+                      obscure: true,
+                      icon: Icons.lock)),
             ],
           ),
         ),
@@ -519,26 +484,76 @@ class RegisterScreenState extends State<RegisterScreen> {
                         curve: Curves.bounceIn);
                   },
                   child: Container(
-                    alignment: Alignment.center,
                     height: 30,
                     width: 60,
+                    child: Center(
+                      child: Text('Prev', style: mystyle(16, Colors.black38)),
+                    ),
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: Theme.of(context).accentColor.withOpacity(0.5)),
-                    child: Text(
-                      'Prev',
-                      style: mystyle(16, Colors.black38),
-                    ),
+                        borderRadius: BorderRadius.circular(15),
+                        gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).accentColor
+                            ])),
                   ),
                 )
-              : SizedBox(),
+              : SizedBox(
+                  height: 30,
+                  width: 60,
+                ),
+        ),
+        Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 3.0),
+              child: Container(
+                height: currentPageIndex == 0 ? 20 : 15,
+                width: currentPageIndex == 0 ? 20 : 15,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: currentPageIndex == 0
+                            ? [
+                                Theme.of(context).primaryColor,
+                                Theme.of(context).accentColor
+                              ]
+                            : [Colors.white60, Colors.white60]),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black)),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 3.0),
+              child: Container(
+                height: currentPageIndex == 1 ? 20 : 15,
+                width: currentPageIndex == 1 ? 20 : 15,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: currentPageIndex == 1
+                            ? [
+                                Theme.of(context).primaryColor,
+                                Theme.of(context).accentColor
+                              ]
+                            : [Colors.white60, Colors.white60]),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black)),
+              ),
+            ),
+          ],
         ),
         Padding(
           padding: EdgeInsets.only(right: 10.0),
           child: currentPageIndex == 0
               ? GestureDetector(
                   onTap: () {
+                    _hideKeyboard();
                     setState(() {
                       currentPageIndex = 1;
                     });
@@ -547,30 +562,47 @@ class RegisterScreenState extends State<RegisterScreen> {
                         curve: Curves.bounceIn);
                   },
                   child: Container(
-                    alignment: Alignment.center,
                     height: 30,
                     width: 60,
+                    child: Center(
+                      child: Text('Next', style: mystyle(16, Colors.black38)),
+                    ),
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: Theme.of(context).accentColor.withOpacity(0.5)),
-                    child: Text(
-                      'Next',
-                      style: mystyle(16, Colors.black38),
-                    ),
+                        borderRadius: BorderRadius.circular(15),
+                        gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).accentColor
+                            ])),
                   ),
                 )
               : GestureDetector(
-                  onTap: () => registerUser(),
+                  onTap: () => _registerAccount(
+                      _emailController.text,
+                      _passwordController.text,
+                      _usernameController.text,
+                      gamesFollow),
                   child: Container(
-                    alignment: Alignment.center,
                     height: 30,
                     width: 60,
+                    child: Center(
+                        child: Icon(
+                      Icons.check,
+                      color: Colors.black38,
+                    )),
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: Theme.of(context).accentColor.withOpacity(0.5)),
-                    child: Icon(Icons.check),
+                        borderRadius: BorderRadius.circular(15),
+                        gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).accentColor
+                            ])),
                   ),
                 ),
         ),

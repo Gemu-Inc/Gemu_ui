@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:Gemu/ui/screens/Profil/posts_profil_screen.dart';
-import 'package:Gemu/ui/screens/Profil/followers.dart';
-import 'package:Gemu/ui/screens/Profil/follows.dart';
+import 'package:gemu/ui/screens/Profil/posts_profil_screen.dart';
+import 'package:gemu/ui/screens/Profil/followers.dart';
+import 'package:gemu/ui/screens/Profil/follows.dart';
 
 class ProfileView extends StatefulWidget {
   final String? idUser;

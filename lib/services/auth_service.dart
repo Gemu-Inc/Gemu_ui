@@ -1,42 +1,120 @@
 import 'dart:async';
-import 'package:Gemu/locator.dart';
-import 'package:Gemu/models/user.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:Gemu/services/database_service.dart';
+
+import 'package:gemu/services/database_service.dart';
+import 'package:gemu/ui/controller/log_controller.dart';
+import 'package:gemu/ui/widgets/snack_bar_custom.dart';
 
 class AuthService {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final DatabaseService? _firestoreService = locator<DatabaseService>();
+  static final instance = AuthService._();
+  AuthService._();
 
-  // GET change about status connection
-  Stream<User?> get onAuthStateChanged => _firebaseAuth.authStateChanges();
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool get isSignedIn => _auth.currentUser != null;
 
-  // GET UID
-  Future<String> getCurrentUID() async {
-    var currentUser = _firebaseAuth.currentUser!.uid;
-    print(currentUser);
-    return currentUser;
+  //Voir les changements au niveau de la connexion de l'utilisateur sur le device
+  Stream<User?> authStateChange() => _auth.authStateChanges();
+
+  //Se connecter
+  Future<void> signIn(
+      {required BuildContext context,
+      required String email,
+      required String password}) async {
+    if (email.isNotEmpty && password.isNotEmpty) {
+      try {
+        await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => LogController()),
+            (route) => false);
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'invalid-email') {
+          print('Invalid email');
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBarCustom(error: 'Try again, invalid email'));
+        } else if (e.code == 'user-disabled') {
+          print('user disabled');
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBarCustom(error: 'Try again, user disabled'));
+        } else if (e.code == 'user-not-found') {
+          print('No user found for that email.');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+              error: 'Try again, user not found for that email'));
+        } else if (e.code == 'wrong-password') {
+          print('Wrong password provided for that user.');
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBarCustom(error: 'Try again, wrong password for that user'));
+        } else {
+          print('Try again');
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBarCustom(error: 'Try again'));
+        }
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBarCustom(error: 'Try again, no email or password'));
+    }
   }
 
-  UserModel? _currentUser;
-  UserModel? get currentUser => _currentUser;
-
-  Future updateEmail(
-      {required String password, required String newEmail}) async {
-    var user = _firebaseAuth.currentUser!;
+  //Créer un utilisateur
+  Future<void> registerUser(BuildContext context, List<dynamic> gamesFollow,
+      String username, String email, String password) async {
     try {
-      var authResult = await user.reauthenticateWithCredential(
-          EmailAuthProvider.credential(email: user.email!, password: password));
+      final UserCredential user = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      String uid = user.user!.uid;
+      Map<String, dynamic> map = {
+        'id': uid,
+        'email': email,
+        'username': username,
+        'imageUrl': null
+      };
+      await DatabaseService.instance.addUser(uid, gamesFollow, map);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (BuildContext context) => LogController()),
+          (route) => false);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBarCustom(error: 'Email already use, try again'));
+      } else if (e.code == 'invalid-email') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBarCustom(error: 'Invalid email, try again'));
+      } else if (e.code == 'operation-not-allowed') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBarCustom(error: 'Operation not allowed'));
+      } else if (e.code == 'weak-password') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBarCustom(error: 'Weak password, try again'));
+      }
+    }
+  }
+
+  //Fonction de déconnexion de l'application
+  Future signOut() => _auth.signOut();
+
+  //Update
+  static Future updateEmail(
+      {required String password, required String newEmail}) async {
+    try {
+      var email = FirebaseAuth.instance.currentUser!.email;
+      AuthCredential authCredential =
+          EmailAuthProvider.credential(email: email!, password: password);
+      UserCredential authResult = await FirebaseAuth.instance.currentUser!
+          .reauthenticateWithCredential(authCredential);
       await authResult.user!.updateEmail(newEmail);
     } catch (e) {
       return print(e);
     }
   }
 
-  Future updatePassword(
+  static Future updatePassword(
       {required String currentPassword, required String newPassword}) async {
-    var user = _firebaseAuth.currentUser!;
+    var user = _auth.currentUser!;
     try {
       var authResult = await user.reauthenticateWithCredential(
           EmailAuthProvider.credential(
@@ -44,74 +122,6 @@ class AuthService {
       await authResult.user!.updatePassword(newPassword);
     } catch (e) {
       return print(e);
-    }
-  }
-
-  Future loginWithEmail({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      var authResult = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      await _populateCurrentUser(authResult.user);
-      return authResult.user != null;
-    } catch (e) {
-      return print(e);
-    }
-  }
-
-  Future signUpWithEmail({
-    required String email,
-    required String password,
-    required String pseudo,
-    required String? photoURL,
-    required String points,
-  }) async {
-    try {
-      var authResult = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // create a new user profile on firestore
-      _currentUser = UserModel(
-          id: authResult.user!.uid,
-          email: email,
-          pseudo: pseudo,
-          photoURL: photoURL,
-          points: points);
-
-      await _firestoreService!.createUser(_currentUser!);
-
-      return authResult.user != null;
-    } catch (e) {
-      return print(e);
-    }
-  }
-
-  Future<bool> isUserLoggedIn() async {
-    var user = _firebaseAuth.currentUser;
-    await _populateCurrentUser(user);
-    return user != null;
-  }
-
-  Future signOut() async {
-    await _firebaseAuth.signOut();
-    print('Signing out user');
-  }
-
-  Future _populateCurrentUser(User? user) async {
-    if (user != null) {
-      _currentUser =
-          await (_firestoreService!.getUser(user.uid) as FutureOr<UserModel?>);
-      print('${_currentUser!.pseudo} is log');
-      return user;
-    } else {
-      print('No user log');
-      return null;
     }
   }
 }

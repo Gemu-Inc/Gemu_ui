@@ -9,9 +9,9 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as time;
 
-import 'package:Gemu/constants/route_names.dart';
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/ui/screens/Navigation/nav_screen.dart';
+import 'package:gemu/ui/constants/route_names.dart';
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/controller/navigation_controller.dart';
 
 class PictureScreen extends StatefulWidget {
   final File file;
@@ -477,7 +477,12 @@ class PictureScreenState extends State<PictureScreen>
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      NavScreen()),
+                                                      NavController(
+                                                        uid: FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid,
+                                                      )),
                                               (route) => false);
                                         },
                                         child: Text('Oui')),

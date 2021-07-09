@@ -1,8 +1,8 @@
-import 'package:Gemu/constants/variables.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import 'package:Gemu/models/user.dart';
+import 'package:gemu/models/user.dart';
+import 'package:gemu/ui/constants/constants.dart';
 
 import 'messages_view.dart';
 
@@ -17,7 +17,7 @@ class UserRow extends StatelessWidget {
     return GestureDetector(
         onTap: () => createConversation(context),
         child: ListTile(
-            leading: contact.photoURL == null
+            leading: contact.imageUrl == null
                 ? Container(
                     height: 45,
                     width: 45,
@@ -35,17 +35,17 @@ class UserRow extends StatelessWidget {
                         image: DecorationImage(
                             fit: BoxFit.cover,
                             image:
-                                CachedNetworkImageProvider(contact.photoURL!))),
+                                CachedNetworkImageProvider(contact.imageUrl!))),
                   ),
             title: Text(
-              contact.pseudo!,
+              contact.username,
               style: mystyle(12),
             ),
             trailing: Icon(Icons.message)));
   }
 
   void createConversation(BuildContext context) {
-    String convoID = getConvoID(uid, contact.id);
+    String convoID = getConvoID(uid, contact.uid);
     Navigator.push(
         context,
         MaterialPageRoute(

@@ -1,67 +1,101 @@
-import 'package:Gemu/screensmodels/Reglages/reglages_screen_model.dart';
 import 'package:flutter/material.dart';
-import 'package:stacked/stacked.dart';
+
+import 'package:gemu/services/auth_service.dart';
+import 'package:gemu/ui/controller/log_controller.dart';
+import 'package:gemu/ui/screens/Reglages/Design/design_screen.dart';
+import 'package:gemu/ui/screens/Reglages/Compte/edit_profile_screen.dart';
+import 'package:gemu/ui/widgets/app_bar_custom.dart';
+import 'package:gemu/ui/widgets/alert_dialog_custom.dart';
+import 'package:gemu/models/user.dart';
 
 class ReglagesScreen extends StatelessWidget {
-  const ReglagesScreen({Key? key}) : super(key: key);
+  final UserModel user;
+
+  const ReglagesScreen({Key? key, required this.user}) : super(key: key);
+
+  _signOut(BuildContext context) async {
+    await AuthService.instance.signOut();
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => LogController()),
+        (route) => false);
+  }
+
+  Future confirmDisconnect(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialogCustom(
+              context,
+              'Déconnexion',
+              'Êtes-vous sur de vouloir vous déconnecter?',
+              [disconnectBtn(context), closeAlert(context)]);
+        });
+  }
+
+  TextButton disconnectBtn(BuildContext context) {
+    return TextButton(
+        onPressed: () => _signOut(context),
+        child: Text(
+          'Oui',
+          style: TextStyle(color: Colors.blue),
+        ));
+  }
+
+  TextButton closeAlert(BuildContext context) {
+    return TextButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Text(
+          'Non',
+          style: TextStyle(color: Colors.red),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<ReglagesScreenModel>.reactive(
-        viewModelBuilder: () => ReglagesScreenModel(),
-        builder: (context, model, child) => Scaffold(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              appBar: PreferredSize(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).accentColor
-                        ])),
-                    child: AppBar(
-                      elevation: 0,
-                      backgroundColor: Colors.transparent,
-                      leading: IconButton(
-                          icon: Icon(Icons.arrow_back_ios),
-                          onPressed: () => model.navigateToProfile()),
-                      title: Text("Réglages"),
-                      actions: [
-                        IconButton(
-                            icon: Icon(Icons.logout),
-                            onPressed: () => model.userSignOut())
-                      ],
-                    ),
-                  ),
-                  preferredSize: Size.fromHeight(60)),
-              body: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  Padding(padding: EdgeInsets.only(top: 10.0)),
-                  ListTile(
-                    title: Text('PARAMÈTRES UTILISATEUR'),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.account_box),
-                    title: Text('Mon compte'),
-                    onTap: () => model.navigateToEditProfile(),
-                  ),
-                  Divider(),
-                  ListTile(
-                    title: Text('PARAMÈTRES DE L\'APPLICATION'),
-                  ),
-                  ListTile(
-                      leading: Icon(Icons.design_services),
-                      title: Text('Apparence'),
-                      onTap: () => model.navigateToDesign()),
-                  Divider(),
-                  ListTile(
-                    title: Text('INFORMATIONS SUR L\'APPLICATION'),
-                  ),
-                ],
-              ),
-            ));
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBarCustom(context: context, title: 'Réglages', actions: [
+        IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => confirmDisconnect(context))
+      ]),
+      body: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          Padding(padding: EdgeInsets.only(top: 10.0)),
+          ListTile(
+            title: Text('PARAMÈTRES UTILISATEUR'),
+          ),
+          ListTile(
+            leading: Icon(Icons.account_box),
+            title: Text('Mon compte'),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    settings: RouteSettings(name: ('/EditProfile')),
+                    builder: (BuildContext context) =>
+                        EditProfileScreen(user: user))),
+          ),
+          Divider(),
+          ListTile(
+            title: Text('PARAMÈTRES DE L\'APPLICATION'),
+          ),
+          ListTile(
+              leading: Icon(Icons.design_services),
+              title: Text('Apparence'),
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => DesignScreen()))),
+          Divider(),
+          ListTile(
+            title: Text('INFORMATIONS SUR L\'APPLICATION'),
+          ),
+        ],
+      ),
+    );
   }
 }

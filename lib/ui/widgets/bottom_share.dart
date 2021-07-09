@@ -1,9 +1,9 @@
 import 'dart:async';
-
-import 'package:Gemu/ui/screens/Share/Post/camera.dart';
-import 'package:Gemu/ui/screens/Share/Post/create_post_screen.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+
+import 'package:gemu/ui/screens/Share/Post/camera.dart';
+import 'package:gemu/ui/screens/Share/Post/create_post_screen.dart';
 
 class BottomShare extends StatefulWidget {
   @override
@@ -187,7 +187,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                               Align(
                                 alignment: Alignment.center,
                                 child: ImageIcon(
-                                  AssetImage('lib/assets/images/share.png'),
+                                  AssetImage('assets/images/share.png'),
                                   size: 30,
                                   color: Theme.of(context).canvasColor,
                                 ),

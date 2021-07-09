@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:Gemu/ui/screens/Share/Post/Picture/picture_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:Gemu/constants/variables.dart';
+import 'package:gemu/ui/screens/Share/Post/Picture/picture_screen.dart';
+import 'package:gemu/ui/constants/constants.dart';
 
 class PictureEditorScreen extends StatefulWidget {
   final File file;

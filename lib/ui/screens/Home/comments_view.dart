@@ -4,20 +4,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:timeago/timeago.dart' as time;
 
-import 'package:Gemu/constants/variables.dart';
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/services/database_service.dart';
 import 'profile_view.dart';
 
 class CommentsView extends StatefulWidget {
-  final String? idPost;
+  final String idPost, idUser;
 
-  CommentsView({this.idPost});
+  CommentsView({required this.idPost, required this.idUser});
 
   @override
   CommentsViewState createState() => CommentsViewState();
 }
 
 class CommentsViewState extends State<CommentsView> {
-  String? uid;
+  late String uid;
 
   TextEditingController _commentController = TextEditingController();
 
@@ -71,6 +72,9 @@ class CommentsViewState extends State<CommentsView> {
         .collection('posts')
         .doc(widget.idPost)
         .update({'commentcount': doc.data()!['commentcount'] + 1});
+
+    DatabaseService.addNotification(
+        uid, widget.idUser, "a ajouté un commentaire", "comment");
   }
 
   upComment(String? id) async {

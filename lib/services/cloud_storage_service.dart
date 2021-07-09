@@ -1,9 +1,16 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CloudStorageService {
-  Future<CloudStorageResult> uploadImage(
+  static final instance = CloudStorageService._();
+  CloudStorageService._();
+
+  static Future<PickedFile?> selectImage() async {
+    return await ImagePicker().getImage(source: ImageSource.gallery);
+  }
+
+  static Future<CloudStorageResult> uploadImage(
       {required File imageToUpload, required String title}) async {
     var imageFileName = title;
 
@@ -39,7 +46,7 @@ class CloudStorageService {
     return CloudStorageResult(imageUrl: url, imageFileName: imageFileName);
   }
 
-  Future deleteImage({required imageFileName}) async {
+  static Future deleteImage({required imageFileName}) async {
     final Reference firebaseStorageRef =
         FirebaseStorage.instance.ref().child('users/' + imageFileName);
 

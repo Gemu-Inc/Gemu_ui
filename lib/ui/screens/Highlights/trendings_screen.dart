@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/ui/screens/Home/components/actions_postbar.dart';
-import 'package:Gemu/ui/screens/Home/components/content_postdescription.dart';
-import 'package:Gemu/ui/screens/Home/components/picture_item.dart';
-import 'package:Gemu/ui/screens/Home/components/video_player_item.dart';
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/screens/Home/components/actions_postbar.dart';
+import 'package:gemu/ui/screens/Home/components/content_postdescription.dart';
+import 'package:gemu/ui/screens/Home/components/picture_item.dart';
+import 'package:gemu/ui/screens/Home/components/video_player_item.dart';
 
 class TrendingsScreen extends StatefulWidget {
   @override

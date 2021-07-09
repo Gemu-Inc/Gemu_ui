@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:Gemu/constants/variables.dart';
-import 'package:Gemu/ui/screens/Share/Post/Video/video_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/screens/Share/Post/Video/video_screen.dart';
 
 class VideoEditorScreen extends StatefulWidget {
   final File? file;

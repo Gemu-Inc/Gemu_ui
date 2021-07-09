@@ -1,41 +1,40 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
-  final String? id;
-  final String? pseudo;
-  final String? email;
-  final String? photoURL;
-  final String? points;
-  //final List<String>? idGames;
+  String uid;
+  String username;
+  String email;
+  String? imageUrl;
+  DocumentReference ref;
+  String? documentId;
 
   UserModel({
-    this.id,
-    this.pseudo,
-    this.email,
-    this.photoURL,
-    this.points,
-    //this.idGames
+    required this.ref,
+    this.documentId,
+    required this.uid,
+    required this.username,
+    required this.email,
+    this.imageUrl,
   });
 
-  factory UserModel.fromMap(Map<String, dynamic> data) {
+  factory UserModel.fromMap(
+      DocumentSnapshot snapshot, Map<String, dynamic> data) {
     return UserModel(
-      id: data['id'],
-      pseudo: data['pseudo'],
+      ref: snapshot.reference,
+      documentId: snapshot.id,
+      uid: data['id'],
+      username: data['username'],
       email: data['email'],
-      photoURL: data['photoURL'],
-      points: data['points'],
-      /*idGames: List<String>.from(data['idGames'].map((item) {
-          return item;
-        }).toList())*/
+      imageUrl: data['imageUrl'],
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'pseudo': pseudo,
+      'id': uid,
+      'username': username,
       'email': email,
-      'photoURL': photoURL,
-      'points': points,
-      //'idGames': idGames
+      'imageUrl': imageUrl,
     };
   }
 }

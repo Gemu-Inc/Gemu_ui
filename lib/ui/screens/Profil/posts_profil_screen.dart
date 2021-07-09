@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 
-import 'package:Gemu/ui/screens/Home/components/picture_item.dart';
-import 'package:Gemu/ui/screens/Home/components/video_player_item.dart';
-import 'package:Gemu/ui/screens/Home/components/actions_postbar.dart';
-import 'package:Gemu/ui/screens/Home/components/content_postdescription.dart';
-import 'package:helpers/helpers/misc.dart';
+import 'package:gemu/ui/screens/Home/components/picture_item.dart';
+import 'package:gemu/ui/screens/Home/components/video_player_item.dart';
+import 'package:gemu/ui/screens/Home/components/actions_postbar.dart';
+import 'package:gemu/ui/screens/Home/components/content_postdescription.dart';
 
 import 'comment_postbar.dart';
 

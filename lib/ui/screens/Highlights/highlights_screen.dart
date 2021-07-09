@@ -4,10 +4,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:Gemu/ui/widgets/clipper_appbar.dart';
-import 'package:Gemu/size_config.dart';
-import 'package:Gemu/ui/screens/Highlights/choix_categories.dart';
-import 'package:Gemu/constants/variables.dart';
+import 'package:gemu/ui/widgets/clipper_custom.dart';
+import 'package:gemu/ui/constants/size_config.dart';
+import 'package:gemu/ui/screens/Highlights/choix_categories.dart';
+import 'package:gemu/ui/constants/constants.dart';
 
 import 'search_screen.dart';
 import 'hashtag_post_view.dart';
@@ -16,13 +16,15 @@ import 'trendings_screen.dart';
 import 'discover_screen.dart';
 
 class HighlightsScreen extends StatefulWidget {
-  const HighlightsScreen({Key? key}) : super(key: key);
+  final String uid;
+
+  const HighlightsScreen({Key? key, required this.uid}) : super(key: key);
 
   HighlightsScreenState createState() => HighlightsScreenState();
 }
 
 class HighlightsScreenState extends State<HighlightsScreen>
-    with TickerProviderStateMixin {
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   late AnimationController _controllerRotate;
   late PanelController _panelController;
   late Animation _animationRotate;
@@ -44,6 +46,9 @@ class HighlightsScreenState extends State<HighlightsScreen>
     TrendingsScreen(),
     DiscoverScreen()
   ];
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -89,6 +94,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     SizeConfig().init(context);
     return dataIsThere
         ? SlidingUpPanel(
@@ -166,7 +172,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
 
   Widget panel() {
     return ClipPath(
-      clipper: ClipperCustomAppBar(),
+      clipper: ClipperCustom(),
       child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
