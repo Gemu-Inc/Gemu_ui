@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:video_compress/video_compress.dart';
@@ -10,11 +9,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:video_player/video_player.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:timeago/timeago.dart' as time;
 
-import 'package:gemu/ui/constants/route_names.dart';
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/controller/navigation_controller.dart';
+import 'package:gemu/ui/widgets/snack_bar_custom.dart';
+import 'package:gemu/ui/widgets/alert_dialog_custom.dart';
 
 class VideoScreen extends StatefulWidget {
   final File file;
@@ -132,268 +131,81 @@ class VideoScreenState extends State<VideoScreen>
         privacy = 'Private';
       }
 
-      var currentUser = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot<Map<String, dynamic>> userdoc = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(currentUser)
-          .get();
-      var alldocs = await FirebaseFirestore.instance
-          .collection('posts')
-          .where('uid', isEqualTo: currentUser)
-          .get();
-      int length = alldocs.docs.length;
+      int date = DateTime.now().millisecondsSinceEpoch.toInt();
+      String postName = 'post${me!.uid}$date';
 
-      var doc = await FirebaseFirestore.instance
-          .collection('posts')
-          .doc('Video$currentUser-$length')
-          .get();
-      if (!doc.exists) {
-        String video = await uploadVideoToStorage(
-            videoPath, "Video$currentUser-$length", nameGame);
-        String previewImage = await uploadImagePreviewToStorage(
-            videoPath, "Video$currentUser-$length", nameGame);
-        FirebaseFirestore.instance
-            .collection('posts')
-            .doc("Video$currentUser-$length")
-            .set({
-          'uid': currentUser,
-          'username': userdoc.data()!['pseudo'],
-          'profilpicture': userdoc.data()!['photoURL'],
-          'id': "Video$currentUser-$length",
-          'game': nameGame,
-          'up': [],
-          'down': [],
-          'commentcount': 0,
-          'caption': _captionController.text,
-          'hashtags': hashtagsSelected,
-          'videoUrl': video,
-          'previewImage': previewImage,
-          'privacy': privacy,
-          'viewcount': 0,
-          'time': DateTime.now(),
-          'popularity': 0
-        });
+      String video = await uploadVideoToStorage(videoPath, postName, nameGame);
+      String previewImage =
+          await uploadImagePreviewToStorage(videoPath, postName, nameGame);
+      FirebaseFirestore.instance.collection('posts').doc(postName).set({
+        'uid': me!.uid,
+        'type': 'video',
+        'id': postName,
+        'gameName': gameName,
+        'gameImage': gameImage,
+        'upcount': 0,
+        'downcount': 0,
+        'commentcount': 0,
+        'description': _captionController.text,
+        'hashtags': hashtagsSelected,
+        'postUrl': video,
+        'previewImage': previewImage,
+        'privacy': privacy,
+        'viewcount': 0,
+        'date': date,
+      });
 
-        if (hashtagsSelected.length != 0) {
-          var hashtagdocs =
-              await FirebaseFirestore.instance.collection('hashtags').get();
-          int hashtagsLength = hashtagdocs.docs.length;
+      if (hashtagsSelected.length != 0) {
+        FirebaseFirestore.instance.collection('hashtags').get();
 
-          for (int i = 0; i < hashtagsSelected.length; i++) {
-            var docHashtags = await FirebaseFirestore.instance
-                .collection('hashtags')
-                .where('name', isEqualTo: hashtagsSelected[i])
-                .get();
-            for (var item in docHashtags.docs) {
-              id = item.data()['id'];
-              postsCount = item.data()['postsCount'];
-            }
-            if (docHashtags.docs.isEmpty) {
-              FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .doc(hashtagsSelected[i])
-                  .set({
-                'id': hashtagsSelected[i],
-                'name': hashtagsSelected[i],
-                'postsCount': 1
-              });
-              FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .doc(hashtagsSelected[i])
-                  .collection('posts')
-                  .doc("Video$currentUser-$length")
-                  .set({
-                'uid': currentUser,
-                'username': userdoc.data()!['pseudo'],
-                'profilpicture': userdoc.data()!['photoURL'],
-                'id': "Video$currentUser-$length",
-                'game': nameGame,
-                'up': [],
-                'down': [],
-                'commentcount': 0,
-                'caption': _captionController.text,
-                'hashtags': hashtagsSelected,
-                'videoUrl': video,
-                'previewImage': previewImage,
-                'privacy': privacy,
-                'viewcount': 0,
-                'time': DateTime.now(),
-                'popularity': 0
-              });
-            } else {
-              FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .doc(id)
-                  .update({'postsCount': postsCount! + 1});
-              FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .doc(id)
-                  .collection('posts')
-                  .doc("Video$currentUser-$length")
-                  .set({
-                'uid': currentUser,
-                'username': userdoc.data()!['pseudo'],
-                'profilpicture': userdoc.data()!['photoURL'],
-                'id': "Video$currentUser-$length",
-                'game': nameGame,
-                'up': [],
-                'down': [],
-                'commentcount': 0,
-                'caption': _captionController.text,
-                'hashtags': hashtagsSelected,
-                'videoUrl': video,
-                'previewImage': previewImage,
-                'privacy': privacy,
-                'viewcount': 0,
-                'time': DateTime.now(),
-                'popularity': 0
-              });
-            }
-            if (hashtagsSelected.length > 1) {
-              setState(() {
-                hashtagsLength = hashtagsLength + 1;
-              });
-            }
+        for (int i = 0; i < hashtagsSelected.length; i++) {
+          var docHashtags = await FirebaseFirestore.instance
+              .collection('hashtags')
+              .where('name', isEqualTo: hashtagsSelected[i])
+              .get();
+          for (var item in docHashtags.docs) {
+            id = item.data()['id'];
+            postsCount = item.data()['postsCount'];
           }
-        }
-      } else {
-        setState(() {
-          length = length + 1;
-        });
-        var doc = await FirebaseFirestore.instance
-            .collection('posts')
-            .doc('Video$currentUser-$length')
-            .get();
-        if (!doc.exists) {
-          String video = await uploadVideoToStorage(
-              videoPath, "Video$currentUser-$length", nameGame);
-          String previewImage = await uploadImagePreviewToStorage(
-              videoPath, "Video$currentUser-$length", nameGame);
-          FirebaseFirestore.instance
-              .collection('posts')
-              .doc("Video$currentUser-$length")
-              .set({
-            'uid': currentUser,
-            'username': userdoc.data()!['pseudo'],
-            'profilpicture': userdoc.data()!['photoURL'],
-            'id': "Video$currentUser-$length",
-            'game': nameGame,
-            'up': [],
-            'down': [],
-            'commentcount': 0,
-            'caption': _captionController.text,
-            'hashtags': hashtagsSelected,
-            'videoUrl': video,
-            'previewImage': previewImage,
-            'privacy': privacy,
-            'viewcount': 0,
-            'time': DateTime.now(),
-            'popularity': 0
-          });
 
-          if (hashtagsSelected.length != 0) {
-            var hashtagdocs =
-                await FirebaseFirestore.instance.collection('hashtags').get();
-            int hashtagsLength = hashtagdocs.docs.length;
-
-            for (int i = 0; i < hashtagsSelected.length; i++) {
-              var docHashtags = await FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .where('name', isEqualTo: hashtagsSelected[i])
-                  .get();
-              for (var item in docHashtags.docs) {
-                id = item.data()['id'];
-                postsCount = item.data()['postsCount'];
-              }
-              if (docHashtags.docs.isEmpty) {
-                FirebaseFirestore.instance
-                    .collection('hashtags')
-                    .doc(hashtagsSelected[i])
-                    .set({
-                  'id': hashtagsSelected[i],
-                  'name': hashtagsSelected[i],
-                  'postsCount': 1
-                });
-                FirebaseFirestore.instance
-                    .collection('hashtags')
-                    .doc(hashtagsSelected[i])
-                    .collection('posts')
-                    .doc("Video$currentUser-$length")
-                    .set({
-                  'uid': currentUser,
-                  'username': userdoc.data()!['pseudo'],
-                  'profilpicture': userdoc.data()!['photoURL'],
-                  'id': "Video$currentUser-$length",
-                  'game': nameGame,
-                  'up': [],
-                  'down': [],
-                  'commentcount': 0,
-                  'caption': _captionController.text,
-                  'hashtags': hashtagsSelected,
-                  'videoUrl': video,
-                  'previewImage': previewImage,
-                  'privacy': privacy,
-                  'viewcount': 0,
-                  'time': DateTime.now(),
-                  'popularity': 0
-                });
-              } else {
-                FirebaseFirestore.instance
-                    .collection('hashtags')
-                    .doc(id)
-                    .update({'postsCount': postsCount! + 1});
-                FirebaseFirestore.instance
-                    .collection('hashtags')
-                    .doc(id)
-                    .collection('posts')
-                    .doc("Video$currentUser-$length")
-                    .set({
-                  'uid': currentUser,
-                  'username': userdoc.data()!['pseudo'],
-                  'profilpicture': userdoc.data()!['photoURL'],
-                  'id': "Video$currentUser-$length",
-                  'game': nameGame,
-                  'up': [],
-                  'down': [],
-                  'commentcount': 0,
-                  'caption': _captionController.text,
-                  'hashtags': hashtagsSelected,
-                  'videoUrl': video,
-                  'previewImage': previewImage,
-                  'privacy': privacy,
-                  'viewcount': 0,
-                  'time': DateTime.now(),
-                  'popularity': 0
-                });
-              }
-              if (hashtagsSelected.length > 1) {
-                setState(() {
-                  hashtagsLength = hashtagsLength + 1;
-                });
-              }
-            }
+          if (docHashtags.docs.isEmpty) {
+            FirebaseFirestore.instance
+                .collection('hashtags')
+                .doc(hashtagsSelected[i])
+                .set({
+              'id': hashtagsSelected[i],
+              'name': hashtagsSelected[i],
+              'postsCount': 1
+            });
+            FirebaseFirestore.instance
+                .collection('hashtags')
+                .doc(hashtagsSelected[i])
+                .collection('posts')
+                .doc(postName)
+                .set({});
+          } else {
+            FirebaseFirestore.instance
+                .collection('hashtags')
+                .doc(id)
+                .update({'postsCount': postsCount! + 1});
+            FirebaseFirestore.instance
+                .collection('hashtags')
+                .doc(id)
+                .collection('posts')
+                .doc(postName)
+                .set({});
           }
         }
       }
 
-      Navigator.pushNamedAndRemoveUntil(
-          context, NavScreenRoute, (route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => NavController(uid: me!.uid)),
+          (route) => false);
     } catch (e) {
       print(e);
     }
-  }
-
-  void showInSnackBar(String message) {
-    ScaffoldMessenger(
-        child: SnackBar(
-            backgroundColor: Theme.of(context).canvasColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            content: Text(
-              message,
-              style: mystyle(12),
-            )));
   }
 
   double getRadianFromDegree(double degree) {
@@ -541,44 +353,37 @@ class VideoScreenState extends State<VideoScreen>
                                     await showDialog(
                                         context: context,
                                         builder: (context) {
-                                          return AlertDialog(
-                                            backgroundColor: Theme.of(context)
-                                                .scaffoldBackgroundColor,
-                                            title: Text('Abandon'),
-                                            content: Text(
-                                                'Voulez-vous abandonner la création de ce post?'),
-                                            actions: [
-                                              TextButton(
-                                                  onPressed: () {
-                                                    Navigator
-                                                        .pushAndRemoveUntil(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        NavController(
-                                                                          uid: FirebaseAuth
-                                                                              .instance
-                                                                              .currentUser!
-                                                                              .uid,
-                                                                        )),
-                                                            (route) => false);
-                                                  },
-                                                  child: Text('Oui')),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(
-                                                    context,
-                                                  ).pop(false);
-                                                },
-                                                child: Text(
-                                                  'Non',
-                                                  style: TextStyle(
-                                                      color: Colors.red),
-                                                ),
-                                              )
-                                            ],
-                                          );
+                                          return AlertDialogCustom(
+                                              context,
+                                              'Abandon',
+                                              'Voulez-vous abandonner la création de ce post?',
+                                              [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pushAndRemoveUntil(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  NavController(
+                                                                      uid: me!
+                                                                          .uid)),
+                                                          (route) => false);
+                                                    },
+                                                    child: Text(
+                                                      'Oui',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.blue[200]),
+                                                    )),
+                                                TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    child: Text('Non',
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .red[200])))
+                                              ]);
                                         });
                                   },
                                   icon: Icon(Icons.clear)),
@@ -601,30 +406,37 @@ class VideoScreenState extends State<VideoScreen>
   }
 
   Widget _save() {
-    return GestureDetector(
-        onTap: () {
-          File file = widget.file;
-          uploadVideo(file.path, gameName);
-        },
-        child: Container(
-          height: 50,
-          width: 50,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Theme.of(context).primaryColor.withOpacity(0.7),
-                  Theme.of(context).accentColor.withOpacity(0.7)
-                ]),
-          ),
-          child: Icon(
-            Icons.save,
-            color: Colors.white,
-          ),
-        ));
+    return Padding(
+        padding: EdgeInsets.only(right: 10.0, bottom: 10.0),
+        child: GestureDetector(
+            onTap: () {
+              if (gameName == 'No game') {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+                    error: 'Choississez un jeu pour votre post'));
+              } else {
+                File file = widget.file;
+                uploadVideo(file.path, gameName);
+              }
+            },
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).primaryColor.withOpacity(0.7),
+                      Theme.of(context).accentColor.withOpacity(0.7)
+                    ]),
+              ),
+              child: Icon(
+                Icons.save,
+                color: Colors.white,
+              ),
+            )));
   }
 
   Widget _designBar() {

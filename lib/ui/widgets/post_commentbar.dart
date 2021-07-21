@@ -6,9 +6,8 @@ import 'package:gemu/ui/constants/constants.dart';
 
 class CommentPostBar extends StatefulWidget {
   final String? idPost;
-  final FocusNode? focusNode;
 
-  CommentPostBar({required this.idPost, required this.focusNode});
+  CommentPostBar({required this.idPost});
 
   @override
   CommentPostBarState createState() => CommentPostBarState();
@@ -113,7 +112,6 @@ class CommentPostBarState extends State<CommentPostBar>
                           padding: EdgeInsets.symmetric(horizontal: 15),
                           child: TextField(
                             controller: _commentController,
-                            focusNode: widget.focusNode,
                             decoration: InputDecoration(
                                 hintText: "Type comment",
                                 border: InputBorder.none),
@@ -125,9 +123,6 @@ class CommentPostBarState extends State<CommentPostBar>
                         child: InkWell(
                           onTap: () {
                             publishComment();
-                            if (widget.focusNode!.hasFocus) {
-                              widget.focusNode!.unfocus();
-                            }
                           },
                           child: Text(
                             'Publish',

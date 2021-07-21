@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/providers/conversationProvider.dart';
@@ -7,7 +6,9 @@ import 'package:gemu/ui/providers/conversationProvider.dart';
 import 'Notifications/notifications_screen.dart';
 
 class ActivitiesMenuDrawer extends StatefulWidget {
-  ActivitiesMenuDrawer({Key? key}) : super(key: key);
+  final String uid;
+
+  ActivitiesMenuDrawer({Key? key, required this.uid}) : super(key: key);
 
   @override
   _ActivitiesMenuDrawerState createState() => _ActivitiesMenuDrawerState();
@@ -21,11 +22,9 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
   late AnimationController _activitiesController, _rotateController;
   late Animation _activitiesAnimation, _rotateAnimation;
 
-  bool isDrawer = true;
-
   int whatActivity = 0;
   List<String> activities = [
-    'All activities',
+    'All notifications',
     'Comments',
     'Follows',
     'Up&Down'
@@ -51,6 +50,8 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
   @override
   void initState() {
     super.initState();
+
+    print('init activities');
 
     _tabController = TabController(length: 2, vsync: this);
     _tabController!.addListener(_onTabChanged);
@@ -81,154 +82,91 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
 
   @override
   Widget build(BuildContext context) {
-    final String uid = FirebaseAuth.instance.currentUser!.uid;
-    return isDrawer
-        ? Drawer(
-            child: Scaffold(
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                appBar: PreferredSize(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                            Theme.of(context).primaryColor,
-                            Theme.of(context).accentColor
-                          ])),
-                      child: AppBar(
-                        automaticallyImplyLeading: false,
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        actions: [
-                          IconButton(
-                              icon: Icon(
-                                Icons.zoom_out_map_rounded,
-                                size: 26,
-                              ),
-                              onPressed: () {
-                                if (isDrawer) {
-                                  setState(() {
-                                    isDrawer = false;
-                                  });
-                                }
-                              }),
-                        ],
-                        bottom: PreferredSize(
-                            child: bottomAppBar(),
-                            preferredSize: Size.fromHeight(60)),
-                      ),
-                    ),
-                    preferredSize: Size.fromHeight(120)),
-                body: Stack(
-                  children: [
-                    TabBarView(controller: _tabController, children: [
-                      NotificationsScreen(
-                        whatActivity: activities[whatActivity],
-                      ),
-                      ConversationProvider(uid: uid)
-                    ]),
-                    Align(
-                        alignment: Alignment.topCenter,
-                        child: activitiesPanel()),
-                  ],
-                )))
-        : Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: PreferredSize(
-                child: Container(
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).accentColor
-                      ])),
-                  child: AppBar(
-                    automaticallyImplyLeading: false,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    actions: [
-                      IconButton(
-                          icon: Icon(
-                            Icons.close_fullscreen_rounded,
-                            size: 26,
-                          ),
-                          onPressed: () {
-                            if (!isDrawer) {
-                              setState(() {
-                                isDrawer = true;
-                              });
-                            }
-                          })
-                    ],
-                    bottom: PreferredSize(
-                        child: bottomAppBar(),
-                        preferredSize: Size.fromHeight(60)),
-                  ),
-                ),
-                preferredSize: Size.fromHeight(120)),
-            body: Stack(
-              children: [
-                TabBarView(controller: _tabController, children: [
+    return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          elevation: 6,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).accentColor
+                ])),
+          ),
+          leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back_ios)),
+          title: Text('Activities'),
+          bottom: PreferredSize(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 5.0),
+                child: bottomAppBar(),
+              ),
+              preferredSize: Size.fromHeight(50)),
+        ),
+        body: Stack(
+          children: [
+            TabBarView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _tabController,
+                children: [
                   NotificationsScreen(
                     whatActivity: activities[whatActivity],
                   ),
-                  ConversationProvider(uid: uid)
+                  ConversationProvider(uid: widget.uid)
                 ]),
-                Align(alignment: Alignment.topCenter, child: activitiesPanel()),
-              ],
-            ));
+            Align(alignment: Alignment.topCenter, child: activitiesPanel()),
+          ],
+        ));
   }
 
   Widget bottomAppBar() {
-    return Container(
-        height: 60,
-        decoration: BoxDecoration(),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: Theme.of(context).primaryColor,
-              unselectedLabelColor: Colors.grey,
-              indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).canvasColor),
-              tabs: [
-                Tab(
-                    child: currentTabIndex == 0
-                        ? GestureDetector(
-                            onTap: () {
-                              if (_rotateController.isCompleted) {
-                                _rotateController.reverse();
-                                _activitiesController.reverse();
-                              } else {
-                                _rotateController.forward();
-                                _activitiesController.forward();
-                              }
-                            },
-                            child: Row(
-                              children: [
-                                Text(activities[whatActivity]),
-                                Transform(
-                                    transform: Matrix4.rotationZ(
-                                        getRadianFromDegree(
-                                            _rotateAnimation.value)),
-                                    alignment: Alignment.center,
-                                    child: Icon(
-                                      Icons.expand_more,
-                                    ))
-                              ],
+    return TabBar(
+      controller: _tabController,
+      isScrollable: true,
+      indicatorSize: TabBarIndicatorSize.tab,
+      labelColor: Theme.of(context).primaryColor,
+      unselectedLabelColor: Colors.grey,
+      indicator: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Theme.of(context).canvasColor,
+      ),
+      tabs: [
+        Tab(
+            child: currentTabIndex == 0
+                ? GestureDetector(
+                    onTap: () {
+                      if (_rotateController.isCompleted) {
+                        _rotateController.reverse();
+                        _activitiesController.reverse();
+                      } else {
+                        _rotateController.forward();
+                        _activitiesController.forward();
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Text(activities[whatActivity]),
+                        Transform(
+                            transform: Matrix4.rotationZ(
+                                getRadianFromDegree(_rotateAnimation.value)),
+                            alignment: Alignment.center,
+                            child: Icon(
+                              Icons.expand_more,
                             ))
-                        : Text(activities[whatActivity])),
-                Tab(
-                  text: 'Messages',
-                )
-              ]),
-        ));
+                      ],
+                    ))
+                : Text(activities[whatActivity])),
+        Tab(
+          text: 'Messages',
+        )
+      ],
+    );
   }
 
   Widget activitiesPanel() {

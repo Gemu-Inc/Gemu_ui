@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'package:gemu/ui/screens/Home/components/actions_postbar.dart';
-import 'package:gemu/ui/screens/Home/components/content_postdescription.dart';
-import 'package:gemu/ui/screens/Home/components/picture_item.dart';
-import 'package:gemu/ui/screens/Home/components/video_player_item.dart';
 import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/widgets/picture_item.dart';
+import 'package:gemu/ui/widgets/video_item.dart';
+import 'package:gemu/ui/widgets/post_actionsbar.dart';
+import 'package:gemu/ui/widgets/post_description.dart';
 
 class HashtagPostView extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>>? hashtag;
@@ -78,7 +78,7 @@ class HashtagPostViewState extends State<HashtagPostView> {
 
             return Stack(
               children: [
-                documentSnapshot.data()!['pictureUrl'] != null
+                /*documentSnapshot.data()!['pictureUrl'] != null
                     ? PictureItem(
                         idUser: documentSnapshot.data()!['uid'],
                         idPost: documentSnapshot.data()!['id'],
@@ -88,7 +88,7 @@ class HashtagPostViewState extends State<HashtagPostView> {
                         idUser: documentSnapshot.data()!['uid'],
                         idPost: documentSnapshot.data()!['id'],
                         videoUrl: documentSnapshot.data()!['videoUrl'],
-                      ),
+                      ),*/
                 Positioned(
                     bottom: 30,
                     left: 0,
@@ -98,7 +98,7 @@ class HashtagPostViewState extends State<HashtagPostView> {
                       caption: documentSnapshot.data()!['caption'],
                       hashtags: documentSnapshot.data()!['hashtags'],
                     )),
-                Positioned(
+                /*Positioned(
                     bottom: 30,
                     right: 0,
                     child: ActionsPostBar(
@@ -109,7 +109,7 @@ class HashtagPostViewState extends State<HashtagPostView> {
                           documentSnapshot.data()!['commentcount'].toString(),
                       up: documentSnapshot.data()!['up'],
                       down: documentSnapshot.data()!['down'],
-                    ))
+                    ))*/
               ],
             );
           }),

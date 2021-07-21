@@ -33,7 +33,6 @@ class UserModel {
     return {
       'id': uid,
       'username': username,
-      'email': email,
       'imageUrl': imageUrl,
     };
   }

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/screens/Home/components/actions_postbar.dart';
-import 'package:gemu/ui/screens/Home/components/content_postdescription.dart';
-import 'package:gemu/ui/screens/Home/components/picture_item.dart';
-import 'package:gemu/ui/screens/Home/components/video_player_item.dart';
+import 'package:gemu/ui/widgets/picture_item.dart';
+import 'package:gemu/ui/widgets/video_item.dart';
+import 'package:gemu/ui/widgets/post_actionsbar.dart';
+import 'package:gemu/ui/widgets/post_description.dart';
 
 class DiscoverScreen extends StatefulWidget {
   @override
@@ -111,7 +111,7 @@ class DiscoverScreenState extends State<DiscoverScreen> {
                     DocumentSnapshot<Map<String, dynamic>> post = posts[index];
                     return Stack(
                       children: [
-                        post.data()!['pictureUrl'] != null
+                        /*post.data()!['pictureUrl'] != null
                             ? PictureItem(
                                 idUser: post.data()!['uid'],
                                 idPost: post.data()!['id'],
@@ -121,7 +121,7 @@ class DiscoverScreenState extends State<DiscoverScreen> {
                                 idUser: post.data()!['uid'],
                                 idPost: post.data()!['id'],
                                 videoUrl: post.data()!['videoUrl'],
-                              ),
+                              ),*/
                         Positioned(
                             bottom: 30,
                             left: 0,
@@ -131,7 +131,7 @@ class DiscoverScreenState extends State<DiscoverScreen> {
                               caption: post.data()!['caption'],
                               hashtags: post.data()!['hashtags'],
                             )),
-                        Positioned(
+                        /*Positioned(
                             bottom: 30,
                             right: 0,
                             child: ActionsPostBar(
@@ -142,7 +142,7 @@ class DiscoverScreenState extends State<DiscoverScreen> {
                                   post.data()!['commentcount'].toString(),
                               up: post.data()!['up'],
                               down: post.data()!['down'],
-                            ))
+                            ))*/
                       ],
                     );
                   })

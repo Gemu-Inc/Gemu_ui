@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/services/database_service.dart';
@@ -28,7 +29,7 @@ class _NavControllerState extends State<NavController> {
   GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   late StreamSubscription streamListener;
 
-  final PageController pageController = PageController();
+  final PageController navController = PageController();
 
   int selectedPage = 0;
 
@@ -52,7 +53,7 @@ class _NavControllerState extends State<NavController> {
   ];
 
   void onTap(int index) {
-    pageController.jumpToPage(index);
+    navController.jumpToPage(index);
   }
 
   void onPageChanged(int index) {
@@ -73,19 +74,20 @@ class _NavControllerState extends State<NavController> {
         me = UserModel.fromMap(
             document, document.data() as Map<String, dynamic>);
       });
+      print('me: ${me!.uid}');
     });
   }
 
   @override
   void dispose() {
-    pageController.dispose();
+    navController.dispose();
     streamListener.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return (me == null)
+    return (me == null || me!.uid != widget.uid)
         ? Scaffold(
             body: Center(
               child: CircularProgressIndicator(
@@ -96,13 +98,16 @@ class _NavControllerState extends State<NavController> {
         : Scaffold(
             key: _globalKey,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            drawer: ProfilMenuDrawer(user: me!),
+            drawerEdgeDragWidth: MediaQuery.of(context).size.width / 2,
             drawerEnableOpenDragGesture: true,
-            endDrawer: ActivitiesMenuDrawer(),
             endDrawerEnableOpenDragGesture: true,
+            drawer: ProfilMenuDrawer(user: me!),
+            endDrawer: ActivitiesMenuDrawer(
+              uid: me!.uid,
+            ),
             body: PageView(
               physics: NeverScrollableScrollPhysics(),
-              controller: pageController,
+              controller: navController,
               onPageChanged: onPageChanged,
               children: [
                 HomeScreen(uid: me!.uid),

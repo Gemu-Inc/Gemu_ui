@@ -7,11 +7,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:timeago/timeago.dart' as time;
 
-import 'package:gemu/ui/constants/route_names.dart';
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/controller/navigation_controller.dart';
+import 'package:gemu/models/user.dart';
+import 'package:gemu/ui/widgets/snack_bar_custom.dart';
+import 'package:gemu/ui/widgets/alert_dialog_custom.dart';
 
 class PictureScreen extends StatefulWidget {
   final File file;
@@ -34,6 +35,8 @@ class PictureScreen extends StatefulWidget {
 
 class PictureScreenState extends State<PictureScreen>
     with TickerProviderStateMixin {
+  late UserModel user;
+
   bool isUploading = false;
   bool isCaption = false;
   bool isHashtags = false;
@@ -163,260 +166,76 @@ class PictureScreenState extends State<PictureScreen>
         privacy = 'Private';
       }
 
-      var currentUser = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot<Map<String, dynamic>> userdoc = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(currentUser)
-          .get();
+      int date = DateTime.now().millisecondsSinceEpoch.toInt();
+      String postName = 'post${me!.uid}$date';
 
-      var alldocs = await FirebaseFirestore.instance
-          .collection('posts')
-          .where('uid', isEqualTo: currentUser)
-          .get();
-      int length = alldocs.docs.length;
+      String picture =
+          await uploadPictureToStorage(imagePath, postName, gameName);
+      FirebaseFirestore.instance.collection('posts').doc(postName).set({
+        'uid': me!.uid,
+        'type': 'picture',
+        'id': postName,
+        'gameName': gameName,
+        'gameImage': gameImage,
+        'upcount': 0,
+        'downcount': 0,
+        'commentcount': 0,
+        'description': _captionController.text,
+        'hashtags': hashtagsSelected,
+        'postUrl': picture,
+        'privacy': privacy,
+        'viewcount': 0,
+        'date': date,
+      });
 
-      var doc = await FirebaseFirestore.instance
-          .collection('posts')
-          .doc('Picture$currentUser-$length')
-          .get();
-      if (!doc.exists) {
-        String picture = await uploadPictureToStorage(
-            imagePath, "Picture$currentUser-$length", gameName);
-        FirebaseFirestore.instance
-            .collection('posts')
-            .doc("Picture$currentUser-$length")
-            .set({
-          'uid': currentUser,
-          'username': userdoc.data()!['pseudo'],
-          'profilepicture': userdoc.data()!['photoURL'],
-          'id': "Picture$currentUser-$length",
-          'game': gameName,
-          'up': [],
-          'down': [],
-          'commentcount': 0,
-          'caption': _captionController.text,
-          'hashtags': hashtagsSelected,
-          'pictureUrl': picture,
-          'privacy': privacy,
-          'viewcount': 0,
-          'time': DateTime.now(),
-          'popularity': 0
-        });
-
-        if (hashtagsSelected.length != 0) {
-          var hashtagdocs =
-              await FirebaseFirestore.instance.collection('hashtags').get();
-          int hashtagsLength = hashtagdocs.docs.length;
-
-          for (int i = 0; i < hashtagsSelected.length; i++) {
-            var docHashtags = await FirebaseFirestore.instance
-                .collection('hashtags')
-                .where('name', isEqualTo: hashtagsSelected[i])
-                .get();
-            for (var item in docHashtags.docs) {
-              id = item.data()['id'];
-              postsCount = item.data()['postsCount'];
-            }
-            if (docHashtags.docs.isEmpty) {
-              FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .doc(hashtagsSelected[i])
-                  .set({
-                'id': hashtagsSelected[i],
-                'name': hashtagsSelected[i],
-                'postsCount': 1
-              });
-              FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .doc(hashtagsSelected[i])
-                  .collection('posts')
-                  .doc("Picture$currentUser-$length")
-                  .set({
-                'uid': currentUser,
-                'username': userdoc.data()!['pseudo'],
-                'profilepicture': userdoc.data()!['photoURL'],
-                'id': "Picture$currentUser-$length",
-                'game': gameName,
-                'up': [],
-                'down': [],
-                'commentcount': 0,
-                'caption': _captionController.text,
-                'hashtags': hashtagsSelected,
-                'pictureUrl': picture,
-                'privacy': privacy,
-                'viewcount': 0,
-                'time': DateTime.now(),
-                'popularity': 0
-              });
-            } else {
-              FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .doc(id)
-                  .update({'postsCount': postsCount! + 1});
-              FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .doc(id)
-                  .collection('posts')
-                  .doc("Picture$currentUser-$length")
-                  .set({
-                'uid': currentUser,
-                'username': userdoc.data()!['pseudo'],
-                'profilepicture': userdoc.data()!['photoURL'],
-                'id': "Picture$currentUser-$length",
-                'game': gameName,
-                'up': [],
-                'down': [],
-                'commentcount': 0,
-                'caption': _captionController.text,
-                'hashtags': hashtagsSelected,
-                'pictureUrl': picture,
-                'privacy': privacy,
-                'viewcount': 0,
-                'time': DateTime.now(),
-                'popularity': 0
-              });
-            }
-            if (hashtagsSelected.length > 1) {
-              setState(() {
-                hashtagsLength = hashtagsLength + 1;
-              });
-            }
+      if (hashtagsSelected.length != 0) {
+        for (int i = 0; i < hashtagsSelected.length; i++) {
+          var docHashtags = await FirebaseFirestore.instance
+              .collection('hashtags')
+              .where('name', isEqualTo: hashtagsSelected[i])
+              .get();
+          for (var item in docHashtags.docs) {
+            id = item.data()['id'];
+            postsCount = item.data()['postsCount'];
           }
-        }
-      } else {
-        setState(() {
-          length = length + 1;
-        });
-        print('length: $length');
-        var doc = await FirebaseFirestore.instance
-            .collection('posts')
-            .doc('Picture$currentUser-$length')
-            .get();
-        if (!doc.exists) {
-          String picture = await uploadPictureToStorage(
-              imagePath, "Picture$currentUser-$length", gameName);
-          FirebaseFirestore.instance
-              .collection('posts')
-              .doc("Picture$currentUser-$length")
-              .set({
-            'uid': currentUser,
-            'username': userdoc.data()!['pseudo'],
-            'profilepicture': userdoc.data()!['photoURL'],
-            'id': "Picture$currentUser-$length",
-            'game': gameName,
-            'up': [],
-            'down': [],
-            'commentcount': 0,
-            'caption': _captionController.text,
-            'hashtags': hashtagsSelected,
-            'pictureUrl': picture,
-            'privacy': privacy,
-            'viewcount': 0,
-            'time': DateTime.now(),
-            'popularity': 0
-          });
-
-          if (hashtagsSelected.length != 0) {
-            var hashtagdocs =
-                await FirebaseFirestore.instance.collection('hashtags').get();
-            int hashtagsLength = hashtagdocs.docs.length;
-
-            for (int i = 0; i < hashtagsSelected.length; i++) {
-              var docHashtags = await FirebaseFirestore.instance
-                  .collection('hashtags')
-                  .where('name', isEqualTo: hashtagsSelected[i])
-                  .get();
-              for (var item in docHashtags.docs) {
-                id = item.data()['id'];
-                postsCount = item.data()['postsCount'];
-              }
-              if (docHashtags.docs.isEmpty) {
-                FirebaseFirestore.instance
-                    .collection('hashtags')
-                    .doc(hashtagsSelected[i])
-                    .set({
-                  'id': hashtagsSelected[i],
-                  'name': hashtagsSelected[i],
-                  'postsCount': 1
-                });
-                FirebaseFirestore.instance
-                    .collection('hashtags')
-                    .doc(hashtagsSelected[i])
-                    .collection('posts')
-                    .doc("Picture$currentUser-$length")
-                    .set({
-                  'uid': currentUser,
-                  'username': userdoc.data()!['pseudo'],
-                  'profilepicture': userdoc.data()!['photoURL'],
-                  'id': "Picture$currentUser-$length",
-                  'game': gameName,
-                  'up': [],
-                  'down': [],
-                  'commentcount': 0,
-                  'caption': _captionController.text,
-                  'hashtags': hashtagsSelected,
-                  'pictureUrl': picture,
-                  'privacy': privacy,
-                  'viewcount': 0,
-                  'time': DateTime.now(),
-                  'popularity': 0
-                });
-              } else {
-                FirebaseFirestore.instance
-                    .collection('hashtags')
-                    .doc(id)
-                    .update({'postsCount': postsCount! + 1});
-                FirebaseFirestore.instance
-                    .collection('hashtags')
-                    .doc(id)
-                    .collection('posts')
-                    .doc("Picture$currentUser-$length")
-                    .set({
-                  'uid': currentUser,
-                  'username': userdoc.data()!['pseudo'],
-                  'profilepicture': userdoc.data()!['photoURL'],
-                  'id': "Picture$currentUser-$length",
-                  'game': gameName,
-                  'up': [],
-                  'down': [],
-                  'commentcount': 0,
-                  'caption': _captionController.text,
-                  'hashtags': hashtagsSelected,
-                  'pictureUrl': picture,
-                  'privacy': privacy,
-                  'viewcount': 0,
-                  'time': DateTime.now(),
-                  'popularity': 0
-                });
-              }
-              if (hashtagsSelected.length > 1) {
-                setState(() {
-                  hashtagsLength = hashtagsLength + 1;
-                });
-              }
-            }
+          if (docHashtags.docs.isEmpty) {
+            FirebaseFirestore.instance
+                .collection('hashtags')
+                .doc(hashtagsSelected[i])
+                .set({
+              'id': hashtagsSelected[i],
+              'name': hashtagsSelected[i],
+              'postsCount': 1
+            });
+            FirebaseFirestore.instance
+                .collection('hashtags')
+                .doc(hashtagsSelected[i])
+                .collection('posts')
+                .doc(postName)
+                .set({});
+          } else {
+            FirebaseFirestore.instance
+                .collection('hashtags')
+                .doc(id)
+                .update({'postsCount': postsCount! + 1});
+            FirebaseFirestore.instance
+                .collection('hashtags')
+                .doc(id)
+                .collection('posts')
+                .doc(postName)
+                .set({});
           }
         }
       }
 
-      Navigator.pushNamedAndRemoveUntil(
-          context, NavScreenRoute, (route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => NavController(uid: me!.uid)),
+          (route) => false);
     } catch (e) {
       print(e);
     }
-  }
-
-  void showInSnackBar(String message) {
-    ScaffoldMessenger(
-        child: SnackBar(
-            backgroundColor: Theme.of(context).canvasColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            content: Text(
-              message,
-              style: mystyle(12),
-            )));
   }
 
   @override
@@ -464,41 +283,34 @@ class PictureScreenState extends State<PictureScreen>
                           await showDialog(
                               context: context,
                               builder: (context) {
-                                return AlertDialog(
-                                  backgroundColor:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  title: Text('Abandon'),
-                                  content: Text(
-                                      'Voulez-vous abandonner la création de ce post?'),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      NavController(
-                                                        uid: FirebaseAuth
-                                                            .instance
-                                                            .currentUser!
-                                                            .uid,
-                                                      )),
-                                              (route) => false);
-                                        },
-                                        child: Text('Oui')),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(
-                                          context,
-                                        ).pop(false);
-                                      },
-                                      child: Text(
-                                        'Non',
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    )
-                                  ],
-                                );
+                                return AlertDialogCustom(
+                                    context,
+                                    'Abandon',
+                                    'Voulez-vous abandonner la création de ce post?',
+                                    [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        NavController(
+                                                            uid: me!.uid)),
+                                                (route) => false);
+                                          },
+                                          child: Text(
+                                            'Oui',
+                                            style: TextStyle(
+                                                color: Colors.blue[200]),
+                                          )),
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('Non',
+                                              style: TextStyle(
+                                                  color: Colors.red[200])))
+                                    ]);
                               });
                         },
                         icon: Icon(Icons.clear)),
@@ -722,7 +534,8 @@ class PictureScreenState extends State<PictureScreen>
         child: GestureDetector(
             onTap: () {
               if (gameName == 'No game') {
-                showInSnackBar('Choississez un jeu pour votre post');
+                ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+                    error: 'Choississez un jeu pour votre post'));
               } else {
                 uploadPicture(widget.file.path, gameName);
               }

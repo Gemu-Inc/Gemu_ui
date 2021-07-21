@@ -3,8 +3,6 @@ import 'package:expandable/expandable.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 
-import '../profile_view.dart';
-
 class ContentPostDescription extends StatelessWidget {
   final String? idUser, username, caption;
   final List? hashtags;
@@ -15,6 +13,7 @@ class ContentPostDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.pink,
       width: MediaQuery.of(context).size.width / 2,
       child: ExpandableTheme(
           data: ExpandableThemeData(
@@ -30,13 +29,7 @@ class ContentPostDescription extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfileView(
-                                  idUser: idUser,
-                                ))),
-                    child: Text(username!, style: mystyle(15))),
+                    onTap: () {}, child: Text(username!, style: mystyle(15))),
                 ScrollOnExpand(
                   scrollOnExpand: true,
                   scrollOnCollapse: false,

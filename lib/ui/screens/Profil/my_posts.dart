@@ -3,13 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-
-import './posts_profil_screen.dart';
+import 'package:gemu/models/user.dart';
+import 'package:gemu/models/post.dart';
+import 'package:gemu/ui/widgets/post_tile.dart';
 
 class PostsPublic extends StatefulWidget {
-  final String uid;
+  final UserModel user;
 
-  PostsPublic({required this.uid});
+  PostsPublic({required this.user});
 
   @override
   PostsPublicState createState() => PostsPublicState();
@@ -17,13 +18,7 @@ class PostsPublic extends StatefulWidget {
 
 class PostsPublicState extends State<PostsPublic>
     with AutomaticKeepAliveClientMixin {
-  late String uid;
-
-  @override
-  void initState() {
-    super.initState();
-    uid = widget.uid;
-  }
+  List<Post> posts = [];
 
   @override
   bool get wantKeepAlive => true;
@@ -31,21 +26,22 @@ class PostsPublicState extends State<PostsPublic>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
+    return FutureBuilder(
+        future: FirebaseFirestore.instance
             .collection('posts')
-            .where('uid', isEqualTo: uid)
+            .where('uid', isEqualTo: widget.user.uid)
             .where('privacy', isEqualTo: "Public")
-            .orderBy('time', descending: true)
-            .snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
+            .orderBy('date', descending: true)
+            .get(),
+        builder: (context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (!snapshot.hasData) {
             return Center(
                 child: CircularProgressIndicator(
               color: Theme.of(context).primaryColor,
             ));
           }
-          if (snapshot.data.docs.length == 0) {
+          if (snapshot.data!.docs.length == 0) {
             return Center(
               child: Text(
                 'Pas encore de publications publiques',
@@ -53,27 +49,31 @@ class PostsPublicState extends State<PostsPublic>
               ),
             );
           }
+          if (posts.length != 0) {
+            posts.clear();
+          }
+          for (var item in snapshot.data!.docs) {
+            posts.add(Post.fromMap(item, item.data()));
+          }
           return GridView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: snapshot.data.docs.length,
+              itemCount: posts.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   childAspectRatio: 1,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6),
               itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot<Map<String, dynamic>> post =
-                    snapshot.data.docs[index];
-                return post.data()!['previewImage'] == null
+                return posts[index].type == 'picture'
                     ? GestureDetector(
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PostsProfilScreen(
-                                      userID: uid,
-                                      indexPost: index,
-                                    ))),
+                                builder: (context) => PostsView(
+                                    postIndex: index,
+                                    actualUser: me!,
+                                    posts: posts))),
                         child: Container(
                           height: 150,
                           width: 150,
@@ -85,19 +85,10 @@ class PostsPublicState extends State<PostsPublic>
                                 child: Image(
                                     fit: BoxFit.cover,
                                     image: CachedNetworkImageProvider(
-                                        post.data()!['pictureUrl'])),
+                                        posts[index].postUrl)),
                               ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                child: InkWell(
-                                  onTap: () =>
-                                      print('Supprimer ma publication'),
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                              Container(
+                                color: Colors.black.withOpacity(0.2),
                               ),
                               Positioned(
                                 bottom: 0,
@@ -108,7 +99,7 @@ class PostsPublicState extends State<PostsPublic>
                                       Icons.remove_red_eye,
                                       color: Colors.white,
                                     ),
-                                    Text(post.data()!['viewcount'].toString()),
+                                    Text(posts[index].viewcount.toString()),
                                   ],
                                 ),
                               ),
@@ -120,8 +111,10 @@ class PostsPublicState extends State<PostsPublic>
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PostsProfilScreen(
-                                    userID: uid, indexPost: index))),
+                                builder: (context) => PostsView(
+                                    postIndex: index,
+                                    actualUser: me!,
+                                    posts: posts))),
                         child: Container(
                           height: 150,
                           width: 150,
@@ -133,19 +126,10 @@ class PostsPublicState extends State<PostsPublic>
                                 child: Image(
                                     fit: BoxFit.cover,
                                     image: CachedNetworkImageProvider(
-                                        post.data()!['previewImage'])),
+                                        posts[index].previewImage!)),
                               ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                child: InkWell(
-                                  onTap: () =>
-                                      print('Supprimer ma publication'),
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                              Container(
+                                color: Colors.black.withOpacity(0.2),
                               ),
                               Positioned(
                                 bottom: 0,
@@ -156,7 +140,7 @@ class PostsPublicState extends State<PostsPublic>
                                       Icons.remove_red_eye,
                                       color: Colors.white,
                                     ),
-                                    Text(post.data()!['viewcount'].toString()),
+                                    Text(posts[index].viewcount.toString()),
                                   ],
                                 ),
                               ),
@@ -178,9 +162,9 @@ class PostsPublicState extends State<PostsPublic>
 }
 
 class PostsPrivate extends StatefulWidget {
-  final String uid;
+  final UserModel user;
 
-  PostsPrivate({required this.uid});
+  PostsPrivate({required this.user});
 
   @override
   PostsPrivateState createState() => PostsPrivateState();
@@ -188,13 +172,7 @@ class PostsPrivate extends StatefulWidget {
 
 class PostsPrivateState extends State<PostsPrivate>
     with AutomaticKeepAliveClientMixin {
-  late String uid;
-
-  @override
-  void initState() {
-    super.initState();
-    uid = widget.uid;
-  }
+  List<Post> posts = [];
 
   @override
   bool get wantKeepAlive => true;
@@ -202,44 +180,55 @@ class PostsPrivateState extends State<PostsPrivate>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
+    return FutureBuilder(
+        future: FirebaseFirestore.instance
             .collection('posts')
-            .where('uid', isEqualTo: uid)
-            .where('privacy', isEqualTo: "Private")
-            .orderBy('time', descending: true)
-            .snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
+            .where('uid', isEqualTo: me!.uid)
+            .where('privacy', isEqualTo: 'Private')
+            .orderBy('date', descending: true)
+            .get(),
+        builder: (BuildContext context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (!snapshot.hasData) {
             return Center(
-                child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
-            ));
-          }
-          if (snapshot.data.docs.length == 0) {
-            return Center(
-              child: Text('Pas de publications privées', style: mystyle(11)),
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
             );
+          }
+          if (snapshot.data!.docs.length == 0) {
+            return Center(
+              child: Text(
+                'Pas encore de publications privées',
+                style: mystyle(11),
+              ),
+            );
+          }
+          if (posts.length != 0) {
+            posts.clear();
+          }
+          for (var item in snapshot.data!.docs) {
+            posts.add(Post.fromMap(item, item.data()));
           }
           return GridView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: snapshot.data.docs.length,
+              itemCount: posts.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   childAspectRatio: 1,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6),
               itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot<Map<String, dynamic>> post =
-                    snapshot.data.docs[index];
-                return post.data()!['previewImage'] == null
+                return posts[index].type == 'picture'
                     ? GestureDetector(
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    PostsProfilScreen(userID: uid))),
+                                builder: (context) => PostsView(
+                                    postIndex: index,
+                                    actualUser: me!,
+                                    posts: posts))),
                         child: Container(
                           height: 150,
                           width: 150,
@@ -251,18 +240,22 @@ class PostsPrivateState extends State<PostsPrivate>
                                 child: Image(
                                     fit: BoxFit.cover,
                                     image: CachedNetworkImageProvider(
-                                        post.data()!['pictureUrl'])),
+                                        posts[index].postUrl)),
+                              ),
+                              Container(
+                                color: Colors.black.withOpacity(0.2),
                               ),
                               Positioned(
-                                top: 0,
+                                bottom: 0,
                                 right: 0,
-                                child: InkWell(
-                                  onTap: () =>
-                                      print('Supprimer ma publication'),
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Colors.white,
-                                  ),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.remove_red_eye,
+                                      color: Colors.white,
+                                    ),
+                                    Text(posts[index].viewcount.toString()),
+                                  ],
                                 ),
                               ),
                             ],
@@ -273,8 +266,10 @@ class PostsPrivateState extends State<PostsPrivate>
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    PostsProfilScreen(userID: uid))),
+                                builder: (context) => PostsView(
+                                    postIndex: index,
+                                    actualUser: me!,
+                                    posts: posts))),
                         child: Container(
                           height: 150,
                           width: 150,
@@ -286,19 +281,10 @@ class PostsPrivateState extends State<PostsPrivate>
                                 child: Image(
                                     fit: BoxFit.cover,
                                     image: CachedNetworkImageProvider(
-                                        post.data()!['previewImage'])),
+                                        posts[index].previewImage!)),
                               ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                child: InkWell(
-                                  onTap: () =>
-                                      print('Supprimer ma publication'),
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                              Container(
+                                color: Colors.black.withOpacity(0.2),
                               ),
                               Positioned(
                                 top: 0,
@@ -308,11 +294,79 @@ class PostsPrivateState extends State<PostsPrivate>
                                   color: Colors.white,
                                 ),
                               ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.remove_red_eye,
+                                      color: Colors.white,
+                                    ),
+                                    Text(posts[index].viewcount.toString()),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       );
               });
         });
+  }
+}
+
+class PostsView extends StatefulWidget {
+  final int postIndex;
+  final UserModel actualUser;
+  final List<Post> posts;
+
+  PostsView(
+      {required this.postIndex, required this.actualUser, required this.posts});
+
+  @override
+  PostsViewState createState() => PostsViewState();
+}
+
+class PostsViewState extends State<PostsView> {
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: widget.postIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child: Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              elevation: 0,
+              leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(
+                    Icons.expand_more,
+                    size: 33,
+                  )),
+              title: Text('Mes posts'),
+            ),
+            body: PageView.builder(
+                controller: _pageController,
+                scrollDirection: Axis.vertical,
+                itemCount: widget.posts.length,
+                itemBuilder: (_, int index) {
+                  return PostTile(
+                      idUserActual: widget.actualUser.uid,
+                      post: widget.posts[index]);
+                })));
   }
 }

@@ -179,6 +179,11 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                   color: Colors.transparent,
                   child: TextFormField(
                     initialValue: widget.user.email,
+                    cursorColor: Theme.of(context).primaryColor,
+                    decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor))),
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter a mail' : null,
                     onChanged: (value) => setState(() => _currentEmail = value),

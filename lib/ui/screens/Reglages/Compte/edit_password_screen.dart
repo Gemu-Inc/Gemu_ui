@@ -129,7 +129,14 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                 color: Colors.transparent,
                 width: MediaQuery.of(context).size.width - 130,
                 child: TextFormField(
-                  decoration: InputDecoration(labelText: "Current Password"),
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: InputDecoration(
+                      labelText: "Current Password",
+                      labelStyle:
+                          TextStyle(color: Theme.of(context).primaryColor),
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor))),
                   obscureText: true,
                   validator: (value) =>
                       value!.isEmpty ? 'Please enter a password' : null,
@@ -145,7 +152,14 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                 color: Colors.transparent,
                 width: MediaQuery.of(context).size.width - 130,
                 child: TextFormField(
-                  decoration: InputDecoration(labelText: "New Password"),
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: InputDecoration(
+                      labelText: "New Password",
+                      labelStyle:
+                          TextStyle(color: Theme.of(context).primaryColor),
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor))),
                   obscureText: true,
                   validator: (value) =>
                       value!.isEmpty ? 'Please enter a password' : null,

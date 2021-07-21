@@ -9,6 +9,7 @@ import 'package:gemu/ui/screens/Reglages/reglages_screen.dart';
 import 'package:gemu/ui/screens/Support/panel_support_screen.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/services/database_service.dart';
+import 'package:gemu/ui/constants/constants.dart';
 
 import 'followers.dart';
 import 'follows.dart';
@@ -41,7 +42,6 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
   @override
   void initState() {
     super.initState();
-    print('init state profil');
 
     _tabController = TabController(vsync: this, length: 2, initialIndex: 0);
 
@@ -63,8 +63,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
         .snapshots()
         .listen((data) {
       for (var item in data.docs) {
-        points =
-            (item.data()['up'].length - item.data()['down'].length) + points;
+        points = (item.data()['upcount'] - item.data()['downcount']) + points;
       }
     });
 
@@ -323,10 +322,13 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                 },
                 body: Stack(
                   children: [
-                    TabBarView(controller: _tabController, children: [
-                      PostsPublic(uid: widget.user.uid),
-                      PostsPrivate(uid: widget.user.uid)
-                    ]),
+                    TabBarView(
+                        physics: NeverScrollableScrollPhysics(),
+                        controller: _tabController,
+                        children: [
+                          PostsPublic(user: widget.user),
+                          PostsPrivate(user: widget.user)
+                        ]),
                   ],
                 ))
             : Center(

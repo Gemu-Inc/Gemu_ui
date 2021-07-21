@@ -3,11 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-
-import 'components/picture_item.dart';
-import 'components/video_player_item.dart';
-import 'components/actions_postbar.dart';
-import 'components/content_postdescription.dart';
+import 'package:gemu/ui/widgets/picture_item.dart';
+import 'package:gemu/ui/widgets/video_item.dart';
+import 'package:gemu/ui/widgets/post_actionsbar.dart';
+import 'package:gemu/ui/widgets/post_description.dart';
 
 class PostViewFollowing extends StatefulWidget {
   @override
@@ -106,7 +105,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
                         DocumentSnapshot<Map<String, dynamic>> post =
                             snapshot.data.docs[index];
                         return Stack(children: [
-                          post.data()!['videoUrl'] == null
+                          /*post.data()!['videoUrl'] == null
                               ? PictureItem(
                                   idUser: post.data()!['uid'],
                                   idPost: post.data()!['id'],
@@ -116,7 +115,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
                                   idUser: post.data()!['uid'],
                                   idPost: post.data()!['id'],
                                   videoUrl: post.data()!['videoUrl'],
-                                ),
+                                ),*/
                           Positioned(
                               left: 0,
                               bottom: 15,
@@ -126,7 +125,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
                                 caption: post.data()!['caption'],
                                 hashtags: post.data()!['hashtags'],
                               )),
-                          Positioned(
+                          /* Positioned(
                               right: 0,
                               bottom: 5,
                               child: ActionsPostBar(
@@ -137,7 +136,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
                                     post.data()!['commentcount'].toString(),
                                 up: post.data()!['up'],
                                 down: post.data()!['down'],
-                              )),
+                              )),*/
                         ]);
                       });
                 })

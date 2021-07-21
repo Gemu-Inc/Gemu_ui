@@ -13,9 +13,14 @@ class MessagesScreen extends StatefulWidget {
   MessagesScreenState createState() => MessagesScreenState();
 }
 
-class MessagesScreenState extends State<MessagesScreen> {
+class MessagesScreenState extends State<MessagesScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final String uid = FirebaseAuth.instance.currentUser!.uid;
     final List<Convo> _convos = Provider.of<List<Convo>>(context);
     final List<UserModel> _users = Provider.of<List<UserModel>>(context);

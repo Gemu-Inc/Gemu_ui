@@ -3,15 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:gemu/ui/screens/Home/comments_view.dart';
+import 'package:gemu/ui/widgets/comments_view.dart';
 import 'package:gemu/services/database_service.dart';
-
-import '../profile_view.dart';
 
 class ActionsPostBar extends StatefulWidget {
   final String idUser, profilPicture, commentsCounts, idPost;
 
-  final List? up, down;
+  final int up, down;
 
   ActionsPostBar(
       {required this.idUser,
@@ -157,9 +155,10 @@ class ActionsPostBarState extends State<ActionsPostBar> {
 
   @override
   Widget build(BuildContext context) {
-    int points = (widget.up!.length - widget.down!.length);
+    int points = (widget.up - widget.down);
     return dataIsThere
         ? Container(
+            color: Colors.purple,
             alignment: Alignment.center,
             height: 70,
             width: MediaQuery.of(context).size.width / 2,
@@ -199,11 +198,13 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                       pointUpPost(widget.idPost);
                     }
                   },
-                  child: Icon(iconUp,
-                      size: 28,
-                      color: widget.up!.contains(uid)
+                  child: Icon(
+                    iconUp,
+                    size: 28,
+                    /*color: widget.up.contains(uid)
                           ? Colors.green
-                          : Colors.grey[300]),
+                          : Colors.grey[300]*/
+                  ),
                 ),
                 SizedBox(
                   width: 10.0,
@@ -214,11 +215,13 @@ class ActionsPostBarState extends State<ActionsPostBar> {
                       pointsDownPost(widget.idPost);
                     }
                   },
-                  child: Icon(iconDown,
-                      size: 28,
-                      color: widget.down!.contains(uid)
+                  child: Icon(
+                    iconDown,
+                    size: 28,
+                    /*color: widget.down.contains(uid)
                           ? Colors.red
-                          : Colors.grey[300]),
+                          : Colors.grey[300]*/
+                  ),
                 ),
               ],
             ),
@@ -231,23 +234,18 @@ class ActionsPostBarState extends State<ActionsPostBar> {
   }
 
   Widget _getSocialAction(
-      {required String title, IconData? icon, BuildContext? context}) {
+      {required String title, IconData? icon, required BuildContext context}) {
     return Container(
         height: 60.0,
         child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
           InkWell(
-            onTap: () => showModalBottomSheet(
-                backgroundColor: Theme.of(context!).scaffoldBackgroundColor,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20))),
-                context: context,
-                builder: (BuildContext context) {
-                  return CommentsView(
-                      idPost: widget.idPost, idUser: widget.idUser);
-                }),
+            onTap: () {
+              /*Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          CommentsView(idPost: widget.idPost, idUser: uid)));*/
+            },
             child: Icon(icon, size: 28, color: Colors.grey[300]),
           ),
           Padding(
@@ -308,12 +306,7 @@ class ActionsPostBarState extends State<ActionsPostBar> {
     return Positioned(
       left: (ActionWidgetSize / 2) - (ProfileImageSize / 2),
       child: GestureDetector(
-          onTap: () => Navigator.push(
-              context!,
-              MaterialPageRoute(
-                  builder: (context) => ProfileView(
-                        idUser: widget.idUser,
-                      ))),
+          onTap: () => () {},
           child: widget.profilPicture == null
               ? Container(
                   width: ProfileImageSize,

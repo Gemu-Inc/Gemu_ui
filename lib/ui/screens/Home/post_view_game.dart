@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-
-import 'components/picture_item.dart';
-import 'components/video_player_item.dart';
-import 'components/actions_postbar.dart';
-import 'components/content_postdescription.dart';
+import 'package:gemu/ui/widgets/picture_item.dart';
+import 'package:gemu/ui/widgets/video_item.dart';
+import 'package:gemu/ui/widgets/post_actionsbar.dart';
+import 'package:gemu/ui/widgets/post_description.dart';
 
 class PostViewGame extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>> game;
@@ -100,7 +99,7 @@ class PostViewGameState extends State<PostViewGame> {
               DocumentSnapshot<Map<String, dynamic>> post = posts[index];
 
               return Stack(children: [
-                post.data()!['videoUrl'] == null
+                /*post.data()!['videoUrl'] == null
                     ? PictureItem(
                         idUser: post.data()!['uid'],
                         idPost: post.data()!['id'],
@@ -110,7 +109,7 @@ class PostViewGameState extends State<PostViewGame> {
                         idUser: post.data()!['uid'],
                         idPost: post.data()!['id'],
                         videoUrl: post.data()!['videoUrl'],
-                      ),
+                      ),*/
                 Positioned(
                     left: 0,
                     bottom: 15,
@@ -120,7 +119,7 @@ class PostViewGameState extends State<PostViewGame> {
                       caption: post.data()!['caption'],
                       hashtags: post.data()!['hashtags'],
                     )),
-                Positioned(
+                /*Positioned(
                     right: 0,
                     bottom: 5,
                     child: ActionsPostBar(
@@ -130,7 +129,7 @@ class PostViewGameState extends State<PostViewGame> {
                       commentsCounts: post.data()!['commentcount'].toString(),
                       up: post.data()!['up'],
                       down: post.data()!['down'],
-                    )),
+                    )),*/
               ]);
             });
       },

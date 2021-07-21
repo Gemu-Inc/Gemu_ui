@@ -124,6 +124,10 @@ class _EditUserNameScreenState extends State<EditUserNameScreen> {
                   child: TextFormField(
                     initialValue: widget.user.username,
                     cursorColor: Theme.of(context).primaryColor,
+                    decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor))),
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter a name' : null,
                     onChanged: (value) => setState(() => _currentName = value),

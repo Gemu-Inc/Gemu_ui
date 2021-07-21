@@ -13,9 +13,14 @@ class NotificationsScreen extends StatefulWidget {
   NotificationsScreenState createState() => NotificationsScreenState();
 }
 
-class NotificationsScreenState extends State<NotificationsScreen> {
+class NotificationsScreenState extends State<NotificationsScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('notifications')
@@ -33,12 +38,11 @@ class NotificationsScreenState extends State<NotificationsScreen> {
             child: Text('Pas de notifications'),
           );
         }
-
         List<DocumentSnapshot<Map<String, dynamic>>> documents =
             snapshot.data.docs;
         switch (widget.whatActivity) {
-          case "All activities":
-            return notificationsAllActivities(documents);
+          case "All notifications":
+            return notificationsAllNotifications(documents);
           case "Comments":
             return notificationsComments(documents);
           case "Follows":
@@ -46,13 +50,13 @@ class NotificationsScreenState extends State<NotificationsScreen> {
           case "Up&Down":
             return notificationsUpDown(documents);
           default:
-            return SizedBox();
+            return Center(child: Text('Pas de notifications actuellement'));
         }
       },
     );
   }
 
-  Widget notificationsAllActivities(
+  Widget notificationsAllNotifications(
       List<DocumentSnapshot<Map<String, dynamic>>> notifications) {
     return ListView.builder(
         itemCount: notifications.length,
@@ -63,45 +67,66 @@ class NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget notificationsComments(
       List<DocumentSnapshot<Map<String, dynamic>>> notifications) {
+    List<DocumentSnapshot<Map<String, dynamic>>> notifComments = [];
+    for (var notif in notifications) {
+      if (notif.data()!['type'] == "comment") {
+        notifComments.add(notif);
+      }
+    }
+
+    if (notifComments.length == 0) {
+      return Center(
+        child: Text('Pas de notifications Comments'),
+      );
+    }
     return ListView.builder(
-      itemCount: notifications.length,
+      itemCount: notifComments.length,
       itemBuilder: (context, index) {
-        switch (notifications[index].data()!['type']) {
-          case "comment":
-            return NotifTile(notification: notifications[index]);
-          default:
-            return SizedBox();
-        }
+        return NotifTile(notification: notifComments[index]);
       },
     );
   }
 
   Widget notificationsFollows(
       List<DocumentSnapshot<Map<String, dynamic>>> notifications) {
+    List<DocumentSnapshot<Map<String, dynamic>>> notifFollows = [];
+    for (var notif in notifFollows) {
+      if (notif.data()!['type'] == 'follow') {
+        notifFollows.add(notif);
+      }
+    }
+
+    if (notifFollows.length == 0) {
+      return Center(
+        child: Text('Pas de notifications Follows'),
+      );
+    }
     return ListView.builder(
-      itemCount: notifications.length,
+      itemCount: notifFollows.length,
       itemBuilder: (context, index) {
-        switch (notifications[index].data()!['type']) {
-          case "follow":
-            return NotifTile(notification: notifications[index]);
-          default:
-            return SizedBox();
-        }
+        return NotifTile(notification: notifFollows[index]);
       },
     );
   }
 
   Widget notificationsUpDown(
       List<DocumentSnapshot<Map<String, dynamic>>> notifications) {
+    List<DocumentSnapshot<Map<String, dynamic>>> notifUpDown = [];
+    for (var notif in notifications) {
+      if (notif.data()!['type'] == 'updown') {
+        notifUpDown.add(notif);
+      }
+    }
+
+    if (notifUpDown.length == 0) {
+      return Center(
+        child: Text('Pas de notifications Up&Down'),
+      );
+    }
     return ListView.builder(
-      itemCount: notifications.length,
+      itemCount: notifUpDown.length,
       itemBuilder: (context, index) {
-        switch (notifications[index].data()!['type']) {
-          case "updown":
-            return NotifTile(notification: notifications[index]);
-          default:
-            return SizedBox();
-        }
+        return NotifTile(notification: notifUpDown[index]);
       },
     );
   }

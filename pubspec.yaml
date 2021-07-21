@@ -50,6 +50,7 @@ dependencies:
   video_trimmer: ^0.4.0
   modal_bottom_sheet: ^2.0.0
   bouncing_widget: ^2.0.0
+  marquee: ^2.2.0
 
 
 dev_dependencies:

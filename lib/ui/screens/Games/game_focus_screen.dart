@@ -4,11 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/screens/Home/components/actions_postbar.dart';
-import 'package:gemu/ui/screens/Home/components/content_postdescription.dart';
-import 'package:gemu/ui/screens/Home/components/picture_item.dart';
-import 'package:gemu/ui/screens/Home/components/video_player_item.dart';
-import 'package:gemu/ui/screens/Profil/comment_postbar.dart';
+import 'package:gemu/ui/widgets/picture_item.dart';
+import 'package:gemu/ui/widgets/video_item.dart';
+import 'package:gemu/ui/widgets/post_actionsbar.dart';
+import 'package:gemu/ui/widgets/post_description.dart';
+import 'package:gemu/ui/widgets/post_commentbar.dart';
 
 class GameFocusScreen extends StatefulWidget {
   const GameFocusScreen({Key? key, required this.game}) : super(key: key);
@@ -24,8 +24,6 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
 
   PageController? _pageController;
 
-  FocusNode? _focusNode;
-
   String? uid;
   Stream? stream;
 
@@ -33,7 +31,6 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    _focusNode = FocusNode();
     getAllData();
   }
 
@@ -63,11 +60,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: dataIsThere
             ? GestureDetector(
-                onTap: () {
-                  if (_focusNode!.hasFocus) {
-                    _focusNode!.unfocus();
-                  }
-                },
+                onTap: () {},
                 child: Stack(
                   children: [
                     StreamBuilder(
@@ -111,7 +104,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                                   posts[index];
 
                               return Stack(children: [
-                                post.data()!['videoUrl'] == null
+                                /*post.data()!['videoUrl'] == null
                                     ? PictureItem(
                                         idPost: post.data()!['id'],
                                         pictureUrl: post.data()!['pictureUrl'],
@@ -119,7 +112,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                                     : VideoPlayerItem(
                                         idPost: post.data()!['id'],
                                         videoUrl: post.data()!['videoUrl'],
-                                      ),
+                                      ),*/
                                 Positioned(
                                     left: 0,
                                     bottom: 50,
@@ -129,7 +122,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                                       caption: post.data()!['caption'],
                                       hashtags: post.data()!['hashtags'],
                                     )),
-                                Positioned(
+                                /*Positioned(
                                     right: 0,
                                     bottom: 45,
                                     child: ActionsPostBar(
@@ -142,12 +135,11 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                                           .toString(),
                                       up: post.data()!['up'],
                                       down: post.data()!['down'],
-                                    )),
+                                    )),*/
                                 Positioned(
                                     bottom: 0,
                                     child: CommentPostBar(
                                       idPost: post.data()!['id'],
-                                      focusNode: _focusNode,
                                     ))
                               ]);
                             });

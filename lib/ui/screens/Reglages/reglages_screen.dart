@@ -38,7 +38,7 @@ class ReglagesScreen extends StatelessWidget {
         onPressed: () => _signOut(context),
         child: Text(
           'Oui',
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(color: Colors.blue[200]),
         ));
   }
 
@@ -49,7 +49,7 @@ class ReglagesScreen extends StatelessWidget {
         },
         child: Text(
           'Non',
-          style: TextStyle(color: Colors.red),
+          style: TextStyle(color: Colors.red[200]),
         ));
   }
 

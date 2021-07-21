@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:gemu/ui/screens/Profil/posts_profil_screen.dart';
 import 'package:gemu/ui/screens/Profil/followers.dart';
 import 'package:gemu/ui/screens/Profil/follows.dart';
 
@@ -465,12 +464,7 @@ class ProfileViewState extends State<ProfileView>
                     (post.data()!['up'].length - post.data()!['down'].length);
                 return post.data()!['previewImage'] == null
                     ? GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PostsProfilScreen(
-                                    userID: user!.data()!['id'],
-                                    indexPost: index))),
+                        onTap: () {},
                         child: Container(
                           height: 150,
                           width: 150,
@@ -502,12 +496,7 @@ class ProfileViewState extends State<ProfileView>
                         ),
                       )
                     : GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PostsProfilScreen(
-                                    userID: user!.data()!['id'],
-                                    indexPost: index))),
+                        onTap: () {},
                         child: Container(
                           height: 150,
                           width: 150,
