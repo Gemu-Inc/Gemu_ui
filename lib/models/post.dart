@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+import 'package:gemu/services/cache_manager_service.dart';
 
 class Post {
   DocumentReference reference;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import 'package:gemu/ui/router.dart';
 import 'package:gemu/ui/constants/app_constants.dart';
@@ -21,6 +22,8 @@ Future<void> main() async {
       statusBarColor: Colors.transparent,
       systemNavigationBarColor: Color(0xFF1A1C25)));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  //DefaultCacheManager().emptyCache();
 
   Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   prefs.then((value) {

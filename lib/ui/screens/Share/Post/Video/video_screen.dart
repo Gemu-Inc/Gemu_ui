@@ -68,26 +68,26 @@ class VideoScreenState extends State<VideoScreen>
   compressVideo(String videoPath) async {
     MediaInfo? compressedVideo = await VideoCompress.compressVideo(videoPath,
         quality: VideoQuality.MediumQuality,
-        deleteOrigin: false,
+        deleteOrigin: true,
         includeAudio: true);
     return File(compressedVideo!.path!);
   }
 
   getPreviewImage(String videoPath) async {
-    final previewImagePath = await VideoThumbnail.thumbnailFile(
-        video: videoPath,
-        imageFormat: ImageFormat.JPEG,
-        quality: 50,
-        timeMs: 1000);
+    try {
+      final previewImagePath = await VideoThumbnail.thumbnailFile(
+          video: videoPath,
+          maxHeight: 0,
+          maxWidth: 0,
+          quality: 50,
+          timeMs: 1000);
 
-    /*final lastIndex = previewImagePath?.lastIndexOf(RegExp(r'.jp'));
-    final splitted = previewImagePath?.substring(0, lastIndex);
-    final outPath = "${splitted}_out${previewImagePath?.substring(lastIndex!)}";
-    File? compressImage = await FlutterImageCompress.compressAndGetFile(
-        previewImagePath!, outPath);*/
-    File? compressImage = File(previewImagePath!);
+      File? compressImage = File(previewImagePath!);
 
-    return compressImage;
+      return compressImage;
+    } catch (e) {
+      print(e);
+    }
   }
 
   uploadVideoToStorage(String videoPath, String id, String nameGame) async {
@@ -134,9 +134,9 @@ class VideoScreenState extends State<VideoScreen>
       int date = DateTime.now().millisecondsSinceEpoch.toInt();
       String postName = 'post${me!.uid}$date';
 
-      String video = await uploadVideoToStorage(videoPath, postName, nameGame);
       String previewImage =
           await uploadImagePreviewToStorage(videoPath, postName, nameGame);
+      String video = await uploadVideoToStorage(videoPath, postName, nameGame);
       FirebaseFirestore.instance.collection('posts').doc(postName).set({
         'uid': me!.uid,
         'type': 'video',
@@ -216,10 +216,15 @@ class VideoScreenState extends State<VideoScreen>
   @override
   void initState() {
     super.initState();
-    _videoPlayerController = VideoPlayerController.file(widget.file);
-    _videoPlayerController.initialize();
-    _videoPlayerController.setLooping(true);
-    _videoPlayerController.play();
+    _videoPlayerController = VideoPlayerController.file(widget.file,
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true))
+      ..initialize().then((value) {
+        if (mounted) {
+          setState(() {});
+          _videoPlayerController.setLooping(true);
+          _videoPlayerController.play();
+        }
+      });
 
     saveCaption = widget.caption;
     _captionController = TextEditingController(text: saveCaption);

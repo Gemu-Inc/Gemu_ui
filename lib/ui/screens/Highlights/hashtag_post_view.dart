@@ -2,10 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/widgets/picture_item.dart';
-import 'package:gemu/ui/widgets/video_item.dart';
-import 'package:gemu/ui/widgets/post_actionsbar.dart';
-import 'package:gemu/ui/widgets/post_description.dart';
 
 class HashtagPostView extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>>? hashtag;
@@ -89,7 +85,7 @@ class HashtagPostViewState extends State<HashtagPostView> {
                         idPost: documentSnapshot.data()!['id'],
                         videoUrl: documentSnapshot.data()!['videoUrl'],
                       ),*/
-                Positioned(
+                /*Positioned(
                     bottom: 30,
                     left: 0,
                     child: ContentPostDescription(
@@ -97,7 +93,7 @@ class HashtagPostViewState extends State<HashtagPostView> {
                       username: documentSnapshot.data()!['username'],
                       caption: documentSnapshot.data()!['caption'],
                       hashtags: documentSnapshot.data()!['hashtags'],
-                    )),
+                    )),*/
                 /*Positioned(
                     bottom: 30,
                     right: 0,

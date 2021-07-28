@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:gemu/ui/constants/constants.dart';
+
 import 'post_view_game.dart';
 import 'post_view_following.dart';
 
@@ -18,6 +20,8 @@ class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   bool dataIsThere = false;
 
+  String? userImageUrl;
+
   late TabController _tabMenuController;
 
   late AnimationController _animationRotateController,
@@ -28,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen>
   late int currentTabGamesIndex;
 
   List gamesList = [];
-  late DocumentSnapshot<Map<String, dynamic>> user;
 
   @override
   bool get wantKeepAlive => true;
@@ -36,6 +39,8 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+
+    userImageUrl = me!.imageUrl;
 
     _tabMenuController = TabController(initialIndex: 1, length: 2, vsync: this);
     _tabMenuController.addListener(_onTabChanged);
@@ -54,8 +59,6 @@ class _HomeScreenState extends State<HomeScreen>
     _animationRotateController.addListener(() {
       setState(() {});
     });
-
-    getAllData();
   }
 
   @override
@@ -92,13 +95,6 @@ class _HomeScreenState extends State<HomeScreen>
   double getRadianFromDegree(double degree) {
     double unitRadian = 57.295779513;
     return degree / unitRadian;
-  }
-
-  getAllData() async {
-    user = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.uid)
-        .get();
   }
 
   getUserGames() async {
@@ -248,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen>
           children: [
             Padding(
               padding: EdgeInsets.only(left: 10.0),
-              child: user.data()!['imageUrl'] == null
+              child: userImageUrl == null
                   ? Builder(
                       builder: (context) => GestureDetector(
                         onTap: () => Scaffold.of(context).openDrawer(),
@@ -325,8 +321,7 @@ class _HomeScreenState extends State<HomeScreen>
                 shape: BoxShape.circle,
                 image: DecorationImage(
                     fit: BoxFit.cover,
-                    image:
-                        CachedNetworkImageProvider(user.data()!['imageUrl']))),
+                    image: CachedNetworkImageProvider(userImageUrl!))),
           ),
         ));
   }

@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/ui/screens/Games/game_focus_screen.dart';
-import 'package:gemu/ui/screens/Home/profile_view.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -229,12 +228,12 @@ class SearchScreenState extends State<SearchScreen>
                       MaterialPageRoute(
                           builder: (context) => GameFocusScreen(game: all)));
                 } else {
-                  Navigator.push(
+                  /*Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => ProfileView(
                                 idUser: all.data()!['id'],
-                              )));
+                              )));*/
                 }
               },
               leading: Container(
@@ -267,12 +266,12 @@ class SearchScreenState extends State<SearchScreen>
           return Padding(
             padding: EdgeInsets.only(top: 5.0),
             child: ListTile(
-              onTap: () => Navigator.push(
+              /*onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => ProfileView(
                             idUser: user.data()!['id'],
-                          ))),
+                          ))),*/
               leading: Container(
                 height: 50,
                 width: 50,

@@ -3,10 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/widgets/picture_item.dart';
-import 'package:gemu/ui/widgets/video_item.dart';
-import 'package:gemu/ui/widgets/post_actionsbar.dart';
-import 'package:gemu/ui/widgets/post_description.dart';
 
 class PostViewFollowing extends StatefulWidget {
   @override
@@ -116,7 +112,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
                                   idPost: post.data()!['id'],
                                   videoUrl: post.data()!['videoUrl'],
                                 ),*/
-                          Positioned(
+                          /*Positioned(
                               left: 0,
                               bottom: 15,
                               child: ContentPostDescription(
@@ -124,7 +120,7 @@ class PostViewFollowingState extends State<PostViewFollowing> {
                                 username: post.data()!['username'],
                                 caption: post.data()!['caption'],
                                 hashtags: post.data()!['hashtags'],
-                              )),
+                              )),*/
                           /* Positioned(
                               right: 0,
                               bottom: 5,

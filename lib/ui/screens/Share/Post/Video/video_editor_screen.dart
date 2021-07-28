@@ -44,11 +44,17 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
   @override
   void initState() {
     super.initState();
-    _videoPlayerController = VideoPlayerController.file(widget.file!);
-    _videoPlayerController.initialize();
-    _videoPlayerController.setLooping(true);
-    _videoPlayerController.setVolume(0.0);
-    _videoPlayerController.play();
+    _videoPlayerController = VideoPlayerController.file(widget.file!,
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true))
+      ..initialize().then((value) {
+        if (mounted) {
+          setState(() {
+            _videoPlayerController.setLooping(true);
+            _videoPlayerController.setVolume(0.0);
+            _videoPlayerController.play();
+          });
+        }
+      });
 
     _pageController = PageController(initialPage: currentPageIndex);
     _captionController = TextEditingController();

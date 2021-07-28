@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/screens/Home/profile_view.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/ui/widgets/app_bar_custom.dart';
 
@@ -81,12 +79,12 @@ class FollowsState extends State<Follows> {
                     itemBuilder: (context, index) {
                       UserModel user = resultFinal[index];
                       return ListTile(
-                        onTap: () => Navigator.push(
+                        /*onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ProfileView(
                                       idUser: user.uid,
-                                    ))),
+                                    ))),*/
                         leading: user.imageUrl == null
                             ? Container(
                                 height: 50,

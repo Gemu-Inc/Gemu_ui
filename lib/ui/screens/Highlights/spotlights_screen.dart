@@ -2,10 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/widgets/picture_item.dart';
-import 'package:gemu/ui/widgets/video_item.dart';
-import 'package:gemu/ui/widgets/post_actionsbar.dart';
-import 'package:gemu/ui/widgets/post_description.dart';
 
 class SpotlightsScreen extends StatefulWidget {
   @override
@@ -93,7 +89,7 @@ class SpotlightsScreenState extends State<SpotlightsScreen> {
                                   idPost: post.data()!['id'],
                                   videoUrl: post.data()!['videoUrl'],
                                 ),*/
-                          Positioned(
+                          /*Positioned(
                               bottom: 30,
                               left: 0,
                               child: ContentPostDescription(
@@ -101,7 +97,7 @@ class SpotlightsScreenState extends State<SpotlightsScreen> {
                                 username: post.data()!['username'],
                                 caption: post.data()!['caption'],
                                 hashtags: post.data()!['hashtags'],
-                              )),
+                              )),*/
                           /*Positioned(
                               bottom: 30,
                               right: 0,

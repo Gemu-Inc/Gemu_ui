@@ -4,11 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/widgets/picture_item.dart';
-import 'package:gemu/ui/widgets/video_item.dart';
-import 'package:gemu/ui/widgets/post_actionsbar.dart';
-import 'package:gemu/ui/widgets/post_description.dart';
-import 'package:gemu/ui/widgets/post_commentbar.dart';
 
 class GameFocusScreen extends StatefulWidget {
   const GameFocusScreen({Key? key, required this.game}) : super(key: key);
@@ -113,7 +108,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                                         idPost: post.data()!['id'],
                                         videoUrl: post.data()!['videoUrl'],
                                       ),*/
-                                Positioned(
+                                /*Positioned(
                                     left: 0,
                                     bottom: 50,
                                     child: ContentPostDescription(
@@ -121,7 +116,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                                       username: post.data()!['username'],
                                       caption: post.data()!['caption'],
                                       hashtags: post.data()!['hashtags'],
-                                    )),
+                                    )),*/
                                 /*Positioned(
                                     right: 0,
                                     bottom: 45,
@@ -136,11 +131,6 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                                       up: post.data()!['up'],
                                       down: post.data()!['down'],
                                     )),*/
-                                Positioned(
-                                    bottom: 0,
-                                    child: CommentPostBar(
-                                      idPost: post.data()!['id'],
-                                    ))
                               ]);
                             });
                       },

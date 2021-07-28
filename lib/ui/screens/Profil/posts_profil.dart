@@ -71,9 +71,10 @@ class PostsPublicState extends State<PostsPublic>
                             context,
                             MaterialPageRoute(
                                 builder: (context) => PostsView(
-                                    postIndex: index,
-                                    actualUser: me!,
-                                    posts: posts))),
+                                      postIndex: index,
+                                      actualUser: me!,
+                                      posts: posts,
+                                    ))),
                         child: Container(
                           height: 150,
                           width: 150,
@@ -82,10 +83,9 @@ class PostsPublicState extends State<PostsPublic>
                               Container(
                                 height: 150,
                                 width: 150,
-                                child: Image(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(
-                                        posts[index].postUrl)),
+                                child: CachedNetworkImage(
+                                    imageUrl: posts[index].postUrl,
+                                    fit: BoxFit.cover),
                               ),
                               Container(
                                 color: Colors.black.withOpacity(0.2),
@@ -112,9 +112,10 @@ class PostsPublicState extends State<PostsPublic>
                             context,
                             MaterialPageRoute(
                                 builder: (context) => PostsView(
-                                    postIndex: index,
-                                    actualUser: me!,
-                                    posts: posts))),
+                                      postIndex: index,
+                                      actualUser: me!,
+                                      posts: posts,
+                                    ))),
                         child: Container(
                           height: 150,
                           width: 150,
@@ -123,10 +124,10 @@ class PostsPublicState extends State<PostsPublic>
                               Container(
                                 height: 150,
                                 width: 150,
-                                child: Image(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(
-                                        posts[index].previewImage!)),
+                                child: CachedNetworkImage(
+                                  imageUrl: posts[index].previewImage!,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                               Container(
                                 color: Colors.black.withOpacity(0.2),
@@ -226,9 +227,10 @@ class PostsPrivateState extends State<PostsPrivate>
                             context,
                             MaterialPageRoute(
                                 builder: (context) => PostsView(
-                                    postIndex: index,
-                                    actualUser: me!,
-                                    posts: posts))),
+                                      postIndex: index,
+                                      actualUser: me!,
+                                      posts: posts,
+                                    ))),
                         child: Container(
                           height: 150,
                           width: 150,
@@ -237,10 +239,10 @@ class PostsPrivateState extends State<PostsPrivate>
                               Container(
                                 height: 150,
                                 width: 150,
-                                child: Image(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(
-                                        posts[index].postUrl)),
+                                child: CachedNetworkImage(
+                                  imageUrl: posts[index].postUrl,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                               Container(
                                 color: Colors.black.withOpacity(0.2),
@@ -267,9 +269,10 @@ class PostsPrivateState extends State<PostsPrivate>
                             context,
                             MaterialPageRoute(
                                 builder: (context) => PostsView(
-                                    postIndex: index,
-                                    actualUser: me!,
-                                    posts: posts))),
+                                      postIndex: index,
+                                      actualUser: me!,
+                                      posts: posts,
+                                    ))),
                         child: Container(
                           height: 150,
                           width: 150,
@@ -278,21 +281,13 @@ class PostsPrivateState extends State<PostsPrivate>
                               Container(
                                 height: 150,
                                 width: 150,
-                                child: Image(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(
-                                        posts[index].previewImage!)),
+                                child: CachedNetworkImage(
+                                  imageUrl: posts[index].previewImage!,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                               Container(
                                 color: Colors.black.withOpacity(0.2),
-                              ),
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                child: Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
-                                ),
                               ),
                               Positioned(
                                 bottom: 0,
@@ -305,6 +300,14 @@ class PostsPrivateState extends State<PostsPrivate>
                                     ),
                                     Text(posts[index].viewcount.toString()),
                                   ],
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                child: Icon(
+                                  Icons.play_arrow,
+                                  color: Colors.white,
                                 ),
                               ),
                             ],
@@ -321,8 +324,11 @@ class PostsView extends StatefulWidget {
   final UserModel actualUser;
   final List<Post> posts;
 
-  PostsView(
-      {required this.postIndex, required this.actualUser, required this.posts});
+  PostsView({
+    required this.postIndex,
+    required this.actualUser,
+    required this.posts,
+  });
 
   @override
   PostsViewState createState() => PostsViewState();
@@ -346,27 +352,29 @@ class PostsViewState extends State<PostsView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            extendBodyBehindAppBar: true,
-            appBar: AppBar(
-              elevation: 0,
-              leading: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    Icons.expand_more,
-                    size: 33,
-                  )),
-              title: Text('Mes posts'),
-            ),
-            body: PageView.builder(
-                controller: _pageController,
-                scrollDirection: Axis.vertical,
-                itemCount: widget.posts.length,
-                itemBuilder: (_, int index) {
-                  return PostTile(
-                      idUserActual: widget.actualUser.uid,
-                      post: widget.posts[index]);
-                })));
+      child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            elevation: 0,
+            leading: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(
+                  Icons.expand_more,
+                  size: 33,
+                )),
+            title: Text('Mes posts'),
+          ),
+          body: PageView.builder(
+              controller: _pageController,
+              scrollDirection: Axis.vertical,
+              itemCount: widget.posts.length,
+              itemBuilder: (_, int index) {
+                return PostTile(
+                  idUserActual: widget.actualUser.uid,
+                  post: widget.posts[index],
+                );
+              })),
+    );
   }
 }

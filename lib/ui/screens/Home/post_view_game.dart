@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/widgets/picture_item.dart';
-import 'package:gemu/ui/widgets/video_item.dart';
-import 'package:gemu/ui/widgets/post_actionsbar.dart';
-import 'package:gemu/ui/widgets/post_description.dart';
 
 class PostViewGame extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>> game;
@@ -110,7 +106,7 @@ class PostViewGameState extends State<PostViewGame> {
                         idPost: post.data()!['id'],
                         videoUrl: post.data()!['videoUrl'],
                       ),*/
-                Positioned(
+                /*Positioned(
                     left: 0,
                     bottom: 15,
                     child: ContentPostDescription(
@@ -118,7 +114,7 @@ class PostViewGameState extends State<PostViewGame> {
                       username: post.data()!['username'],
                       caption: post.data()!['caption'],
                       hashtags: post.data()!['hashtags'],
-                    )),
+                    )),*/
                 /*Positioned(
                     right: 0,
                     bottom: 5,

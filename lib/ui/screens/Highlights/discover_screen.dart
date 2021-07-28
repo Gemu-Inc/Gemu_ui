@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/widgets/picture_item.dart';
-import 'package:gemu/ui/widgets/video_item.dart';
-import 'package:gemu/ui/widgets/post_actionsbar.dart';
-import 'package:gemu/ui/widgets/post_description.dart';
 
 class DiscoverScreen extends StatefulWidget {
   @override
@@ -122,7 +118,7 @@ class DiscoverScreenState extends State<DiscoverScreen> {
                                 idPost: post.data()!['id'],
                                 videoUrl: post.data()!['videoUrl'],
                               ),*/
-                        Positioned(
+                        /*Positioned(
                             bottom: 30,
                             left: 0,
                             child: ContentPostDescription(
@@ -130,7 +126,7 @@ class DiscoverScreenState extends State<DiscoverScreen> {
                               username: post.data()!['username'],
                               caption: post.data()!['caption'],
                               hashtags: post.data()!['hashtags'],
-                            )),
+                            )),*/
                         /*Positioned(
                             bottom: 30,
                             right: 0,

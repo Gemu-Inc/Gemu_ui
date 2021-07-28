@@ -91,7 +91,6 @@ class ExpandableTextState extends State<ExpandableText>
     _linkTapGestureRecognizer = TapGestureRecognizer()..onTap = _toggleExpanded;
     _prefixTapGestureRecognizer = TapGestureRecognizer()..onTap = _prefixTapped;
 
-    print('text: ${widget.text}');
     _updateText();
   }
 
