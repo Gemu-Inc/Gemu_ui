@@ -38,20 +38,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       {required String title, required var currentUserID}) async {
     CloudStorageResult storageResult;
 
-    storageResult = await CloudStorageService.uploadImage(
-        imageToUpload: _selectedImage!, title: title + currentUserID);
+    try {
+      storageResult = await CloudStorageService.uploadImage(
+          imageToUpload: _selectedImage!, title: title + currentUserID);
+      await DatabaseService.updateUserImgProfile(
+          storageResult.imageUrl, currentUserID);
 
-    var result;
+      FirebaseFirestore.instance
+          .collection('posts')
+          .where('uid', isEqualTo: currentUserID)
+          .get()
+          .then((data) {
+        for (var item in data.docs) {
+          item.reference.update({'imageUrl': storageResult.imageUrl});
+        }
+      });
 
-    result = await DatabaseService.updateUserImgProfile(
-        storageResult.imageUrl, currentUserID);
-
-    if (result is String) {
-      alertNotUpdateProfile('Could not change profile image', result);
-    } else {
       alertUpdateProfile(
           'Profile image successfully added', 'Your image has been changed');
+    } catch (e) {
+      alertNotUpdateProfile('Could not change profile image', 'Try again');
     }
+
     if (_selectedImage != null) {
       setState(() {
         _selectedImage = null;

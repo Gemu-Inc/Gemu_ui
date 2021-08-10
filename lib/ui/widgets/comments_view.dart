@@ -11,6 +11,7 @@ import 'package:gemu/models/post.dart';
 import 'package:gemu/models/commentaire.dart';
 import 'package:gemu/services/date_helper.dart';
 import 'package:gemu/ui/screens/Profil/profil_screen.dart';
+import 'package:gemu/models/user.dart';
 
 class CommentsView extends StatefulWidget {
   final Post post;
@@ -45,9 +46,7 @@ class CommentsViewState extends State<CommentsView>
         .collection('comments')
         .doc('Comment${userdoc.id}$date')
         .set({
-      'username': userdoc.data()!['username'],
       'uid': userdoc.id,
-      'profilpicture': userdoc.data()!['imageUrl'],
       'comment': _commentController.text,
       'upcount': 0,
       'downcount': 0,
@@ -135,144 +134,143 @@ class CommentsViewState extends State<CommentsView>
   }
 
   Widget commentaires() {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('posts')
-            .doc(widget.post.id)
-            .collection('comments')
-            .snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
-          return Column(
+    return Column(
+      children: [
+        Container(
+          height: 60,
+          decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              border: Border(
+                  top: BorderSide(color: Colors.white, width: 0.1),
+                  bottom: BorderSide(color: Colors.white, width: 0.1))),
+          alignment: Alignment.center,
+          child: Row(
             children: [
-              Container(
-                height: 60,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    border: Border(
-                        top: BorderSide(color: Colors.white, width: 0.1),
-                        bottom: BorderSide(color: Colors.white, width: 0.1))),
-                alignment: Alignment.center,
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          if (isComment) {
-                            hideKeyboard();
-                          } else {
-                            Navigator.pop(context);
-                          }
-                        },
-                        icon: Icon(Icons.arrow_back_ios)),
-                    Text(
-                      'Commentaires',
-                      style: mystyle(14),
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                  flex: 5,
-                  child: Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: !snapshot.hasData
-                          ? Center(
-                              child: CircularProgressIndicator(
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            )
-                          : snapshot.data.docs.length == 0
-                              ? Center(
-                                  child: Text(
-                                    'No comments',
-                                    style: mystyle(11, Colors.white60),
-                                  ),
-                                )
-                              : ListView.builder(
-                                  itemCount: snapshot.data.docs.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    Commentaire comment = Commentaire.fromMap(
-                                        snapshot.data.docs[index],
-                                        snapshot.data.docs[index].data());
-                                    return CommentTile(
-                                      post: widget.post,
-                                      comment: comment,
-                                    );
-                                  }))),
-              Expanded(
-                  child: Container(
-                height: 60,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).shadowColor,
-                    border: Border(
-                        top: BorderSide(color: Colors.white, width: 0.1))),
-                alignment: Alignment.center,
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5.0),
-                    child: Row(
-                      children: [
-                        me!.imageUrl == null
-                            ? Container(
-                                margin: EdgeInsets.all(3.0),
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.white60,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: Color(0xFF222831)),
-                                ),
-                                child: Icon(
-                                  Icons.person,
-                                  size: 23,
-                                  color: Colors.black,
-                                ))
-                            : Container(
-                                margin: EdgeInsets.all(3.0),
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.white60,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: Color(0xFF222831)),
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: CachedNetworkImageProvider(
-                                          me!.imageUrl!)),
-                                )),
-                        Expanded(
-                            child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.0),
-                          child: TextFormField(
-                            scrollPhysics: AlwaysScrollableScrollPhysics(),
-                            controller: _commentController,
-                            decoration: InputDecoration(
-                              hintText: "Ajouter un commentaire...",
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        )),
-                        TextButton(
-                            onPressed: () {
-                              publishComment(snapshot.data.docs.length);
-                            },
-                            child: Text('Publish',
-                                style: mystyle(
-                                    15, Theme.of(context).primaryColor)))
-                      ],
-                    )),
-              ))
+              IconButton(
+                  onPressed: () {
+                    if (isComment) {
+                      hideKeyboard();
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  },
+                  icon: Icon(Icons.arrow_back_ios)),
+              Text(
+                'Commentaires',
+                style: mystyle(14),
+              )
             ],
-          );
-        });
+          ),
+        ),
+        Expanded(
+            flex: 5,
+            child: Container(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('posts')
+                        .doc(widget.post.id)
+                        .collection('comments')
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        );
+                      }
+
+                      if (snapshot.data.docs.length == 0) {
+                        return Center(
+                          child: Text(
+                            'No comments',
+                            style: mystyle(11, Colors.white60),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                          itemCount: snapshot.data.docs.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            Commentaire comment = Commentaire.fromMap(
+                                snapshot.data.docs[index],
+                                snapshot.data.docs[index].data());
+                            return CommentTile(
+                              comment: comment,
+                            );
+                          });
+                    }))),
+        Expanded(
+            child: Container(
+          height: 60,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              color: Theme.of(context).shadowColor,
+              border: Border(top: BorderSide(color: Colors.white, width: 0.1))),
+          alignment: Alignment.center,
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
+              child: Row(
+                children: [
+                  me!.imageUrl == null
+                      ? Container(
+                          margin: EdgeInsets.all(3.0),
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white60,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Color(0xFF222831)),
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: 23,
+                            color: Colors.black,
+                          ))
+                      : Container(
+                          margin: EdgeInsets.all(3.0),
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white60,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Color(0xFF222831)),
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image:
+                                    CachedNetworkImageProvider(me!.imageUrl!)),
+                          )),
+                  Expanded(
+                      child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: TextFormField(
+                      scrollPhysics: AlwaysScrollableScrollPhysics(),
+                      controller: _commentController,
+                      decoration: InputDecoration(
+                        hintText: "Ajouter un commentaire...",
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  )),
+                  TextButton(
+                      onPressed: () {
+                        publishComment(0);
+                      },
+                      child: Text('Publish',
+                          style: mystyle(15, Theme.of(context).primaryColor)))
+                ],
+              )),
+        ))
+      ],
+    );
   }
 }
 
 class CommentTile extends StatefulWidget {
   final Commentaire comment;
-  final Post post;
 
-  CommentTile({required this.post, required this.comment});
+  CommentTile({required this.comment});
 
   @override
   CommentTileState createState() => CommentTileState();
@@ -300,7 +298,7 @@ class CommentTileState extends State<CommentTile> {
     });
 
     DatabaseService.addNotification(
-        me!.uid, widget.post.uid, "a up votre commentaire", "updown");
+        me!.uid, widget.comment.uid, "a up votre commentaire", "updown");
   }
 
   downComment(Commentaire comment) {
@@ -319,7 +317,7 @@ class CommentTileState extends State<CommentTile> {
     });
 
     DatabaseService.addNotification(
-        me!.uid, widget.post.uid, "a down votre commentaire", "updown");
+        me!.uid, widget.comment.uid, "a down votre commentaire", "updown");
   }
 
   @override
@@ -360,159 +358,175 @@ class CommentTileState extends State<CommentTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5.0),
-      child: Container(
-          child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-              child: Container(
+    return FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('users')
+            .doc(widget.comment.uid)
+            .get(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) {
+            return SizedBox();
+          }
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 5.0),
+            child: Container(
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ProfilPost(
-                                      userPostID: widget.comment.uid)));
-                        },
-                        child: widget.comment.profilPicture == null
-                            ? Container(
-                                margin: EdgeInsets.all(3.0),
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).canvasColor,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.black),
-                                ),
-                                child: Icon(
-                                  Icons.person,
-                                  size: 23,
-                                  color: Colors.black,
-                                ))
-                            : Container(
-                                margin: EdgeInsets.all(3.0),
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.white60,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.black),
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: CachedNetworkImageProvider(
-                                          widget.comment.profilPicture!)),
-                                )),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProfilPost(
-                                    userPostID: widget.comment.uid)));
-                      },
-                      child: Text(
-                        "${widget.comment.username}",
-                        style: mystyle(12, Colors.white, FontWeight.w700),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 5.0,
-                    ),
-                    Expanded(
-                        child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("${widget.comment.comment}",
-                            style: TextStyle(color: Colors.white60)),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Container(
-                          height: 20.0,
-                          child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                    child: Container(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProfilPost(
+                                            userPostID: widget.comment.uid)));
+                              },
+                              child: snapshot.data.data()['imageUrl'] == null
+                                  ? Container(
+                                      margin: EdgeInsets.all(3.0),
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).canvasColor,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.black),
+                                      ),
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 23,
+                                        color: Colors.black,
+                                      ))
+                                  : Container(
+                                      margin: EdgeInsets.all(3.0),
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white60,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.black),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: CachedNetworkImageProvider(
+                                                snapshot.data
+                                                    .data()['imageUrl'])),
+                                      )),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProfilPost(
+                                          userPostID: widget.comment.uid)));
+                            },
+                            child: Text(
+                              snapshot.data.data()['username'],
+                              style: mystyle(12, Colors.white, FontWeight.w700),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5.0,
+                          ),
+                          Expanded(
+                              child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                DateHelper().datePostView(widget.comment.date),
-                                style: mystyle(9),
-                              ),
+                              Text(widget.comment.comment,
+                                  style: TextStyle(color: Colors.white60)),
                               SizedBox(
-                                width: 5.0,
+                                height: 5.0,
                               ),
-                              Text('-'),
-                              SizedBox(
-                                width: 5.0,
-                              ),
-                              Text(
-                                'Répondre',
-                                style: mystyle(9),
+                              Container(
+                                height: 20.0,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      DateHelper()
+                                          .datePostView(widget.comment.date),
+                                      style: mystyle(9),
+                                    ),
+                                    SizedBox(
+                                      width: 5.0,
+                                    ),
+                                    Text('-'),
+                                    SizedBox(
+                                      width: 5.0,
+                                    ),
+                                    Text(
+                                      'Répondre',
+                                      style: mystyle(9),
+                                    )
+                                  ],
+                                ),
                               )
                             ],
-                          ),
-                        )
-                      ],
-                    )),
-                  ],
+                          )),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-          Container(
-            width: 50,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                        onTap: () => upComment(widget.comment),
-                        child: (upper.length != 0 && upper.contains(me!.uid))
-                            ? Icon(
-                                Icons.arrow_upward,
-                                size: 20,
-                                color: Colors.green[200],
-                              )
-                            : Icon(
-                                Icons.arrow_upward_outlined,
-                                size: 20,
-                                color: Colors.white60,
-                              )),
-                    InkWell(
-                        onTap: () => downComment(widget.comment),
-                        child: (downer.length != 0 && downer.contains(me!.uid))
-                            ? Icon(
-                                Icons.arrow_downward,
-                                size: 20,
-                                color: Colors.red[200],
-                              )
-                            : Icon(
-                                Icons.arrow_downward_outlined,
-                                size: 20,
-                                color: Colors.white60,
-                              )),
-                  ],
-                ),
-                SizedBox(
-                  height: 3.0,
-                ),
-                Text(
-                  '${(widget.comment.upcount - widget.comment.downcount)}',
-                  style: mystyle(11, Colors.white),
+                Container(
+                  width: 50,
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                              onTap: () => upComment(widget.comment),
+                              child:
+                                  (upper.length != 0 && upper.contains(me!.uid))
+                                      ? Icon(
+                                          Icons.arrow_upward,
+                                          size: 20,
+                                          color: Colors.green[200],
+                                        )
+                                      : Icon(
+                                          Icons.arrow_upward_outlined,
+                                          size: 20,
+                                          color: Colors.white60,
+                                        )),
+                          InkWell(
+                              onTap: () => downComment(widget.comment),
+                              child: (downer.length != 0 &&
+                                      downer.contains(me!.uid))
+                                  ? Icon(
+                                      Icons.arrow_downward,
+                                      size: 20,
+                                      color: Colors.red[200],
+                                    )
+                                  : Icon(
+                                      Icons.arrow_downward_outlined,
+                                      size: 20,
+                                      color: Colors.white60,
+                                    )),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 3.0,
+                      ),
+                      Text(
+                        (widget.comment.upcount - widget.comment.downcount)
+                            .toString(),
+                        style: mystyle(11, Colors.white),
+                      )
+                    ],
+                  ),
                 )
               ],
-            ),
-          )
-        ],
-      )),
-    );
+            )),
+          );
+        });
   }
 }

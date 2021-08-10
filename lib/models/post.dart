@@ -8,7 +8,8 @@ import 'package:gemu/services/cache_manager_service.dart';
 class Post {
   DocumentReference reference;
   String id;
-  String uid;
+  String uid, username;
+  String? imageUrl;
   int commentcount;
   int date;
   String description;
@@ -26,6 +27,8 @@ class Post {
       {required this.reference,
       required this.id,
       required this.uid,
+      required this.username,
+      required this.imageUrl,
       required this.commentcount,
       required this.date,
       required this.description,
@@ -44,6 +47,8 @@ class Post {
         reference: snapshot.reference,
         id: data['id'],
         uid: data['uid'],
+        username: data['username'],
+        imageUrl: data['imageUrl'],
         commentcount: data['commentcount'],
         date: data['date'],
         description: data['description'],

@@ -173,6 +173,8 @@ class PictureScreenState extends State<PictureScreen>
           await uploadPictureToStorage(imagePath, postName, gameName);
       FirebaseFirestore.instance.collection('posts').doc(postName).set({
         'uid': me!.uid,
+        'username': me!.username,
+        'imageUrl': me!.imageUrl,
         'type': 'picture',
         'id': postName,
         'gameName': gameName,

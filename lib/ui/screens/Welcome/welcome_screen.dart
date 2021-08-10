@@ -159,7 +159,15 @@ class BodyState extends State<Body> {
                     of: 40,
                   ),
                   BouncingButton(
-                    title: 'Sign up',
+                    content: Center(
+                      child: Text(
+                        'Sign up',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    height: 50,
+                    width: MediaQuery.of(context).size.width / 1.5,
                     onPressed: () {
                       Navigator.push(
                           context,
@@ -194,7 +202,15 @@ class BodyState extends State<Body> {
                     of: 40,
                   ),
                   BouncingButton(
-                    title: 'Login',
+                    content: Center(
+                      child: Text(
+                        'Login',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    height: 50,
+                    width: MediaQuery.of(context).size.width / 1.5,
                     onPressed: () {
                       Navigator.push(
                           context,

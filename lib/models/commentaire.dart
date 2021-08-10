@@ -2,9 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Commentaire {
   final DocumentReference reference;
-  final String username;
   final String uid;
-  final String? profilPicture;
   final String comment;
   final int upcount;
   final int downcount;
@@ -13,9 +11,7 @@ class Commentaire {
 
   Commentaire(
       {required this.reference,
-      required this.username,
       required this.uid,
-      required this.profilPicture,
       required this.comment,
       required this.upcount,
       required this.downcount,
@@ -26,9 +22,7 @@ class Commentaire {
       DocumentSnapshot snapshot, Map<String, dynamic> data) {
     return Commentaire(
         reference: snapshot.reference,
-        username: data['username'],
         uid: data['uid'],
-        profilPicture: data['profilpicture'],
         comment: data['comment'],
         upcount: data['upcount'],
         downcount: data['downcount'],

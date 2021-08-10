@@ -61,7 +61,8 @@ class PostTileState extends State<PostTile> with TickerProviderStateMixin {
                 ? PictureItem(
                     file: snapshot.data.file,
                     idUserActual: widget.idUserActual,
-                    post: widget.post)
+                    post: widget.post,
+                  )
                 : VideoItem(
                     videoPlayerControllerType: VideoPlayerController.file(
                         snapshot.data.file,
@@ -95,7 +96,7 @@ class PictureItemState extends State<PictureItem>
   static const double ActionWidgetSize = 60.0;
   static const double ActionIconSize = 35.0;
   static const double ShareActionIconSize = 25.0;
-  static const double ProfileImageSize = 50.0;
+  static const double ProfileImageSize = 45.0;
   static const double PlusIconSize = 20.0;
 
   late AnimationController _upController, _downController;
@@ -103,8 +104,6 @@ class PictureItemState extends State<PictureItem>
 
   late Post post;
   late StreamSubscription postListener;
-
-  late UserModel userPost;
 
   late String hashtags;
   late String descriptionFinal;
@@ -150,7 +149,7 @@ class PictureItemState extends State<PictureItem>
     });
 
     DatabaseService.addNotification(
-        widget.idUserActual, userPost.uid, "a up votre post", "updown");
+        widget.idUserActual, post.uid, "a up votre post", "updown");
   }
 
   downPost() async {
@@ -177,11 +176,13 @@ class PictureItemState extends State<PictureItem>
     });
 
     DatabaseService.addNotification(
-        widget.idUserActual, userPost.uid, "a down votre post", "updown");
+        widget.idUserActual, post.uid, "a down votre post", "updown");
   }
 
   followUser() async {
-    userPost.ref
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(post.uid)
         .collection('followers')
         .doc(widget.idUserActual)
         .get()
@@ -192,9 +193,9 @@ class PictureItemState extends State<PictureItem>
             .collection('users')
             .doc(widget.idUserActual)
             .collection('following')
-            .doc(userPost.uid)
+            .doc(post.uid)
             .set({});
-        DatabaseService.addNotification(widget.idUserActual, userPost.uid,
+        DatabaseService.addNotification(widget.idUserActual, post.uid,
             "a commencé à vous suivre", "follow");
 
         setState(() {
@@ -239,12 +240,6 @@ class PictureItemState extends State<PictureItem>
       FirebaseFirestore.instance
           .collection('users')
           .doc(post.uid)
-          .get()
-          .then((data) {
-        userPost = UserModel.fromMap(data, data.data()!);
-      });
-
-      userPost.ref
           .collection('followers')
           .doc(widget.idUserActual)
           .get()
@@ -261,8 +256,6 @@ class PictureItemState extends State<PictureItem>
       });
 
       updateView();
-    } else {
-      userPost = me!;
     }
 
     //concatène les list et les différents string afin de créer une bonne description
@@ -466,11 +459,10 @@ class PictureItemState extends State<PictureItem>
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => ProfilPost(
-                                                userPostID: userPost.uid,
+                                                userPostID: post.uid,
                                               )));
                                 },
-                                child: Text(userPost.username,
-                                    style: mystyle(14))),
+                                child: Text(post.username, style: mystyle(14))),
                           ),
                           SizedBox(
                             width: 2.5,
@@ -657,8 +649,8 @@ class PictureItemState extends State<PictureItem>
 
   Widget _getFollowAction({required BuildContext context}) {
     return Container(
-        width: 55.0,
-        height: 55.0,
+        width: ProfileImageSize,
+        height: ProfileImageSize,
         child: post.uid == widget.idUserActual || isFollowing
             ? _getProfilePicture(context)
             : Stack(children: [
@@ -674,33 +666,28 @@ class PictureItemState extends State<PictureItem>
             context,
             MaterialPageRoute(
                 builder: (context) => ProfilPost(
-                      userPostID: userPost.uid,
+                      userPostID: post.uid,
                     )));
       },
-      child: userPost.imageUrl == null
+      child: post.imageUrl == null
           ? Container(
-              width: ProfileImageSize,
-              height: ProfileImageSize,
               decoration: BoxDecoration(
-                color: Colors.white60,
+                color: Theme.of(context).canvasColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: Color(0xFF222831)),
+                border: Border.all(color: Colors.black),
               ),
               child: Icon(
                 Icons.person,
-                size: 23,
-                color: Colors.black,
+                size: 30,
               ))
           : Container(
-              width: ProfileImageSize,
-              height: ProfileImageSize,
               decoration: BoxDecoration(
                   color: Colors.white60,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Color(0xFF222831)),
+                  border: Border.all(color: Colors.black),
                   image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(userPost.imageUrl!))),
+                      image: CachedNetworkImageProvider(post.imageUrl!))),
             ),
     );
   }
@@ -741,20 +728,17 @@ class PictureItemState extends State<PictureItem>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Padding(
-                padding: EdgeInsets.only(right: 3.0),
-                child: Icon(
-                  Icons.videogame_asset,
-                  color: Colors.white,
-                  size: 23,
-                ),
+              Icon(
+                Icons.videogame_asset,
+                color: Colors.white,
+                size: 23,
               ),
               Card(
                 color: Colors.transparent,
                 shadowColor: Colors.transparent,
                 child: Container(
                     height: 40,
-                    width: 75,
+                    width: 55,
                     child: Marquee(
                       text: post.gameName,
                       style: mystyle(13),
@@ -797,7 +781,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   static const double ActionWidgetSize = 60.0;
   static const double ActionIconSize = 35.0;
   static const double ShareActionIconSize = 25.0;
-  static const double ProfileImageSize = 50.0;
+  static const double ProfileImageSize = 45.0;
   static const double PlusIconSize = 20.0;
 
   late AnimationController _upController, _downController;
@@ -805,8 +789,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
   late Post post;
   late StreamSubscription postListener;
-
-  late UserModel userPost;
 
   late String hashtags;
   late String descriptionFinal;
@@ -820,7 +802,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
   late VideoPlayerController videoPlayerController;
   bool volumeOn = true;
-  bool isNavigateComment = true;
+  bool isNavigateComment = false;
 
   String concatListHashtags(List hashtags) {
     StringBuffer concat = StringBuffer();
@@ -856,7 +838,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     });
 
     DatabaseService.addNotification(
-        widget.idUserActual, userPost.uid, "a up votre post", "updown");
+        widget.idUserActual, post.uid, "a up votre post", "updown");
   }
 
   downPost() async {
@@ -883,11 +865,13 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     });
 
     DatabaseService.addNotification(
-        widget.idUserActual, userPost.uid, "a down votre post", "updown");
+        widget.idUserActual, post.uid, "a down votre post", "updown");
   }
 
   followUser() async {
-    userPost.ref
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(post.uid)
         .collection('followers')
         .doc(widget.idUserActual)
         .get()
@@ -898,9 +882,9 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
             .collection('users')
             .doc(widget.idUserActual)
             .collection('following')
-            .doc(userPost.uid)
+            .doc(post.uid)
             .set({});
-        DatabaseService.addNotification(widget.idUserActual, userPost.uid,
+        DatabaseService.addNotification(widget.idUserActual, post.uid,
             "a commencé à vous suivre", "follow");
 
         setState(() {
@@ -930,9 +914,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     videoPlayerController = widget.videoPlayerControllerType
       ..initialize().then((value) {
         if (mounted) {
-          setState(() {});
           videoPlayerController.setLooping(true);
-          videoPlayerController.play();
+          setState(() {});
         }
       });
 
@@ -954,12 +937,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
       FirebaseFirestore.instance
           .collection('users')
           .doc(post.uid)
-          .get()
-          .then((data) {
-        userPost = UserModel.fromMap(data, data.data()!);
-      });
-
-      userPost.ref
           .collection('followers')
           .doc(widget.idUserActual)
           .get()
@@ -976,8 +953,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
       });
 
       updateView();
-    } else {
-      userPost = me!;
     }
 
     //concatène les list et les différents string afin de créer une bonne description
@@ -1053,6 +1028,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     downListener.cancel();
     postListener.cancel();
     videoPlayerController.dispose();
+
     print('fin du post');
     super.dispose();
   }
@@ -1153,16 +1129,32 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                       aspectRatio: videoPlayerController.value.aspectRatio,
                       child: VideoPlayer(videoPlayerController)),
                   onVisibilityChanged: (VisibilityInfo info) {
+                    print('info: ${info.visibleFraction}');
                     if (info.visibleFraction == 0 && !isNavigateComment) {
-                      videoPlayerController.pause();
+                      print('pas visible et false');
+                      if (mounted) {
+                        setState(() {
+                          videoPlayerController.pause();
+                        });
+                      }
                     } else if (info.visibleFraction == 1 &&
                         !isNavigateComment) {
-                      setState(() {
-                        isNavigateComment = !isNavigateComment;
-                      });
-                      videoPlayerController.play();
-                    } else if (info.visibleFraction == 1) {
-                      videoPlayerController.play();
+                      print('visible et false');
+                      if (mounted) {
+                        setState(() {
+                          videoPlayerController.play();
+                        });
+                      }
+                    } else if ((info.visibleFraction == 1 ||
+                            info.visibleFraction == 0) &&
+                        isNavigateComment) {
+                      print('visible ou pas et true');
+                      if (mounted) {
+                        setState(() {
+                          videoPlayerController.play();
+                          isNavigateComment = !isNavigateComment;
+                        });
+                      }
                     }
                   })
               : CachedNetworkImage(
@@ -1187,14 +1179,15 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
           children: [
             IconButton(
               onPressed: () {
-                print('icon pause');
-                setState(() {
-                  if (videoPlayerController.value.isPlaying) {
+                if (videoPlayerController.value.isPlaying) {
+                  setState(() {
                     videoPlayerController.pause();
-                  } else {
+                  });
+                } else {
+                  setState(() {
                     videoPlayerController.play();
-                  }
-                });
+                  });
+                }
               },
               icon: Icon(
                 videoPlayerController.value.isPlaying
@@ -1234,7 +1227,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        height: 8.0,
+        height: 6.0,
         child: VideoProgressIndicator(
           videoPlayerController,
           allowScrubbing: true,
@@ -1268,18 +1261,14 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                             shadowColor: Colors.transparent,
                             child: InkWell(
                                 onTap: () {
-                                  setState(() {
-                                    isNavigateComment = false;
-                                  });
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => ProfilPost(
-                                                userPostID: userPost.uid,
+                                                userPostID: post.uid,
                                               )));
                                 },
-                                child: Text(userPost.username,
-                                    style: mystyle(14))),
+                                child: Text(post.username, style: mystyle(14))),
                           ),
                           SizedBox(
                             width: 2.5,
@@ -1410,6 +1399,9 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
         shadowColor: Colors.transparent,
         child: InkWell(
           onTap: () {
+            setState(() {
+              isNavigateComment = true;
+            });
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -1470,8 +1462,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
   Widget _getFollowAction({required BuildContext context}) {
     return Container(
-      width: 55.0,
-      height: 55.0,
+      width: ProfileImageSize,
+      height: ProfileImageSize,
       child: post.uid == widget.idUserActual || isFollowing
           ? _getProfilePicture(context)
           : Stack(
@@ -1482,40 +1474,32 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   Widget _getProfilePicture(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          isNavigateComment = !isNavigateComment;
-        });
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ProfilPost(
-                      userPostID: userPost.uid,
+                      userPostID: post.uid,
                     )));
       },
-      child: userPost.imageUrl == null
+      child: post.imageUrl == null
           ? Container(
-              width: ProfileImageSize,
-              height: ProfileImageSize,
               decoration: BoxDecoration(
-                color: Colors.white60,
+                color: Theme.of(context).canvasColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: Color(0xFF222831)),
+                border: Border.all(color: Colors.black),
               ),
               child: Icon(
                 Icons.person,
-                size: 23,
-                color: Colors.black,
+                size: 30,
               ))
           : Container(
-              width: ProfileImageSize,
-              height: ProfileImageSize,
               decoration: BoxDecoration(
                   color: Colors.white60,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Color(0xFF222831)),
+                  border: Border.all(color: Colors.black),
                   image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(userPost.imageUrl!))),
+                      image: CachedNetworkImageProvider(post.imageUrl!))),
             ),
     );
   }
@@ -1569,7 +1553,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                 shadowColor: Colors.transparent,
                 child: Container(
                     height: 40,
-                    width: 75,
+                    width: 55,
                     child: Marquee(
                       text: post.gameName,
                       style: mystyle(13),

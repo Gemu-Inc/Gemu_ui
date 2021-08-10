@@ -82,7 +82,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
         Positioned(
             left: size.width / 4,
             right: size.width / 4,
-            bottom: 30,
+            bottom: 25,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [

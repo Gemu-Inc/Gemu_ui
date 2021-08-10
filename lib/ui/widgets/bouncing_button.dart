@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
 class BouncingButton extends StatefulWidget {
-  final String title;
+  final Widget content;
+  final double height;
+  final double width;
   final VoidCallback onPressed;
 
-  BouncingButton({required this.title, required this.onPressed});
+  BouncingButton(
+      {required this.content,
+      required this.height,
+      required this.width,
+      required this.onPressed});
 
   @override
   BouncingButtonState createState() => BouncingButtonState();
@@ -43,24 +49,18 @@ class BouncingButtonState extends State<BouncingButton>
       child: Transform.scale(
         scale: _scale,
         child: Container(
-          width: MediaQuery.of(context).size.width / 1.5,
-          height: 50,
-          decoration: BoxDecoration(
-              color: Theme.of(context).canvasColor,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).shadowColor,
-                  offset: Offset(-5.0, 5.0),
-                )
-              ]),
-          child: Center(
-            child: Text(
-              widget.title,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-            ),
-          ),
-        ),
+            height: widget.height,
+            width: widget.width,
+            decoration: BoxDecoration(
+                color: Theme.of(context).canvasColor,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).shadowColor,
+                    offset: Offset(-5.0, 5.0),
+                  )
+                ]),
+            child: widget.content),
       ),
     );
   }

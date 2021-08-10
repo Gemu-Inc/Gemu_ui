@@ -4,11 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/models/game.dart';
 
 class GameFocusScreen extends StatefulWidget {
-  const GameFocusScreen({Key? key, required this.game}) : super(key: key);
+  final Game game;
 
-  final DocumentSnapshot<Map<String, dynamic>>? game;
+  const GameFocusScreen({Key? key, required this.game}) : super(key: key);
 
   @override
   _GameFocusScreenState createState() => _GameFocusScreenState();
@@ -40,7 +41,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
 
     stream = FirebaseFirestore.instance
         .collection('posts')
-        .where('game', isEqualTo: widget.game!.data()!['name'])
+        .where('game', isEqualTo: widget.game.name)
         .where('privacy', isEqualTo: 'Public')
         .snapshots();
 
@@ -165,7 +166,7 @@ class _GameFocusScreenState extends State<GameFocusScreen> {
                               image: DecorationImage(
                                   fit: BoxFit.cover,
                                   image: CachedNetworkImageProvider(
-                                      widget.game!.data()!['imageUrl']))),
+                                      widget.game.imageUrl))),
                         ),
                       ),
                     )

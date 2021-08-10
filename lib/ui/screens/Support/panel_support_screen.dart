@@ -145,10 +145,10 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
                                               scrollDirection: Axis.vertical,
                                               shrinkWrap: true,
                                               itemCount: gameNoVerified
-                                                  .categories.length,
+                                                  .categories!.length,
                                               itemBuilder: (_, int index) {
                                                 String category = gameNoVerified
-                                                    .categories[index];
+                                                    .categories![index];
                                                 return Text(
                                                   category,
                                                   style: mystyle(14),
@@ -195,7 +195,7 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
                                     onTap: () => decline(
                                         gameNoVerified.documentId!,
                                         gameNoVerified.imageUrl,
-                                        gameNoVerified.categories),
+                                        gameNoVerified.categories!),
                                     child: Container(
                                       height: 45,
                                       width: 45,

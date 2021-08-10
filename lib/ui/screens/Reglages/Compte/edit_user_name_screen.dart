@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gemu/services/database_service.dart';
@@ -19,14 +20,24 @@ class _EditUserNameScreenState extends State<EditUserNameScreen> {
   String? _currentName;
 
   Future updateUserPseudo(String? currentName, String currentUserID) async {
-    var result = await DatabaseService.updateUserPseudo(
-        currentName ?? widget.user.username, currentUserID);
+    try {
+      await DatabaseService.updateUserPseudo(
+          currentName ?? widget.user.username, currentUserID);
 
-    if (result is String) {
-      alertUpdateUsername('Could not change username', result);
-    } else {
+      await FirebaseFirestore.instance
+          .collection('posts')
+          .where('uid', isEqualTo: currentUserID)
+          .get()
+          .then((data) {
+        for (var item in data.docs) {
+          item.reference.update({'username': currentName});
+        }
+      });
+
       alertUpdateUsername(
           'Username successfully updated', 'Your username has been changed');
+    } catch (e) {
+      alertUpdateUsername('Could not change username', 'Try again');
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/screens/Activities/activities_screen.dart';
 import 'package:gemu/ui/screens/Reglages/reglages_screen.dart';
 import 'package:gemu/ui/screens/Support/panel_support_screen.dart';
 import 'package:gemu/models/user.dart';
@@ -15,18 +16,18 @@ import 'followers.dart';
 import 'follows.dart';
 import 'posts_profil.dart';
 
-class ProfilMenuDrawer extends StatefulWidget {
+class MyProfilScreen extends StatefulWidget {
   final UserModel user;
 
-  const ProfilMenuDrawer({
+  const MyProfilScreen({
     Key? key,
     required this.user,
   }) : super(key: key);
   @override
-  _ProfilMenuDrawerState createState() => _ProfilMenuDrawerState();
+  _MyProfilScreenState createState() => _MyProfilScreenState();
 }
 
-class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
+class _MyProfilScreenState extends State<MyProfilScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -106,11 +107,11 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                         forceElevated: true,
                         pinned: true,
                         leading: IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: Icon(
-                              Icons.arrow_back_ios,
-                              size: 23,
-                            )),
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => PanelSupportScreen())),
+                            icon: Icon(Icons.support)),
                         centerTitle: true,
                         title: Text(
                           widget.user.username,
@@ -121,8 +122,9 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                               onPressed: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => PanelSupportScreen())),
-                              icon: Icon(Icons.support)),
+                                      builder: (_) => ActivitiesMenuDrawer(
+                                          uid: widget.user.uid))),
+                              icon: Icon(Icons.notifications_active)),
                           IconButton(
                               icon: Icon(
                                 Icons.settings,
@@ -321,7 +323,7 @@ class _ProfilMenuDrawerState extends State<ProfilMenuDrawer>
                 body: Stack(
                   children: [
                     TabBarView(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: AlwaysScrollableScrollPhysics(),
                         controller: _tabController,
                         children: [
                           PostsPublic(user: widget.user),
@@ -350,7 +352,7 @@ class ProfilPostState extends State<ProfilPost>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  late UserModel userPost;
+  UserModel? userPost;
 
   late StreamSubscription followersListener, followingsListener, pointsListener;
   int followers = 0;
@@ -373,7 +375,13 @@ class ProfilPostState extends State<ProfilPost>
         userPost = UserModel.fromMap(data, data.data()!);
       });
 
-      userPost.ref.collection('followers').doc(me!.uid).get().then((follower) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userPostID)
+          .collection('followers')
+          .doc(me!.uid)
+          .get()
+          .then((follower) {
         if (!follower.exists) {
           setState(() {
             isFollowing = false;
@@ -388,15 +396,19 @@ class ProfilPostState extends State<ProfilPost>
       userPost = me!;
     }
 
-    followersListener =
-        userPost.ref.collection('followers').snapshots().listen((data) {
+    followersListener = FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userPostID)
+        .collection('followers')
+        .snapshots()
+        .listen((data) {
       setState(() {
         followers = data.docs.length;
       });
 
       pointsListener = FirebaseFirestore.instance
           .collection('posts')
-          .where('uid', isEqualTo: userPost.uid)
+          .where('uid', isEqualTo: widget.userPostID)
           .snapshots()
           .listen((data) {
         for (var item in data.docs) {
@@ -404,8 +416,12 @@ class ProfilPostState extends State<ProfilPost>
         }
       });
 
-      followingsListener =
-          userPost.ref.collection('following').snapshots().listen((data) {
+      followingsListener = FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userPostID)
+          .collection('following')
+          .snapshots()
+          .listen((data) {
         setState(() {
           followings = data.docs.length;
         });
@@ -429,17 +445,17 @@ class ProfilPostState extends State<ProfilPost>
   }
 
   followUser() async {
-    userPost.ref.collection('followers').doc(me!.uid).get().then((user) {
+    userPost!.ref.collection('followers').doc(me!.uid).get().then((user) {
       if (!user.exists) {
         user.reference.set({});
         FirebaseFirestore.instance
             .collection('users')
             .doc(me!.uid)
             .collection('following')
-            .doc(userPost.uid)
+            .doc(userPost!.uid)
             .set({});
         DatabaseService.addNotification(
-            me!.uid, userPost.uid, "a commencé à vous suivre", "follow");
+            me!.uid, userPost!.uid, "a commencé à vous suivre", "follow");
 
         setState(() {
           isFollowing = true;
@@ -452,7 +468,7 @@ class ProfilPostState extends State<ProfilPost>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: dataIsThere
+      body: (dataIsThere && userPost != null)
           ? NestedScrollView(
               headerSliverBuilder:
                   (BuildContext context, bool innerBoxIsScrolled) {
@@ -472,7 +488,7 @@ class ProfilPostState extends State<ProfilPost>
                           )),
                       centerTitle: true,
                       title: Text(
-                        userPost.username,
+                        userPost!.username,
                         style: TextStyle(fontSize: 23),
                       ),
                       expandedHeight: 250,
@@ -492,7 +508,7 @@ class ProfilPostState extends State<ProfilPost>
                             children: [
                               Align(
                                   alignment: Alignment.center,
-                                  child: userPost.imageUrl == null
+                                  child: userPost!.imageUrl == null
                                       ? Container(
                                           height: 90,
                                           width: 90,
@@ -521,7 +537,8 @@ class ProfilPostState extends State<ProfilPost>
                                                   fit: BoxFit.cover,
                                                   image:
                                                       CachedNetworkImageProvider(
-                                                          userPost.imageUrl!))),
+                                                          userPost!
+                                                              .imageUrl!))),
                                         )),
                               Align(
                                 alignment: Alignment.bottomCenter,
@@ -537,7 +554,7 @@ class ProfilPostState extends State<ProfilPost>
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => Followers(
-                                                      idUser: userPost.uid,
+                                                      idUser: userPost!.uid,
                                                     ))),
                                         child: Container(
                                           color: Colors.transparent,
@@ -590,7 +607,7 @@ class ProfilPostState extends State<ProfilPost>
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => Follows(
-                                                    idUser: userPost.uid))),
+                                                    idUser: userPost!.uid))),
                                         child: Container(
                                           color: Colors.transparent,
                                           height: 60,
@@ -654,7 +671,7 @@ class ProfilPostState extends State<ProfilPost>
               body: Stack(
                 children: [
                   TabBarView(controller: _tabController, children: [
-                    PostsPublic(user: userPost),
+                    PostsPublic(user: userPost!),
                     Center(
                       child: Text(
                           'Visible seulement pour les followers du compte'),

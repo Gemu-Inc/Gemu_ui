@@ -1,39 +1,41 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/models/post.dart';
+import 'package:gemu/ui/screens/Highlights/highlights_posts_view.dart';
 
 class DiscoverScreen extends StatefulWidget {
   @override
   DiscoverScreenState createState() => DiscoverScreenState();
 }
 
-class DiscoverScreenState extends State<DiscoverScreen> {
+class DiscoverScreenState extends State<DiscoverScreen>
+    with AutomaticKeepAliveClientMixin {
   bool dataIsThere = false;
 
   List gamesUser = [];
   List allGames = [];
-  List posts = [];
-
-  late PageController _pageController;
+  List<Post> posts = [];
 
   getPosts() async {
-    var uid = FirebaseAuth.instance.currentUser!.uid;
-
-    var myGames = await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
-        .doc(uid)
+        .doc(me!.uid)
         .collection('games')
-        .get();
-    for (var item in myGames.docs) {
-      gamesUser.add(item.id);
-    }
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        gamesUser.add(item.id);
+      }
+    });
 
-    var games = await FirebaseFirestore.instance.collection('games').get();
-    for (var item in games.docs) {
-      allGames.add(item.id);
-    }
+    await FirebaseFirestore.instance.collection('games').get().then((value) {
+      for (var item in value.docs) {
+        allGames.add(item.id);
+      }
+    });
 
     for (var i = 0; i < gamesUser.length; i++) {
       for (var j = 0; j < allGames.length; j++) {
@@ -44,110 +46,119 @@ class DiscoverScreenState extends State<DiscoverScreen> {
     }
 
     for (var i = 0; i < allGames.length; i++) {
-      allGames.shuffle();
-      print(allGames[i]);
-      var data = await FirebaseFirestore.instance
+      //allGames.shuffle();
+      await FirebaseFirestore.instance
           .collection('posts')
-          .where('game', isEqualTo: allGames[i])
+          .where('gameName', isEqualTo: allGames[i])
+          .where('privacy', isEqualTo: 'Public')
           .limit(2)
-          .get();
-      for (var item in data.docs) {
-        if (!posts.contains(item)) {
-          posts.add(item);
+          .get()
+          .then((value) {
+        for (var item in value.docs) {
+          if (!posts.contains(Post.fromMap(item, item.data()))) {
+            posts.add(Post.fromMap(item, item.data()));
+          }
         }
-      }
+      });
     }
 
     posts.shuffle();
 
-    setState(() {
-      dataIsThere = !dataIsThere;
-    });
+    if (!dataIsThere) {
+      setState(() {
+        dataIsThere = true;
+      });
+    }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
     getPosts();
-    _pageController = PageController(initialPage: 0);
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
+    gamesUser.clear();
+    allGames.clear();
+    posts.clear();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-            )),
-        title: Text(
-          'Discover',
-          style: mystyle(18, Colors.white),
-        ),
-      ),
-      body: dataIsThere
-          ? posts.length != 0
-              ? PageView.builder(
-                  controller: _pageController,
-                  scrollDirection: Axis.vertical,
-                  itemCount: posts.length,
-                  itemBuilder: (_, int index) {
-                    DocumentSnapshot<Map<String, dynamic>> post = posts[index];
-                    return Stack(
-                      children: [
-                        /*post.data()!['pictureUrl'] != null
-                            ? PictureItem(
-                                idUser: post.data()!['uid'],
-                                idPost: post.data()!['id'],
-                                pictureUrl: post.data()!['pictureUrl'],
-                              )
-                            : VideoPlayerItem(
-                                idUser: post.data()!['uid'],
-                                idPost: post.data()!['id'],
-                                videoUrl: post.data()!['videoUrl'],
-                              ),*/
-                        /*Positioned(
-                            bottom: 30,
-                            left: 0,
-                            child: ContentPostDescription(
-                              idUser: post.data()!['uid'],
-                              username: post.data()!['username'],
-                              caption: post.data()!['caption'],
-                              hashtags: post.data()!['hashtags'],
-                            )),*/
-                        /*Positioned(
-                            bottom: 30,
-                            right: 0,
-                            child: ActionsPostBar(
-                              idUser: post.data()!['uid'],
-                              idPost: post.data()!['id'],
-                              profilPicture: post.data()!['profilepicture'],
-                              commentsCounts:
-                                  post.data()!['commentcount'].toString(),
-                              up: post.data()!['up'],
-                              down: post.data()!['down'],
-                            ))*/
-                      ],
-                    );
-                  })
-              : Center(
-                  child: Text('Pas encore de posts pour cette section'),
-                )
-          : Center(
-              child: CircularProgressIndicator(),
+    super.build(context);
+    return dataIsThere
+        ? posts.length != 0
+            ? GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 6,
+                    mainAxisSpacing: 6),
+                itemCount: posts.length,
+                itemBuilder: (_, index) {
+                  Post post = posts[index];
+                  return post.type == 'picture'
+                      ? GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => DiscoverPostsView(
+                                        indexPost: index, posts: posts)));
+                          },
+                          child: Container(
+                            height: 150,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black),
+                                borderRadius: BorderRadius.circular(10.0),
+                                image: DecorationImage(
+                                    image: CachedNetworkImageProvider(
+                                        post.postUrl),
+                                    fit: BoxFit.cover)),
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => DiscoverPostsView(
+                                        indexPost: index, posts: posts)));
+                          },
+                          child: Container(
+                            height: 150,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black),
+                                borderRadius: BorderRadius.circular(10.0),
+                                image: DecorationImage(
+                                    image: CachedNetworkImageProvider(
+                                        post.previewImage!),
+                                    fit: BoxFit.cover)),
+                            child: Align(
+                              alignment: Alignment.topRight,
+                              child: Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        );
+                })
+            : Center(
+                child: Text(
+                  'Pas encore de posts pour cette section',
+                  style: mystyle(12),
+                ),
+              )
+        : Center(
+            child: CircularProgressIndicator(
+              color: Theme.of(context).primaryColor,
             ),
-    );
+          );
   }
 }

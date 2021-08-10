@@ -352,6 +352,8 @@ class PostsViewState extends State<PostsView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      left: false,
+      right: false,
       child: Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           extendBodyBehindAppBar: true,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gemu/ui/widgets/app_bar_custom.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 
 import 'package:gemu/ui/constants/app_constants.dart';
 import 'package:gemu/ui/screens/Reglages/Design/theme_notifier.dart';
@@ -235,12 +236,28 @@ class _DesignScreenState extends State<DesignScreen> {
     var prefs = await SharedPreferences.getInstance();
     if (value == 'LightOrange') {
       themeNotifier.setTheme(lightThemeOrange);
+      //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'LightPurple') {
       themeNotifier.setTheme(lightThemePurple);
+      //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'DarkOrange') {
       themeNotifier.setTheme(darkThemeOrange);
+      //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Color(0xFF1A1C25)));
     } else if (value == 'DarkPurple') {
       themeNotifier.setTheme(darkThemePurple);
+      //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Color(0xFF1A1C25)));
     } else if (value == 'ThemeCustomLight') {
       themeNotifier.setTheme(themeCustomLight);
     } else if (value == 'ThemeCustomDark') {

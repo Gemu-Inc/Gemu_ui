@@ -16,7 +16,7 @@ class ActivitiesMenuDrawer extends StatefulWidget {
 
 class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
     with TickerProviderStateMixin {
-  TabController? _tabController;
+  late TabController _tabController;
   int currentTabIndex = 0;
 
   late AnimationController _activitiesController, _rotateController;
@@ -31,10 +31,10 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
   ];
 
   void _onTabChanged() {
-    if (!_tabController!.indexIsChanging)
+    if (!_tabController.indexIsChanging)
       setState(() {
-        print('Changing to Tab: ${_tabController!.index}');
-        currentTabIndex = _tabController!.index;
+        print('Changing to Tab: ${_tabController.index}');
+        currentTabIndex = _tabController.index;
         if (currentTabIndex == 1 && _activitiesController.value == 1) {
           _rotateController.reverse();
           _activitiesController.reverse();
@@ -53,8 +53,8 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
 
     print('init activities');
 
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController!.addListener(_onTabChanged);
+    _tabController = TabController(length: 1, vsync: this);
+    _tabController.addListener(_onTabChanged);
     currentTabIndex = 0;
 
     _activitiesController =
@@ -73,8 +73,15 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
   }
 
   @override
+  void deactivate() {
+    _rotateController.removeListener(() {});
+    _tabController.removeListener(_onTabChanged);
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
-    _tabController!.dispose();
+    _tabController.dispose();
     _activitiesController.dispose();
     _rotateController.dispose();
     super.dispose();
@@ -118,7 +125,6 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                   NotificationsScreen(
                     whatActivity: activities[whatActivity],
                   ),
-                  ConversationProvider(uid: widget.uid)
                 ]),
             Align(alignment: Alignment.topCenter, child: activitiesPanel()),
           ],
@@ -138,33 +144,28 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
       ),
       tabs: [
         Tab(
-            child: currentTabIndex == 0
-                ? GestureDetector(
-                    onTap: () {
-                      if (_rotateController.isCompleted) {
-                        _rotateController.reverse();
-                        _activitiesController.reverse();
-                      } else {
-                        _rotateController.forward();
-                        _activitiesController.forward();
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Text(activities[whatActivity]),
-                        Transform(
-                            transform: Matrix4.rotationZ(
-                                getRadianFromDegree(_rotateAnimation.value)),
-                            alignment: Alignment.center,
-                            child: Icon(
-                              Icons.expand_more,
-                            ))
-                      ],
-                    ))
-                : Text(activities[whatActivity])),
-        Tab(
-          text: 'Messages',
-        )
+            child: GestureDetector(
+                onTap: () {
+                  if (_rotateController.isCompleted) {
+                    _rotateController.reverse();
+                    _activitiesController.reverse();
+                  } else {
+                    _rotateController.forward();
+                    _activitiesController.forward();
+                  }
+                },
+                child: Row(
+                  children: [
+                    Text(activities[whatActivity]),
+                    Transform(
+                        transform: Matrix4.rotationZ(
+                            getRadianFromDegree(_rotateAnimation.value)),
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.expand_more,
+                        ))
+                  ],
+                )))
       ],
     );
   }

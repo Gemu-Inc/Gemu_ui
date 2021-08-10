@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'theme_notifier.dart';
 
 class ThemeButton extends StatelessWidget {
-  final ThemeData? buttonThemeData;
+  final ThemeData buttonThemeData;
 
-  ThemeButton({this.buttonThemeData});
+  ThemeButton({required this.buttonThemeData});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class ThemeButton extends StatelessWidget {
       ),
       shape: CircleBorder(),
       elevation: 2.0,
-      fillColor: buttonThemeData!.scaffoldBackgroundColor,
+      fillColor: buttonThemeData.scaffoldBackgroundColor,
       padding: const EdgeInsets.all(5.0),
     );
   }
@@ -43,10 +43,7 @@ class ThemeButton extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              buttonThemeData!.primaryColor,
-              buttonThemeData!.accentColor
-            ],
+            colors: [buttonThemeData.primaryColor, buttonThemeData.accentColor],
           ),
           borderRadius: BorderRadius.circular(40)),
       child: Icon(

@@ -139,6 +139,8 @@ class VideoScreenState extends State<VideoScreen>
       String video = await uploadVideoToStorage(videoPath, postName, nameGame);
       FirebaseFirestore.instance.collection('posts').doc(postName).set({
         'uid': me!.uid,
+        'username': me!.username,
+        'imageUrl': me!.imageUrl,
         'type': 'video',
         'id': postName,
         'gameName': gameName,
