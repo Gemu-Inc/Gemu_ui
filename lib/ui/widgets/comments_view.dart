@@ -387,7 +387,7 @@ class CommentTileState extends State<CommentTile> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ProfilPost(
+                                        builder: (context) => ProfilUser(
                                             userPostID: widget.comment.uid)));
                               },
                               child: snapshot.data.data()['imageUrl'] == null
@@ -426,7 +426,7 @@ class CommentTileState extends State<CommentTile> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ProfilPost(
+                                      builder: (context) => ProfilUser(
                                           userPostID: widget.comment.uid)));
                             },
                             child: Text(

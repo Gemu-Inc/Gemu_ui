@@ -339,16 +339,16 @@ class _MyProfilScreenState extends State<MyProfilScreen>
   }
 }
 
-class ProfilPost extends StatefulWidget {
+class ProfilUser extends StatefulWidget {
   final String userPostID;
 
-  ProfilPost({required this.userPostID});
+  ProfilUser({required this.userPostID});
 
   @override
-  ProfilPostState createState() => ProfilPostState();
+  ProfilUserState createState() => ProfilUserState();
 }
 
-class ProfilPostState extends State<ProfilPost>
+class ProfilUserState extends State<ProfilUser>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -445,7 +445,7 @@ class ProfilPostState extends State<ProfilPost>
   }
 
   followUser() async {
-    userPost!.ref.collection('followers').doc(me!.uid).get().then((user) {
+    userPost!.ref!.collection('followers').doc(me!.uid).get().then((user) {
       if (!user.exists) {
         user.reference.set({});
         FirebaseFirestore.instance

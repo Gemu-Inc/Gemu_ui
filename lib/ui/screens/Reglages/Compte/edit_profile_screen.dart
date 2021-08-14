@@ -274,7 +274,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 children: [
                   Text('E-mail', style: TextStyle(color: Colors.blue[200])),
                   Text(
-                    widget.user.email,
+                    widget.user.email!,
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.grey),
                   ),

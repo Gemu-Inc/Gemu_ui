@@ -10,7 +10,7 @@ import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/ui/screens/Highlights/discover_screen.dart';
 
-import 'search_screen.dart';
+import '../Search/search_screen.dart';
 import 'highlights_posts_view.dart';
 
 class HighlightsScreen extends StatefulWidget {
@@ -274,7 +274,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
     hashtag = widget.hashtag;
 
     postsHahstags =
-        hashtag.reference.collection('posts').snapshots().listen((data) async {
+        hashtag.reference!.collection('posts').snapshots().listen((data) async {
       if (posts.length != 0) {
         posts.clear();
       }

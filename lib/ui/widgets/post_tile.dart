@@ -458,7 +458,7 @@ class PictureItemState extends State<PictureItem>
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ProfilPost(
+                                          builder: (context) => ProfilUser(
                                                 userPostID: post.uid,
                                               )));
                                 },
@@ -665,7 +665,7 @@ class PictureItemState extends State<PictureItem>
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ProfilPost(
+                builder: (context) => ProfilUser(
                       userPostID: post.uid,
                     )));
       },
@@ -1264,7 +1264,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ProfilPost(
+                                          builder: (context) => ProfilUser(
                                                 userPostID: post.uid,
                                               )));
                                 },
@@ -1477,7 +1477,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ProfilPost(
+                builder: (context) => ProfilUser(
                       userPostID: post.uid,
                     )));
       },

@@ -56,6 +56,8 @@ dependencies:
   visibility_detector: ^0.2.0
   firebase_analytics: ^8.2.0
   cloud_functions: ^3.0.0
+  algolia: ^1.0.1
+  sticky_headers: ^0.2.0
 
 
 dev_dependencies:

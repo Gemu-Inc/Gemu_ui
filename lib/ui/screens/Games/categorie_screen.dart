@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:algolia/algolia.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/ui/screens/Games/game_focus_screen.dart';
 import 'package:gemu/models/categorie.dart';
+import 'package:gemu/services/algolia_service.dart';
 
 class CategorieScreen extends StatefulWidget {
   final Categorie categorie;
@@ -18,15 +20,21 @@ class CategorieScreen extends StatefulWidget {
 
 class _CategorieScreenState extends State<CategorieScreen>
     with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  late TextEditingController _searchController;
-
   bool dataIsThere = false;
+
+  late TabController _tabController;
 
   List gamesUser = [];
   List gamesCategories = [];
   List gameFollow = [];
   List gameNoFollow = [];
+
+  late TextEditingController _searchController;
+  late FocusNode _keyboardFocusNode;
+  bool _searching = false;
+
+  Algolia algolia = AlgoliaService.algolia;
+  List<AlgoliaObjectSnapshot> _games = [];
 
   @override
   bool get wantKeepAlive => true;
@@ -36,11 +44,13 @@ class _CategorieScreenState extends State<CategorieScreen>
     getAllData();
     _tabController = TabController(length: 2, vsync: this);
     _searchController = TextEditingController();
+    _keyboardFocusNode = FocusNode();
     super.initState();
   }
 
   @override
   void dispose() {
+    _keyboardFocusNode.dispose();
     _searchController.clear();
     _tabController.dispose();
     super.dispose();
@@ -97,10 +107,34 @@ class _CategorieScreenState extends State<CategorieScreen>
     }
   }
 
+  _searchGames() async {
+    if (_games.length != 0) {
+      _games.clear();
+    }
+
+    setState(() {
+      _searching = true;
+    });
+
+    AlgoliaQuery query = await algolia.instance
+        .index("games")
+        .query(_searchController.text)
+        .facetFilter('categories:${widget.categorie.name}');
+
+    _games = (await query.getObjects()).hits;
+
+    print(_games.length);
+
+    setState(() {
+      _searching = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -123,6 +157,9 @@ class _CategorieScreenState extends State<CategorieScreen>
               child: Column(
                 children: [
                   search(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
                   Container(
                       height: 60.0,
                       child: Padding(
@@ -146,29 +183,85 @@ class _CategorieScreenState extends State<CategorieScreen>
                       ))
                 ],
               ),
-              preferredSize: Size.fromHeight(100))),
+              preferredSize: Size.fromHeight(120))),
       body: dataIsThere
           ? TabBarView(
               controller: _tabController,
               children: [
-                gameNoFollow.length == 0
-                    ? Center(
-                        child: Text(
-                          'Plus d\'autres jeux à découvrir dans cette catégorie pour le moment',
-                          textAlign: TextAlign.center,
-                          style: mystyle(12),
-                        ),
+                _searching
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              height: 15.0,
+                              width: 15.0,
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).primaryColor,
+                              )),
+                          SizedBox(
+                            width: 5.0,
+                          ),
+                          Text(
+                            'Recherche un jeu',
+                            style: mystyle(11),
+                          )
+                        ],
                       )
-                    : gamesNoDiscover(),
-                gameFollow.length == 0
-                    ? Center(
-                        child: Text(
-                          'Pas encore de jeux suivis dans cette catégorie',
-                          textAlign: TextAlign.center,
-                          style: mystyle(12),
-                        ),
+                    : _searchController.text.isEmpty
+                        ? gameNoFollow.length == 0
+                            ? Center(
+                                child: Text(
+                                  'Plus d\'autres jeux à découvrir dans cette catégorie pour le moment',
+                                  textAlign: TextAlign.center,
+                                  style: mystyle(12),
+                                ),
+                              )
+                            : gamesNoDiscover()
+                        : _games.length == 0
+                            ? Center(
+                                child: Text(
+                                  'No results found',
+                                  style: mystyle(12),
+                                ),
+                              )
+                            : gamesSearch(_games),
+                _searching
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              height: 15.0,
+                              width: 15.0,
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).primaryColor,
+                              )),
+                          SizedBox(
+                            width: 5.0,
+                          ),
+                          Text(
+                            'Recherche un jeu',
+                            style: mystyle(11),
+                          )
+                        ],
                       )
-                    : gamesFollow(),
+                    : _searchController.text.isEmpty
+                        ? gameFollow.length == 0
+                            ? Center(
+                                child: Text(
+                                  'Pas encore de jeux suivis dans cette catégorie',
+                                  textAlign: TextAlign.center,
+                                  style: mystyle(12),
+                                ),
+                              )
+                            : gamesFollow()
+                        : _games.length == 0
+                            ? Center(
+                                child: Text(
+                                  'No results found',
+                                  style: mystyle(12),
+                                ),
+                              )
+                            : gamesSearch(_games),
               ],
             )
           : Center(
@@ -187,26 +280,47 @@ class _CategorieScreenState extends State<CategorieScreen>
         width: MediaQuery.of(context).size.width / 1.2,
         child: TextField(
             controller: _searchController,
-            cursorColor: Theme.of(context).accentColor,
+            focusNode: _keyboardFocusNode,
+            cursorColor: Theme.of(context).primaryColor,
+            textInputAction: TextInputAction.search,
+            onTap: () {
+              setState(() {
+                FocusScope.of(context).requestFocus(_keyboardFocusNode);
+              });
+            },
+            onChanged: (value) {
+              _searchGames();
+            },
             decoration: InputDecoration(
                 filled: true,
                 fillColor: Theme.of(context).canvasColor,
-                hintText: 'Recherche un jeu',
+                hintText: 'Recherche un jeu "${widget.categorie.name}"',
                 hintStyle: mystyle(12),
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Theme.of(context).accentColor)),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor, width: 1.5),
+                ),
                 prefixIcon: Icon(
                   Icons.search,
                   size: 20,
+                  color: _keyboardFocusNode.hasFocus
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey,
                 ),
-                suffixIcon: IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      size: 20,
-                    ),
-                    onPressed: () => _searchController.clear()))),
+                suffixIcon: _searchController.text.isEmpty
+                    ? SizedBox()
+                    : IconButton(
+                        icon: Icon(
+                          Icons.clear,
+                          size: 20,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.clear();
+                          });
+                        }))),
       ),
     );
   }
@@ -215,8 +329,8 @@ class _CategorieScreenState extends State<CategorieScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: GridView.builder(
-          physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
+          scrollDirection: Axis.vertical,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 1,
@@ -235,8 +349,8 @@ class _CategorieScreenState extends State<CategorieScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: GridView.builder(
-          physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
+          scrollDirection: Axis.vertical,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 1,
@@ -246,6 +360,25 @@ class _CategorieScreenState extends State<CategorieScreen>
           itemBuilder: (BuildContext context, int index) {
             Game game =
                 Game.fromMap(gameNoFollow[index], gameNoFollow[index].data());
+            return GameView(game: game);
+          }),
+    );
+  }
+
+  Widget gamesSearch(List<AlgoliaObjectSnapshot> games) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: GridView.builder(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 1,
+              crossAxisSpacing: 6,
+              mainAxisSpacing: 6),
+          itemCount: games.length,
+          itemBuilder: (_, index) {
+            Game game = Game.fromMapAlgolia(games[index], games[index].data);
             return GameView(game: game);
           }),
     );
@@ -395,15 +528,17 @@ class GameViewState extends State<GameView> {
             decoration: BoxDecoration(
                 color: isFollow ? Colors.green[400] : Colors.red[400],
                 shape: BoxShape.circle,
-                border: Border.all(color: Color(0xFF222831))),
+                border: Border.all(color: Colors.black)),
             child: isFollow
                 ? Icon(
                     Icons.check,
                     size: 20,
+                    color: Colors.black,
                   )
                 : Icon(
                     Icons.add,
                     size: 20,
+                    color: Colors.black,
                   )));
   }
 }

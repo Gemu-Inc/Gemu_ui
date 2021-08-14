@@ -264,6 +264,7 @@ class _HomeScreenState extends State<HomeScreen>
                       unselectedLabelColor: Colors.grey,
                       isScrollable: true,
                       tabs: games.map((game) {
+                        int indexGame = games.indexOf(game);
                         return Column(
                           children: [
                             Container(
@@ -278,7 +279,11 @@ class _HomeScreenState extends State<HomeScreen>
                                         Theme.of(context).accentColor
                                       ]),
                                   borderRadius: BorderRadius.circular(10.0),
-                                  border: Border.all(color: Colors.black),
+                                  border: Border.all(
+                                      width: 1.5,
+                                      color: currentTabGamesIndex == indexGame
+                                          ? Theme.of(context).primaryColor
+                                          : Colors.grey),
                                   image: DecorationImage(
                                       fit: BoxFit.cover,
                                       image: CachedNetworkImageProvider(

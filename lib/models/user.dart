@@ -1,21 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:algolia/algolia.dart';
 
 class UserModel {
+  DocumentReference? ref;
+  AlgoliaObjectReference? refAlgolia;
+  String? documentId;
   String uid;
   String username;
-  String email;
+  String? email;
   String? imageUrl;
-  DocumentReference ref;
-  String? documentId;
+  String? type;
 
-  UserModel({
-    required this.ref,
-    this.documentId,
-    required this.uid,
-    required this.username,
-    required this.email,
-    this.imageUrl,
-  });
+  UserModel(
+      {this.ref,
+      this.refAlgolia,
+      this.documentId,
+      required this.uid,
+      required this.username,
+      this.email,
+      this.imageUrl,
+      this.type});
 
   factory UserModel.fromMap(
       DocumentSnapshot snapshot, Map<String, dynamic> data) {
@@ -27,6 +31,16 @@ class UserModel {
       email: data['email'],
       imageUrl: data['imageUrl'],
     );
+  }
+
+  factory UserModel.fromMapAlgolia(
+      AlgoliaObjectSnapshot snapshot, Map<String, dynamic> data) {
+    return UserModel(
+        refAlgolia: snapshot.ref,
+        uid: data["objectID"],
+        username: data["username"],
+        imageUrl: data["imageUrl"],
+        type: data["type"]);
   }
 
   Map<String, dynamic> toMap() {
