@@ -11,7 +11,6 @@ import 'package:gemu/models/post.dart';
 import 'package:gemu/models/commentaire.dart';
 import 'package:gemu/services/date_helper.dart';
 import 'package:gemu/ui/screens/Profil/profil_screen.dart';
-import 'package:gemu/models/user.dart';
 
 class CommentsView extends StatefulWidget {
   final Post post;

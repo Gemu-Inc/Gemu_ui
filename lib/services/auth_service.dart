@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/ui/controller/log_controller.dart';
 import 'package:gemu/ui/widgets/snack_bar_custom.dart';
+import 'package:gemu/models/game.dart';
 
 class AuthService {
   static final instance = AuthService._();
@@ -33,35 +34,43 @@ class AuthService {
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-email') {
           print('Invalid email');
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBarCustom(error: 'Try again, invalid email'));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+              context: context, error: 'Try again, invalid email'));
         } else if (e.code == 'user-disabled') {
           print('user disabled');
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBarCustom(error: 'Try again, user disabled'));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+              context: context, error: 'Try again, user disabled'));
         } else if (e.code == 'user-not-found') {
           print('No user found for that email.');
           ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+              context: context,
               error: 'Try again, user not found for that email'));
         } else if (e.code == 'wrong-password') {
           print('Wrong password provided for that user.');
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBarCustom(error: 'Try again, wrong password for that user'));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+              context: context,
+              error: 'Try again, wrong password for that user'));
         } else {
           print('Try again');
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBarCustom(error: 'Try again'));
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBarCustom(context: context, error: 'Try again'));
         }
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBarCustom(error: 'Try again, no email or password'));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+          context: context, error: 'Try again, no email or password'));
     }
   }
 
   //Créer un utilisateur
-  Future<void> registerUser(BuildContext context, List<dynamic> gamesFollow,
-      String username, String email, String password) async {
+  Future<void> registerUser(
+      BuildContext context,
+      List<Game> gamesFollow,
+      String username,
+      String email,
+      String password,
+      String confirmPassword,
+      String country) async {
     try {
       final UserCredential user = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -70,7 +79,8 @@ class AuthService {
         'id': uid,
         'email': email,
         'username': username,
-        'imageUrl': null
+        'imageUrl': null,
+        'country': country
       };
       await DatabaseService.instance.addUser(uid, gamesFollow, map);
       Navigator.pushAndRemoveUntil(
@@ -79,17 +89,17 @@ class AuthService {
           (route) => false);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBarCustom(error: 'Email already use, try again'));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+            context: context, error: 'Email already use, try again'));
       } else if (e.code == 'invalid-email') {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBarCustom(error: 'Invalid email, try again'));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+            context: context, error: 'Invalid email, try again'));
       } else if (e.code == 'operation-not-allowed') {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBarCustom(error: 'Operation not allowed'));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBarCustom(context: context, error: 'Operation not allowed'));
       } else if (e.code == 'weak-password') {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBarCustom(error: 'Weak password, try again'));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
+            context: context, error: 'Weak password, try again'));
       }
     }
   }

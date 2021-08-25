@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:algolia/algolia.dart';
 
 class Game {
+  final DocumentSnapshot<Map<String, dynamic>>? snapshot;
   final String name;
   final String imageUrl;
   final List? categories;
@@ -11,7 +12,8 @@ class Game {
   final String? type;
 
   Game(
-      {this.reference,
+      {this.snapshot,
+      this.reference,
       this.referenceAlgolia,
       required this.name,
       required this.imageUrl,
@@ -19,8 +21,10 @@ class Game {
       this.documentId,
       this.type});
 
-  factory Game.fromMap(DocumentSnapshot snapshot, Map<String, dynamic> data) {
+  factory Game.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot,
+      Map<String, dynamic> data) {
     return Game(
+        snapshot: snapshot,
         reference: snapshot.reference,
         documentId: snapshot.id,
         name: data['name'],

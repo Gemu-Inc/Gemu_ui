@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -132,7 +133,10 @@ class VideoScreenState extends State<VideoScreen>
       }
 
       int date = DateTime.now().millisecondsSinceEpoch.toInt();
-      String postName = 'post${me!.uid}$date';
+
+      DocumentReference ref =
+          FirebaseFirestore.instance.collection('posts').doc();
+      String postName = 'post' + ref.id;
 
       String previewImage =
           await uploadImagePreviewToStorage(videoPath, postName, nameGame);
@@ -203,7 +207,9 @@ class VideoScreenState extends State<VideoScreen>
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => NavController(uid: me!.uid)),
+              builder: (BuildContext context) => NavController(
+                    uid: me!.uid,
+                  )),
           (route) => false);
     } catch (e) {
       print(e);
@@ -367,15 +373,17 @@ class VideoScreenState extends State<VideoScreen>
                                               [
                                                 TextButton(
                                                     onPressed: () {
-                                                      Navigator.pushAndRemoveUntil(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  NavController(
-                                                                      uid: me!
-                                                                          .uid)),
-                                                          (route) => false);
+                                                      Navigator
+                                                          .pushAndRemoveUntil(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      NavController(
+                                                                        uid: me!
+                                                                            .uid,
+                                                                      )),
+                                                              (route) => false);
                                                     },
                                                     child: Text(
                                                       'Oui',
@@ -419,7 +427,9 @@ class VideoScreenState extends State<VideoScreen>
             onTap: () {
               if (gameName == 'No game') {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-                    error: 'Choississez un jeu pour votre post'));
+                  context: context,
+                  error: 'Choississez un jeu pour votre post',
+                ));
               } else {
                 File file = widget.file;
                 uploadVideo(file.path, gameName);

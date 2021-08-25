@@ -3,7 +3,6 @@ import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/constants/size_config.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -77,8 +76,8 @@ class BodyState extends State<Body> {
     return AnimatedContainer(
         duration: _duration,
         curve: Curves.easeInOut,
-        width: double.infinity,
-        height: SizeConfig.screenHeight,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -92,7 +91,7 @@ class BodyState extends State<Body> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
+                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.2),
                 Theme.of(context).scaffoldBackgroundColor
               ])),
           child: IntroSlider(

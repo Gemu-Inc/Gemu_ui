@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/screens/Games/categorie_screen.dart';
@@ -8,14 +9,20 @@ import 'package:gemu/ui/screens/Games/game_focus_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/ui/widgets/alert_dialog_custom.dart';
+import 'package:gemu/ui/providers/index_tab_games_home.dart';
 
 import 'add_game_screen.dart';
 
 class GamesScreen extends StatefulWidget {
   final String uid;
   final List<Game> games;
+  final IndexGamesHome indexGamesHome;
 
-  const GamesScreen({Key? key, required this.uid, required this.games})
+  const GamesScreen(
+      {Key? key,
+      required this.uid,
+      required this.games,
+      required this.indexGamesHome})
       : super(key: key);
 
   @override
@@ -27,6 +34,7 @@ class _GamesScreenState extends State<GamesScreen>
   late AnimationController _animationController;
 
   unfollowGame(Game game) async {
+    await widget.indexGamesHome.setIndexNewGame(widget.games.length - 1);
     await FirebaseFirestore.instance
         .collection('users')
         .doc(me!.uid)
@@ -236,8 +244,9 @@ class _GamesScreenState extends State<GamesScreen>
           return AlertDialogCustom(context, 'Unfollow game',
               'Êtes-vous sur de vouloir retirer ce jeu de vos abonnements?', [
             TextButton(
-                onPressed: () {
-                  unfollowGame(game);
+                onPressed: () async {
+                  await unfollowGame(game);
+                  print(widget.games.length);
                   Navigator.pop(context);
                 },
                 child: Text(
@@ -300,8 +309,10 @@ class _GamesScreenState extends State<GamesScreen>
                               onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) =>
-                                        CategorieScreen(categorie: categorie)),
+                                    builder: (_) => CategorieScreen(
+                                          categorie: categorie,
+                                          indexGamesHome: widget.indexGamesHome,
+                                        )),
                               ),
                               child: Container(
                                 height: 60,

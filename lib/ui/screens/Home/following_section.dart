@@ -30,7 +30,6 @@ class FollowingSectionState extends State<FollowingSection>
   @override
   void initState() {
     super.initState();
-
     _pageFollowingController =
         PageController(initialPage: currentPageFollowingIndex);
     followings = widget.followings;
@@ -51,6 +50,7 @@ class FollowingSectionState extends State<FollowingSection>
         await FirebaseFirestore.instance
             .collection('posts')
             .where('uid', isEqualTo: followings[i])
+            .orderBy('date', descending: true)
             .get()
             .then((data) {
           for (var item in data.docs) {
@@ -60,7 +60,38 @@ class FollowingSectionState extends State<FollowingSection>
       }
     }
 
+    if (!dataIsThere) {
+      setState(() {
+        dataIsThere = true;
+      });
+    }
+  }
+
+  Future refreshData() async {
     setState(() {
+      dataIsThere = false;
+    });
+
+    await Future.delayed(Duration(seconds: 2));
+
+    if (followings.length != 0) {
+      posts.clear();
+      print('posts clear: ${posts.length}');
+      for (var i = 0; i < followings.length; i++) {
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .where('uid', isEqualTo: followings[i])
+            .orderBy('date', descending: true)
+            .get()
+            .then((data) {
+          for (var item in data.docs) {
+            posts.add(Post.fromMap(item, item.data()));
+          }
+        });
+      }
+    }
+    setState(() {
+      print('${posts.length}');
       dataIsThere = true;
     });
   }
@@ -68,31 +99,79 @@ class FollowingSectionState extends State<FollowingSection>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return dataIsThere
-        ? posts.length == 0
-            ? Center(
-                child: Text('No following/posts at the moment',
-                    style: mystyle(11)),
-              )
-            : PageView.builder(
-                controller: _pageFollowingController,
-                scrollDirection: Axis.vertical,
-                onPageChanged: (index) {
-                  setState(() {
-                    currentPageFollowingIndex = index;
-                    print(
-                        'currentPageGamesIndex est à: $currentPageFollowingIndex');
-                  });
-                },
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  Post post = posts[index];
-                  return PostTile(idUserActual: me!.uid, post: post);
-                })
-        : Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
+    return Stack(
+      children: [
+        RefreshIndicator(
+          backgroundColor: Theme.of(context).canvasColor,
+          color: Theme.of(context).primaryColor,
+          displacement: 100,
+          onRefresh: () {
+            print('refresh');
+            return refreshData();
+          },
+          child: dataIsThere
+              ? posts.length == 0
+                  ? Center(
+                      child: Text('No following/posts at the moment',
+                          style: mystyle(11)),
+                    )
+                  : PageView.builder(
+                      controller: _pageFollowingController,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      onPageChanged: (index) {
+                        setState(() {
+                          currentPageFollowingIndex = index;
+                          print(
+                              'currentPageGamesIndex est à: $currentPageFollowingIndex');
+                        });
+                      },
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        Post post = posts[index];
+                        return PostTile(idUserActual: me!.uid, post: post);
+                      })
+              : Center(
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+        ),
+        topAppBarFollowing()
+      ],
+    );
+  }
+
+  Widget topAppBarFollowing() {
+    return GestureDetector(
+      onTap: () {
+        _pageFollowingController.jumpToPage(0);
+        setState(() {
+          currentPageFollowingIndex = 0;
+        });
+      },
+      child: Container(
+          height: 55,
+          alignment: Alignment.center,
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(10.0),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).accentColor
+                    ])),
+            child: Icon(
+              Icons.subscriptions,
+              color: Colors.black,
+              size: 30,
             ),
-          );
+          )),
+    );
   }
 }

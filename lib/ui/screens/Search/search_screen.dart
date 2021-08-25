@@ -17,7 +17,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class SearchScreenState extends State<SearchScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   TextEditingController _searchController = TextEditingController(text: "");
   String value = "";
   bool _searching = false;
@@ -33,6 +33,9 @@ class SearchScreenState extends State<SearchScreen>
 
   late FocusNode _keyboardFocusNode;
   late ScrollController _scrollController;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -254,7 +257,8 @@ class SearchScreenState extends State<SearchScreen>
       'imageUrl': snapshot.data["imageUrl"],
       'categories': snapshot.data["categories"],
       'postsCount': snapshot.data["postsCount"],
-      'type': snapshot.data["type"]
+      'type': snapshot.data["type"],
+      'date': DateTime.now().millisecondsSinceEpoch.toInt()
     });
   }
 
@@ -269,6 +273,7 @@ class SearchScreenState extends State<SearchScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -378,7 +383,7 @@ class SearchScreenState extends State<SearchScreen>
           );
   }
 
-  Widget recentsearch() {
+  Widget recentSearchAll() {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 5.0,
@@ -402,6 +407,7 @@ class SearchScreenState extends State<SearchScreen>
                       .collection('users')
                       .doc(me!.uid)
                       .collection('recentSearch')
+                      .orderBy('date', descending: true)
                       .get(),
                   builder: (_, AsyncSnapshot snapshot) {
                     if (!snapshot.hasData) {
@@ -582,6 +588,315 @@ class SearchScreenState extends State<SearchScreen>
     );
   }
 
+  Widget recentSearchUsers() {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 5.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text(
+              'Recherches récentes',
+              style: mystyle(13),
+            ),
+          ),
+          SizedBox(
+            height: 5.0,
+          ),
+          Expanded(
+              child: FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(me!.uid)
+                      .collection('recentSearch')
+                      .where('type', isEqualTo: 'user')
+                      .orderBy('date', descending: true)
+                      .get(),
+                  builder: (_, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      );
+                    }
+                    if (snapshot.data.docs.length == 0) {
+                      return Center(
+                        child: Text(
+                          'Pas encore de recherches récentes',
+                          style: mystyle(11),
+                        ),
+                      );
+                    }
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (_, index) {
+                          DocumentSnapshot<Map<String, dynamic>> recentSearch =
+                              snapshot.data.docs[index];
+                          return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5.0),
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => ProfilUser(
+                                              userPostID: recentSearch.id)));
+                                },
+                                leading: recentSearch.data()!['imageUrl'] ==
+                                        null
+                                    ? Container(
+                                        height: 45,
+                                        width: 45,
+                                        decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.black),
+                                            shape: BoxShape.circle,
+                                            color:
+                                                Theme.of(context).canvasColor),
+                                        child: Icon(
+                                          Icons.person,
+                                          color: Colors.black,
+                                        ),
+                                      )
+                                    : Container(
+                                        height: 45,
+                                        width: 45,
+                                        decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.black),
+                                            shape: BoxShape.circle,
+                                            color:
+                                                Theme.of(context).canvasColor,
+                                            image: DecorationImage(
+                                                image:
+                                                    CachedNetworkImageProvider(
+                                                        recentSearch.data()![
+                                                            'imageUrl']),
+                                                fit: BoxFit.cover)),
+                                      ),
+                                title: Text(
+                                  recentSearch.data()!['username'],
+                                  style: mystyle(12),
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        deleteFromRecentSearch(recentSearch);
+                                      });
+                                    },
+                                    icon: Icon(Icons.clear)),
+                              ));
+                        });
+                  }))
+        ],
+      ),
+    );
+  }
+
+  Widget recentSearchGames() {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 5.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text(
+              'Recherches récentes',
+              style: mystyle(13),
+            ),
+          ),
+          SizedBox(
+            height: 5.0,
+          ),
+          Expanded(
+              child: FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(me!.uid)
+                      .collection('recentSearch')
+                      .where('type', isEqualTo: 'game')
+                      .orderBy('date', descending: true)
+                      .get(),
+                  builder: (_, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      );
+                    }
+                    if (snapshot.data.docs.length == 0) {
+                      return Center(
+                        child: Text(
+                          'Pas encore de recherches récentes',
+                          style: mystyle(11),
+                        ),
+                      );
+                    }
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (_, index) {
+                          DocumentSnapshot<Map<String, dynamic>> recentSearch =
+                              snapshot.data.docs[index];
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => GameView(
+                                              game: Game.fromMap(recentSearch,
+                                                  recentSearch.data()!),
+                                            )));
+                              },
+                              leading: Container(
+                                height: 45,
+                                width: 45,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                    shape: BoxShape.circle,
+                                    color: Theme.of(context).canvasColor,
+                                    image: DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                            recentSearch.data()!['imageUrl']),
+                                        fit: BoxFit.cover)),
+                              ),
+                              title: Text(
+                                recentSearch.data()!['name'],
+                                style: mystyle(12),
+                              ),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      deleteFromRecentSearch(recentSearch);
+                                    });
+                                  },
+                                  icon: Icon(Icons.clear)),
+                            ),
+                          );
+                        });
+                  }))
+        ],
+      ),
+    );
+  }
+
+  Widget recentSearchHashtags() {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 5.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text(
+              'Recherches récentes',
+              style: mystyle(13),
+            ),
+          ),
+          SizedBox(
+            height: 5.0,
+          ),
+          Expanded(
+              child: FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(me!.uid)
+                      .collection('recentSearch')
+                      .where('type', isEqualTo: 'hashtag')
+                      .orderBy('date', descending: true)
+                      .get(),
+                  builder: (_, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      );
+                    }
+                    if (snapshot.data.docs.length == 0) {
+                      return Center(
+                        child: Text(
+                          'Pas encore de recherches récentes',
+                          style: mystyle(11),
+                        ),
+                      );
+                    }
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (_, index) {
+                          DocumentSnapshot<Map<String, dynamic>> recentSearch =
+                              snapshot.data.docs[index];
+                          return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5.0),
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => HashtagView(
+                                                hashtag: Hashtag.fromMap(
+                                                    recentSearch,
+                                                    recentSearch.data()!),
+                                              )));
+                                },
+                                leading: Container(
+                                  height: 45,
+                                  width: 45,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.black),
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Theme.of(context).primaryColor,
+                                            Theme.of(context).accentColor
+                                          ])),
+                                  child: Icon(
+                                    Icons.tag,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                title: Text(
+                                  recentSearch.data()!['name'],
+                                  style: mystyle(12),
+                                ),
+                                subtitle: Text(
+                                  '${recentSearch.data()!['postsCount'].toString()} publications',
+                                  style: mystyle(11),
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        deleteFromRecentSearch(recentSearch);
+                                      });
+                                    },
+                                    icon: Icon(Icons.clear)),
+                              ));
+                        });
+                  }))
+        ],
+      ),
+    );
+  }
+
   Widget all() {
     return _searching
         ? Center(
@@ -608,7 +923,7 @@ class SearchScreenState extends State<SearchScreen>
             ),
           )
         : _searchController.text.isEmpty
-            ? recentsearch()
+            ? recentSearchAll()
             : _all.length == 0
                 ? Center(
                     child: Text(
@@ -771,7 +1086,7 @@ class SearchScreenState extends State<SearchScreen>
             ),
           )
         : _searchController.text.isEmpty
-            ? recentsearch()
+            ? recentSearchUsers()
             : _users.length == 0
                 ? Center(
                     child: Text(
@@ -856,7 +1171,7 @@ class SearchScreenState extends State<SearchScreen>
             ),
           )
         : _searchController.text.isEmpty
-            ? recentsearch()
+            ? recentSearchGames()
             : _games.length == 0
                 ? Center(
                     child: Text(
@@ -931,7 +1246,7 @@ class SearchScreenState extends State<SearchScreen>
             ),
           )
         : _searchController.text.isEmpty
-            ? recentsearch()
+            ? recentSearchHashtags()
             : _hashtags.length == 0
                 ? Center(
                     child: Text(

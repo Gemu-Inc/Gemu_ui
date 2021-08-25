@@ -58,6 +58,7 @@ dependencies:
   cloud_functions: ^3.0.0
   algolia: ^1.0.1
   sticky_headers: ^0.2.0
+  country_calling_code_picker: ^2.0.0
 
 
 dev_dependencies:

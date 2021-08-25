@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:gemu/ui/screens/Reglages/Design/theme_notifier.dart';
 import 'package:gemu/ui/screens/Reglages/Design/theme_values.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gemu/ui/controller/log_controller.dart';
+import 'package:gemu/ui/providers/index_tab_games_home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +23,8 @@ Future<void> main() async {
 
   Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   prefs.then((value) {
-    runApp(ChangeNotifierProvider<ThemeNotifier>(
+    runApp(MultiProvider(providers: [
+      ChangeNotifierProvider<ThemeNotifier>(
         create: (_) {
           String? theme = value.getString(Constants.appTheme);
           print(theme);
@@ -31,20 +34,23 @@ Future<void> main() async {
             //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
-                systemNavigationBarColor: Color(0xFF1A1C25)));
+                systemNavigationBarColor: Color(0xFF1A1C25),
+                systemNavigationBarDividerColor: Colors.transparent));
             return ThemeNotifier(themeData);
           } else if (theme == 'LightOrange') {
             //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
-                systemNavigationBarColor: Color(0xFFDEE4E7)));
+                systemNavigationBarColor: Color(0xFFDEE4E7),
+                systemNavigationBarDividerColor: Colors.transparent));
             themeData = lightThemeOrange;
             return ThemeNotifier(themeData);
           } else if (theme == 'LightPurple') {
             //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
-                systemNavigationBarColor: Color(0xFFDEE4E7)));
+                systemNavigationBarColor: Color(0xFFDEE4E7),
+                systemNavigationBarDividerColor: Colors.transparent));
             themeData = lightThemePurple;
             return ThemeNotifier(themeData);
           } else if (theme == 'DarkOrange') {
@@ -52,16 +58,24 @@ Future<void> main() async {
             //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
-                systemNavigationBarColor: Color(0xFF1A1C25)));
+                systemNavigationBarColor: Color(0xFF1A1C25),
+                systemNavigationBarDividerColor: Colors.transparent));
             return ThemeNotifier(themeData);
           }
           //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
           SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Color(0xFF1A1C25)));
+              systemNavigationBarColor: Color(0xFF1A1C25),
+              systemNavigationBarDividerColor: Colors.transparent));
           return ThemeNotifier(darkThemeOrange);
         },
-        child: MyApp()));
+      ),
+      ChangeNotifierProvider<IndexGamesHome>(
+        create: (_) {
+          return IndexGamesHome(0);
+        },
+      )
+    ], child: MyApp()));
   });
 }
 

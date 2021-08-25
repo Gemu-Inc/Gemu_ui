@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,11 +10,15 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/ui/screens/Games/game_focus_screen.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/services/algolia_service.dart';
+import 'package:gemu/ui/providers/index_tab_games_home.dart';
 
 class CategorieScreen extends StatefulWidget {
   final Categorie categorie;
+  final IndexGamesHome indexGamesHome;
 
-  CategorieScreen({Key? key, required this.categorie}) : super(key: key);
+  CategorieScreen(
+      {Key? key, required this.categorie, required this.indexGamesHome})
+      : super(key: key);
 
   @override
   _CategorieScreenState createState() => _CategorieScreenState();
@@ -340,7 +346,10 @@ class _CategorieScreenState extends State<CategorieScreen>
           itemBuilder: (BuildContext context, int index) {
             Game game =
                 Game.fromMap(gameFollow[index], gameFollow[index].data());
-            return GameView(game: game);
+            return GameView(
+              game: game,
+              indexGamesHome: widget.indexGamesHome,
+            );
           }),
     );
   }
@@ -360,7 +369,10 @@ class _CategorieScreenState extends State<CategorieScreen>
           itemBuilder: (BuildContext context, int index) {
             Game game =
                 Game.fromMap(gameNoFollow[index], gameNoFollow[index].data());
-            return GameView(game: game);
+            return GameView(
+              game: game,
+              indexGamesHome: widget.indexGamesHome,
+            );
           }),
     );
   }
@@ -379,7 +391,7 @@ class _CategorieScreenState extends State<CategorieScreen>
           itemCount: games.length,
           itemBuilder: (_, index) {
             Game game = Game.fromMapAlgolia(games[index], games[index].data);
-            return GameView(game: game);
+            return GameView(game: game, indexGamesHome: widget.indexGamesHome);
           }),
     );
   }
@@ -387,8 +399,9 @@ class _CategorieScreenState extends State<CategorieScreen>
 
 class GameView extends StatefulWidget {
   final Game game;
+  final IndexGamesHome indexGamesHome;
 
-  GameView({required this.game});
+  GameView({required this.game, required this.indexGamesHome});
 
   @override
   GameViewState createState() => GameViewState();
@@ -398,47 +411,46 @@ class GameViewState extends State<GameView> {
   bool dataIsThere = false;
   bool isFollow = false;
 
+  late StreamSubscription gamesListener;
+  List games = [];
+
   @override
   void initState() {
     super.initState();
-    getAllData();
-  }
-
-  getAllData() async {
-    List games = [];
-    var doc = await FirebaseFirestore.instance
+    gamesListener = FirebaseFirestore.instance
         .collection('users')
         .doc(me!.uid)
         .collection('games')
-        .get();
-    for (var item in doc.docs) {
-      games.add(item.id);
-    }
-    if (games.contains(widget.game.documentId)) {
-      setState(() {
-        isFollow = true;
-      });
-    } else {
-      setState(() {
-        isFollow = false;
-      });
-    }
-    setState(() {
-      dataIsThere = true;
+        .snapshots()
+        .listen((data) {
+      if (games.length != 0) {
+        games.clear();
+      }
+      for (var item in data.docs) {
+        games.add(item.id);
+        if (!dataIsThere) {
+          if (games.contains(widget.game.documentId)) {
+            setState(() {
+              isFollow = true;
+            });
+          } else {
+            setState(() {
+              isFollow = false;
+            });
+          }
+        }
+      }
+      if (!dataIsThere) {
+        setState(() {
+          dataIsThere = true;
+        });
+      }
     });
   }
 
   follow() async {
-    List games = [];
-    var doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(me!.uid)
-        .collection('games')
-        .get();
-    for (var item in doc.docs) {
-      games.add(item.id);
-    }
     if (games.contains(widget.game.documentId)) {
+      await widget.indexGamesHome.setIndexNewGame(games.length - 1);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(me!.uid)
@@ -521,7 +533,9 @@ class GameViewState extends State<GameView> {
 
   Widget followGame() {
     return GestureDetector(
-        onTap: () => follow(),
+        onTap: () {
+          follow();
+        },
         child: Container(
             height: 25,
             width: 25,

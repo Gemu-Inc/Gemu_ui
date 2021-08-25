@@ -13,7 +13,9 @@ class LogController extends StatelessWidget {
         builder: (context, snapshot) {
           final isSignedIn = snapshot.data != null;
           return isSignedIn
-              ? NavController(uid: snapshot.data!.uid)
+              ? NavController(
+                  uid: snapshot.data!.uid,
+                )
               : WelcomeScreen();
         });
   }

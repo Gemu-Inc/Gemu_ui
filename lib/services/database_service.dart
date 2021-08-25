@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
+import 'package:gemu/models/game.dart';
 
 class DatabaseService {
   static final instance = DatabaseService._();
@@ -14,16 +15,16 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('users');
 
   //add user dans la bdd
-  addUser(String uid, List gamesFollow, Map<String, dynamic> map) {
+  addUser(String uid, List<Game> gamesFollow, Map<String, dynamic> map) {
     usersCollectionReference.doc(uid).set(map);
     for (var i = 0; i < gamesFollow.length; i++) {
       usersCollectionReference
           .doc(uid)
           .collection('games')
-          .doc(gamesFollow[i].data()['name'])
+          .doc(gamesFollow[i].name)
           .set({
-        'name': gamesFollow[i].data()['name'],
-        'imageUrl': gamesFollow[i].data()['imageUrl']
+        'name': gamesFollow[i].name,
+        'imageUrl': gamesFollow[i].imageUrl
       });
     }
   }

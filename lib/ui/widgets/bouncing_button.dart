@@ -35,6 +35,14 @@ class BouncingButtonState extends State<BouncingButton>
   }
 
   @override
+  void deactivate() {
+    _controller.removeListener(() {
+      setState(() {});
+    });
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();

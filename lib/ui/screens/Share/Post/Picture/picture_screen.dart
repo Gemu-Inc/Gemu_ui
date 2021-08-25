@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -167,7 +167,10 @@ class PictureScreenState extends State<PictureScreen>
       }
 
       int date = DateTime.now().millisecondsSinceEpoch.toInt();
-      String postName = 'post${me!.uid}$date';
+
+      DocumentReference ref =
+          FirebaseFirestore.instance.collection('posts').doc();
+      String postName = 'post' + ref.id;
 
       String picture =
           await uploadPictureToStorage(imagePath, postName, gameName);
@@ -233,7 +236,9 @@ class PictureScreenState extends State<PictureScreen>
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => NavController(uid: me!.uid)),
+              builder: (BuildContext context) => NavController(
+                    uid: me!.uid,
+                  )),
           (route) => false);
     } catch (e) {
       print(e);
@@ -298,7 +303,8 @@ class PictureScreenState extends State<PictureScreen>
                                                     builder: (BuildContext
                                                             context) =>
                                                         NavController(
-                                                            uid: me!.uid)),
+                                                          uid: me!.uid,
+                                                        )),
                                                 (route) => false);
                                           },
                                           child: Text(
@@ -537,7 +543,9 @@ class PictureScreenState extends State<PictureScreen>
             onTap: () {
               if (gameName == 'No game') {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-                    error: 'Choississez un jeu pour votre post'));
+                  context: context,
+                  error: 'Choississez un jeu pour votre post',
+                ));
               } else {
                 uploadPicture(widget.file.path, gameName);
               }

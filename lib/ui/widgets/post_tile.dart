@@ -10,7 +10,6 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/models/user.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/ui/widgets/expandable_text.dart';
 import 'package:gemu/services/date_helper.dart';
@@ -50,7 +49,7 @@ class PostTileState extends State<PostTile> with TickerProviderStateMixin {
                       idUserActual: widget.idUserActual,
                       post: widget.post)
                   : VideoItem(
-                      videoPlayerControllerType: VideoPlayerController.network(
+                      videoPlayerController: VideoPlayerController.network(
                           widget.post.postUrl,
                           videoPlayerOptions:
                               VideoPlayerOptions(mixWithOthers: true)),
@@ -64,7 +63,7 @@ class PostTileState extends State<PostTile> with TickerProviderStateMixin {
                     post: widget.post,
                   )
                 : VideoItem(
-                    videoPlayerControllerType: VideoPlayerController.file(
+                    videoPlayerController: VideoPlayerController.file(
                         snapshot.data.file,
                         videoPlayerOptions:
                             VideoPlayerOptions(mixWithOthers: true)),
@@ -79,7 +78,7 @@ class PictureItem extends StatefulWidget {
   final File? file;
   final String? postUrl;
   final String idUserActual;
-  final Post post;
+  Post post;
 
   PictureItem(
       {this.file,
@@ -102,7 +101,7 @@ class PictureItemState extends State<PictureItem>
   late AnimationController _upController, _downController;
   late Animation _upAnimation, _downAnimation;
 
-  late Post post;
+  //late Post post;
   late StreamSubscription postListener;
 
   late String hashtags;
@@ -130,59 +129,63 @@ class PictureItemState extends State<PictureItem>
   }
 
   upPost() async {
-    post.reference.collection('up').doc(widget.idUserActual).get().then((uper) {
+    widget.post.reference
+        .collection('up')
+        .doc(widget.idUserActual)
+        .get()
+        .then((uper) {
       if (!uper.exists) {
         uper.reference.set({});
-        post.reference.update({'upcount': post.upcount + 1});
+        widget.post.reference.update({'upcount': widget.post.upcount + 1});
       }
     });
 
-    post.reference
+    widget.post.reference
         .collection('down')
         .doc(widget.idUserActual)
         .get()
         .then((downer) {
       if (downer.exists) {
         downer.reference.delete();
-        post.reference.update({'downcount': post.downcount - 1});
+        widget.post.reference.update({'downcount': widget.post.downcount - 1});
       }
     });
 
     DatabaseService.addNotification(
-        widget.idUserActual, post.uid, "a up votre post", "updown");
+        widget.idUserActual, widget.post.uid, "a up votre post", "updown");
   }
 
   downPost() async {
-    post.reference
+    widget.post.reference
         .collection('down')
         .doc(widget.idUserActual)
         .get()
         .then((downer) {
       if (!downer.exists) {
         downer.reference.set({});
-        post.reference.update({'downcount': post.downcount + 1});
+        widget.post.reference.update({'downcount': widget.post.downcount + 1});
       }
     });
 
-    post.reference
+    widget.post.reference
         .collection('up')
         .doc(widget.idUserActual)
         .get()
         .then((upper) {
       if (upper.exists) {
         upper.reference.delete();
-        post.reference.update({'upcount': post.upcount - 1});
+        widget.post.reference.update({'upcount': widget.post.upcount - 1});
       }
     });
 
     DatabaseService.addNotification(
-        widget.idUserActual, post.uid, "a down votre post", "updown");
+        widget.idUserActual, widget.post.uid, "a down votre post", "updown");
   }
 
   followUser() async {
     FirebaseFirestore.instance
         .collection('users')
-        .doc(post.uid)
+        .doc(widget.post.uid)
         .collection('followers')
         .doc(widget.idUserActual)
         .get()
@@ -193,9 +196,9 @@ class PictureItemState extends State<PictureItem>
             .collection('users')
             .doc(widget.idUserActual)
             .collection('following')
-            .doc(post.uid)
+            .doc(widget.post.uid)
             .set({});
-        DatabaseService.addNotification(widget.idUserActual, post.uid,
+        DatabaseService.addNotification(widget.idUserActual, widget.post.uid,
             "a commencé à vous suivre", "follow");
 
         setState(() {
@@ -206,9 +209,9 @@ class PictureItemState extends State<PictureItem>
   }
 
   updateView() async {
-    post.reference.update({'viewcount': post.viewcount + 1});
+    widget.post.reference.update({'viewcount': widget.post.viewcount + 1});
 
-    post.reference
+    widget.post.reference
         .collection('viewers')
         .doc(widget.idUserActual)
         .get()
@@ -223,23 +226,22 @@ class PictureItemState extends State<PictureItem>
   void initState() {
     super.initState();
     //écoute sur les changements du post
-    post = widget.post;
     postListener = FirebaseFirestore.instance
         .collection('posts')
-        .doc(post.id)
+        .doc(widget.post.id)
         .snapshots()
         .listen((data) {
       print('post listen');
       setState(() {
-        post = Post.fromMap(data, data.data()!);
+        widget.post = Post.fromMap(data, data.data()!);
       });
     });
 
     //Prendre les infos du user du post
-    if (post.uid != widget.idUserActual) {
+    if (widget.post.uid != widget.idUserActual) {
       FirebaseFirestore.instance
           .collection('users')
-          .doc(post.uid)
+          .doc(widget.post.uid)
           .collection('followers')
           .doc(widget.idUserActual)
           .get()
@@ -259,11 +261,13 @@ class PictureItemState extends State<PictureItem>
     }
 
     //concatène les list et les différents string afin de créer une bonne description
-    hashtags = concatListHashtags(post.hashtags);
-    descriptionFinal = concatDescriptionHastags(post.description, hashtags);
+    hashtags = concatListHashtags(widget.post.hashtags);
+    descriptionFinal =
+        concatDescriptionHastags(widget.post.description, hashtags);
 
     //Listener sur les up&down du post
-    upListener = post.reference.collection('up').snapshots().listen((data) {
+    upListener =
+        widget.post.reference.collection('up').snapshots().listen((data) {
       if (up.length != 0) {
         up.clear();
       }
@@ -273,7 +277,8 @@ class PictureItemState extends State<PictureItem>
         });
       }
     });
-    downListener = post.reference.collection('down').snapshots().listen((data) {
+    downListener =
+        widget.post.reference.collection('down').snapshots().listen((data) {
       if (down.length != 0) {
         down.clear();
       }
@@ -336,7 +341,7 @@ class PictureItemState extends State<PictureItem>
 
   @override
   Widget build(BuildContext context) {
-    int points = (post.upcount - post.downcount);
+    int points = (widget.post.upcount - widget.post.downcount);
     return Stack(
       children: [
         contentPostPicture(),
@@ -364,7 +369,7 @@ class PictureItemState extends State<PictureItem>
               child: GestureDetector(
                 onDoubleTap: () {
                   print('upPost');
-                  if (post.uid != widget.idUserActual) {
+                  if (widget.post.uid != widget.idUserActual) {
                     _upController.forward();
                     upPost();
                   }
@@ -376,7 +381,7 @@ class PictureItemState extends State<PictureItem>
                 child: GestureDetector(
                   onDoubleTap: () {
                     print('downPost');
-                    if (post.uid != widget.idUserActual) {
+                    if (widget.post.uid != widget.idUserActual) {
                       _downController.forward();
                       downPost();
                     }
@@ -414,7 +419,7 @@ class PictureItemState extends State<PictureItem>
     return Stack(
       children: [
         Hero(
-          tag: 'post${post.id}',
+          tag: 'post${widget.post.id}',
           child: Center(
               child: widget.file != null
                   ? Image.file(
@@ -459,10 +464,11 @@ class PictureItemState extends State<PictureItem>
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => ProfilUser(
-                                                userPostID: post.uid,
+                                                userPostID: widget.post.uid,
                                               )));
                                 },
-                                child: Text(post.username, style: mystyle(14))),
+                                child: Text(widget.post.username,
+                                    style: mystyle(14))),
                           ),
                           SizedBox(
                             width: 2.5,
@@ -471,7 +477,7 @@ class PictureItemState extends State<PictureItem>
                           SizedBox(
                             width: 2.5,
                           ),
-                          Text(DateHelper().datePostView(post.date)),
+                          Text(DateHelper().datePostView(widget.post.date)),
                         ],
                       ),
                       SizedBox(
@@ -511,7 +517,7 @@ class PictureItemState extends State<PictureItem>
         ),
         _getSocialAction(
             icon: Icons.insert_comment_outlined,
-            title: post.commentcount.toString(),
+            title: widget.post.commentcount.toString(),
             context: context),
         SizedBox(
           height: 25.0,
@@ -542,7 +548,7 @@ class PictureItemState extends State<PictureItem>
               shadowColor: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  if (post.uid != widget.idUserActual) {
+                  if (widget.post.uid != widget.idUserActual) {
                     upPost();
                   }
                 },
@@ -558,7 +564,7 @@ class PictureItemState extends State<PictureItem>
               shadowColor: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  if (post.uid != widget.idUserActual) {
+                  if (widget.post.uid != widget.idUserActual) {
                     downPost();
                   }
                 },
@@ -594,7 +600,7 @@ class PictureItemState extends State<PictureItem>
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => CommentsView(post: post)));
+                    builder: (context) => CommentsView(post: widget.post)));
           },
           child: Icon(icon, size: 28, color: Colors.white),
         ),
@@ -626,8 +632,8 @@ class PictureItemState extends State<PictureItem>
         Card(
           color: Colors.transparent,
           shadowColor: Colors.transparent,
-          child:
-              Text(post.viewcount.toString(), style: mystyle(13, Colors.white)),
+          child: Text(widget.post.viewcount.toString(),
+              style: mystyle(13, Colors.white)),
         ),
       ],
     );
@@ -651,7 +657,7 @@ class PictureItemState extends State<PictureItem>
     return Container(
         width: ProfileImageSize,
         height: ProfileImageSize,
-        child: post.uid == widget.idUserActual || isFollowing
+        child: widget.post.uid == widget.idUserActual || isFollowing
             ? _getProfilePicture(context)
             : Stack(children: [
                 _getProfilePicture(context),
@@ -666,10 +672,10 @@ class PictureItemState extends State<PictureItem>
             context,
             MaterialPageRoute(
                 builder: (context) => ProfilUser(
-                      userPostID: post.uid,
+                      userPostID: widget.post.uid,
                     )));
       },
-      child: post.imageUrl == null
+      child: widget.post.imageUrl == null
           ? Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,
@@ -687,7 +693,8 @@ class PictureItemState extends State<PictureItem>
                   border: Border.all(color: Colors.black),
                   image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(post.imageUrl!))),
+                      image:
+                          CachedNetworkImageProvider(widget.post.imageUrl!))),
             ),
     );
   }
@@ -740,7 +747,7 @@ class PictureItemState extends State<PictureItem>
                     height: 40,
                     width: 55,
                     child: Marquee(
-                      text: post.gameName,
+                      text: widget.post.gameName,
                       style: mystyle(13),
                       textDirection: TextDirection.ltr,
                       blankSpace: 50,
@@ -754,7 +761,8 @@ class PictureItemState extends State<PictureItem>
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(5.0),
                     image: DecorationImage(
-                        image: CachedNetworkImageProvider(post.gameImage),
+                        image:
+                            CachedNetworkImageProvider(widget.post.gameImage),
                         fit: BoxFit.cover)),
               )
             ],
@@ -764,12 +772,12 @@ class PictureItemState extends State<PictureItem>
 }
 
 class VideoItem extends StatefulWidget {
-  final VideoPlayerController videoPlayerControllerType;
+  final VideoPlayerController videoPlayerController;
   final String idUserActual;
   final Post post;
 
   VideoItem(
-      {required this.videoPlayerControllerType,
+      {required this.videoPlayerController,
       required this.idUserActual,
       required this.post});
 
@@ -783,6 +791,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   static const double ShareActionIconSize = 25.0;
   static const double ProfileImageSize = 45.0;
   static const double PlusIconSize = 20.0;
+
+  late VideoPlayerController videoPlayerController;
 
   late AnimationController _upController, _downController;
   late Animation _upAnimation, _downAnimation;
@@ -800,7 +810,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   List up = [];
   List down = [];
 
-  late VideoPlayerController videoPlayerController;
   bool volumeOn = true;
   bool isNavigateComment = false;
 
@@ -911,12 +920,11 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    videoPlayerController = widget.videoPlayerControllerType
-      ..initialize().then((value) {
-        if (mounted) {
-          videoPlayerController.setLooping(true);
-          setState(() {});
-        }
+
+    videoPlayerController = widget.videoPlayerController
+      ..setLooping(true)
+      ..initialize().then((_) {
+        setState(() {});
       });
 
     //écoute sur les changements du post
@@ -1028,7 +1036,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     downListener.cancel();
     postListener.cancel();
     videoPlayerController.dispose();
-
     print('fin du post');
     super.dispose();
   }

@@ -13,6 +13,20 @@ class WelcomeScreen extends StatelessWidget {
     SizeConfig().init(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.info_outline,
+                color: Colors.white,
+              ),
+              onPressed: () => Navigator.pushNamed(context, GetStartedRoute))
+        ],
+      ),
       body: Body(),
     );
   }
@@ -62,8 +76,8 @@ class BodyState extends State<Body> {
     return AnimatedContainer(
       duration: _duration,
       curve: Curves.easeInOut,
-      width: double.infinity,
-      height: SizeConfig.screenHeight,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -77,155 +91,143 @@ class BodyState extends State<Body> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
-                Theme.of(context).scaffoldBackgroundColor
+                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
+                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
               ]),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 30.0),
+          padding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 5.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                    icon: Icon(Icons.info_outline),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, GetStartedRoute)),
+              VerticalSpacing(
+                of: 50.0,
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                height: MediaQuery.of(context).size.height / 6,
+                width: 250,
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(right: 45.0, bottom: 5.0),
+                        child: Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(10.0),
+                              image: DecorationImage(
+                                  image: AssetImage("assets/icons/icon.png"))),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      "Welcome to Gemu",
+                      style: Theme.of(context).textTheme.headline3!.copyWith(
+                          fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
               VerticalSpacing(
                 of: 10.0,
               ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-                  height: 130,
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 30.0, bottom: 10.0),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.black),
-                                borderRadius: BorderRadius.circular(10.0),
-                                image: DecorationImage(
-                                    image:
-                                        AssetImage("assets/icons/icon.png"))),
+              Expanded(
+                  child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 35.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            height: 2,
+                            width: MediaQuery.of(context).size.width / 4,
+                            color: Theme.of(context).canvasColor,
                           ),
+                          Text(
+                            'Start the adventure',
+                            style: mystyle(12),
+                          ),
+                          Container(
+                            height: 2,
+                            width: MediaQuery.of(context).size.width / 4,
+                            color: Theme.of(context).canvasColor,
+                          )
+                        ],
+                      ),
+                    ),
+                    BouncingButton(
+                      content: Center(
+                        child: Text(
+                          'Sign up',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w700),
                         ),
                       ),
-                      Text(
-                        "Welcome to Gemu",
-                        style: Theme.of(context).textTheme.headline3!.copyWith(
-                            fontWeight: FontWeight.bold, color: Colors.white),
+                      height: MediaQuery.of(context).size.height / 14,
+                      width: MediaQuery.of(context).size.width / 1.5,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    RegisterScreen()));
+                      },
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 35.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            height: 2,
+                            width: MediaQuery.of(context).size.width / 4,
+                            color: Theme.of(context).canvasColor,
+                          ),
+                          Text(
+                            'Already an account?',
+                            style: mystyle(12),
+                          ),
+                          Container(
+                            height: 2,
+                            width: MediaQuery.of(context).size.width / 4,
+                            color: Theme.of(context).canvasColor,
+                          )
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    BouncingButton(
+                      content: Center(
+                        child: Text(
+                          'Sign in',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      height: MediaQuery.of(context).size.height / 14,
+                      width: MediaQuery.of(context).size.width / 1.5,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    LoginScreen()));
+                      },
+                    )
+                  ],
                 ),
-              ),
-              VerticalSpacing(
-                of: 60.0,
-              ),
-              Expanded(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        height: 2,
-                        width: MediaQuery.of(context).size.width / 4,
-                        color: Theme.of(context).canvasColor,
-                      ),
-                      Text(
-                        'Start the adventure',
-                        style: mystyle(12),
-                      ),
-                      Container(
-                        height: 2,
-                        width: MediaQuery.of(context).size.width / 4,
-                        color: Theme.of(context).canvasColor,
-                      )
-                    ],
-                  ),
-                  VerticalSpacing(
-                    of: 40,
-                  ),
-                  BouncingButton(
-                    content: Center(
-                      child: Text(
-                        'Sign up',
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    height: 50,
-                    width: MediaQuery.of(context).size.width / 1.5,
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  RegisterScreen()));
-                    },
-                  ),
-                  VerticalSpacing(
-                    of: 60,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        height: 2,
-                        width: MediaQuery.of(context).size.width / 4,
-                        color: Theme.of(context).canvasColor,
-                      ),
-                      Text(
-                        'Already an account?',
-                        style: mystyle(12),
-                      ),
-                      Container(
-                        height: 2,
-                        width: MediaQuery.of(context).size.width / 4,
-                        color: Theme.of(context).canvasColor,
-                      )
-                    ],
-                  ),
-                  VerticalSpacing(
-                    of: 40,
-                  ),
-                  BouncingButton(
-                    content: Center(
-                      child: Text(
-                        'Login',
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    height: 50,
-                    width: MediaQuery.of(context).size.width / 1.5,
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  LoginScreen()));
-                    },
-                  )
-                ],
               )),
-              VerticalSpacing(
-                of: 60.0,
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
+              Container(
+                height: MediaQuery.of(context).size.height / 15,
                 child: Column(
                   children: [
                     Container(
@@ -247,7 +249,7 @@ class BodyState extends State<Body> {
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

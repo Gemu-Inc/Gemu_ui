@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/game.dart';
@@ -10,6 +12,7 @@ import 'package:gemu/services/database_service.dart';
 import 'package:gemu/ui/screens/Reglages/Design/theme_values.dart';
 import 'package:gemu/ui/widgets/bottom_share.dart';
 import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/providers/index_tab_games_home.dart';
 
 import '../screens/Home/home_screen.dart';
 import '../screens/Games/games_screen.dart';
@@ -29,6 +32,8 @@ class _NavControllerState extends State<NavController> {
   bool dataIsHere = false;
 
   GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
+  late IndexGamesHome indexGames;
 
   late StreamSubscription userListener, gamesListener, followingsListener;
 
@@ -117,6 +122,7 @@ class _NavControllerState extends State<NavController> {
 
   @override
   Widget build(BuildContext context) {
+    indexGames = Provider.of<IndexGamesHome>(context);
     return (me == null || me!.uid != widget.uid || !dataIsHere)
         ? Scaffold(
             body: Center(
@@ -135,23 +141,21 @@ class _NavControllerState extends State<NavController> {
               onPageChanged: onPageChanged,
               children: [
                 HomeScreen(
-                  userActual: me!,
-                  followings: followings,
-                  games: gamesList,
-                ),
+                    userActual: me!,
+                    followings: followings,
+                    games: gamesList,
+                    indexGamesHome: indexGames),
                 HighlightsScreen(
                   uid: me!.uid,
                 ),
                 GamesScreen(
-                  uid: me!.uid,
-                  games: gamesList,
-                ),
+                    uid: me!.uid, games: gamesList, indexGamesHome: indexGames),
                 MyProfilScreen(user: me!)
               ],
             ),
             bottomNavigationBar: Container(
                 width: MediaQuery.of(context).size.width,
-                height: 60,
+                height: MediaQuery.of(context).size.height / 11,
                 decoration: selectedPage != 0
                     ? BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
@@ -195,8 +199,8 @@ class _NavControllerState extends State<NavController> {
                                   padding:
                                       EdgeInsets.only(top: 0.5, bottom: 0.5),
                                   child: Container(
-                                    height: 26,
-                                    width: 26,
+                                    height: 27.5,
+                                    width: 27.5,
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color:

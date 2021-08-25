@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/providers/index_tab_games_home.dart';
 
 import 'game_section.dart';
 import 'following_section.dart';
@@ -12,13 +13,15 @@ class HomeScreen extends StatefulWidget {
   final UserModel userActual;
   final List followings;
   final List<Game> games;
+  final IndexGamesHome indexGamesHome;
 
-  HomeScreen({
-    Key? key,
-    required this.userActual,
-    required this.followings,
-    required this.games,
-  }) : super(key: key);
+  HomeScreen(
+      {Key? key,
+      required this.userActual,
+      required this.followings,
+      required this.games,
+      required this.indexGamesHome})
+      : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -28,22 +31,21 @@ class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   bool dataIsThere = false;
 
-  List<Game> gamesList = [];
-
   late TabController _tabMenuController;
   int currentTabMenuIndex = 1;
-  int currentTabGamesIndex = 0;
+
+  late int currentTabGamesIndex;
 
   late AnimationController _animationRotateController,
       _animationGamesController;
   late Animation _animationRotate, _animationGames;
 
   void _onTabMenuChanged() {
+    if (_animationRotateController.isCompleted) {
+      _animationRotateController.reverse();
+      _animationGamesController.reverse();
+    }
     if (!_tabMenuController.indexIsChanging) {
-      if (_animationRotateController.isCompleted) {
-        _animationRotateController.reverse();
-        _animationGamesController.reverse();
-      }
       setState(() {
         currentTabMenuIndex = _tabMenuController.index;
       });
@@ -66,15 +68,13 @@ class _HomeScreenState extends State<HomeScreen>
         initialIndex: currentTabMenuIndex, length: 2, vsync: this);
     _tabMenuController.addListener(_onTabMenuChanged);
 
-    gamesList = widget.games;
-
     _animationGamesController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
     _animationGames = CurvedAnimation(
         parent: _animationGamesController, curve: Curves.easeOut);
 
     _animationRotateController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
     _animationRotate = Tween<double>(begin: 0.0, end: 180.0).animate(
         CurvedAnimation(
             parent: _animationRotateController, curve: Curves.easeOut));
@@ -100,16 +100,17 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    currentTabGamesIndex = widget.indexGamesHome.getIndex();
     return SafeArea(
         left: false,
         right: false,
         child: DefaultTabController(
             initialIndex: currentTabGamesIndex,
-            length: gamesList.length,
+            length: widget.games.length,
             child: Stack(
               children: [
-                bodyHome(gamesList[currentTabGamesIndex]),
-                topHome(gamesList[currentTabGamesIndex]),
+                bodyHome(widget.games[currentTabGamesIndex]),
+                topHome(widget.games[currentTabGamesIndex]),
               ],
             )));
   }
@@ -117,53 +118,12 @@ class _HomeScreenState extends State<HomeScreen>
   Widget topHome(Game game) {
     return Column(
       children: [
-        topAppBar(game),
+        SizedBox(
+          height: 55,
+        ),
         bottomAppBar(),
-        tabGames(gamesList),
+        tabGames(widget.games),
       ],
-    );
-  }
-
-  Widget topAppBar(Game game) {
-    return Container(
-      height: 55,
-      alignment: Alignment.center,
-      child: currentTabMenuIndex == 0
-          ? Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(10.0),
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).accentColor
-                      ])),
-              child: Icon(
-                Icons.follow_the_signs_sharp,
-                color: Colors.black,
-                size: 30,
-              ),
-            )
-          : Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).accentColor
-                      ]),
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(color: Colors.black),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(game.imageUrl)))),
     );
   }
 
@@ -176,18 +136,17 @@ class _HomeScreenState extends State<HomeScreen>
           alignment: Alignment.topCenter,
           child: TabBar(
               controller: _tabMenuController,
+              overlayColor: MaterialStateProperty.all(Colors.transparent),
               indicatorColor: Theme.of(context).primaryColor,
-              indicatorWeight: 0.5,
-              indicatorSize: TabBarIndicatorSize.label,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorWeight: 1.0,
               labelColor: Theme.of(context).primaryColor,
               unselectedLabelColor: Colors.grey,
+              isScrollable: true,
               tabs: [
                 Tab(
                   child: currentTabMenuIndex == 0
-                      ? Container(
-                          alignment: Alignment.center,
-                          child: Text('Followings', style: mystyle(16)),
-                        )
+                      ? Text('Followings', style: mystyle(15))
                       : Text(
                           'Followings',
                           style: mystyle(13, Colors.grey),
@@ -208,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Games', style: mystyle(16)),
+                              Text('Games', style: mystyle(15)),
                               Padding(
                                   padding: EdgeInsets.only(top: 1.0),
                                   child: Transform(
@@ -237,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen>
         controller: _tabMenuController,
         children: [
           following,
-          games(gamesList),
+          games(widget.games),
         ]);
   }
 
@@ -255,9 +214,8 @@ class _HomeScreenState extends State<HomeScreen>
                 child: Center(
                   child: TabBar(
                       onTap: (index) {
-                        setState(() {
-                          currentTabGamesIndex = index;
-                        });
+                        widget.indexGamesHome.setIndex(index);
+                        currentTabGamesIndex = widget.indexGamesHome.getIndex();
                       },
                       indicatorColor: Colors.transparent,
                       labelColor: Theme.of(context).primaryColor,
