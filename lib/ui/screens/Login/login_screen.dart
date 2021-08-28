@@ -294,6 +294,9 @@ class LoginScreenState extends State<LoginScreen> {
             )
           ],
         ),
+        VerticalSpacing(
+          of: 20.0,
+        )
       ],
     );
   }

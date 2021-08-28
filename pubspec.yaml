@@ -65,10 +65,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-flutter_icons:
-  android: "launcher_icon"
+  flutter_native_splash: ^1.2.1
+
+flutter_native_splash:
+  color: "#dee4E7"
+  color_dark: "#1a1c25"
+  image: assets/icons/icon.png
+  android: true
   ios: true
-  image_path: "assets/icons/icon.png"
 
 flutter_launcher_name:
   name: "Gemu"

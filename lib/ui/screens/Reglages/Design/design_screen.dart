@@ -14,43 +14,124 @@ class DesignScreen extends StatefulWidget {
 }
 
 class _DesignScreenState extends State<DesignScreen> {
-  int selectedPosition = 0;
   List themes = Constants.themes;
   late SharedPreferences prefs;
   late ThemeNotifier themeNotifier;
+  late PrimaryColorNotifier _primaryColorNotifier;
+  late AccentColorNotifier _accentColorNotifier;
+
   bool isSwitched = false;
-  bool createTheme = false;
+
+  Color darkApp = Color(0xFF1A1C25);
+  Color lightApp = Color(0xFFDEE4E7);
+  Color orangeApp = Color(0xFFB27D75);
+  Color purpleApp = Color(0xFF6E78B1);
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _getSavedTheme();
-    });
-  }
-
-  _getSavedTheme() async {
-    prefs = await SharedPreferences.getInstance();
-    setState(() {
-      selectedPosition = themes
-          .indexOf(prefs.getString(Constants.appTheme) ?? 'darkThemeOrange');
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     themeNotifier = Provider.of<ThemeNotifier>(context);
+    _primaryColorNotifier = Provider.of<PrimaryColorNotifier>(context);
+    _accentColorNotifier = Provider.of<AccentColorNotifier>(context);
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBarCustom(context: context, title: 'Design', actions: []),
-        body: Column(
+        body: Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: systemTheme(),
+              ),
+              Expanded(
+                child: lightThemes(),
+              ),
+              Expanded(
+                child: darkThemes(),
+              )
+            ],
+          ),
+        ));
+  }
+
+  Widget systemTheme() {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: lightThemes(),
+            Text(
+              "Default system colors",
+              style: Theme.of(context).textTheme.headline5,
             ),
-            Expanded(
-              child: darkThemes(),
+            Text(
+              "Select colors for the default system",
+              style: TextStyle(fontSize: 15),
+            ),
+            SizedBox(
+              height: 25.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  child: Column(
+                    children: [
+                      RawMaterialButton(
+                        onPressed: () {
+                          colorChangedPrimary(orangeApp.value);
+                          colorChangedAccent(purpleApp.value);
+                          onThemeChanged('ThemeCustomSystem');
+                        },
+                        child: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 400),
+                            transitionBuilder: (Widget child,
+                                    Animation<double> animation) =>
+                                ScaleTransition(child: child, scale: animation),
+                            child: _getIconSystem(orangeApp, purpleApp)),
+                        shape: CircleBorder(),
+                        elevation: 6.0,
+                        padding: EdgeInsets.all(5.0),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text('Orange/Purple'),
+                    ],
+                  ),
+                ),
+                Container(
+                  child: Column(
+                    children: [
+                      RawMaterialButton(
+                        onPressed: () {
+                          colorChangedPrimary(purpleApp.value);
+                          colorChangedAccent(orangeApp.value);
+                          onThemeChanged('ThemeCustomSystem');
+                        },
+                        child: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 400),
+                            transitionBuilder: (Widget child,
+                                    Animation<double> animation) =>
+                                ScaleTransition(child: child, scale: animation),
+                            child: _getIconSystem(purpleApp, orangeApp)),
+                        shape: CircleBorder(),
+                        elevation: 6.0,
+                        padding: EdgeInsets.all(5.0),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text('Purple/Orange'),
+                    ],
+                  ),
+                ),
+              ],
             )
           ],
         ));
@@ -67,7 +148,7 @@ class _DesignScreenState extends State<DesignScreen> {
               style: Theme.of(context).textTheme.headline5,
             ),
             Text(
-              "Select your default theme color",
+              "Select colors for the light theme",
               style: TextStyle(fontSize: 15),
             ),
             SizedBox(
@@ -80,7 +161,7 @@ class _DesignScreenState extends State<DesignScreen> {
                   child: Column(
                     children: [
                       RawMaterialButton(
-                        onPressed: () => _updateState(0),
+                        onPressed: () => onThemeChanged('LightOrange'),
                         child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 400),
                             transitionBuilder: (Widget child,
@@ -88,7 +169,7 @@ class _DesignScreenState extends State<DesignScreen> {
                                 ScaleTransition(child: child, scale: animation),
                             child: _getIcon(themeNotifier, lightThemeOrange)),
                         shape: CircleBorder(),
-                        elevation: 2.0,
+                        elevation: 6.0,
                         fillColor: lightThemeOrange.scaffoldBackgroundColor,
                         padding: EdgeInsets.all(5.0),
                       ),
@@ -103,7 +184,7 @@ class _DesignScreenState extends State<DesignScreen> {
                   child: Column(
                     children: [
                       RawMaterialButton(
-                        onPressed: () => _updateState(1),
+                        onPressed: () => onThemeChanged('LightPurple'),
                         child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 400),
                             transitionBuilder: (Widget child,
@@ -111,7 +192,7 @@ class _DesignScreenState extends State<DesignScreen> {
                                 ScaleTransition(child: child, scale: animation),
                             child: _getIcon(themeNotifier, lightThemePurple)),
                         shape: CircleBorder(),
-                        elevation: 2.0,
+                        elevation: 6.0,
                         fillColor: lightThemePurple.scaffoldBackgroundColor,
                         padding: EdgeInsets.all(5.0),
                       ),
@@ -139,7 +220,7 @@ class _DesignScreenState extends State<DesignScreen> {
             style: Theme.of(context).textTheme.headline5,
           ),
           Text(
-            "Select your default theme color",
+            "Select colors for the dark theme",
             style: TextStyle(fontSize: 15),
           ),
           SizedBox(
@@ -152,7 +233,7 @@ class _DesignScreenState extends State<DesignScreen> {
                 child: Column(
                   children: [
                     RawMaterialButton(
-                      onPressed: () => _updateState(2),
+                      onPressed: () => onThemeChanged('DarkOrange'),
                       child: AnimatedSwitcher(
                         duration: Duration(milliseconds: 400),
                         transitionBuilder:
@@ -161,7 +242,7 @@ class _DesignScreenState extends State<DesignScreen> {
                         child: _getIcon(themeNotifier, darkThemeOrange),
                       ),
                       shape: CircleBorder(),
-                      elevation: 2.0,
+                      elevation: 6.0,
                       fillColor: darkThemeOrange.scaffoldBackgroundColor,
                       padding: EdgeInsets.all(5.0),
                     ),
@@ -176,7 +257,7 @@ class _DesignScreenState extends State<DesignScreen> {
                 child: Column(
                   children: [
                     RawMaterialButton(
-                      onPressed: () => _updateState(3),
+                      onPressed: () => onThemeChanged('DarkPurple'),
                       child: AnimatedSwitcher(
                           duration: Duration(milliseconds: 400),
                           transitionBuilder: (Widget child,
@@ -184,7 +265,7 @@ class _DesignScreenState extends State<DesignScreen> {
                               ScaleTransition(child: child, scale: animation),
                           child: _getIcon(themeNotifier, darkThemePurple)),
                       shape: CircleBorder(),
-                      elevation: 2.0,
+                      elevation: 6.0,
                       fillColor: darkThemePurple.scaffoldBackgroundColor,
                       padding: EdgeInsets.all(5.0),
                     ),
@@ -198,6 +279,31 @@ class _DesignScreenState extends State<DesignScreen> {
             ],
           )
         ],
+      ),
+    );
+  }
+
+  Widget _getIconSystem(Color primaryColor, Color accentColor) {
+    bool selected = (_primaryColorNotifier.getColor() == primaryColor &&
+        _accentColorNotifier.getColor() == accentColor &&
+        themeNotifier.getTheme() == null);
+
+    return Container(
+      height: 50,
+      width: 50,
+      key: Key((selected) ? "ON" : "OFF"),
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                primaryColor,
+                accentColor,
+              ]),
+          borderRadius: BorderRadius.circular(40)),
+      child: Icon(
+        (selected) ? Icons.done : Icons.close,
+        size: 20.0,
       ),
     );
   }
@@ -225,54 +331,53 @@ class _DesignScreenState extends State<DesignScreen> {
     );
   }
 
-  _updateState(int position) {
-    setState(() {
-      selectedPosition = position;
-    });
-    onThemeChanged(themes[position]);
-  }
-
   void onThemeChanged(String value) async {
     var prefs = await SharedPreferences.getInstance();
     if (value == 'LightOrange') {
-      themeNotifier.setTheme(lightThemeOrange);
+      await themeNotifier.setTheme(lightThemeOrange);
       //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Color(0xFFDEE4E7)));
+      SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'LightPurple') {
-      themeNotifier.setTheme(lightThemePurple);
+      await themeNotifier.setTheme(lightThemePurple);
       //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Color(0xFFDEE4E7)));
+      SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'DarkOrange') {
-      themeNotifier.setTheme(darkThemeOrange);
+      await themeNotifier.setTheme(darkThemeOrange);
       //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Color(0xFF1A1C25)));
+      SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(systemNavigationBarColor: Color(0xFF1A1C25)));
     } else if (value == 'DarkPurple') {
-      themeNotifier.setTheme(darkThemePurple);
+      await themeNotifier.setTheme(darkThemePurple);
       //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Color(0xFF1A1C25)));
-    } else if (value == 'ThemeCustomLight') {
-      themeNotifier.setTheme(themeCustomLight);
-    } else if (value == 'ThemeCustomDark') {
-      themeNotifier.setTheme(themeCustomDark);
+      SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(systemNavigationBarColor: Color(0xFF1A1C25)));
+    } else if (value == 'ThemeCustomSystem') {
+      await themeNotifier.setTheme(null);
+      SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent));
     }
     prefs.setString(Constants.appTheme, value);
   }
 
   void colorChangedPrimary(int value) async {
     var prefs = await SharedPreferences.getInstance();
+    if (value == orangeApp.value) {
+      _primaryColorNotifier.setColor(orangeApp);
+    } else if (value == purpleApp.value) {
+      _primaryColorNotifier.setColor(purpleApp);
+    }
     prefs.setInt('color_primary', value);
   }
 
   void colorChangedAccent(int value) async {
     var prefs = await SharedPreferences.getInstance();
+    if (value == orangeApp.value) {
+      _accentColorNotifier.setColor(orangeApp);
+    } else if (value == purpleApp.value) {
+      _accentColorNotifier.setColor(purpleApp);
+    }
     prefs.setInt('color_accent', value);
   }
 }

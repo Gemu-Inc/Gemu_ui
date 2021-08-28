@@ -15,8 +15,8 @@ mystyle(double size, [Color? color, FontWeight fw = FontWeight.w700]) {
 }
 
 //Avoir le thème
-ThemeData themeApp(BuildContext context) {
+/*ThemeData themeApp(BuildContext context) {
   final themeNotifier = Provider.of<ThemeNotifier>(context);
   ThemeData themeApp = themeNotifier.getTheme();
   return themeApp;
-}
+}*/

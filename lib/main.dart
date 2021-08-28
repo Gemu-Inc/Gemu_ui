@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -24,52 +23,47 @@ Future<void> main() async {
   Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   prefs.then((value) {
     runApp(MultiProvider(providers: [
-      ChangeNotifierProvider<ThemeNotifier>(
-        create: (_) {
-          String? theme = value.getString(Constants.appTheme);
-          print(theme);
-          ThemeData themeData;
-          if (theme == 'DarkPurple') {
-            themeData = darkThemePurple;
-            //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                systemNavigationBarColor: Color(0xFF1A1C25),
-                systemNavigationBarDividerColor: Colors.transparent));
-            return ThemeNotifier(themeData);
-          } else if (theme == 'LightOrange') {
-            //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                systemNavigationBarColor: Color(0xFFDEE4E7),
-                systemNavigationBarDividerColor: Colors.transparent));
-            themeData = lightThemeOrange;
-            return ThemeNotifier(themeData);
-          } else if (theme == 'LightPurple') {
-            //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                systemNavigationBarColor: Color(0xFFDEE4E7),
-                systemNavigationBarDividerColor: Colors.transparent));
-            themeData = lightThemePurple;
-            return ThemeNotifier(themeData);
-          } else if (theme == 'DarkOrange') {
-            themeData = darkThemeOrange;
-            //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                systemNavigationBarColor: Color(0xFF1A1C25),
-                systemNavigationBarDividerColor: Colors.transparent));
-            return ThemeNotifier(themeData);
-          }
-          //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
+      ChangeNotifierProvider<PrimaryColorNotifier>(create: (_) {
+        Color primaryColor;
+        primaryColor =
+            Color(value.getInt('color_primary') ?? Color(0xFFB27D75).value);
+        return PrimaryColorNotifier(primaryColor);
+      }),
+      ChangeNotifierProvider<AccentColorNotifier>(create: (_) {
+        Color accentColor;
+        accentColor =
+            Color(value.getInt('color_accent') ?? Color(0xFF6E78B1).value);
+        return AccentColorNotifier(accentColor);
+      }),
+      ChangeNotifierProvider<ThemeNotifier>(create: (_) {
+        String? theme = value.getString(Constants.appTheme);
+        ThemeData themeData;
+        if (theme == 'DarkPurple') {
+          themeData = darkThemePurple;
           SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Color(0xFF1A1C25),
-              systemNavigationBarDividerColor: Colors.transparent));
-          return ThemeNotifier(darkThemeOrange);
-        },
-      ),
+              systemNavigationBarColor: Color(0xFF1A1C25)));
+          return ThemeNotifier(themeData);
+        } else if (theme == 'LightOrange') {
+          themeData = lightThemeOrange;
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+              systemNavigationBarColor: Color(0xFFDEE4E7)));
+          return ThemeNotifier(themeData);
+        } else if (theme == 'LightPurple') {
+          themeData = lightThemePurple;
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+              systemNavigationBarColor: Color(0xFFDEE4E7)));
+          return ThemeNotifier(themeData);
+        } else if (theme == 'DarkOrange') {
+          themeData = darkThemeOrange;
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+              systemNavigationBarColor: Color(0xFF1A1C25)));
+          return ThemeNotifier(themeData);
+        } else {
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.transparent));
+          return ThemeNotifier(null);
+        }
+      }),
       ChangeNotifierProvider<IndexGamesHome>(
         create: (_) {
           return IndexGamesHome(0);
@@ -83,10 +77,80 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
+    final _primaryColor = Provider.of<PrimaryColorNotifier>(context);
+    final _accentColor = Provider.of<AccentColorNotifier>(context);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Gemu',
-        theme: themeNotifier.getTheme(),
+        themeMode: themeNotifier.getTheme() == null ? ThemeMode.system : null,
+        //Light theme system
+        theme: themeNotifier.getTheme() == null
+            ? ThemeData(
+                brightness: Brightness.light,
+                scaffoldBackgroundColor: Color(0xFFDEE4E7),
+                primaryColor: _primaryColor.getColor(),
+                accentColor: _accentColor.getColor(),
+                canvasColor: Color(0xFFD3D3D3),
+                shadowColor: Color(0xFFBDBDBD),
+                iconTheme: IconThemeData(
+                  color: Colors.black45,
+                ),
+                appBarTheme: AppBarTheme(
+                  color: Colors.transparent,
+                  textTheme: TextTheme(
+                      headline6: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  iconTheme: IconThemeData(
+                    color: Colors.black45,
+                  ),
+                ),
+                bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    type: BottomNavigationBarType.fixed,
+                    selectedIconTheme: IconThemeData(size: 26),
+                    selectedLabelStyle: TextStyle(fontSize: 14.0),
+                    selectedItemColor: _primaryColor.getColor(),
+                    unselectedIconTheme: IconThemeData(size: 23),
+                    unselectedLabelStyle: TextStyle(fontSize: 12.0),
+                    unselectedItemColor: Colors.black45))
+            : themeNotifier.getTheme(),
+        //Dark theme system
+        darkTheme: themeNotifier.getTheme() == null
+            ? ThemeData(
+                brightness: Brightness.dark,
+                scaffoldBackgroundColor: Color(0xFF1A1C25),
+                primaryColor: _primaryColor.getColor(),
+                accentColor: _accentColor.getColor(),
+                canvasColor: Color(0xFF222831),
+                shadowColor: Color(0xFF121212),
+                iconTheme: IconThemeData(
+                  color: Colors.white60,
+                ),
+                appBarTheme: AppBarTheme(
+                  color: Colors.transparent,
+                  textTheme: TextTheme(
+                      headline6: TextStyle(
+                          color: Colors.white60,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  iconTheme: IconThemeData(
+                    color: Colors.white60,
+                  ),
+                ),
+                bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    type: BottomNavigationBarType.fixed,
+                    selectedIconTheme: IconThemeData(size: 26),
+                    selectedLabelStyle: TextStyle(fontSize: 14.0),
+                    selectedItemColor: _primaryColor.getColor(),
+                    unselectedIconTheme: IconThemeData(size: 23),
+                    unselectedLabelStyle: TextStyle(fontSize: 12.0),
+                    unselectedItemColor: Colors.white60))
+            : themeNotifier.getTheme(),
         onGenerateRoute: generateRoute,
         home: LogController());
   }

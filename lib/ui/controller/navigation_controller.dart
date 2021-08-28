@@ -170,10 +170,11 @@ class _NavControllerState extends State<NavController> {
                         color: Theme.of(context).scaffoldBackgroundColor,
                         border: Border(
                             top: BorderSide(
-                                color: (themeApp(context) == darkThemeOrange ||
+                                color: Colors.white60,
+                                /*(themeApp(context) == darkThemeOrange ||
                                         themeApp(context) == darkThemePurple)
                                     ? Colors.white60
-                                    : Colors.black45,
+                                    : Colors.black45*/
                                 width: 0.1)),
                       ),
                 child: BottomNavigationBar(
@@ -222,13 +223,14 @@ class _NavControllerState extends State<NavController> {
                                     height: 23,
                                     width: 23,
                                     decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (themeApp(context) ==
+                                        border:
+                                            Border.all(color: Colors.white60),
+                                        /*(themeApp(context) ==
                                                         darkThemeOrange ||
                                                     themeApp(context) ==
                                                         darkThemePurple)
                                                 ? Colors.white60
-                                                : Colors.black45),
+                                                : Colors.black45*/
                                         shape: BoxShape.circle,
                                         image: DecorationImage(
                                             fit: BoxFit.cover,

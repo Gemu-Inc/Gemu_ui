@@ -120,9 +120,11 @@ class BodyState extends State<Body> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.circular(10.0),
+                              shape: BoxShape.circle,
                               image: DecorationImage(
-                                  image: AssetImage("assets/icons/icon.png"))),
+                                  image:
+                                      AssetImage("assets/icons/icon_round.png"),
+                                  fit: BoxFit.cover)),
                         ),
                       ),
                     ),
