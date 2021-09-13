@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/services.dart';
 
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/game.dart';
@@ -13,6 +14,7 @@ class HomeScreen extends StatefulWidget {
   final UserModel userActual;
   final List followings;
   final List<Game> games;
+  final List<PageController> gamePageController;
   final IndexGamesHome indexGamesHome;
 
   HomeScreen(
@@ -20,6 +22,7 @@ class HomeScreen extends StatefulWidget {
       required this.userActual,
       required this.followings,
       required this.games,
+      required this.gamePageController,
       required this.indexGamesHome})
       : super(key: key);
 
@@ -35,6 +38,8 @@ class _HomeScreenState extends State<HomeScreen>
   int currentTabMenuIndex = 1;
 
   late int currentTabGamesIndex;
+
+  late PageController followingsPageController;
 
   late AnimationController _animationRotateController,
       _animationGamesController;
@@ -67,6 +72,8 @@ class _HomeScreenState extends State<HomeScreen>
     _tabMenuController = TabController(
         initialIndex: currentTabMenuIndex, length: 2, vsync: this);
     _tabMenuController.addListener(_onTabMenuChanged);
+
+    followingsPageController = PageController();
 
     _animationGamesController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 100));
@@ -101,30 +108,112 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context);
     currentTabGamesIndex = widget.indexGamesHome.getIndex();
-    return SafeArea(
-        left: false,
-        right: false,
-        child: DefaultTabController(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          systemNavigationBarColor: Colors.black),
+      child: SafeArea(
+          left: false,
+          right: false,
+          child: DefaultTabController(
             initialIndex: currentTabGamesIndex,
             length: widget.games.length,
-            child: Stack(
-              children: [
-                bodyHome(widget.games[currentTabGamesIndex]),
-                topHome(widget.games[currentTabGamesIndex]),
-              ],
-            )));
+            child: Scaffold(
+              backgroundColor: Colors.black,
+              appBar: PreferredSize(
+                  child: AppBar(
+                    backgroundColor: Colors.black,
+                  ),
+                  preferredSize: Size.fromHeight(0)),
+              body: Stack(
+                children: [
+                  bodyHome(widget.games[currentTabGamesIndex]),
+                  topHome(widget.games[currentTabGamesIndex])
+                ],
+              ),
+            ),
+          )),
+    );
   }
 
   Widget topHome(Game game) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 55,
-        ),
-        bottomAppBar(),
-        tabGames(widget.games),
-      ],
+    return Container(
+      padding: EdgeInsets.only(top: 10.0),
+      height: MediaQuery.of(context).size.height / 4,
+      color: Colors.transparent,
+      child: Column(
+        children: [
+          topAppBar(),
+          bottomAppBar(),
+          tabGames(widget.games),
+        ],
+      ),
     );
+  }
+
+  Widget topAppBar() {
+    return Builder(builder: (_) {
+      switch (currentTabMenuIndex) {
+        case 0:
+          return GestureDetector(
+            onTap: () {
+              followingsPageController.jumpToPage(0);
+            },
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(10.0),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).accentColor
+                    ]),
+              ),
+              child: Icon(Icons.subscriptions, size: 30, color: Colors.black),
+            ),
+          );
+        case 1:
+          return GestureDetector(
+            onTap: () {
+              widget.gamePageController[currentTabGamesIndex].jumpToPage(0);
+            },
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10.0),
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).accentColor
+                      ]),
+                  image: DecorationImage(
+                      image: CachedNetworkImageProvider(
+                          widget.games[currentTabGamesIndex].imageUrl),
+                      fit: BoxFit.cover)),
+            ),
+          );
+        default:
+          return Container(
+            height: 50,
+            width: 50,
+            alignment: Alignment.center,
+            color: Colors.grey,
+            child: CircularProgressIndicator(
+              color: Theme.of(context).primaryColor,
+              strokeWidth: 1.5,
+            ),
+          );
+      }
+    });
   }
 
   Widget bottomAppBar() {
@@ -202,6 +291,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget get following => FollowingSection(
         followings: widget.followings,
+        pageController: followingsPageController,
       );
 
   Widget tabGames(List<Game> games) {
@@ -267,9 +357,11 @@ class _HomeScreenState extends State<HomeScreen>
         physics: NeverScrollableScrollPhysics(),
         children: games.map((game) {
           return GameSection(
-              game: game,
-              animationGamesController: _animationGamesController,
-              animationRotateController: _animationRotateController);
+            game: game,
+            animationGamesController: _animationGamesController,
+            animationRotateController: _animationRotateController,
+            pageController: widget.gamePageController[currentTabGamesIndex],
+          );
         }).toList());
   }
 }

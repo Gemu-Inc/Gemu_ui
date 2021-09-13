@@ -25,6 +25,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   bool dataIsThere = false;
   bool isLoading = false;
   bool isLoadingMoreData = false;
+  bool isResultLoading = false;
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -48,6 +49,7 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   List<Game> allGames = [];
   List<Game> gamesFollow = [];
+  List<Game> newGames = [];
 
   ScrollController _mainScrollController = ScrollController();
   ScrollController _gamesScrollController = ScrollController();
@@ -112,10 +114,15 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   loadMoreData() async {
     setState(() {
+      if (newGames.length != 0) {
+        newGames.clear();
+      }
+      if (isResultLoading) {
+        isResultLoading = false;
+      }
       isLoadingMoreData = true;
     });
 
-    List<Game> newGames = [];
     Game game = allGames.last;
     bool add;
 
@@ -144,12 +151,11 @@ class RegisterScreenState extends State<RegisterScreen> {
       }
     }
 
-    newGames.clear();
-
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
 
     setState(() {
       isLoadingMoreData = false;
+      isResultLoading = true;
     });
   }
 
@@ -372,20 +378,19 @@ class RegisterScreenState extends State<RegisterScreen> {
     final country = _selectedCountry;
 
     return WillPopScope(
-        child: Scaffold(
-          body: AnimatedContainer(
-            duration: _duration,
-            curve: Curves.easeInOut,
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: isDayMood ? lightBgColors : darkBgColors,
-              ),
+        child: AnimatedContainer(
+          duration: _duration,
+          curve: Curves.easeInOut,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: isDayMood ? lightBgColors : darkBgColors,
             ),
-            child: Container(
+          ),
+          child: Container(
               decoration: BoxDecoration(
                   gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -394,73 +399,77 @@ class RegisterScreenState extends State<RegisterScreen> {
                     Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
                     Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
                   ])),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                    alignment: Alignment.bottomLeft,
-                    height: 70.0,
-                    width: MediaQuery.of(context).size.width,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pushAndRemoveUntil(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: Container(
+                    padding: EdgeInsets.all(7.5),
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   WelcomeScreen()),
                           (route) => false),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.arrow_back_ios,
-                            size: 25,
-                            color: Colors.white38,
-                          ),
-                          Text(
-                            'Back',
-                            style: mystyle(16, Colors.white38),
-                          )
-                        ],
+                      style: TextButton.styleFrom(
+                          alignment: Alignment.center,
+                          backgroundColor: Colors.black.withOpacity(0.3),
+                          elevation: 0,
+                          shape: CircleBorder(
+                              side: BorderSide(color: Colors.black))),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        size: 16,
                       ),
                     ),
                   ),
-                  Expanded(
-                      child: PageView(
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      if (index == 0) {
-                        _hideKeyboard();
-                        setState(() {
-                          currentPageIndex = 0;
-                        });
-                      } else {
-                        _hideKeyboard();
-                        setState(() {
-                          currentPageIndex = 1;
-                        });
-                      }
-                    },
-                    children: [firstPage(country), secondPage()],
-                  )),
-                  Container(
-                    height: MediaQuery.of(context).size.height / 14,
-                    alignment: Alignment.center,
-                    child: bottomBar(country),
-                  ),
-                ],
-              ),
-            ),
-          ),
+                  title: Text('Register', style: mystyle(25, Colors.white)),
+                  centerTitle: true,
+                ),
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        child: PageView(
+                      controller: _pageController,
+                      onPageChanged: (index) {
+                        if (index == 0) {
+                          _hideKeyboard();
+                          setState(() {
+                            currentPageIndex = 0;
+                          });
+                        } else {
+                          _hideKeyboard();
+                          setState(() {
+                            currentPageIndex = 1;
+                          });
+                        }
+                      },
+                      children: [firstPage(country), secondPage()],
+                    )),
+                    Container(
+                      height: MediaQuery.of(context).size.height / 14,
+                      alignment: Alignment.center,
+                      child: bottomBar(country),
+                    ),
+                  ],
+                ),
+              )),
         ),
         onWillPop: () => _willPopCallback());
   }
 
   Widget firstPage(Country? country) {
-    return Column(
+    return ListView(
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       children: [
         Container(
           width: MediaQuery.of(context).size.width,
+          padding: EdgeInsets.only(left: 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -475,185 +484,168 @@ class RegisterScreenState extends State<RegisterScreen> {
             ],
           ),
         ),
-        Expanded(
-          child: Container(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    child: Text(
-                      'Enter your username',
-                      style: mystyle(12),
-                    ),
-                  ),
-                  Container(
-                    width: SizeConfig.screenWidth,
-                    margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                    child: TextFieldCustom(
-                      context: context,
-                      controller: _usernameController,
-                      focusNode: _focusNodeUsername,
-                      label: 'Username',
-                      obscure: false,
-                      icon: Icons.person,
-                      textInputAction: TextInputAction.next,
-                      clear: () {
-                        setState(() {
-                          _usernameController.clear();
-                        });
-                      },
-                      submit: (value) {
-                        value = _usernameController.text;
-                        _focusNodeUsername.unfocus();
-                        FocusScope.of(context).requestFocus(_focusNodeEmail);
-                      },
-                    ),
-                  ),
-                  VerticalSpacing(
-                    of: 20,
-                  ),
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    child: Text(
-                      'Enter your email',
-                      style: mystyle(12),
-                    ),
-                  ),
-                  Container(
-                    width: SizeConfig.screenWidth,
-                    margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                    child: TextFieldCustom(
-                      context: context,
-                      controller: _emailController,
-                      focusNode: _focusNodeEmail,
-                      label: 'Email',
-                      obscure: false,
-                      icon: Icons.mail,
-                      textInputAction: TextInputAction.next,
-                      textInputType: TextInputType.emailAddress,
-                      clear: () {
-                        setState(() {
-                          _emailController.clear();
-                        });
-                      },
-                      submit: (value) {
-                        value = _emailController.text;
-                        _focusNodeEmail.unfocus();
-                        FocusScope.of(context).requestFocus(_focusNodePassword);
-                      },
-                    ),
-                  ),
-                  VerticalSpacing(
-                    of: 20,
-                  ),
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    child: Text(
-                      'Enter your password',
-                      style: mystyle(12),
-                    ),
-                  ),
-                  Container(
-                      width: SizeConfig.screenWidth,
-                      margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                      child: TextFieldCustom(
-                        context: context,
-                        controller: _passwordController,
-                        focusNode: _focusNodePassword,
-                        label: 'Password',
-                        obscure: true,
-                        icon: Icons.lock,
-                        textInputAction: TextInputAction.next,
-                        clear: () {
-                          setState(() {
-                            _passwordController.clear();
-                          });
-                        },
-                        submit: (value) {
-                          value = _passwordController.text;
-                          _focusNodePassword.unfocus();
-                          FocusScope.of(context)
-                              .requestFocus(_focusNodeConfirmPassword);
-                        },
-                      )),
-                  VerticalSpacing(
-                    of: 10.0,
-                  ),
-                  Container(
-                      width: SizeConfig.screenWidth,
-                      margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                      child: TextFieldCustom(
-                        context: context,
-                        controller: _confirmPasswordController,
-                        focusNode: _focusNodeConfirmPassword,
-                        label: 'Confirm password',
-                        obscure: true,
-                        icon: Icons.lock,
-                        textInputAction: TextInputAction.go,
-                        clear: () {
-                          setState(() {
-                            _confirmPasswordController.clear();
-                          });
-                        },
-                        submit: (value) {
-                          value = _confirmPasswordController.text;
-                          _focusNodeConfirmPassword.unfocus();
-                        },
-                      )),
-                  VerticalSpacing(
-                    of: 20.0,
-                  ),
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    child: Text(
-                      'Select your nationnality',
-                      style: mystyle(11),
-                    ),
-                  ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        country == null
-                            ? Container()
-                            : Column(
-                                children: <Widget>[
-                                  Container(
-                                    height: 30,
-                                    width: 50,
-                                    child: Image.asset(
-                                      country.flag,
-                                      package: countryCodePackageName,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  Text(
-                                    '${country.name} (${country.countryCode})',
-                                    textAlign: TextAlign.center,
-                                    style: mystyle(11),
-                                  ),
-                                ],
-                              ),
-                        MaterialButton(
-                          child: Text('Select'),
-                          color: Theme.of(context).canvasColor,
-                          onPressed: _onPressedShowBottomSheet,
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          child: Text(
+            'Enter your username',
+            style: mystyle(12),
+          ),
+        ),
+        Container(
+          width: SizeConfig.screenWidth,
+          margin: EdgeInsets.only(left: 20.0, right: 20.0),
+          child: TextFieldCustom(
+            context: context,
+            controller: _usernameController,
+            focusNode: _focusNodeUsername,
+            label: 'Username',
+            obscure: false,
+            icon: Icons.person,
+            textInputAction: TextInputAction.next,
+            clear: () {
+              setState(() {
+                _usernameController.clear();
+              });
+            },
+            submit: (value) {
+              value = _usernameController.text;
+              _focusNodeUsername.unfocus();
+              FocusScope.of(context).requestFocus(_focusNodeEmail);
+            },
+          ),
+        ),
+        VerticalSpacing(
+          of: 20,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          child: Text(
+            'Enter your email',
+            style: mystyle(12),
+          ),
+        ),
+        Container(
+          width: SizeConfig.screenWidth,
+          margin: EdgeInsets.only(left: 20.0, right: 20.0),
+          child: TextFieldCustom(
+            context: context,
+            controller: _emailController,
+            focusNode: _focusNodeEmail,
+            label: 'Email',
+            obscure: false,
+            icon: Icons.mail,
+            textInputAction: TextInputAction.next,
+            textInputType: TextInputType.emailAddress,
+            clear: () {
+              setState(() {
+                _emailController.clear();
+              });
+            },
+            submit: (value) {
+              value = _emailController.text;
+              _focusNodeEmail.unfocus();
+              FocusScope.of(context).requestFocus(_focusNodePassword);
+            },
+          ),
+        ),
+        VerticalSpacing(
+          of: 20,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          child: Text(
+            'Enter your password',
+            style: mystyle(12),
+          ),
+        ),
+        Container(
+            width: SizeConfig.screenWidth,
+            margin: EdgeInsets.only(left: 20.0, right: 20.0),
+            child: TextFieldCustom(
+              context: context,
+              controller: _passwordController,
+              focusNode: _focusNodePassword,
+              label: 'Password',
+              obscure: true,
+              icon: Icons.lock,
+              textInputAction: TextInputAction.next,
+              clear: () {
+                setState(() {
+                  _passwordController.clear();
+                });
+              },
+              submit: (value) {
+                value = _passwordController.text;
+                _focusNodePassword.unfocus();
+                FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
+              },
+            )),
+        VerticalSpacing(
+          of: 10.0,
+        ),
+        Container(
+            width: SizeConfig.screenWidth,
+            margin: EdgeInsets.only(left: 20.0, right: 20.0),
+            child: TextFieldCustom(
+              context: context,
+              controller: _confirmPasswordController,
+              focusNode: _focusNodeConfirmPassword,
+              label: 'Confirm password',
+              obscure: true,
+              icon: Icons.lock,
+              textInputAction: TextInputAction.go,
+              clear: () {
+                setState(() {
+                  _confirmPasswordController.clear();
+                });
+              },
+              submit: (value) {
+                value = _confirmPasswordController.text;
+                _focusNodeConfirmPassword.unfocus();
+              },
+            )),
+        VerticalSpacing(
+          of: 20.0,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          child: Text(
+            'Select your nationnality',
+            style: mystyle(11),
+          ),
+        ),
+        Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              country == null
+                  ? Container()
+                  : Column(
+                      children: <Widget>[
+                        Container(
+                          height: 30,
+                          width: 50,
+                          child: Image.asset(
+                            country.flag,
+                            package: countryCodePackageName,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          '${country.name} (${country.countryCode})',
+                          textAlign: TextAlign.center,
+                          style: mystyle(11),
                         ),
                       ],
                     ),
-                  ),
-                ],
+              MaterialButton(
+                child: Text('Select'),
+                color: Theme.of(context).canvasColor,
+                onPressed: _onPressedShowBottomSheet,
               ),
-            ),
+            ],
           ),
         ),
       ],
@@ -665,6 +657,7 @@ class RegisterScreenState extends State<RegisterScreen> {
       controller: _mainScrollController,
       padding: EdgeInsets.zero,
       shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       children: [
         topSelectionGames(),
         StickyHeader(
@@ -688,6 +681,7 @@ class RegisterScreenState extends State<RegisterScreen> {
         ? Container(
             height: 250,
             width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.only(left: 20.0),
             child: Column(
               children: [
                 Text(
@@ -800,6 +794,7 @@ class RegisterScreenState extends State<RegisterScreen> {
         : Container(
             height: 100,
             width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.only(left: 20.0),
             child: Column(
               children: [
                 Text(
@@ -879,7 +874,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                           childAspectRatio: 1.0,
                           crossAxisSpacing: 6,
                           mainAxisSpacing: 6),
-                      //controller: _gamesScrollController,
                       shrinkWrap: true,
                       itemCount: gamesAlgolia.length,
                       itemBuilder: (_, index) {
@@ -1177,19 +1171,31 @@ class RegisterScreenState extends State<RegisterScreen> {
                 ),
               );
             }),
-        Container(
-          height: isLoadingMoreData ? 50.0 : 0.0,
-          child: Center(
-            child: SizedBox(
-              height: 30.0,
-              width: 30.0,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-                strokeWidth: 1.5,
-              ),
-            ),
-          ),
-        )
+        Padding(
+            padding: const EdgeInsets.only(bottom: 30.0),
+            child: Stack(
+              children: [
+                Container(
+                  height: isLoadingMoreData ? 50.0 : 0.0,
+                  child: Center(
+                    child: SizedBox(
+                      height: 30.0,
+                      width: 30.0,
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).primaryColor,
+                        strokeWidth: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: isResultLoading && newGames.length == 0 ? 50.0 : 0.0,
+                  child: Center(
+                    child: Text('C\'est tout pour le moment'),
+                  ),
+                )
+              ],
+            )),
       ],
     );
   }

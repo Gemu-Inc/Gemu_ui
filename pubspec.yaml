@@ -46,8 +46,7 @@ dependencies:
   video_player: ^2.1.1 
   expandable: ^5.0.1
   video_compress: ^3.0.0
-  video_thumbnail: ^0.3.3
-  video_trimmer: ^0.4.0
+  video_thumbnail: ^0.4.3
   modal_bottom_sheet: ^2.0.0
   bouncing_widget: ^2.0.0
   marquee: ^2.2.0
@@ -55,7 +54,7 @@ dependencies:
   flutter_cache_manager: ^3.1.2
   visibility_detector: ^0.2.0
   firebase_analytics: ^8.2.0
-  cloud_functions: ^3.0.0
+  cloud_functions: ^3.0.3
   algolia: ^1.0.1
   sticky_headers: ^0.2.0
   country_calling_code_picker: ^2.0.0

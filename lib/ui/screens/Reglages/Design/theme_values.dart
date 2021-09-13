@@ -24,17 +24,13 @@ final darkThemeOrange = ThemeData(
     ),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      textTheme: TextTheme(
-          headline6: TextStyle(
-              color: Colors.white60,
-              fontSize: 18,
-              fontWeight: FontWeight.bold)),
+      titleTextStyle: TextStyle(
+          color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
       iconTheme: IconThemeData(
         color: Colors.white60,
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
@@ -57,17 +53,13 @@ final darkThemePurple = ThemeData(
     ),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      textTheme: TextTheme(
-          headline6: TextStyle(
-              color: Colors.white60,
-              fontSize: 18,
-              fontWeight: FontWeight.bold)),
+      titleTextStyle: TextStyle(
+          color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
       iconTheme: IconThemeData(
         color: Colors.white60,
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
@@ -90,17 +82,13 @@ final lightThemeOrange = ThemeData(
     ),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      textTheme: TextTheme(
-          headline6: TextStyle(
-              color: Colors.black45,
-              fontSize: 18,
-              fontWeight: FontWeight.bold)),
+      titleTextStyle: TextStyle(
+          color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
       iconTheme: IconThemeData(
         color: Colors.black45,
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
@@ -123,17 +111,13 @@ final lightThemePurple = ThemeData(
     ),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      textTheme: TextTheme(
-          headline6: TextStyle(
-              color: Colors.black45,
-              fontSize: 18,
-              fontWeight: FontWeight.bold)),
+      titleTextStyle: TextStyle(
+          color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
       iconTheme: IconThemeData(
         color: Colors.black45,
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),

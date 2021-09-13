@@ -7,8 +7,9 @@ import 'package:gemu/ui/widgets/post_tile.dart';
 
 class FollowingSection extends StatefulWidget {
   final List followings;
+  final PageController pageController;
 
-  FollowingSection({required this.followings});
+  FollowingSection({required this.followings, required this.pageController});
 
   @override
   FollowingSectionState createState() => FollowingSectionState();
@@ -17,9 +18,6 @@ class FollowingSection extends StatefulWidget {
 class FollowingSectionState extends State<FollowingSection>
     with AutomaticKeepAliveClientMixin {
   bool dataIsThere = false;
-
-  int currentPageFollowingIndex = 0;
-  late PageController _pageFollowingController;
 
   List followings = [];
   List<Post> posts = [];
@@ -30,15 +28,12 @@ class FollowingSectionState extends State<FollowingSection>
   @override
   void initState() {
     super.initState();
-    _pageFollowingController =
-        PageController(initialPage: currentPageFollowingIndex);
     followings = widget.followings;
     getPostsFollowing();
   }
 
   @override
   void dispose() {
-    _pageFollowingController.dispose();
     super.dispose();
   }
 
@@ -116,16 +111,16 @@ class FollowingSectionState extends State<FollowingSection>
                           style: mystyle(11)),
                     )
                   : PageView.builder(
-                      controller: _pageFollowingController,
+                      controller: widget.pageController,
                       physics: AlwaysScrollableScrollPhysics(),
                       scrollDirection: Axis.vertical,
-                      onPageChanged: (index) {
+                      /*onPageChanged: (index) {
                         setState(() {
                           currentPageFollowingIndex = index;
                           print(
                               'currentPageGamesIndex est à: $currentPageFollowingIndex');
                         });
-                      },
+                      },*/
                       itemCount: posts.length,
                       itemBuilder: (context, index) {
                         Post post = posts[index];
@@ -137,41 +132,7 @@ class FollowingSectionState extends State<FollowingSection>
                   ),
                 ),
         ),
-        topAppBarFollowing()
       ],
-    );
-  }
-
-  Widget topAppBarFollowing() {
-    return GestureDetector(
-      onTap: () {
-        _pageFollowingController.jumpToPage(0);
-        setState(() {
-          currentPageFollowingIndex = 0;
-        });
-      },
-      child: Container(
-          height: 55,
-          alignment: Alignment.center,
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10.0),
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).accentColor
-                    ])),
-            child: Icon(
-              Icons.subscriptions,
-              color: Colors.black,
-              size: 30,
-            ),
-          )),
     );
   }
 }

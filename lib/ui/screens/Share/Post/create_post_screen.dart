@@ -121,7 +121,8 @@ class AddPostScreenState extends State<AddPostScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        elevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 6,
         leading: IconButton(
             icon: Icon(Icons.clear), onPressed: () => Navigator.pop(context)),
         title: Text(
@@ -131,8 +132,7 @@ class AddPostScreenState extends State<AddPostScreen> {
       ),
       body: Column(
         children: [
-          Container(
-            height: (MediaQuery.of(context).size.height / 2) - 40,
+          Expanded(
             child: InkWell(
               splashColor: Theme.of(context).accentColor,
               onTap: () => showOptionsImage(),
@@ -152,8 +152,7 @@ class AddPostScreenState extends State<AddPostScreen> {
               ),
             ),
           ),
-          Container(
-            height: (MediaQuery.of(context).size.height / 2) - 40,
+          Expanded(
             child: InkWell(
               splashColor: Theme.of(context).accentColor,
               onTap: () => showOptionsVideo(),

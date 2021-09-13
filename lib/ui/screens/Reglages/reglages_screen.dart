@@ -4,6 +4,7 @@ import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/ui/controller/log_controller.dart';
 import 'package:gemu/ui/screens/Reglages/Design/design_screen.dart';
 import 'package:gemu/ui/screens/Reglages/Compte/edit_profile_screen.dart';
+import 'package:gemu/ui/screens/Welcome/welcome_screen.dart';
 import 'package:gemu/ui/widgets/app_bar_custom.dart';
 import 'package:gemu/ui/widgets/alert_dialog_custom.dart';
 import 'package:gemu/models/user.dart';
@@ -17,7 +18,7 @@ class ReglagesScreen extends StatelessWidget {
     await AuthService.instance.signOut();
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => LogController()),
+        MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
         (route) => false);
   }
 

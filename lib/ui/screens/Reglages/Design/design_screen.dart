@@ -334,29 +334,34 @@ class _DesignScreenState extends State<DesignScreen> {
   void onThemeChanged(String value) async {
     var prefs = await SharedPreferences.getInstance();
     if (value == 'LightOrange') {
-      await themeNotifier.setTheme(lightThemeOrange);
-      //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-      SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(systemNavigationBarColor: Color(0xFFDEE4E7)));
+      themeNotifier.setTheme(lightThemeOrange);
+      //Mise en place de l'overlay des notifications Android
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'LightPurple') {
-      await themeNotifier.setTheme(lightThemePurple);
-      //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-      SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(systemNavigationBarColor: Color(0xFFDEE4E7)));
+      themeNotifier.setTheme(lightThemePurple);
+      //Mise en place de l'overlay des notifications Android
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'DarkOrange') {
-      await themeNotifier.setTheme(darkThemeOrange);
-      //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-      SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(systemNavigationBarColor: Color(0xFF1A1C25)));
+      themeNotifier.setTheme(darkThemeOrange);
+      //Mise en place de l'overlay des notifications Android
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Color(0xFF1A1C25)));
     } else if (value == 'DarkPurple') {
-      await themeNotifier.setTheme(darkThemePurple);
-      //Mise en place de l'overlay des notifications Android et blocage de la rotation automatique sur l'app
-      SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(systemNavigationBarColor: Color(0xFF1A1C25)));
+      themeNotifier.setTheme(darkThemePurple);
+      //Mise en place de l'overlay des notifications Android
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Color(0xFF1A1C25)));
     } else if (value == 'ThemeCustomSystem') {
-      await themeNotifier.setTheme(null);
-      SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent));
+      themeNotifier.setTheme(null);
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Colors.transparent));
     }
     prefs.setString(Constants.appTheme, value);
   }

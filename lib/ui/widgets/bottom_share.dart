@@ -82,7 +82,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
         Positioned(
             left: size.width / 4,
             right: size.width / 4,
-            bottom: 25,
+            bottom: (size.height / 11) - 40,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
@@ -169,7 +169,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                             }
                           },
                           backgroundColor: Colors.transparent,
-                          elevation: 6.0,
+                          elevation: 3.0,
                           tooltip: 'Share',
                           child: Stack(
                             children: [

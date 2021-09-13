@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-
-import 'package:gemu/services/cache_manager_service.dart';
 
 class Post {
+  DocumentSnapshot<Map<String, dynamic>>? snapshot;
   DocumentReference reference;
   String id;
   String uid, username;
@@ -24,7 +20,8 @@ class Post {
   String? previewImage;
 
   Post(
-      {required this.reference,
+      {this.snapshot,
+      required this.reference,
       required this.id,
       required this.uid,
       required this.username,
@@ -42,8 +39,10 @@ class Post {
       required this.viewcount,
       this.previewImage});
 
-  factory Post.fromMap(DocumentSnapshot snapshot, Map<String, dynamic> data) {
+  factory Post.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot,
+      Map<String, dynamic> data) {
     return Post(
+        snapshot: snapshot,
         reference: snapshot.reference,
         id: data['id'],
         uid: data['uid'],

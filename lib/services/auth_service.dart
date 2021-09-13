@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/ui/controller/log_controller.dart';
+import 'package:gemu/ui/controller/navigation_controller.dart';
 import 'package:gemu/ui/widgets/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';
 
@@ -29,7 +30,8 @@ class AuthService {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => LogController()),
+                builder: (BuildContext context) =>
+                    NavController(uid: _auth.currentUser!.uid)),
             (route) => false);
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-email') {
@@ -85,7 +87,8 @@ class AuthService {
       await DatabaseService.instance.addUser(uid, gamesFollow, map);
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (BuildContext context) => LogController()),
+          MaterialPageRoute(
+              builder: (BuildContext context) => NavController(uid: uid)),
           (route) => false);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:gemu/ui/controller/log_controller.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -217,7 +218,7 @@ class PictureScreenState extends State<PictureScreen>
                 .doc(hashtagsSelected[i])
                 .collection('posts')
                 .doc(postName)
-                .set({});
+                .set({'date': date});
           } else {
             FirebaseFirestore.instance
                 .collection('hashtags')
@@ -228,17 +229,27 @@ class PictureScreenState extends State<PictureScreen>
                 .doc(id)
                 .collection('posts')
                 .doc(postName)
-                .set({});
+                .set({'date': date});
           }
         }
       }
+      FirebaseFirestore.instance
+          .collection('games')
+          .doc(gameName)
+          .collection('posts')
+          .doc(postName)
+          .set({'date': date});
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(me!.uid)
+          .collection('posts')
+          .doc(postName)
+          .set({'date': date});
 
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => NavController(
-                    uid: me!.uid,
-                  )),
+              builder: (BuildContext context) => NavController(uid: me!.uid)),
           (route) => false);
     } catch (e) {
       print(e);
@@ -303,8 +314,7 @@ class PictureScreenState extends State<PictureScreen>
                                                     builder: (BuildContext
                                                             context) =>
                                                         NavController(
-                                                          uid: me!.uid,
-                                                        )),
+                                                            uid: me!.uid)),
                                                 (route) => false);
                                           },
                                           child: Text(

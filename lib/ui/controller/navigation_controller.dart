@@ -2,14 +2,12 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/ui/screens/Reglages/Design/theme_values.dart';
 import 'package:gemu/ui/widgets/bottom_share.dart';
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/providers/index_tab_games_home.dart';
@@ -31,35 +29,29 @@ class NavController extends StatefulWidget {
 class _NavControllerState extends State<NavController> {
   bool dataIsHere = false;
 
-  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
-
-  late IndexGamesHome indexGames;
-
   late StreamSubscription userListener, gamesListener, followingsListener;
 
-  int selectedPage = 0;
-  late final PageController navController;
-
   List<Game> gamesList = [];
+  List<PageController> gamePageController = [];
 
   List followings = [];
 
-  void onTap(int index) {
-    navController.jumpToPage(index);
-  }
+  late IndexGamesHome indexGames;
 
-  void onPageChanged(int index) {
+  int selectedPage = 0;
+
+  late PageController _navPageController;
+
+  void onTap(int index) {
     setState(() {
       selectedPage = index;
     });
+    print('selectedPage: $selectedPage');
+    _navPageController.jumpToPage(selectedPage);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    navController = PageController(initialPage: selectedPage);
-
-    userListener = DatabaseService.usersCollectionReference
+  loadingData() async {
+    userListener = await DatabaseService.usersCollectionReference
         .doc(widget.uid)
         .snapshots()
         .listen((document) {
@@ -71,7 +63,7 @@ class _NavControllerState extends State<NavController> {
       print('me: ${me!.uid}');
     });
 
-    gamesListener = FirebaseFirestore.instance
+    gamesListener = await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.uid)
         .collection('games')
@@ -80,21 +72,17 @@ class _NavControllerState extends State<NavController> {
       print('listen games');
       if (gamesList.length != 0) {
         gamesList.clear();
+        gamePageController.clear();
       }
       for (var item in data.docs) {
         setState(() {
           gamesList.add(Game.fromMap(item, item.data()));
-        });
-      }
-      if (!dataIsHere) {
-        setState(() {
-          print('data here');
-          dataIsHere = true;
+          gamePageController.add(PageController());
         });
       }
     });
 
-    followingsListener = FirebaseFirestore.instance
+    followingsListener = await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.uid)
         .collection('following')
@@ -108,7 +96,20 @@ class _NavControllerState extends State<NavController> {
           followings.add(item.id);
         });
       }
+
+      if (!dataIsHere && mounted) {
+        setState(() {
+          dataIsHere = true;
+        });
+      }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _navPageController = PageController(initialPage: 0);
+    loadingData();
   }
 
   @override
@@ -116,70 +117,85 @@ class _NavControllerState extends State<NavController> {
     userListener.cancel();
     gamesListener.cancel();
     followingsListener.cancel();
-    navController.dispose();
+    _navPageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     indexGames = Provider.of<IndexGamesHome>(context);
-    return (me == null || me!.uid != widget.uid || !dataIsHere)
-        ? Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          )
-        : Scaffold(
-            key: _globalKey,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            resizeToAvoidBottomInset: false,
-            body: PageView(
-              physics: NeverScrollableScrollPhysics(),
-              controller: navController,
-              onPageChanged: onPageChanged,
-              children: [
-                HomeScreen(
-                    userActual: me!,
-                    followings: followings,
-                    games: gamesList,
-                    indexGamesHome: indexGames),
-                HighlightsScreen(
-                  uid: me!.uid,
+    return Stack(
+      children: [
+        !dataIsHere
+            ? AnnotatedRegion<SystemUiOverlayStyle>(
+                child: Scaffold(
+                  backgroundColor: Colors.black,
+                  body: Center(
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor,
+                      strokeWidth: 1.5,
+                    ),
+                  ),
                 ),
-                GamesScreen(
-                    uid: me!.uid, games: gamesList, indexGamesHome: indexGames),
-                MyProfilScreen(user: me!)
-              ],
-            ),
-            bottomNavigationBar: Container(
+                value: SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  systemNavigationBarColor: Colors.black,
+                  statusBarIconBrightness:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Brightness.light
+                          : Brightness.dark,
+                ))
+            : PageView(
+                controller: _navPageController,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  HomeScreen(
+                      userActual: me!,
+                      followings: followings,
+                      games: gamesList,
+                      gamePageController: gamePageController,
+                      indexGamesHome: indexGames),
+                  HighlightsScreen(
+                    uid: me!.uid,
+                    gamesUser: gamesList,
+                  ),
+                  GamesScreen(
+                      uid: me!.uid,
+                      games: gamesList,
+                      indexGamesHome: indexGames),
+                  MyProfilScreen(user: me!)
+                ],
+              ),
+        Positioned(
+            bottom: 0,
+            child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height / 11,
                 decoration: selectedPage != 0
-                    ? BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).shadowColor,
-                              blurRadius: 1,
-                              spreadRadius: 3,
-                            )
-                          ])
+                    ? BoxDecoration(boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context).shadowColor,
+                          blurRadius: 1,
+                          spreadRadius: 3,
+                        )
+                      ])
                     : BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
                         border: Border(
-                            top: BorderSide(
-                                color: Colors.white60,
-                                /*(themeApp(context) == darkThemeOrange ||
-                                        themeApp(context) == darkThemePurple)
-                                    ? Colors.white60
-                                    : Colors.black45*/
-                                width: 0.1)),
+                            top: BorderSide(color: Colors.white60, width: 0.5)),
                       ),
                 child: BottomNavigationBar(
+                    backgroundColor: selectedPage != 0
+                        ? Theme.of(context).scaffoldBackgroundColor
+                        : Colors.black.withOpacity(0.2),
                     currentIndex: selectedPage,
-                    onTap: onTap,
+                    onTap: (index) async {
+                      onTap(index);
+                    },
+                    unselectedItemColor: selectedPage == 0
+                        ? Colors.white60
+                        : Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white60
+                            : Colors.black45,
                     items: [
                       BottomNavigationBarItem(
                           activeIcon: Icon(Icons.home),
@@ -194,55 +210,12 @@ class _NavControllerState extends State<NavController> {
                           icon: Icon(Icons.videogame_asset_outlined),
                           label: 'Games'),
                       BottomNavigationBarItem(
-                          activeIcon: me!.imageUrl == null
-                              ? Icon(Icons.person)
-                              : Padding(
-                                  padding:
-                                      EdgeInsets.only(top: 0.5, bottom: 0.5),
-                                  child: Container(
-                                    height: 27.5,
-                                    width: 27.5,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            width: 1.0),
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: CachedNetworkImageProvider(
-                                                me!.imageUrl!))),
-                                  ),
-                                ),
-                          icon: me!.imageUrl == null
-                              ? Icon(Icons.person_outline)
-                              : Padding(
-                                  padding:
-                                      EdgeInsets.only(top: 0.5, bottom: 0.5),
-                                  child: Container(
-                                    height: 23,
-                                    width: 23,
-                                    decoration: BoxDecoration(
-                                        border:
-                                            Border.all(color: Colors.white60),
-                                        /*(themeApp(context) ==
-                                                        darkThemeOrange ||
-                                                    themeApp(context) ==
-                                                        darkThemePurple)
-                                                ? Colors.white60
-                                                : Colors.black45*/
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: CachedNetworkImageProvider(
-                                                me!.imageUrl!))),
-                                  ),
-                                ),
+                          activeIcon: Icon(Icons.person),
+                          icon: Icon(Icons.person_outline),
                           label: 'Profil')
-                    ])),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            floatingActionButton: BottomShare(),
-          );
+                    ]))),
+        BottomShare(),
+      ],
+    );
   }
 }

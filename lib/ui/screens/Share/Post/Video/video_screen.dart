@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:gemu/ui/controller/log_controller.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -188,7 +189,7 @@ class VideoScreenState extends State<VideoScreen>
                 .doc(hashtagsSelected[i])
                 .collection('posts')
                 .doc(postName)
-                .set({});
+                .set({'date': date});
           } else {
             FirebaseFirestore.instance
                 .collection('hashtags')
@@ -199,17 +200,28 @@ class VideoScreenState extends State<VideoScreen>
                 .doc(id)
                 .collection('posts')
                 .doc(postName)
-                .set({});
+                .set({'date': date});
           }
         }
       }
 
+      FirebaseFirestore.instance
+          .collection('games')
+          .doc(gameName)
+          .collection('posts')
+          .doc(postName)
+          .set({'date': date});
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(me!.uid)
+          .collection('posts')
+          .doc(postName)
+          .set({'date': date});
+
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => NavController(
-                    uid: me!.uid,
-                  )),
+              builder: (BuildContext context) => NavController(uid: me!.uid)),
           (route) => false);
     } catch (e) {
       print(e);
@@ -373,17 +385,15 @@ class VideoScreenState extends State<VideoScreen>
                                               [
                                                 TextButton(
                                                     onPressed: () {
-                                                      Navigator
-                                                          .pushAndRemoveUntil(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      NavController(
-                                                                        uid: me!
-                                                                            .uid,
-                                                                      )),
-                                                              (route) => false);
+                                                      Navigator.pushAndRemoveUntil(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  NavController(
+                                                                      uid: me!
+                                                                          .uid)),
+                                                          (route) => false);
                                                     },
                                                     child: Text(
                                                       'Oui',

@@ -10,13 +10,14 @@ import 'package:gemu/ui/widgets/post_tile.dart';
 
 class GameSection extends StatefulWidget {
   final Game game;
-
   final AnimationController animationRotateController, animationGamesController;
+  final PageController pageController;
 
   GameSection(
       {required this.game,
       required this.animationGamesController,
-      required this.animationRotateController});
+      required this.animationRotateController,
+      required this.pageController});
 
   @override
   GameSectionState createState() => GameSectionState();
@@ -28,38 +29,18 @@ class GameSectionState extends State<GameSection>
 
   List<Post> posts = [];
 
-  late PageController _pageGamesController;
-  int currentPageGamesIndex = 0;
-
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    _pageGamesController = PageController(initialPage: currentPageGamesIndex);
     getPostsGame();
   }
 
   @override
   void dispose() {
-    _pageGamesController.dispose();
     super.dispose();
-  }
-
-  String generateRandomId() {
-    const int AUTO_ID_LENGTH = 20;
-    const String AUTO_ID_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
-    const int maxRandom = AUTO_ID_ALPHABET.length;
-    final Random randomGen = Random();
-
-    String id = 'post';
-    for (int i = 0; i < AUTO_ID_LENGTH; i++) {
-      id = id + AUTO_ID_ALPHABET[randomGen.nextInt(maxRandom)];
-    }
-
-    return id;
   }
 
   getPostsGame() async {
@@ -79,7 +60,7 @@ class GameSectionState extends State<GameSection>
 
     posts.shuffle();
 
-    if (!dataIsThere) {
+    if (!dataIsThere && mounted) {
       setState(() {
         dataIsThere = true;
       });
@@ -135,19 +116,19 @@ class GameSectionState extends State<GameSection>
                     ? Center(
                         child: Text(
                           'No posts at the moment',
-                          style: mystyle(11),
+                          style: mystyle(11, Colors.white),
                         ),
                       )
                     : PageView.builder(
-                        controller: _pageGamesController,
+                        controller: widget.pageController,
                         physics: AlwaysScrollableScrollPhysics(),
                         scrollDirection: Axis.vertical,
                         onPageChanged: (index) {
-                          setState(() {
-                            currentPageGamesIndex = index;
-                            print(
-                                'currentPageGamesIndex est à: $currentPageGamesIndex');
-                          });
+                          /*setState(() {
+                              currentPageGamesIndex = index;
+                              print(
+                                  'currentPageGamesIndex est à: $currentPageGamesIndex');
+                            });*/
                           if (widget.animationRotateController.isCompleted) {
                             widget.animationRotateController.reverse();
                             widget.animationGamesController.reverse();
@@ -164,40 +145,7 @@ class GameSectionState extends State<GameSection>
                       color: Theme.of(context).primaryColor,
                     ),
                   )),
-        topAppBarGames()
       ],
-    );
-  }
-
-  Widget topAppBarGames() {
-    return GestureDetector(
-      onTap: () {
-        print('retour au début');
-        _pageGamesController.jumpToPage(0);
-        setState(() {
-          currentPageGamesIndex = 0;
-        });
-      },
-      child: Container(
-          height: 55,
-          alignment: Alignment.center,
-          child: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).accentColor
-                      ]),
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(color: Colors.black),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image:
-                          CachedNetworkImageProvider(widget.game.imageUrl))))),
     );
   }
 }

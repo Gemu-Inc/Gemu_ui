@@ -5,11 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/controller/navigation_controller.dart';
-import 'package:gemu/ui/providers/index_tab_games_home.dart';
 
 class AddGameScreen extends StatefulWidget {
   @override

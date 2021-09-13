@@ -5,39 +5,13 @@ import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/constants/route_names.dart';
 import 'package:gemu/ui/screens/Login/login_screen.dart';
 import 'package:gemu/ui/screens/Register/register_screen.dart';
-import 'package:gemu/ui/widgets/bouncing_button.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-              icon: Icon(
-                Icons.info_outline,
-                color: Colors.white,
-              ),
-              onPressed: () => Navigator.pushNamed(context, GetStartedRoute))
-        ],
-      ),
-      body: Body(),
-    );
-  }
+  WelcomeScreenState createState() => WelcomeScreenState();
 }
 
-class Body extends StatefulWidget {
-  @override
-  BodyState createState() => BodyState();
-}
-
-class BodyState extends State<Body> {
+class WelcomeScreenState extends State<WelcomeScreen> {
   Duration _duration = Duration(seconds: 1);
   bool isDayMood = false;
 
@@ -62,7 +36,13 @@ class BodyState extends State<Body> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     List<Color> lightBgColors = [
       Color(0xFF947B8F),
       Color(0xFFB27D75),
@@ -73,67 +53,93 @@ class BodyState extends State<Body> {
       Color(0xFF6E78B1),
       Color(0xFF947B8F),
     ];
-    return AnimatedContainer(
-      duration: _duration,
-      curve: Curves.easeInOut,
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: isDayMood ? lightBgColors : darkBgColors,
-        ),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.info_outline,
+                color: Colors.white,
+                size: 26,
+              ),
+              onPressed: () => Navigator.pushNamed(context, GetStartedRoute))
+        ],
       ),
-      child: Container(
+      body: AnimatedContainer(
+        duration: _duration,
+        curve: Curves.easeInOut,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
-              ]),
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDayMood ? lightBgColors : darkBgColors,
+          ),
         ),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 5.0),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
+                  Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
+                ]),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               VerticalSpacing(
-                of: 50.0,
+                of: 100.0,
               ),
               Container(
-                alignment: Alignment.topLeft,
-                height: MediaQuery.of(context).size.height / 6,
-                width: 250,
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(right: 45.0, bottom: 5.0),
-                        child: Container(
-                          height: 60,
-                          width: 60,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black),
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  image:
-                                      AssetImage("assets/icons/icon_round.png"),
-                                  fit: BoxFit.cover)),
-                        ),
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Welcome to",
+                        style: Theme.of(context).textTheme.headline3!.copyWith(
+                            fontWeight: FontWeight.bold, color: Colors.white),
                       ),
-                    ),
-                    Text(
-                      "Welcome to Gemu",
-                      style: Theme.of(context).textTheme.headline3!.copyWith(
-                          fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ],
+                      Row(
+                        children: [
+                          Text(
+                            "Gemu",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline3!
+                                .copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.black),
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                          "assets/icons/icon_round.png"),
+                                      fit: BoxFit.cover)),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
               VerticalSpacing(
@@ -167,23 +173,31 @@ class BodyState extends State<Body> {
                         ],
                       ),
                     ),
-                    BouncingButton(
-                      content: Center(
-                        child: Text(
-                          'Sign up',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w700),
-                        ),
-                      ),
+                    Container(
+                      width: double.infinity,
                       height: MediaQuery.of(context).size.height / 14,
-                      width: MediaQuery.of(context).size.width / 1.5,
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    RegisterScreen()));
-                      },
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: ElevatedButton(
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      RegisterScreen())),
+                          style: TextButton.styleFrom(
+                              backgroundColor: Theme.of(context).canvasColor,
+                              elevation: 6,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0))),
+                          child: Text(
+                            'Sign up',
+                            style: TextStyle(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700),
+                          )),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 35.0),
@@ -207,24 +221,32 @@ class BodyState extends State<Body> {
                         ],
                       ),
                     ),
-                    BouncingButton(
-                      content: Center(
-                        child: Text(
-                          'Sign in',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w700),
-                        ),
-                      ),
+                    Container(
+                      width: double.infinity,
                       height: MediaQuery.of(context).size.height / 14,
-                      width: MediaQuery.of(context).size.width / 1.5,
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    LoginScreen()));
-                      },
-                    )
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: ElevatedButton(
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      LoginScreen())),
+                          style: TextButton.styleFrom(
+                              backgroundColor: Theme.of(context).canvasColor,
+                              elevation: 6,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0))),
+                          child: Text(
+                            'Sign in',
+                            style: TextStyle(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700),
+                          )),
+                    ),
                   ],
                 ),
               )),
@@ -243,12 +265,17 @@ class BodyState extends State<Body> {
                     VerticalSpacing(
                       of: 10.0,
                     ),
-                    InkWell(
-                      onTap: () => print('Terms and Conditions'),
-                      child: Text(
-                        'Terms and Conditions',
+                    Expanded(
+                        child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      child: InkWell(
+                        onTap: () => print('Terms and Conditions'),
+                        child: Text(
+                          'Terms and Conditions',
+                        ),
                       ),
-                    ),
+                    )),
                   ],
                 ),
               ),
