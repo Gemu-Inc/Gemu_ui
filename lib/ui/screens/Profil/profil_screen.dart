@@ -111,8 +111,7 @@ class _MyProfilScreenState extends State<MyProfilScreen>
       child: Scaffold(
         body: dataIsThere
             ? NestedScrollView(
-                physics: AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics()),
+                physics: AlwaysScrollableScrollPhysics(),
                 headerSliverBuilder: (_, bool innerBoxIsScrolled) {
                   return [
                     SliverAppBar(
@@ -154,7 +153,7 @@ class _MyProfilScreenState extends State<MyProfilScreen>
                                       builder: (BuildContext context) =>
                                           ReglagesScreen(user: widget.user)))),
                         ],
-                        expandedHeight: 250,
+                        expandedHeight: 225,
                         flexibleSpace: Container(
                           decoration: BoxDecoration(
                               gradient: LinearGradient(
@@ -338,7 +337,8 @@ class _MyProfilScreenState extends State<MyProfilScreen>
                 body: Stack(
                   children: [
                     TabBarView(
-                        physics: AlwaysScrollableScrollPhysics(),
+                        physics: AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics()),
                         controller: _tabController,
                         children: [
                           PostsPublic(user: widget.user),

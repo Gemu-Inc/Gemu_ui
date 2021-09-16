@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gemu/ui/screens/Splash/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -95,6 +94,7 @@ class MyApp extends StatelessWidget {
                 brightness: Brightness.light,
                 scaffoldBackgroundColor: Color(0xFFDEE4E7),
                 primaryColor: _primaryColor.getColor(),
+                colorScheme: ColorScheme.light(),
                 accentColor: _accentColor.getColor(),
                 canvasColor: Color(0xFFD3D3D3),
                 shadowColor: Color(0xFFBDBDBD),
@@ -128,6 +128,7 @@ class MyApp extends StatelessWidget {
                 scaffoldBackgroundColor: Color(0xFF1A1C25),
                 primaryColor: _primaryColor.getColor(),
                 accentColor: _accentColor.getColor(),
+                colorScheme: ColorScheme.dark(),
                 canvasColor: Color(0xFF222831),
                 shadowColor: Color(0xFF121212),
                 iconTheme: IconThemeData(

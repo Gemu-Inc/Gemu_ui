@@ -16,6 +16,7 @@ class ReglagesScreen extends StatelessWidget {
 
   _signOut(BuildContext context) async {
     await AuthService.instance.signOut();
+    await Future.delayed(Duration(seconds: 1));
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),

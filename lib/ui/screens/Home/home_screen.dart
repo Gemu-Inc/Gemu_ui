@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen>
   late TabController _tabMenuController;
   int currentTabMenuIndex = 1;
 
-  late int currentTabGamesIndex;
+  int currentTabGamesIndex = 0;
 
   late PageController followingsPageController;
 

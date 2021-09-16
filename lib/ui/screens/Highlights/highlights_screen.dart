@@ -711,7 +711,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
                         physics: NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            childAspectRatio: 0.9,
+                            childAspectRatio: 1.0,
                             mainAxisSpacing: 1.0,
                             crossAxisSpacing: 1.0),
                         itemCount: posts.length,
@@ -730,8 +730,6 @@ class HighlightsScreenState extends State<HighlightsScreen>
                                   child: Container(
                                     decoration: BoxDecoration(
                                         border: Border.all(color: Colors.black),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
                                         image: DecorationImage(
                                             image: CachedNetworkImageProvider(
                                                 post.postUrl),
@@ -750,8 +748,6 @@ class HighlightsScreenState extends State<HighlightsScreen>
                                   child: Container(
                                     decoration: BoxDecoration(
                                         border: Border.all(color: Colors.black),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
                                         image: DecorationImage(
                                             image: CachedNetworkImageProvider(
                                                 post.previewImage!),
@@ -1026,7 +1022,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
       },
       child: Container(
         margin: EdgeInsets.all(5.0),
-        width: 100,
+        width: 110,
         decoration: BoxDecoration(
             border: Border.all(color: Colors.black),
             gradient: LinearGradient(
@@ -1036,7 +1032,6 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                   Theme.of(context).primaryColor,
                   Theme.of(context).accentColor
                 ]),
-            borderRadius: BorderRadius.circular(10.0),
             image: DecorationImage(
                 fit: BoxFit.cover,
                 image: CachedNetworkImageProvider(post.postUrl))),
@@ -1058,7 +1053,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
       },
       child: Container(
         margin: EdgeInsets.all(5.0),
-        width: 100,
+        width: 110,
         decoration: BoxDecoration(
             border: Border.all(color: Colors.black),
             gradient: LinearGradient(
@@ -1068,7 +1063,6 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                   Theme.of(context).primaryColor,
                   Theme.of(context).accentColor
                 ]),
-            borderRadius: BorderRadius.circular(10.0),
             image: DecorationImage(
                 fit: BoxFit.cover,
                 image: CachedNetworkImageProvider(post.previewImage!))),

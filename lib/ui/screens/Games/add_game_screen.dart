@@ -241,7 +241,8 @@ class AddGameScreenState extends State<AddGameScreen> {
                         children: [
                           Expanded(
                               child: ListView(
-                            physics: AlwaysScrollableScrollPhysics(),
+                            physics: AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics()),
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
                             children: [
@@ -301,7 +302,10 @@ class AddGameScreenState extends State<AddGameScreen> {
                       ),
                     ))
             : Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                  strokeWidth: 1.5,
+                ),
               ));
   }
 

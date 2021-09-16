@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -30,10 +28,10 @@ class _CategorieScreenState extends State<CategorieScreen>
 
   late TabController _tabController;
 
-  List gamesUser = [];
-  List gamesCategories = [];
-  List gameFollow = [];
-  List gameNoFollow = [];
+  List<Game> gamesUser = [];
+  List<Game> gamesCategories = [];
+  List<Game> gameFollow = [];
+  List<Game> gameNoFollow = [];
 
   late TextEditingController _searchController;
   late FocusNode _keyboardFocusNode;
@@ -41,6 +39,10 @@ class _CategorieScreenState extends State<CategorieScreen>
 
   Algolia algolia = AlgoliaService.algolia;
   List<AlgoliaObjectSnapshot> _games = [];
+
+  ScrollController gamesFollowScrollController = ScrollController();
+  ScrollController gamesNoDiscoverScrollController = ScrollController();
+  ScrollController gamesSearchScrollController = ScrollController();
 
   @override
   bool get wantKeepAlive => true;
@@ -51,11 +53,24 @@ class _CategorieScreenState extends State<CategorieScreen>
     _tabController = TabController(length: 2, vsync: this);
     _searchController = TextEditingController();
     _keyboardFocusNode = FocusNode();
+
+    gamesFollowScrollController.addListener(() {});
+    gamesNoDiscoverScrollController.addListener(() {});
+    gamesSearchScrollController.addListener(() {});
     super.initState();
   }
 
   @override
+  void deactivate() {
+    gamesFollowScrollController.removeListener(() {});
+    gamesNoDiscoverScrollController.removeListener(() {});
+    gamesSearchScrollController.removeListener(() {});
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
+    gamesFollowScrollController.dispose();
     _keyboardFocusNode.dispose();
     _searchController.clear();
     _tabController.dispose();
@@ -73,7 +88,7 @@ class _CategorieScreenState extends State<CategorieScreen>
           .collection('games')
           .doc(item.id)
           .get();
-      gamesUser.add(myGame);
+      gamesUser.add(Game.fromMap(myGame, myGame.data()!));
     }
 
     var gamesCat = await FirebaseFirestore.instance
@@ -82,13 +97,13 @@ class _CategorieScreenState extends State<CategorieScreen>
         .get();
     for (var item in gamesCat.docs) {
       if (item.data()['verified'] == true) {
-        gamesCategories.add(item);
+        gamesCategories.add(Game.fromMap(item, item.data()));
       }
     }
 
     for (var i = 0; i < gamesUser.length; i++) {
       for (var j = 0; j < gamesCategories.length; j++) {
-        if (gamesUser[i].id == gamesCategories[j].id) {
+        if (gamesUser[i].documentId == gamesCategories[j].documentId) {
           gameFollow.add(gamesUser[i]);
         }
       }
@@ -100,7 +115,7 @@ class _CategorieScreenState extends State<CategorieScreen>
 
     for (var i = 0; i < gamesUser.length; i++) {
       for (var j = 0; j < gameNoFollow.length; j++) {
-        if (gameNoFollow[j].id == gamesUser[i].id) {
+        if (gameNoFollow[j].documentId == gamesUser[i].documentId) {
           gameNoFollow.remove(gameNoFollow[j]);
         }
       }
@@ -181,7 +196,6 @@ class _CategorieScreenState extends State<CategorieScreen>
                               boxShadow: [
                                 BoxShadow(
                                   color: Theme.of(context).shadowColor,
-                                  offset: Offset(-2.5, 2.5),
                                 )
                               ]),
                           tabs: [Text('A découvrir'), Text('Suivis')],
@@ -323,9 +337,8 @@ class _CategorieScreenState extends State<CategorieScreen>
                           color: Theme.of(context).primaryColor,
                         ),
                         onPressed: () {
-                          setState(() {
-                            _searchController.clear();
-                          });
+                          _searchController.clear();
+                          setState(() {});
                         }))),
       ),
     );
@@ -335,8 +348,11 @@ class _CategorieScreenState extends State<CategorieScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: GridView.builder(
+          controller: gamesFollowScrollController,
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
+          physics:
+              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 1,
@@ -344,9 +360,9 @@ class _CategorieScreenState extends State<CategorieScreen>
               mainAxisSpacing: 6),
           itemCount: gameFollow.length,
           itemBuilder: (BuildContext context, int index) {
-            Game game =
-                Game.fromMap(gameFollow[index], gameFollow[index].data());
+            Game game = gameFollow[index];
             return GameView(
+              key: ValueKey(game.name),
               game: game,
               indexGamesHome: widget.indexGamesHome,
             );
@@ -358,8 +374,11 @@ class _CategorieScreenState extends State<CategorieScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: GridView.builder(
+          controller: gamesNoDiscoverScrollController,
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
+          physics:
+              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 1,
@@ -367,9 +386,9 @@ class _CategorieScreenState extends State<CategorieScreen>
               mainAxisSpacing: 6),
           itemCount: gameNoFollow.length,
           itemBuilder: (BuildContext context, int index) {
-            Game game =
-                Game.fromMap(gameNoFollow[index], gameNoFollow[index].data());
+            Game game = gameNoFollow[index];
             return GameView(
+              key: ValueKey(game.name),
               game: game,
               indexGamesHome: widget.indexGamesHome,
             );
@@ -381,8 +400,11 @@ class _CategorieScreenState extends State<CategorieScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: GridView.builder(
+          controller: gamesSearchScrollController,
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
+          physics:
+              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 1,
@@ -391,7 +413,10 @@ class _CategorieScreenState extends State<CategorieScreen>
           itemCount: games.length,
           itemBuilder: (_, index) {
             Game game = Game.fromMapAlgolia(games[index], games[index].data);
-            return GameView(game: game, indexGamesHome: widget.indexGamesHome);
+            return GameView(
+                key: ValueKey(game.name),
+                game: game,
+                indexGamesHome: widget.indexGamesHome);
           }),
     );
   }
@@ -401,7 +426,8 @@ class GameView extends StatefulWidget {
   final Game game;
   final IndexGamesHome indexGamesHome;
 
-  GameView({required this.game, required this.indexGamesHome});
+  const GameView({Key? key, required this.game, required this.indexGamesHome})
+      : super(key: key);
 
   @override
   GameViewState createState() => GameViewState();
@@ -411,45 +437,45 @@ class GameViewState extends State<GameView> {
   bool dataIsThere = false;
   bool isFollow = false;
 
-  late StreamSubscription gamesListener;
-  List games = [];
+  List<Game> games = [];
 
   @override
   void initState() {
     super.initState();
-    gamesListener = FirebaseFirestore.instance
-        .collection('users')
-        .doc(me!.uid)
-        .collection('games')
-        .snapshots()
-        .listen((data) {
-      if (games.length != 0) {
-        games.clear();
-      }
-      for (var item in data.docs) {
-        games.add(item.id);
-        if (!dataIsThere) {
-          if (games.contains(widget.game.documentId)) {
-            setState(() {
-              isFollow = true;
-            });
-          } else {
-            setState(() {
-              isFollow = false;
-            });
-          }
+    getGames();
+  }
+
+  getGames() async {
+    if (!dataIsThere) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(me!.uid)
+          .collection('games')
+          .get()
+          .then((value) {
+        for (var item in value.docs) {
+          games.add(Game.fromMap(item, item.data()));
         }
-      }
-      if (!dataIsThere) {
+      });
+
+      if (games.any((element) => element.name == widget.game.name)) {
         setState(() {
-          dataIsThere = true;
+          isFollow = true;
+        });
+      } else {
+        setState(() {
+          isFollow = false;
         });
       }
-    });
+
+      setState(() {
+        dataIsThere = true;
+      });
+    }
   }
 
   follow() async {
-    if (games.contains(widget.game.documentId)) {
+    if (games.any((element) => element.name == widget.game.name)) {
       await widget.indexGamesHome.setIndexNewGame(games.length - 1);
       await FirebaseFirestore.instance
           .collection('users')
@@ -533,6 +559,7 @@ class GameViewState extends State<GameView> {
 
   Widget followGame() {
     return GestureDetector(
+        //key: widget.key,
         onTap: () {
           follow();
         },

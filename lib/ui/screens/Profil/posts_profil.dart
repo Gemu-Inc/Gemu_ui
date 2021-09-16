@@ -24,6 +24,21 @@ class PostsPublicState extends State<PostsPublic>
   bool get wantKeepAlive => true;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     return FutureBuilder(
@@ -56,7 +71,9 @@ class PostsPublicState extends State<PostsPublic>
             posts.add(Post.fromMap(item, item.data()));
           }
           return GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              physics: AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics()),
               shrinkWrap: true,
               itemCount: posts.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -179,6 +196,21 @@ class PostsPrivateState extends State<PostsPrivate>
   bool get wantKeepAlive => true;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     return FutureBuilder(
@@ -212,14 +244,16 @@ class PostsPrivateState extends State<PostsPrivate>
             posts.add(Post.fromMap(item, item.data()));
           }
           return GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              physics: AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics()),
               shrinkWrap: true,
               itemCount: posts.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   childAspectRatio: 1,
-                  crossAxisSpacing: 6,
-                  mainAxisSpacing: 6),
+                  crossAxisSpacing: 1,
+                  mainAxisSpacing: 1),
               itemBuilder: (BuildContext context, int index) {
                 return posts[index].type == 'picture'
                     ? GestureDetector(
@@ -231,37 +265,31 @@ class PostsPrivateState extends State<PostsPrivate>
                                       actualUser: me!,
                                       posts: posts,
                                     ))),
-                        child: Container(
-                          height: 150,
-                          width: 150,
-                          child: Stack(
-                            children: [
-                              Container(
-                                height: 150,
-                                width: 150,
-                                child: CachedNetworkImage(
-                                  imageUrl: posts[index].postUrl,
-                                  fit: BoxFit.cover,
-                                ),
+                        child: Stack(
+                          children: [
+                            Container(
+                              child: CachedNetworkImage(
+                                imageUrl: posts[index].postUrl,
+                                fit: BoxFit.cover,
                               ),
-                              Container(
-                                color: Colors.black.withOpacity(0.2),
+                            ),
+                            Container(
+                              color: Colors.black.withOpacity(0.2),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.remove_red_eye,
+                                    color: Colors.white,
+                                  ),
+                                  Text(posts[index].viewcount.toString()),
+                                ],
                               ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.remove_red_eye,
-                                      color: Colors.white,
-                                    ),
-                                    Text(posts[index].viewcount.toString()),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       )
                     : GestureDetector(
@@ -273,45 +301,39 @@ class PostsPrivateState extends State<PostsPrivate>
                                       actualUser: me!,
                                       posts: posts,
                                     ))),
-                        child: Container(
-                          height: 150,
-                          width: 150,
-                          child: Stack(
-                            children: [
-                              Container(
-                                height: 150,
-                                width: 150,
-                                child: CachedNetworkImage(
-                                  imageUrl: posts[index].previewImage!,
-                                  fit: BoxFit.cover,
-                                ),
+                        child: Stack(
+                          children: [
+                            Container(
+                              child: CachedNetworkImage(
+                                imageUrl: posts[index].previewImage!,
+                                fit: BoxFit.cover,
                               ),
-                              Container(
-                                color: Colors.black.withOpacity(0.2),
+                            ),
+                            Container(
+                              color: Colors.black.withOpacity(0.2),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.remove_red_eye,
+                                    color: Colors.white,
+                                  ),
+                                  Text(posts[index].viewcount.toString()),
+                                ],
                               ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.remove_red_eye,
-                                      color: Colors.white,
-                                    ),
-                                    Text(posts[index].viewcount.toString()),
-                                  ],
-                                ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              child: Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
                               ),
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                child: Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
               });

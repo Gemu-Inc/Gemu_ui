@@ -27,6 +27,7 @@ class AuthService {
       try {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
+        await Future.delayed(Duration(seconds: 1));
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
