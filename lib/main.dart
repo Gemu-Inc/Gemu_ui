@@ -87,10 +87,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Gemu',
-        themeMode: themeNotifier.getTheme() == null ? ThemeMode.system : null,
-        //Light theme system
+        themeMode: ThemeMode.system,
         theme: themeNotifier.getTheme() == null
-            ? ThemeData(
+            ?
+            //Light theme system
+            ThemeData(
                 brightness: Brightness.light,
                 scaffoldBackgroundColor: Color(0xFFDEE4E7),
                 primaryColor: _primaryColor.getColor(),
@@ -108,7 +109,7 @@ class MyApp extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                   iconTheme: IconThemeData(
-                    color: Colors.black45,
+                    color: Colors.black,
                   ),
                 ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -141,7 +142,7 @@ class MyApp extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                   iconTheme: IconThemeData(
-                    color: Colors.white60,
+                    color: Colors.white,
                   ),
                 ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(

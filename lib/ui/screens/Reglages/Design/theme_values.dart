@@ -28,7 +28,7 @@ final darkThemeOrange = ThemeData(
       titleTextStyle: TextStyle(
           color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
       iconTheme: IconThemeData(
-        color: Colors.white60,
+        color: Colors.white,
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -58,7 +58,7 @@ final darkThemePurple = ThemeData(
       titleTextStyle: TextStyle(
           color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
       iconTheme: IconThemeData(
-        color: Colors.white60,
+        color: Colors.white,
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -118,7 +118,7 @@ final lightThemePurple = ThemeData(
       titleTextStyle: TextStyle(
           color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
       iconTheme: IconThemeData(
-        color: Colors.black45,
+        color: Colors.black,
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
