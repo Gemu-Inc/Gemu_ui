@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/ui/widgets/post_tile.dart';
+import 'package:gemu/ui/screens/Autres/post_tile.dart';
 
 class FollowingSection extends StatefulWidget {
   final List followings;
@@ -94,45 +94,33 @@ class FollowingSectionState extends State<FollowingSection>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Stack(
-      children: [
-        RefreshIndicator(
-          backgroundColor: Theme.of(context).canvasColor,
-          color: Theme.of(context).primaryColor,
-          displacement: 100,
-          onRefresh: () {
-            print('refresh');
-            return refreshData();
-          },
-          child: dataIsThere
-              ? posts.length == 0
-                  ? Center(
-                      child: Text('No following/posts at the moment',
-                          style: mystyle(11)),
-                    )
-                  : PageView.builder(
-                      controller: widget.pageController,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      /*onPageChanged: (index) {
-                        setState(() {
-                          currentPageFollowingIndex = index;
-                          print(
-                              'currentPageGamesIndex est à: $currentPageFollowingIndex');
-                        });
-                      },*/
-                      itemCount: posts.length,
-                      itemBuilder: (context, index) {
-                        Post post = posts[index];
-                        return PostTile(idUserActual: me!.uid, post: post);
-                      })
-              : Center(
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-        ),
-      ],
-    );
+    return dataIsThere
+        ? posts.length == 0
+            ? Center(
+                child: Text('No following/posts at the moment',
+                    style: mystyle(11, Colors.white)),
+              )
+            : PageView.builder(
+                controller: widget.pageController,
+                physics: AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics()),
+                scrollDirection: Axis.vertical,
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  Post post = posts[index];
+                  return PostTile(
+                    idUserActual: me!.uid,
+                    post: post,
+                    positionDescriptionBar: 15.0,
+                    positionActionsBar: 20.0,
+                    isGameBar: false,
+                    isFollowingsSection: true,
+                  );
+                })
+        : Center(
+            child: CircularProgressIndicator(
+              color: Theme.of(context).primaryColor,
+            ),
+          );
   }
 }

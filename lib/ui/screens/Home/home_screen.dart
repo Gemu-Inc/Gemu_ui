@@ -44,16 +44,36 @@ class _HomeScreenState extends State<HomeScreen>
   late AnimationController _animationRotateController,
       _animationGamesController;
   late Animation _animationRotate, _animationGames;
+  bool panelGamesThere = false;
 
-  void _onTabMenuChanged() {
+  void _onTabMenuChanged() async {
     if (_animationRotateController.isCompleted) {
       _animationRotateController.reverse();
       _animationGamesController.reverse();
+      if (panelGamesThere) {
+        await Future.delayed(Duration(milliseconds: 200));
+        setState(() {
+          panelGamesThere = false;
+        });
+      }
     }
     if (!_tabMenuController.indexIsChanging) {
       setState(() {
         currentTabMenuIndex = _tabMenuController.index;
       });
+    }
+  }
+
+  void _onPageChanged() async {
+    if (_animationRotateController.isCompleted) {
+      _animationRotateController.reverse();
+      _animationGamesController.reverse();
+      if (panelGamesThere) {
+        await Future.delayed(Duration(milliseconds: 200));
+        setState(() {
+          panelGamesThere = false;
+        });
+      }
     }
   }
 
@@ -91,8 +111,16 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    widget.gamePageController[currentTabGamesIndex].addListener(_onPageChanged);
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void deactivate() {
     _tabMenuController.removeListener(_onTabMenuChanged);
+    widget.gamePageController[currentTabGamesIndex]
+        .removeListener(_onPageChanged);
     super.deactivate();
   }
 
@@ -121,15 +149,10 @@ class _HomeScreenState extends State<HomeScreen>
             length: widget.games.length,
             child: Scaffold(
               backgroundColor: Colors.black,
-              appBar: PreferredSize(
-                  child: AppBar(
-                    backgroundColor: Colors.black,
-                  ),
-                  preferredSize: Size.fromHeight(0)),
               body: Stack(
                 children: [
                   bodyHome(widget.games[currentTabGamesIndex]),
-                  topHome(widget.games[currentTabGamesIndex])
+                  topHome(widget.games[currentTabGamesIndex]),
                 ],
               ),
             ),
@@ -140,8 +163,9 @@ class _HomeScreenState extends State<HomeScreen>
   Widget topHome(Game game) {
     return Container(
       padding: EdgeInsets.only(top: 10.0),
-      height: MediaQuery.of(context).size.height / 4,
-      color: Colors.transparent,
+      height: panelGamesThere
+          ? MediaQuery.of(context).size.height / 4
+          : MediaQuery.of(context).size.height / 6,
       child: Column(
         children: [
           topAppBar(),
@@ -244,11 +268,24 @@ class _HomeScreenState extends State<HomeScreen>
                 Tab(
                   child: currentTabMenuIndex == 1
                       ? GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             if (_animationRotateController.isCompleted) {
                               _animationRotateController.reverse();
                               _animationGamesController.reverse();
+                              if (panelGamesThere) {
+                                await Future.delayed(
+                                    Duration(milliseconds: 200));
+                                setState(() {
+                                  panelGamesThere = false;
+                                });
+                              }
                             } else {
+                              if (!panelGamesThere) {
+                                setState(() {
+                                  panelGamesThere = true;
+                                });
+                              }
+
                               _animationRotateController.forward();
                               _animationGamesController.forward();
                             }
@@ -360,6 +397,7 @@ class _HomeScreenState extends State<HomeScreen>
             game: game,
             animationGamesController: _animationGamesController,
             animationRotateController: _animationRotateController,
+            panelGamesThere: panelGamesThere,
             pageController: widget.gamePageController[currentTabGamesIndex],
           );
         }).toList());

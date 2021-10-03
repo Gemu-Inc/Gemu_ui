@@ -202,14 +202,14 @@ class RegisterScreenState extends State<RegisterScreen> {
         confirmPassword.isEmpty ||
         password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-        context: context,
-        error: 'Write user information',
-      ));
+          context: context,
+          error: 'Write user information',
+          padddingVertical: 40.0));
     } else if (gamesFollow.length == 0 || gamesFollow.length == 1) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-        context: context,
-        error: 'Selects at least two games',
-      ));
+          context: context,
+          error: 'Selects at least two games',
+          padddingVertical: 40.0));
     } else {
       AuthService.instance.registerUser(context, gamesFollow, username, email,
           password, confirmPassword, country);

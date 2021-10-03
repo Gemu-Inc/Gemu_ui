@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/ui/widgets/post_tile.dart';
+import 'package:gemu/ui/screens/Autres/post_tile.dart';
 
 class PostsPublic extends StatefulWidget {
   final UserModel user;
@@ -41,141 +43,150 @@ class PostsPublicState extends State<PostsPublic>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return FutureBuilder(
-        future: FirebaseFirestore.instance
-            .collection('posts')
-            .where('uid', isEqualTo: widget.user.uid)
-            .where('privacy', isEqualTo: "Public")
-            .orderBy('date', descending: true)
-            .get(),
-        builder: (context,
-            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-                child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
-            ));
-          }
-          if (snapshot.data!.docs.length == 0) {
-            return Center(
-              child: Text(
-                'Pas encore de publications publiques',
-                style: mystyle(11),
-              ),
-            );
-          }
-          if (posts.length != 0) {
-            posts.clear();
-          }
-          for (var item in snapshot.data!.docs) {
-            posts.add(Post.fromMap(item, item.data()));
-          }
-          return GridView.builder(
-              scrollDirection: Axis.vertical,
-              physics: AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics()),
-              shrinkWrap: true,
-              itemCount: posts.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 6,
-                  mainAxisSpacing: 6),
-              itemBuilder: (BuildContext context, int index) {
-                return posts[index].type == 'picture'
-                    ? GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PostsView(
-                                      postIndex: index,
-                                      actualUser: me!,
-                                      posts: posts,
-                                    ))),
-                        child: Container(
-                          height: 150,
-                          width: 150,
-                          child: Stack(
-                            children: [
-                              Container(
-                                height: 150,
-                                width: 150,
-                                child: CachedNetworkImage(
-                                    imageUrl: posts[index].postUrl,
-                                    fit: BoxFit.cover),
-                              ),
-                              Container(
-                                color: Colors.black.withOpacity(0.2),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.remove_red_eye,
-                                      color: Colors.white,
-                                    ),
-                                    Text(posts[index].viewcount.toString()),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PostsView(
-                                      postIndex: index,
-                                      actualUser: me!,
-                                      posts: posts,
-                                    ))),
-                        child: Container(
-                          height: 150,
-                          width: 150,
-                          child: Stack(
-                            children: [
-                              Container(
-                                height: 150,
-                                width: 150,
-                                child: CachedNetworkImage(
-                                  imageUrl: posts[index].previewImage!,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Container(
-                                color: Colors.black.withOpacity(0.2),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.remove_red_eye,
-                                      color: Colors.white,
-                                    ),
-                                    Text(posts[index].viewcount.toString()),
-                                  ],
-                                ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                child: Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-              });
-        });
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.0),
+      child: FutureBuilder(
+          future: FirebaseFirestore.instance
+              .collection('posts')
+              .where('uid', isEqualTo: widget.user.uid)
+              .where('privacy', isEqualTo: "Public")
+              .orderBy('date', descending: true)
+              .get(),
+          builder: (context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                  child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ));
+            }
+            if (snapshot.data!.docs.length == 0) {
+              return Center(
+                child: Text(
+                  'Pas encore de publications publiques',
+                  style: mystyle(11),
+                ),
+              );
+            }
+            if (posts.length != 0) {
+              posts.clear();
+            }
+            for (var item in snapshot.data!.docs) {
+              posts.add(Post.fromMap(item, item.data()));
+            }
+            return GridView.builder(
+                scrollDirection: Axis.vertical,
+                physics: AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics()),
+                shrinkWrap: true,
+                itemCount: posts.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 1.0,
+                    mainAxisSpacing: 1.0),
+                itemBuilder: (BuildContext context, int index) {
+                  Post post = posts[index];
+                  return post.type == 'picture'
+                      ? picture(post, index)
+                      : video(post, index);
+                });
+          }),
+    );
+  }
+
+  Widget picture(Post post, int index) {
+    return Material(
+      color: Theme.of(context).canvasColor,
+      borderRadius: BorderRadius.circular(5.0),
+      child: Ink(
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(5.0),
+            image: DecorationImage(
+                image: CachedNetworkImageProvider(post.postUrl),
+                fit: BoxFit.cover)),
+        child: Stack(
+          children: [
+            Container(
+              color: Colors.black.withOpacity(0.2),
+            ),
+            InkWell(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => PostsView(
+                            postIndex: index,
+                            actualUser: me!,
+                            posts: posts,
+                          ))),
+              borderRadius: BorderRadius.circular(5.0),
+              splashColor: Theme.of(context).primaryColor,
+            ),
+            Positioned(
+                bottom: 5.0,
+                right: 5.0,
+                child: Column(
+                  children: [
+                    Icon(Icons.remove_red_eye, color: Colors.white),
+                    Text(post.viewcount.toString(),
+                        style: mystyle(12, Colors.white))
+                  ],
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget video(Post post, int index) {
+    return Material(
+      color: Theme.of(context).canvasColor,
+      borderRadius: BorderRadius.circular(5.0),
+      child: Ink(
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(5.0),
+            image: DecorationImage(
+                image: CachedNetworkImageProvider(post.previewImage!),
+                fit: BoxFit.cover)),
+        child: Stack(
+          children: [
+            Container(
+              color: Colors.black.withOpacity(0.2),
+            ),
+            InkWell(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => PostsView(
+                            postIndex: index,
+                            actualUser: me!,
+                            posts: posts,
+                          ))),
+              borderRadius: BorderRadius.circular(5.0),
+              splashColor: Theme.of(context).primaryColor,
+            ),
+            Positioned(
+                top: 5.0,
+                left: 5.0,
+                child: Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                )),
+            Positioned(
+                bottom: 5.0,
+                right: 5.0,
+                child: Column(
+                  children: [
+                    Icon(Icons.remove_red_eye, color: Colors.white),
+                    Text(post.viewcount.toString(),
+                        style: mystyle(12, Colors.white))
+                  ],
+                ))
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -255,89 +266,107 @@ class PostsPrivateState extends State<PostsPrivate>
                   crossAxisSpacing: 1,
                   mainAxisSpacing: 1),
               itemBuilder: (BuildContext context, int index) {
-                return posts[index].type == 'picture'
-                    ? GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PostsView(
-                                      postIndex: index,
-                                      actualUser: me!,
-                                      posts: posts,
-                                    ))),
-                        child: Stack(
-                          children: [
-                            Container(
-                              child: CachedNetworkImage(
-                                imageUrl: posts[index].postUrl,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Container(
-                              color: Colors.black.withOpacity(0.2),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.remove_red_eye,
-                                    color: Colors.white,
-                                  ),
-                                  Text(posts[index].viewcount.toString()),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PostsView(
-                                      postIndex: index,
-                                      actualUser: me!,
-                                      posts: posts,
-                                    ))),
-                        child: Stack(
-                          children: [
-                            Container(
-                              child: CachedNetworkImage(
-                                imageUrl: posts[index].previewImage!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Container(
-                              color: Colors.black.withOpacity(0.2),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.remove_red_eye,
-                                    color: Colors.white,
-                                  ),
-                                  Text(posts[index].viewcount.toString()),
-                                ],
-                              ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              child: Icon(
-                                Icons.play_arrow,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                Post post = posts[index];
+                return post.type == 'picture'
+                    ? picture(post, index)
+                    : video(post, index);
               });
         });
+  }
+
+  Widget picture(Post post, int index) {
+    return Material(
+      color: Theme.of(context).canvasColor,
+      borderRadius: BorderRadius.circular(5.0),
+      child: Ink(
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(5.0),
+            image: DecorationImage(
+                image: CachedNetworkImageProvider(post.postUrl),
+                fit: BoxFit.cover)),
+        child: Stack(
+          children: [
+            Container(
+              color: Colors.black.withOpacity(0.2),
+            ),
+            InkWell(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => PostsView(
+                            postIndex: index,
+                            actualUser: me!,
+                            posts: posts,
+                          ))),
+              borderRadius: BorderRadius.circular(5.0),
+              splashColor: Theme.of(context).primaryColor,
+            ),
+            Positioned(
+                bottom: 5.0,
+                right: 5.0,
+                child: Column(
+                  children: [
+                    Icon(Icons.remove_red_eye, color: Colors.white),
+                    Text(post.viewcount.toString(),
+                        style: mystyle(12, Colors.white))
+                  ],
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget video(Post post, int index) {
+    return Material(
+      color: Theme.of(context).canvasColor,
+      borderRadius: BorderRadius.circular(5.0),
+      child: Ink(
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(5.0),
+            image: DecorationImage(
+                image: CachedNetworkImageProvider(post.previewImage!),
+                fit: BoxFit.cover)),
+        child: Stack(
+          children: [
+            Container(
+              color: Colors.black.withOpacity(0.2),
+            ),
+            InkWell(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => PostsView(
+                            postIndex: index,
+                            actualUser: me!,
+                            posts: posts,
+                          ))),
+              borderRadius: BorderRadius.circular(5.0),
+              splashColor: Theme.of(context).primaryColor,
+            ),
+            Positioned(
+                top: 5.0,
+                left: 5.0,
+                child: Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                )),
+            Positioned(
+                bottom: 5.0,
+                right: 5.0,
+                child: Column(
+                  children: [
+                    Icon(Icons.remove_red_eye, color: Colors.white),
+                    Text(post.viewcount.toString(),
+                        style: mystyle(12, Colors.white))
+                  ],
+                ))
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -373,32 +402,47 @@ class PostsViewState extends State<PostsView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      left: false,
-      right: false,
-      child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            elevation: 0,
-            leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.expand_more,
-                  size: 33,
-                )),
-            title: Text('Mes posts'),
-          ),
-          body: PageView.builder(
-              controller: _pageController,
-              scrollDirection: Axis.vertical,
-              itemCount: widget.posts.length,
-              itemBuilder: (_, int index) {
-                return PostTile(
-                  idUserActual: widget.actualUser.uid,
-                  post: widget.posts[index],
-                );
-              })),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          systemNavigationBarColor: Colors.black),
+      child: SafeArea(
+        left: false,
+        right: false,
+        child: Scaffold(
+            backgroundColor: Colors.black,
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              elevation: 0,
+              leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  )),
+              title: Text(
+                'Mes posts',
+                style: mystyle(16, Colors.white),
+              ),
+            ),
+            body: PageView.builder(
+                controller: _pageController,
+                physics: AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics()),
+                scrollDirection: Axis.vertical,
+                itemCount: widget.posts.length,
+                itemBuilder: (_, int index) {
+                  return PostTile(
+                    idUserActual: widget.actualUser.uid,
+                    post: widget.posts[index],
+                    positionDescriptionBar: 5.0,
+                    positionActionsBar: 5.0,
+                    isGameBar: true,
+                    isFollowingsSection: false,
+                  );
+                })),
+      ),
     );
   }
 }

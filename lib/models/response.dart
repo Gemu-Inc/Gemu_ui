@@ -1,34 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Commentaire {
+class Response {
   final DocumentReference reference;
   final String uid;
-  final String comment;
+  final String response;
   final int upcount;
   final int downcount;
-  final int responsescount;
   final int date;
   final String id;
 
-  Commentaire(
+  Response(
       {required this.reference,
       required this.uid,
-      required this.comment,
+      required this.response,
       required this.upcount,
       required this.downcount,
-      required this.responsescount,
       required this.date,
       required this.id});
 
-  factory Commentaire.fromMap(
+  factory Response.fromMap(
       DocumentSnapshot snapshot, Map<String, dynamic> data) {
-    return Commentaire(
+    return Response(
         reference: snapshot.reference,
         uid: data['uid'],
-        comment: data['comment'],
+        response: data['response'],
         upcount: data['upcount'],
         downcount: data['downcount'],
-        responsescount: data['responsescount'],
         date: data['date'],
         id: data['id']);
   }

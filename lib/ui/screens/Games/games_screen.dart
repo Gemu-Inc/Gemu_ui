@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/screens/Games/categorie_screen.dart';
-import 'package:gemu/ui/screens/Games/game_focus_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/ui/widgets/alert_dialog_custom.dart';
 import 'package:gemu/ui/providers/index_tab_games_home.dart';
-import 'package:sticky_headers/sticky_headers/widget.dart';
+import 'package:gemu/ui/screens/Autres/game_screen.dart';
 
 import 'add_game_screen.dart';
 
@@ -207,7 +206,7 @@ class _GamesScreenState extends State<GamesScreen>
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => GameFocusScreen(game: game)),
+                            builder: (_) => GameScreen(game: game)),
                       ),
                       onLongPress: () {
                         alertUnfollowGame(game);

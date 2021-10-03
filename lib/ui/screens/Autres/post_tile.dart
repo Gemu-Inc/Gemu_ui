@@ -4,8 +4,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:gemu/ui/screens/Autres/game_screen.dart';
+import 'package:gemu/ui/screens/Autres/hashtags_screen.dart';
 import 'package:marquee/marquee.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:video_player/video_player.dart';
 
@@ -13,17 +16,27 @@ import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/ui/widgets/expandable_text.dart';
 import 'package:gemu/services/date_helper.dart';
-import 'package:gemu/ui/widgets/comments_view.dart';
+import 'package:gemu/ui/screens/Autres/comments_screen.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/ui/screens/Profil/profil_screen.dart';
+import 'package:gemu/models/game.dart';
+import 'package:gemu/ui/screens/Autres/viewers_screen.dart';
 
 class PostTile extends StatefulWidget {
   final String idUserActual;
   final Post post;
-  final bool isHome;
+  final double positionDescriptionBar;
+  final double positionActionsBar;
+  final bool isGameBar;
+  final bool isFollowingsSection;
 
   PostTile(
-      {required this.idUserActual, required this.post, this.isHome = false});
+      {required this.idUserActual,
+      required this.post,
+      required this.positionDescriptionBar,
+      required this.positionActionsBar,
+      required this.isGameBar,
+      required this.isFollowingsSection});
 
   @override
   PostTileState createState() => PostTileState();
@@ -61,6 +74,10 @@ class PostTileState extends State<PostTile> with TickerProviderStateMixin {
                     file: snapshot.data.file,
                     idUserActual: widget.idUserActual,
                     post: widget.post,
+                    positionDescriptionBar: widget.positionDescriptionBar,
+                    positionActionsBar: widget.positionActionsBar,
+                    isGameBar: widget.isGameBar,
+                    isFollowingsSection: widget.isFollowingsSection,
                   )
                 : VideoItem(
                     videoPlayerController: VideoPlayerController.file(
@@ -68,7 +85,12 @@ class PostTileState extends State<PostTile> with TickerProviderStateMixin {
                         videoPlayerOptions:
                             VideoPlayerOptions(mixWithOthers: true)),
                     idUserActual: widget.idUserActual,
-                    post: widget.post);
+                    post: widget.post,
+                    positionDescriptionBar: widget.positionDescriptionBar,
+                    positionActionsBar: widget.positionActionsBar,
+                    isGameBar: widget.isGameBar,
+                    isFollowingsSection: widget.isFollowingsSection,
+                  );
           }),
     );
   }
@@ -78,13 +100,21 @@ class PictureItem extends StatefulWidget {
   final File? file;
   final String? postUrl;
   final String idUserActual;
-  Post post;
+  final Post post;
+  final double positionDescriptionBar;
+  final double positionActionsBar;
+  final bool isGameBar;
+  final bool isFollowingsSection;
 
   PictureItem(
       {this.file,
       this.postUrl,
       required this.idUserActual,
-      required this.post});
+      required this.post,
+      required this.positionDescriptionBar,
+      required this.positionActionsBar,
+      required this.isGameBar,
+      required this.isFollowingsSection});
 
   @override
   PictureItemState createState() => PictureItemState();
@@ -101,8 +131,10 @@ class PictureItemState extends State<PictureItem>
   late AnimationController _upController, _downController;
   late Animation _upAnimation, _downAnimation;
 
-  //late Post post;
+  late Post post;
   late StreamSubscription postListener;
+
+  late Game game;
 
   late String hashtags;
   late String descriptionFinal;
@@ -129,63 +161,59 @@ class PictureItemState extends State<PictureItem>
   }
 
   upPost() async {
-    widget.post.reference
-        .collection('up')
-        .doc(widget.idUserActual)
-        .get()
-        .then((uper) {
+    post.reference.collection('up').doc(widget.idUserActual).get().then((uper) {
       if (!uper.exists) {
         uper.reference.set({});
-        widget.post.reference.update({'upcount': widget.post.upcount + 1});
+        post.reference.update({'upcount': post.upcount + 1});
       }
     });
 
-    widget.post.reference
+    post.reference
         .collection('down')
         .doc(widget.idUserActual)
         .get()
         .then((downer) {
       if (downer.exists) {
         downer.reference.delete();
-        widget.post.reference.update({'downcount': widget.post.downcount - 1});
+        post.reference.update({'downcount': post.downcount - 1});
       }
     });
 
     DatabaseService.addNotification(
-        widget.idUserActual, widget.post.uid, "a up votre post", "updown");
+        widget.idUserActual, post.uid, "a up votre post", "updown");
   }
 
   downPost() async {
-    widget.post.reference
+    post.reference
         .collection('down')
         .doc(widget.idUserActual)
         .get()
         .then((downer) {
       if (!downer.exists) {
         downer.reference.set({});
-        widget.post.reference.update({'downcount': widget.post.downcount + 1});
+        post.reference.update({'downcount': post.downcount + 1});
       }
     });
 
-    widget.post.reference
+    post.reference
         .collection('up')
         .doc(widget.idUserActual)
         .get()
         .then((upper) {
       if (upper.exists) {
         upper.reference.delete();
-        widget.post.reference.update({'upcount': widget.post.upcount - 1});
+        post.reference.update({'upcount': post.upcount - 1});
       }
     });
 
     DatabaseService.addNotification(
-        widget.idUserActual, widget.post.uid, "a down votre post", "updown");
+        widget.idUserActual, post.uid, "a down votre post", "updown");
   }
 
   followUser() async {
     FirebaseFirestore.instance
         .collection('users')
-        .doc(widget.post.uid)
+        .doc(post.uid)
         .collection('followers')
         .doc(widget.idUserActual)
         .get()
@@ -196,9 +224,9 @@ class PictureItemState extends State<PictureItem>
             .collection('users')
             .doc(widget.idUserActual)
             .collection('following')
-            .doc(widget.post.uid)
+            .doc(post.uid)
             .set({});
-        DatabaseService.addNotification(widget.idUserActual, widget.post.uid,
+        DatabaseService.addNotification(widget.idUserActual, post.uid,
             "a commencé à vous suivre", "follow");
 
         setState(() {
@@ -209,9 +237,9 @@ class PictureItemState extends State<PictureItem>
   }
 
   updateView() async {
-    widget.post.reference.update({'viewcount': widget.post.viewcount + 1});
+    post.reference.update({'viewcount': post.viewcount + 1});
 
-    widget.post.reference
+    post.reference
         .collection('viewers')
         .doc(widget.idUserActual)
         .get()
@@ -222,26 +250,147 @@ class PictureItemState extends State<PictureItem>
     });
   }
 
+  showViewersPostBottomSheet() {
+    return showMaterialModalBottomSheet(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10.0),
+                topRight: Radius.circular(10.0))),
+        context: context,
+        builder: (_) {
+          return Container(
+            height: MediaQuery.of(context).size.height / 2,
+            child: ViewersScreen(
+              post: post,
+            ),
+          );
+        });
+  }
+
+  showMorePostBottomSheet() {
+    return showMaterialModalBottomSheet(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+        ),
+        context: context,
+        builder: (_) {
+          return Container(
+            height: MediaQuery.of(context).size.height / 2,
+            child: Column(
+              children: [
+                Container(
+                  height: 60,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10.0),
+                          topRight: Radius.circular(10.0)),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 1.0,
+                            spreadRadius: 1.0,
+                            offset: Offset(0.0, 1.0))
+                      ]),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(Icons.arrow_back_ios)),
+                        Text(
+                          'More',
+                          style: mystyle(16),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                    child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: Center(
+                    child: ListView(
+                      physics: AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics()),
+                      children: [
+                        ListTile(
+                          onTap: () => print('Signaler'),
+                          leading: Icon(Icons.flag),
+                          title: Text(
+                            'Signaler',
+                            style: mystyle(12),
+                          ),
+                        ),
+                        ListTile(
+                          onTap: () => print('Pas interessé'),
+                          leading: Icon(Icons.not_interested_rounded),
+                          title: Text(
+                            'Pas interessé',
+                            style: mystyle(12),
+                          ),
+                        ),
+                        ListTile(
+                          onTap: () => print('Copy'),
+                          leading: Icon(Icons.copy),
+                          title: Text(
+                            'Copier le lien',
+                            style: mystyle(12),
+                          ),
+                        ),
+                        ListTile(
+                          onTap: () => print('Follow/Unfollow'),
+                          leading: Icon(Icons.add),
+                          title: Text(
+                            'Follow',
+                            style: mystyle(12),
+                          ),
+                        ),
+                        ListTile(
+                          onTap: () => print('About account'),
+                          leading: Icon(Icons.account_box),
+                          title: Text(
+                            'A propos du compte',
+                            style: mystyle(12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ))
+              ],
+            ),
+          );
+        });
+  }
+
   @override
   void initState() {
     super.initState();
+    post = widget.post;
     //écoute sur les changements du post
     postListener = FirebaseFirestore.instance
         .collection('posts')
-        .doc(widget.post.id)
+        .doc(post.id)
         .snapshots()
         .listen((data) {
       print('post listen');
       setState(() {
-        widget.post = Post.fromMap(data, data.data()!);
+        post = Post.fromMap(data, data.data()!);
       });
+      print(post.commentcount);
     });
 
     //Prendre les infos du user du post
-    if (widget.post.uid != widget.idUserActual) {
+    if (post.uid != widget.idUserActual) {
       FirebaseFirestore.instance
           .collection('users')
-          .doc(widget.post.uid)
+          .doc(post.uid)
           .collection('followers')
           .doc(widget.idUserActual)
           .get()
@@ -261,13 +410,18 @@ class PictureItemState extends State<PictureItem>
     }
 
     //concatène les list et les différents string afin de créer une bonne description
-    hashtags = concatListHashtags(widget.post.hashtags);
-    descriptionFinal =
-        concatDescriptionHastags(widget.post.description, hashtags);
+    hashtags = concatListHashtags(post.hashtags);
+    descriptionFinal = concatDescriptionHastags(post.description, hashtags);
+
+    //game du post
+    FirebaseFirestore.instance
+        .collection('games')
+        .doc(post.gameName)
+        .get()
+        .then((gameDoc) => game = Game.fromMap(gameDoc, gameDoc.data()!));
 
     //Listener sur les up&down du post
-    upListener =
-        widget.post.reference.collection('up').snapshots().listen((data) {
+    upListener = post.reference.collection('up').snapshots().listen((data) {
       if (up.length != 0) {
         up.clear();
       }
@@ -277,8 +431,7 @@ class PictureItemState extends State<PictureItem>
         });
       }
     });
-    downListener =
-        widget.post.reference.collection('down').snapshots().listen((data) {
+    downListener = post.reference.collection('down').snapshots().listen((data) {
       if (down.length != 0) {
         down.clear();
       }
@@ -291,7 +444,7 @@ class PictureItemState extends State<PictureItem>
 
     //initilisation des animations up&down sur le post
     _upController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 750));
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
     _upAnimation = CurvedAnimation(parent: _upController, curve: Curves.easeIn);
 
     _upController.addListener(() {
@@ -301,7 +454,7 @@ class PictureItemState extends State<PictureItem>
     });
 
     _downController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 750));
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
     _downAnimation =
         CurvedAnimation(parent: _downController, curve: Curves.easeIn);
 
@@ -341,35 +494,35 @@ class PictureItemState extends State<PictureItem>
 
   @override
   Widget build(BuildContext context) {
-    int points = (widget.post.upcount - widget.post.downcount);
+    int points = (post.upcount - post.downcount);
     return Stack(
       children: [
         contentPostPicture(),
-        Positioned(
-            bottom: 0,
-            child: Container(
-              height: MediaQuery.of(context).size.height / 1.5,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                children: [
-                  Expanded(
-                      child: Row(
-                    children: [
-                      Expanded(child: description()),
-                      actionsBar(points)
-                    ],
-                  )),
-                  gameBar()
-                ],
-              ),
-            )),
+        Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              Expanded(
+                  child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [Expanded(child: description()), actionsBar(points)],
+              )),
+              widget.isGameBar
+                  ? gameBar()
+                  : SizedBox(
+                      height: MediaQuery.of(context).size.height / 11,
+                    )
+            ],
+          ),
+        ),
         Column(
           children: [
             Expanded(child: Container(
               child: GestureDetector(
                 onDoubleTap: () {
                   print('upPost');
-                  if (widget.post.uid != widget.idUserActual) {
+                  if (post.uid != widget.idUserActual) {
                     _upController.forward();
                     upPost();
                   }
@@ -381,7 +534,7 @@ class PictureItemState extends State<PictureItem>
                 child: GestureDetector(
                   onDoubleTap: () {
                     print('downPost');
-                    if (widget.post.uid != widget.idUserActual) {
+                    if (post.uid != widget.idUserActual) {
                       _downController.forward();
                       downPost();
                     }
@@ -419,7 +572,7 @@ class PictureItemState extends State<PictureItem>
     return Stack(
       children: [
         Hero(
-          tag: 'post${widget.post.id}',
+          tag: 'post${post.id}',
           child: Center(
               child: widget.file != null
                   ? Image.file(
@@ -440,9 +593,10 @@ class PictureItemState extends State<PictureItem>
 
   Widget description() {
     return Container(
-        alignment: Alignment.bottomLeft,
+        alignment: Alignment.bottomCenter,
+        height: MediaQuery.of(context).size.height / 1.5,
         child: Padding(
-          padding: EdgeInsets.only(bottom: 7.5),
+          padding: EdgeInsets.only(bottom: widget.positionDescriptionBar),
           child: Card(
             color: Colors.transparent,
             shadowColor: Colors.transparent,
@@ -453,6 +607,47 @@ class PictureItemState extends State<PictureItem>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (!widget.isGameBar && widget.isFollowingsSection)
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Container(
+                            height: 30.0,
+                            width: MediaQuery.of(context).size.width / 2.5,
+                            child: Row(
+                              children: [
+                                Icon(Icons.videogame_asset,
+                                    color: Colors.white, size: 18),
+                                Expanded(
+                                    child: Marquee(
+                                  text: post.gameName,
+                                  style: mystyle(12, Colors.white),
+                                  blankSpace: 50.0,
+                                  velocity: 30.0,
+                                )),
+                                GestureDetector(
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) =>
+                                              GameScreen(game: game))),
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context).canvasColor,
+                                        border: Border.all(color: Colors.black),
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        image: DecorationImage(
+                                            image: CachedNetworkImageProvider(
+                                                post.gameImage),
+                                            fit: BoxFit.cover)),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
                       Row(
                         children: [
                           Card(
@@ -464,20 +659,23 @@ class PictureItemState extends State<PictureItem>
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => ProfilUser(
-                                                userPostID: widget.post.uid,
+                                                userPostID: post.uid,
                                               )));
                                 },
-                                child: Text(widget.post.username,
-                                    style: mystyle(14))),
+                                child: Text(post.username,
+                                    style: mystyle(14, Colors.white))),
                           ),
                           SizedBox(
                             width: 2.5,
                           ),
-                          Text('.', style: mystyle(11)),
+                          Text('.', style: mystyle(11, Colors.white)),
                           SizedBox(
                             width: 2.5,
                           ),
-                          Text(DateHelper().datePostView(widget.post.date)),
+                          Text(
+                            DateHelper().datePostView(post.date),
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ],
                       ),
                       SizedBox(
@@ -487,13 +685,15 @@ class PictureItemState extends State<PictureItem>
                           padding: EdgeInsets.symmetric(horizontal: 5.0),
                           child: ExpandableText(
                             descriptionFinal,
-                            style: TextStyle(color: Colors.grey[300]),
+                            style: TextStyle(color: Colors.white),
                             expandText: 'Plus',
                             collapseText: 'Moins',
                             maxLines: 2,
-                            onHashtagTap: (hashtags) {
-                              print('Action quand on appuie sur un hashtag');
-                            },
+                            onHashtagTap: (hashtags) => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        HashtagsScreen(titleTag: hashtags))),
                             hashtagStyle:
                                 mystyle(12, Theme.of(context).primaryColor),
                           )),
@@ -506,32 +706,36 @@ class PictureItemState extends State<PictureItem>
 
   Widget actionsBar(int points) {
     return Container(
+      height: MediaQuery.of(context).size.height / 1.5,
       width: MediaQuery.of(context).size.width / 4,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        _getSocialReferencement(
-            iconUp: Icons.arrow_upward_outlined,
-            iconDown: Icons.arrow_downward_outlined,
-            title: points.toString()),
-        SizedBox(
-          height: 25.0,
-        ),
-        _getSocialAction(
-            icon: Icons.insert_comment_outlined,
-            title: widget.post.commentcount.toString(),
-            context: context),
-        SizedBox(
-          height: 25.0,
-        ),
-        _getViewersAction(),
-        SizedBox(
-          height: 25.0,
-        ),
-        _getMore(),
-        SizedBox(
-          height: 25.0,
-        ),
-        _getFollowAction(context: context),
-      ]),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: widget.positionActionsBar),
+        child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          _getSocialReferencement(
+              iconUp: Icons.arrow_upward_outlined,
+              iconDown: Icons.arrow_downward_outlined,
+              title: points.toString()),
+          SizedBox(
+            height: 35.0,
+          ),
+          _getSocialAction(
+              icon: Icons.insert_comment_outlined,
+              title: post.commentcount.toString(),
+              context: context),
+          SizedBox(
+            height: 35.0,
+          ),
+          _getViewersAction(),
+          SizedBox(
+            height: 35.0,
+          ),
+          _getMore(),
+          SizedBox(
+            height: 35.0,
+          ),
+          _getFollowAction(context: context),
+        ]),
+      ),
     );
   }
 
@@ -548,7 +752,7 @@ class PictureItemState extends State<PictureItem>
               shadowColor: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  if (widget.post.uid != widget.idUserActual) {
+                  if (post.uid != widget.idUserActual) {
                     upPost();
                   }
                 },
@@ -564,7 +768,7 @@ class PictureItemState extends State<PictureItem>
               shadowColor: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  if (widget.post.uid != widget.idUserActual) {
+                  if (post.uid != widget.idUserActual) {
                     downPost();
                   }
                 },
@@ -600,7 +804,7 @@ class PictureItemState extends State<PictureItem>
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => CommentsView(post: widget.post)));
+                    builder: (context) => CommentsView(post: post)));
           },
           child: Icon(icon, size: 28, color: Colors.white),
         ),
@@ -621,7 +825,7 @@ class PictureItemState extends State<PictureItem>
           color: Colors.transparent,
           shadowColor: Colors.transparent,
           child: InkWell(
-            onTap: () => print('See viewers'),
+            onTap: () => showViewersPostBottomSheet(),
             child: Icon(
               Icons.remove_red_eye_outlined,
               color: Colors.white,
@@ -632,8 +836,8 @@ class PictureItemState extends State<PictureItem>
         Card(
           color: Colors.transparent,
           shadowColor: Colors.transparent,
-          child: Text(widget.post.viewcount.toString(),
-              style: mystyle(13, Colors.white)),
+          child:
+              Text(post.viewcount.toString(), style: mystyle(13, Colors.white)),
         ),
       ],
     );
@@ -644,7 +848,7 @@ class PictureItemState extends State<PictureItem>
       color: Colors.transparent,
       shadowColor: Colors.transparent,
       child: InkWell(
-          onTap: () => print('More on the post'),
+          onTap: () => showMorePostBottomSheet(),
           child: Icon(
             Icons.more_vert_outlined,
             color: Colors.white,
@@ -655,9 +859,9 @@ class PictureItemState extends State<PictureItem>
 
   Widget _getFollowAction({required BuildContext context}) {
     return Container(
-        width: ProfileImageSize,
-        height: ProfileImageSize,
-        child: widget.post.uid == widget.idUserActual || isFollowing
+        width: ProfileImageSize + 5.0,
+        height: ProfileImageSize + 7.5,
+        child: post.uid == widget.idUserActual || isFollowing
             ? _getProfilePicture(context)
             : Stack(children: [
                 _getProfilePicture(context),
@@ -666,43 +870,48 @@ class PictureItemState extends State<PictureItem>
   }
 
   Widget _getProfilePicture(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ProfilUser(
-                      userPostID: widget.post.uid,
-                    )));
-      },
-      child: widget.post.imageUrl == null
-          ? Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).canvasColor,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.black),
-              ),
-              child: Icon(
-                Icons.person,
-                size: 30,
-              ))
-          : Container(
-              decoration: BoxDecoration(
-                  color: Colors.white60,
+    return Align(
+      alignment: Alignment.topCenter,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfilUser(
+                        userPostID: post.uid,
+                      )));
+        },
+        child: post.imageUrl == null
+            ? Container(
+                width: ProfileImageSize,
+                height: ProfileImageSize,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).canvasColor,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.black),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image:
-                          CachedNetworkImageProvider(widget.post.imageUrl!))),
-            ),
+                ),
+                child: Icon(
+                  Icons.person,
+                  size: 30,
+                ))
+            : Container(
+                width: ProfileImageSize,
+                height: ProfileImageSize,
+                decoration: BoxDecoration(
+                    color: Colors.white60,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black),
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: CachedNetworkImageProvider(post.imageUrl!))),
+              ),
+      ),
     );
   }
 
   Widget _getPlusIcon({required BuildContext context}) {
-    return Positioned(
-      bottom: 0,
-      left: ((ActionWidgetSize / 2) - (PlusIconSize / 2)),
+    return Align(
+      alignment: Alignment.bottomCenter,
       child: GestureDetector(
         onTap: () => followUser(),
         child: Container(
@@ -728,10 +937,11 @@ class PictureItemState extends State<PictureItem>
 
   Widget gameBar() {
     return Container(
-      height: 50,
+      height: MediaQuery.of(context).size.height / 11,
       width: MediaQuery.of(context).size.width,
       child: Padding(
-          padding: EdgeInsets.only(right: 25.0),
+          padding: EdgeInsets.only(
+              right: (MediaQuery.of(context).size.width / 4) / 3.5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -740,30 +950,32 @@ class PictureItemState extends State<PictureItem>
                 color: Colors.white,
                 size: 23,
               ),
-              Card(
-                color: Colors.transparent,
-                shadowColor: Colors.transparent,
-                child: Container(
-                    height: 40,
-                    width: 55,
-                    child: Marquee(
-                      text: widget.post.gameName,
-                      style: mystyle(13),
-                      textDirection: TextDirection.ltr,
-                      blankSpace: 50,
-                      velocity: 30,
-                    )),
-              ),
               Container(
+                  padding: EdgeInsets.zero,
+                  width: MediaQuery.of(context).size.width / 4,
+                  child: Marquee(
+                    text: post.gameName,
+                    style: mystyle(13, Colors.white),
+                    textDirection: TextDirection.ltr,
+                    blankSpace: 50,
+                    velocity: 30,
+                  )),
+              Container(
+                padding: EdgeInsets.zero,
                 height: 40,
                 width: 40,
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(5.0),
                     image: DecorationImage(
-                        image:
-                            CachedNetworkImageProvider(widget.post.gameImage),
+                        image: CachedNetworkImageProvider(post.gameImage),
                         fit: BoxFit.cover)),
+                child: GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => GameScreen(game: game))),
+                ),
               )
             ],
           )),
@@ -775,11 +987,19 @@ class VideoItem extends StatefulWidget {
   final VideoPlayerController videoPlayerController;
   final String idUserActual;
   final Post post;
+  final double positionDescriptionBar;
+  final double positionActionsBar;
+  final bool isGameBar;
+  final bool isFollowingsSection;
 
   VideoItem(
       {required this.videoPlayerController,
       required this.idUserActual,
-      required this.post});
+      required this.post,
+      required this.positionDescriptionBar,
+      required this.positionActionsBar,
+      required this.isGameBar,
+      required this.isFollowingsSection});
 
   @override
   VideoItemState createState() => VideoItemState();
@@ -802,6 +1022,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
   late String hashtags;
   late String descriptionFinal;
+
+  late Game game;
 
   bool isFollowing = false;
 
@@ -917,6 +1139,125 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     });
   }
 
+  showViewersPostBottomSheet() {
+    return showMaterialModalBottomSheet(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10.0),
+                topRight: Radius.circular(10.0))),
+        context: context,
+        builder: (_) {
+          return Container(
+            height: MediaQuery.of(context).size.height / 2,
+            child: ViewersScreen(
+              post: post,
+            ),
+          );
+        });
+  }
+
+  showMorePostBottomSheet() {
+    return showMaterialModalBottomSheet(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+        ),
+        context: context,
+        builder: (_) {
+          return Container(
+            height: MediaQuery.of(context).size.height / 2,
+            child: Column(
+              children: [
+                Container(
+                  height: 60,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10.0),
+                          topRight: Radius.circular(10.0)),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 1.0,
+                            spreadRadius: 1.0,
+                            offset: Offset(0.0, 1.0))
+                      ]),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(Icons.arrow_back_ios)),
+                        Text(
+                          'More',
+                          style: mystyle(16),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                    child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: Center(
+                    child: ListView(
+                      physics: AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics()),
+                      children: [
+                        ListTile(
+                          onTap: () => print('Signaler'),
+                          leading: Icon(Icons.flag),
+                          title: Text(
+                            'Signaler',
+                            style: mystyle(12),
+                          ),
+                        ),
+                        ListTile(
+                          onTap: () => print('Pas interessé'),
+                          leading: Icon(Icons.not_interested_rounded),
+                          title: Text(
+                            'Pas interessé',
+                            style: mystyle(12),
+                          ),
+                        ),
+                        ListTile(
+                          onTap: () => print('Copy'),
+                          leading: Icon(Icons.copy),
+                          title: Text(
+                            'Copier le lien',
+                            style: mystyle(12),
+                          ),
+                        ),
+                        ListTile(
+                          onTap: () => print('Follow/Unfollow'),
+                          leading: Icon(Icons.add),
+                          title: Text(
+                            'Follow',
+                            style: mystyle(12),
+                          ),
+                        ),
+                        ListTile(
+                          onTap: () => print('About account'),
+                          leading: Icon(Icons.account_box),
+                          title: Text(
+                            'A propos du compte',
+                            style: mystyle(12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ))
+              ],
+            ),
+          );
+        });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -967,6 +1308,13 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     hashtags = concatListHashtags(post.hashtags);
     descriptionFinal = concatDescriptionHastags(post.description, hashtags);
 
+    //Game du post
+    FirebaseFirestore.instance
+        .collection('games')
+        .doc(post.gameName)
+        .get()
+        .then((gameDoc) => game = Game.fromMap(gameDoc, gameDoc.data()!));
+
     //Listener sur les up&down du post
     upListener = post.reference.collection('up').snapshots().listen((data) {
       if (up.length != 0) {
@@ -991,7 +1339,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
     //initilisation des animations up&down sur le post
     _upController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 750));
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
     _upAnimation = CurvedAnimation(parent: _upController, curve: Curves.easeIn);
 
     _upController.addListener(() {
@@ -1001,7 +1349,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     });
 
     _downController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 750));
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
     _downAnimation =
         CurvedAnimation(parent: _downController, curve: Curves.easeIn);
 
@@ -1047,32 +1395,36 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
       children: [
         contentPostVideo(),
         getProgressContent(),
-        Positioned(
-            bottom: 0,
-            child: Container(
-              height: MediaQuery.of(context).size.height / 1.5,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                children: [
-                  Expanded(
+        Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              Expanded(
+                  child: Container(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(child: description()),
+                    actionsBar(points)
+                  ],
+                ),
+              )),
+              widget.isGameBar
+                  ? Container(
+                      height: MediaQuery.of(context).size.height / 11,
+                      width: MediaQuery.of(context).size.width,
                       child: Row(
-                    children: [
-                      Expanded(child: description()),
-                      actionsBar(points)
-                    ],
-                  )),
-                  Container(
-                    height: 50,
-                    child: Row(
-                      children: [
-                        Expanded(child: getPlayController()),
-                        Expanded(child: gameBar())
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            )),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [getPlayController(), gameBar()],
+                      ),
+                    )
+                  : SizedBox(
+                      height: MediaQuery.of(context).size.height / 11,
+                    )
+            ],
+          ),
+        ),
         Column(
           children: [
             Expanded(child: Container(
@@ -1120,7 +1472,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
               size: 80,
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -1131,7 +1483,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
         Center(
           child: videoPlayerController.value.isInitialized
               ? VisibilityDetector(
-                  key: Key('visibility${widget.post.id}'),
+                  key: Key('visibility${post.id}'),
                   child: AspectRatio(
                       aspectRatio: videoPlayerController.value.aspectRatio,
                       child: VideoPlayer(videoPlayerController)),
@@ -1177,70 +1529,87 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   }
 
   getPlayController() {
-    return Padding(
-      padding: EdgeInsets.only(left: 5.0),
-      child: Card(
-        color: Colors.transparent,
-        shadowColor: Colors.transparent,
-        child: Row(
-          children: [
-            IconButton(
+    return Container(
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () {
+              print('press pause');
+              if (videoPlayerController.value.isPlaying) {
+                setState(() {
+                  videoPlayerController.pause();
+                });
+              } else {
+                setState(() {
+                  videoPlayerController.play();
+                });
+              }
+            },
+            icon: Icon(
+              videoPlayerController.value.isPlaying
+                  ? Icons.pause
+                  : Icons.play_arrow,
+              size: 23,
+              color: Colors.white,
+            ),
+          ),
+          IconButton(
               onPressed: () {
-                if (videoPlayerController.value.isPlaying) {
-                  setState(() {
-                    videoPlayerController.pause();
-                  });
+                print('volume');
+                setState(() {
+                  volumeOn = !volumeOn;
+                });
+
+                if (volumeOn) {
+                  videoPlayerController.setVolume(1);
                 } else {
-                  setState(() {
-                    videoPlayerController.play();
-                  });
+                  videoPlayerController.setVolume(0);
                 }
               },
               icon: Icon(
-                videoPlayerController.value.isPlaying
-                    ? Icons.pause
-                    : Icons.play_arrow,
+                volumeOn ? Icons.volume_up_outlined : Icons.volume_off_outlined,
                 size: 23,
                 color: Colors.white,
-              ),
-            ),
-            IconButton(
-                onPressed: () {
-                  print('volume');
-                  setState(() {
-                    volumeOn = !volumeOn;
-                  });
-
-                  if (volumeOn) {
-                    videoPlayerController.setVolume(1);
-                  } else {
-                    videoPlayerController.setVolume(0);
-                  }
-                },
-                icon: Icon(
-                  volumeOn
-                      ? Icons.volume_up_outlined
-                      : Icons.volume_mute_outlined,
-                  size: 23,
-                  color: Colors.white,
-                ))
-          ],
-        ),
+              )),
+          SizedBox(
+            width: 15.0,
+          ),
+          widget.isFollowingsSection
+              ? GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => GameScreen(game: game))),
+                  child: Container(
+                    height: 30.0,
+                    width: 30.0,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).canvasColor,
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(5.0),
+                        image: DecorationImage(
+                            image: CachedNetworkImageProvider(post.gameImage),
+                            fit: BoxFit.cover)),
+                  ),
+                )
+              : SizedBox()
+        ],
       ),
     );
   }
 
   Widget getProgressContent() {
-    return Align(
-      alignment: Alignment.bottomCenter,
+    return Positioned(
+      bottom: widget.isGameBar ? 0 : MediaQuery.of(context).size.height / 11,
       child: Container(
-        height: 6.0,
+        height: 7.0,
+        width: MediaQuery.of(context).size.width,
         child: VideoProgressIndicator(
           videoPlayerController,
           allowScrubbing: true,
           colors: VideoProgressColors(
               playedColor: Theme.of(context).primaryColor,
-              backgroundColor: Colors.grey),
+              backgroundColor: Colors.white),
         ),
       ),
     );
@@ -1249,8 +1618,9 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   Widget description() {
     return Container(
         alignment: Alignment.bottomLeft,
+        height: MediaQuery.of(context).size.height / 1.5,
         child: Padding(
-          padding: EdgeInsets.only(bottom: 7.5),
+          padding: EdgeInsets.only(bottom: widget.positionDescriptionBar),
           child: Card(
             color: Colors.transparent,
             shadowColor: Colors.transparent,
@@ -1261,6 +1631,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      widget.isGameBar ? SizedBox() : getPlayController(),
                       Row(
                         children: [
                           Card(
@@ -1275,16 +1646,18 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                                                 userPostID: post.uid,
                                               )));
                                 },
-                                child: Text(post.username, style: mystyle(14))),
+                                child: Text(post.username,
+                                    style: mystyle(14, Colors.white))),
                           ),
                           SizedBox(
                             width: 2.5,
                           ),
-                          Text('.', style: mystyle(11)),
+                          Text('.', style: mystyle(11, Colors.white)),
                           SizedBox(
                             width: 2.5,
                           ),
-                          Text(DateHelper().datePostView(post.date)),
+                          Text(DateHelper().datePostView(post.date),
+                              style: TextStyle(color: Colors.white)),
                         ],
                       ),
                       SizedBox(
@@ -1300,9 +1673,11 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                             expandText: 'Plus',
                             collapseText: 'Moins',
                             maxLines: 2,
-                            onHashtagTap: (hashtags) {
-                              print('Action quand on appuie sur un hashtag');
-                            },
+                            onHashtagTap: (hashtags) => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        HashtagsScreen(titleTag: hashtags))),
                             hashtagStyle:
                                 mystyle(12, Theme.of(context).primaryColor),
                           )),
@@ -1315,32 +1690,36 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
   Widget actionsBar(int points) {
     return Container(
+      height: MediaQuery.of(context).size.height / 1.5,
       width: MediaQuery.of(context).size.width / 4,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        _getSocialReferencement(
-            iconUp: Icons.arrow_upward_outlined,
-            iconDown: Icons.arrow_downward_outlined,
-            title: points.toString()),
-        SizedBox(
-          height: 25.0,
-        ),
-        _getSocialAction(
-            icon: Icons.insert_comment_outlined,
-            title: post.commentcount.toString(),
-            context: context),
-        SizedBox(
-          height: 25.0,
-        ),
-        _getViewersAction(),
-        SizedBox(
-          height: 25.0,
-        ),
-        _getMore(),
-        SizedBox(
-          height: 25.0,
-        ),
-        _getFollowAction(context: context),
-      ]),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: widget.positionActionsBar),
+        child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          _getSocialReferencement(
+              iconUp: Icons.arrow_upward_outlined,
+              iconDown: Icons.arrow_downward_outlined,
+              title: points.toString()),
+          SizedBox(
+            height: 35.0,
+          ),
+          _getSocialAction(
+              icon: Icons.insert_comment_outlined,
+              title: post.commentcount.toString(),
+              context: context),
+          SizedBox(
+            height: 35.0,
+          ),
+          _getViewersAction(),
+          SizedBox(
+            height: 35.0,
+          ),
+          _getMore(),
+          SizedBox(
+            height: 35.0,
+          ),
+          _getFollowAction(context: context),
+        ]),
+      ),
     );
   }
 
@@ -1435,7 +1814,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
           color: Colors.transparent,
           shadowColor: Colors.transparent,
           child: InkWell(
-            onTap: () => print('See viewers'),
+            onTap: () => showViewersPostBottomSheet(),
             child: Icon(
               Icons.remove_red_eye_outlined,
               color: Colors.white,
@@ -1458,7 +1837,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
       color: Colors.transparent,
       shadowColor: Colors.transparent,
       child: InkWell(
-          onTap: () => print('More on the post'),
+          onTap: () => showMorePostBottomSheet(),
           child: Icon(
             Icons.more_vert_outlined,
             color: Colors.white,
@@ -1469,8 +1848,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
   Widget _getFollowAction({required BuildContext context}) {
     return Container(
-      width: ProfileImageSize,
-      height: ProfileImageSize,
+      width: ProfileImageSize + 5.0,
+      height: ProfileImageSize + 7.5,
       child: post.uid == widget.idUserActual || isFollowing
           ? _getProfilePicture(context)
           : Stack(
@@ -1479,42 +1858,48 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   }
 
   Widget _getProfilePicture(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ProfilUser(
-                      userPostID: post.uid,
-                    )));
-      },
-      child: post.imageUrl == null
-          ? Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).canvasColor,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.black),
-              ),
-              child: Icon(
-                Icons.person,
-                size: 30,
-              ))
-          : Container(
-              decoration: BoxDecoration(
-                  color: Colors.white60,
+    return Align(
+      alignment: Alignment.topCenter,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfilUser(
+                        userPostID: post.uid,
+                      )));
+        },
+        child: post.imageUrl == null
+            ? Container(
+                height: ProfileImageSize,
+                width: ProfileImageSize,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).canvasColor,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.black),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(post.imageUrl!))),
-            ),
+                ),
+                child: Icon(
+                  Icons.person,
+                  size: 30,
+                ))
+            : Container(
+                height: ProfileImageSize,
+                width: ProfileImageSize,
+                decoration: BoxDecoration(
+                    color: Colors.white60,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black),
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: CachedNetworkImageProvider(post.imageUrl!))),
+              ),
+      ),
     );
   }
 
   Widget _getPlusIcon(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      left: ((ActionWidgetSize / 2) - (PlusIconSize / 2)),
+    return Align(
+      alignment: Alignment.bottomCenter,
       child: GestureDetector(
         onTap: () => followUser(),
         child: Container(
@@ -1540,36 +1925,30 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
   Widget gameBar() {
     return Container(
-      height: 50,
-      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 11,
       child: Padding(
-          padding: EdgeInsets.only(right: 25.0),
+          padding: EdgeInsets.only(
+              right: (MediaQuery.of(context).size.width / 4) / 3.5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Padding(
-                padding: EdgeInsets.only(right: 3.0),
-                child: Icon(
-                  Icons.videogame_asset,
-                  color: Colors.white,
-                  size: 23,
-                ),
-              ),
-              Card(
-                color: Colors.transparent,
-                shadowColor: Colors.transparent,
-                child: Container(
-                    height: 40,
-                    width: 55,
-                    child: Marquee(
-                      text: post.gameName,
-                      style: mystyle(13),
-                      textDirection: TextDirection.ltr,
-                      blankSpace: 50,
-                      velocity: 30,
-                    )),
+              Icon(
+                Icons.videogame_asset,
+                color: Colors.white,
+                size: 23,
               ),
               Container(
+                  padding: EdgeInsets.zero,
+                  width: MediaQuery.of(context).size.width / 4,
+                  child: Marquee(
+                    text: post.gameName,
+                    style: mystyle(13, Colors.white),
+                    textDirection: TextDirection.ltr,
+                    blankSpace: 50,
+                    velocity: 30,
+                  )),
+              Container(
+                padding: EdgeInsets.zero,
                 height: 40,
                 width: 40,
                 decoration: BoxDecoration(
@@ -1578,6 +1957,12 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                     image: DecorationImage(
                         image: CachedNetworkImageProvider(post.gameImage),
                         fit: BoxFit.cover)),
+                child: GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => GameScreen(game: game))),
+                ),
               )
             ],
           )),

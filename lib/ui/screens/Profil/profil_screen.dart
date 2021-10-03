@@ -153,7 +153,7 @@ class _MyProfilScreenState extends State<MyProfilScreen>
                                       builder: (BuildContext context) =>
                                           ReglagesScreen(user: widget.user)))),
                         ],
-                        expandedHeight: 225,
+                        expandedHeight: 255,
                         flexibleSpace: Container(
                           decoration: BoxDecoration(
                               gradient: LinearGradient(
@@ -371,7 +371,7 @@ class ProfilUserState extends State<ProfilUser>
 
   UserModel? userPost;
 
-  late StreamSubscription followersListener, followingsListener, pointsListener;
+  late StreamSubscription followersListener, followingsListener;
   int followers = 0;
   int followings = 0;
   int points = 0;
@@ -423,16 +423,6 @@ class ProfilUserState extends State<ProfilUser>
         followers = data.docs.length;
       });
 
-      pointsListener = FirebaseFirestore.instance
-          .collection('posts')
-          .where('uid', isEqualTo: widget.userPostID)
-          .snapshots()
-          .listen((data) {
-        for (var item in data.docs) {
-          points = (item.data()['upcount'] - item.data()['downcount']) + points;
-        }
-      });
-
       followingsListener = FirebaseFirestore.instance
           .collection('users')
           .doc(widget.userPostID)
@@ -443,6 +433,16 @@ class ProfilUserState extends State<ProfilUser>
           followings = data.docs.length;
         });
       });
+    });
+
+    FirebaseFirestore.instance
+        .collection('posts')
+        .where('uid', isEqualTo: widget.userPostID)
+        .get()
+        .then((data) {
+      for (var item in data.docs) {
+        points = (item.data()['upcount'] - item.data()['downcount']) + points;
+      }
     });
 
     _tabController = TabController(length: 2, vsync: this);
@@ -456,7 +456,6 @@ class ProfilUserState extends State<ProfilUser>
   void dispose() {
     _tabController.dispose();
     followersListener.cancel();
-    pointsListener.cancel();
     followingsListener.cancel();
     super.dispose();
   }
@@ -481,214 +480,332 @@ class ProfilUserState extends State<ProfilUser>
     });
   }
 
+  unfollowUser() async {
+    userPost!.ref!.collection('followers').doc(me!.uid).get().then((user) {
+      if (user.exists) {
+        user.reference.delete();
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(me!.uid)
+            .collection('following')
+            .doc(userPost!.uid)
+            .delete();
+
+        setState(() {
+          isFollowing = false;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return (dataIsThere && userPost != null)
-        ? NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                SliverAppBar(
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    automaticallyImplyLeading: false,
-                    elevation: 6.0,
-                    forceElevated: true,
-                    pinned: true,
-                    leading: IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(
-                          Icons.arrow_back_ios,
-                          size: 23,
-                        )),
-                    centerTitle: true,
-                    title: Text(
-                      userPost!.username,
-                      style: TextStyle(fontSize: 23),
-                    ),
-                    expandedHeight: 250,
-                    flexibleSpace: Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
-                              ],
-                              tileMode: TileMode.clamp)),
-                      child: FlexibleSpaceBar(
-                        collapseMode: CollapseMode.parallax,
-                        background: Stack(
-                          children: [
-                            Align(
-                                alignment: Alignment.center,
-                                child: userPost!.imageUrl == null
-                                    ? Container(
-                                        height: 90,
-                                        width: 90,
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).canvasColor,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                              color: Colors.black, width: 2.0),
-                                        ),
-                                        child: Icon(
-                                          Icons.person,
-                                          size: 50,
-                                        ))
-                                    : Container(
-                                        margin: EdgeInsets.all(3.0),
-                                        width: 90,
-                                        height: 90,
-                                        decoration: BoxDecoration(
-                                            color: Colors.transparent,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness:
+              Theme.of(context).brightness == Brightness.dark
+                  ? Brightness.light
+                  : Brightness.dark,
+          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: (dataIsThere && userPost != null)
+            ? NestedScrollView(
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return <Widget>[
+                    SliverAppBar(
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        automaticallyImplyLeading: false,
+                        elevation: 6.0,
+                        forceElevated: true,
+                        pinned: true,
+                        leading: IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(
+                              Icons.arrow_back_ios,
+                              size: 23,
+                            )),
+                        centerTitle: true,
+                        title: Text(
+                          userPost!.username,
+                          style: TextStyle(fontSize: 23),
+                        ),
+                        expandedHeight: userPost!.uid != me!.uid ? 285 : 255,
+                        flexibleSpace: Container(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).accentColor
+                                  ],
+                                  tileMode: TileMode.clamp)),
+                          child: FlexibleSpaceBar(
+                            collapseMode: CollapseMode.parallax,
+                            background: Padding(
+                              padding: EdgeInsets.only(top: 80.0),
+                              child: Column(
+                                children: [
+                                  userPost!.imageUrl == null
+                                      ? Container(
+                                          height: 90,
+                                          width: 90,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Theme.of(context).canvasColor,
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                                color: Color(0xFF222831)),
-                                            image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image:
-                                                    CachedNetworkImageProvider(
-                                                        userPost!.imageUrl!))),
-                                      )),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.only(right: 15.0, bottom: 10.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Followers(
-                                                    idUser: userPost!.uid,
-                                                  ))),
-                                      child: Container(
-                                        color: Colors.transparent,
-                                        height: 60,
-                                        width: 70,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                                alignment: Alignment.topCenter,
-                                                child: Text(
-                                                  'Followers',
-                                                )),
-                                            Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Text(
-                                                followers.toString(),
-                                                style: TextStyle(fontSize: 23),
-                                              ),
-                                            )
-                                          ],
+                                                color: Colors.black,
+                                                width: 2.0),
+                                          ),
+                                          child: Icon(
+                                            Icons.person,
+                                            size: 50,
+                                          ))
+                                      : Container(
+                                          margin: EdgeInsets.all(3.0),
+                                          width: 90,
+                                          height: 90,
+                                          decoration: BoxDecoration(
+                                              color: Colors.transparent,
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Color(0xFF222831)),
+                                              image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image:
+                                                      CachedNetworkImageProvider(
+                                                          userPost!
+                                                              .imageUrl!))),
                                         ),
-                                      ),
-                                    ),
+                                  SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  if (userPost!.uid != me!.uid)
                                     Container(
-                                      color: Colors.transparent,
-                                      height: 60,
-                                      width: 50,
-                                      child: Stack(
-                                        children: [
-                                          Align(
-                                              alignment: Alignment.topCenter,
-                                              child: Text(
-                                                'Points',
+                                      width: MediaQuery.of(context).size.width /
+                                          2.5,
+                                      height: 30,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      child: isFollowing
+                                          ? ElevatedButton(
+                                              onPressed: () => unfollowUser(),
+                                              style: TextButton.styleFrom(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          color: Colors.black),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0))),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.remove,
+                                                      size: 23,
+                                                      color: Colors.black),
+                                                  SizedBox(
+                                                    width: 5.0,
+                                                  ),
+                                                  Text(
+                                                    'Unfollow',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  )
+                                                ],
+                                              ))
+                                          : ElevatedButton(
+                                              onPressed: () => followUser(),
+                                              style: TextButton.styleFrom(
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .primaryColor,
+                                                  elevation: 6,
+                                                  shape: RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          color: Colors.black),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0))),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.add,
+                                                      size: 23,
+                                                      color: Colors.black),
+                                                  SizedBox(
+                                                    width: 10.0,
+                                                  ),
+                                                  Text(
+                                                    'Follow',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  )
+                                                ],
                                               )),
-                                          Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: Text(
-                                              points.toString(),
-                                              style: TextStyle(fontSize: 23),
-                                            ),
-                                          )
-                                        ],
-                                      ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Follows(
-                                                  idUser: userPost!.uid))),
-                                      child: Container(
-                                        color: Colors.transparent,
-                                        height: 60,
-                                        width: 50,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                                alignment: Alignment.topCenter,
-                                                child: Text(
-                                                  'Follows',
-                                                )),
-                                            Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Text(
-                                                followings.toString(),
-                                                style: TextStyle(fontSize: 23),
-                                              ),
-                                            )
-                                          ],
+                                  SizedBox(
+                                    height: 20.0,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right: 15.0, bottom: 10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Followers(
+                                                        idUser: userPost!.uid,
+                                                      ))),
+                                          child: Container(
+                                            color: Colors.transparent,
+                                            height: 60,
+                                            width: 70,
+                                            child: Stack(
+                                              children: [
+                                                Align(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    child: Text(
+                                                      'Followers',
+                                                    )),
+                                                Align(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  child: Text(
+                                                    followers.toString(),
+                                                    style:
+                                                        TextStyle(fontSize: 23),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                  ],
-                                ),
+                                        Container(
+                                          color: Colors.transparent,
+                                          height: 60,
+                                          width: 50,
+                                          child: Stack(
+                                            children: [
+                                              Align(
+                                                  alignment:
+                                                      Alignment.topCenter,
+                                                  child: Text(
+                                                    'Points',
+                                                  )),
+                                              Align(
+                                                alignment:
+                                                    Alignment.bottomCenter,
+                                                child: Text(
+                                                  points.toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 23),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => Follows(
+                                                      idUser: userPost!.uid))),
+                                          child: Container(
+                                            color: Colors.transparent,
+                                            height: 60,
+                                            width: 50,
+                                            child: Stack(
+                                              children: [
+                                                Align(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    child: Text(
+                                                      'Follows',
+                                                    )),
+                                                Align(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  child: Text(
+                                                    followings.toString(),
+                                                    style:
+                                                        TextStyle(fontSize: 23),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )),
-                SliverPersistentHeader(
-                    pinned: true,
-                    delegate: _SliverAppBarDelegate(TabBar(
-                        controller: _tabController,
-                        isScrollable: true,
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        labelColor: Theme.of(context).primaryColor,
-                        unselectedLabelColor: Colors.grey,
-                        indicator: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Theme.of(context).canvasColor,
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Theme.of(context).shadowColor,
-                                  blurRadius: 3,
-                                  spreadRadius: 3)
-                            ]),
-                        tabs: [
-                          Tab(
-                            text: 'Public',
+                            ),
                           ),
-                          Tab(
-                            text: 'Private',
-                          ),
-                        ])))
-              ];
-            },
-            body: Stack(
-              children: [
-                TabBarView(controller: _tabController, children: [
+                        )),
+                    SliverPersistentHeader(
+                        pinned: true,
+                        delegate: _SliverAppBarDelegate(TabBar(
+                            controller: _tabController,
+                            isScrollable: true,
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            labelColor: Theme.of(context).primaryColor,
+                            unselectedLabelColor: Colors.grey,
+                            indicator: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Theme.of(context).canvasColor,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Theme.of(context).primaryColor,
+                                      offset: Offset(1.0, 1.0))
+                                ]),
+                            tabs: [
+                              Tab(
+                                text: 'Public',
+                              ),
+                              Tab(
+                                text: 'Private',
+                              ),
+                            ])))
+                  ];
+                },
+                body: TabBarView(controller: _tabController, children: [
                   PostsPublic(user: userPost!),
                   Center(
                     child:
                         Text('Visible seulement pour les followers du compte'),
                   )
                 ]),
-              ],
-            ))
-        : Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
-            ),
-          );
+              )
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+      ),
+    );
   }
 }
 

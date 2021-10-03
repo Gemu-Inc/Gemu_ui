@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/ui/widgets/bottom_share.dart';
+import 'package:gemu/ui/screens/Autres/bottom_share.dart';
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/providers/index_tab_games_home.dart';
 

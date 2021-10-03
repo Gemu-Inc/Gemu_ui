@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
-import 'package:helpers/helpers/misc.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
@@ -12,6 +11,7 @@ import 'package:gemu/ui/widgets/bouncing_button.dart';
 import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/models/game.dart';
+import 'package:gemu/ui/screens/Autres/hashtags_screen.dart';
 
 import '../Search/search_screen.dart';
 import 'highlights_posts_view.dart';
@@ -608,33 +608,42 @@ class HighlightsScreenState extends State<HighlightsScreen>
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Container(
-                                        height: 50,
-                                        width: 50,
-                                        decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                colors: [
-                                                  Theme.of(context)
-                                                      .primaryColor,
-                                                  Theme.of(context).accentColor
-                                                ]),
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Theme.of(context)
-                                                      .canvasColor,
-                                                  spreadRadius: 3)
-                                            ]),
-                                        child: Icon(Icons.tag),
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) => HashtagsScreen(
+                                                    titleTag: hashtag.name))),
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    Theme.of(context)
+                                                        .primaryColor,
+                                                    Theme.of(context)
+                                                        .accentColor
+                                                  ]),
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Theme.of(context)
+                                                        .canvasColor,
+                                                    spreadRadius: 3)
+                                              ]),
+                                          child: Icon(Icons.tag),
+                                        ),
                                       ),
                                       SizedBox(
                                         height: 2.0,
                                       ),
-                                      Text(hashtag.name),
+                                      Text(hashtag.name, style: mystyle(12)),
                                       Text(
-                                          '${hashtag.postsCount.toString()} publications')
+                                          '${hashtag.postsCount.toString()} publications',
+                                          style: mystyle(12))
                                     ],
                                   ),
                                 ),
@@ -700,9 +709,8 @@ class HighlightsScreenState extends State<HighlightsScreen>
     return dataDiscoverIsThere
         ? posts.length != 0
             ? Container(
-                padding: EdgeInsets.only(
-                    top: 10.0,
-                    bottom: (MediaQuery.of(context).size.height / 11) + 5.0),
+                padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0,
+                    (MediaQuery.of(context).size.height / 11) + 5.0),
                 child: Column(
                   children: [
                     GridView.builder(
@@ -711,56 +719,14 @@ class HighlightsScreenState extends State<HighlightsScreen>
                         physics: NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            childAspectRatio: 1.0,
                             mainAxisSpacing: 1.0,
                             crossAxisSpacing: 1.0),
                         itemCount: posts.length,
                         itemBuilder: (_, index) {
                           Post post = posts[index];
                           return post.type == 'picture'
-                              ? GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) => DiscoverPostsView(
-                                                indexPost: index,
-                                                posts: posts)));
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.black),
-                                        image: DecorationImage(
-                                            image: CachedNetworkImageProvider(
-                                                post.postUrl),
-                                            fit: BoxFit.cover)),
-                                  ),
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) => DiscoverPostsView(
-                                                indexPost: index,
-                                                posts: posts)));
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.black),
-                                        image: DecorationImage(
-                                            image: CachedNetworkImageProvider(
-                                                post.previewImage!),
-                                            fit: BoxFit.cover)),
-                                    child: Align(
-                                      alignment: Alignment.topRight,
-                                      child: Icon(
-                                        Icons.play_arrow,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                );
+                              ? picture(post, index)
+                              : video(post, index);
                         }),
                     Padding(
                       padding: EdgeInsets.only(top: 10.0),
@@ -809,6 +775,92 @@ class HighlightsScreenState extends State<HighlightsScreen>
               ),
             ),
           );
+  }
+
+  Widget picture(Post post, int index) {
+    return Material(
+      color: Theme.of(context).canvasColor,
+      borderRadius: BorderRadius.circular(5.0),
+      child: Ink(
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(5.0),
+              image: DecorationImage(
+                  image: CachedNetworkImageProvider(post.postUrl),
+                  fit: BoxFit.cover)),
+          child: Stack(
+            children: [
+              Container(color: Colors.black.withOpacity(0.2)),
+              InkWell(
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) =>
+                            DiscoverPostsView(indexPost: index, posts: posts))),
+                borderRadius: BorderRadius.circular(5.0),
+                splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+              ),
+              Positioned(
+                bottom: 5.0,
+                right: 5.0,
+                child: Column(
+                  children: [
+                    Icon(Icons.remove_red_eye, color: Colors.white),
+                    Text(post.viewcount.toString(),
+                        style: mystyle(12, Colors.white))
+                  ],
+                ),
+              )
+            ],
+          )),
+    );
+  }
+
+  Widget video(Post post, int index) {
+    return Material(
+      color: Theme.of(context).canvasColor,
+      borderRadius: BorderRadius.circular(5.0),
+      child: Ink(
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(5.0),
+              image: DecorationImage(
+                  image: CachedNetworkImageProvider(post.previewImage!),
+                  fit: BoxFit.cover)),
+          child: Stack(
+            children: [
+              Container(color: Colors.black.withOpacity(0.2)),
+              InkWell(
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) =>
+                            DiscoverPostsView(indexPost: index, posts: posts))),
+                borderRadius: BorderRadius.circular(5.0),
+                splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+              ),
+              Positioned(
+                top: 5.0,
+                left: 5.0,
+                child: Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                ),
+              ),
+              Positioned(
+                bottom: 5.0,
+                right: 5.0,
+                child: Column(
+                  children: [
+                    Icon(Icons.remove_red_eye, color: Colors.white),
+                    Text(post.viewcount.toString(),
+                        style: mystyle(12, Colors.white))
+                  ],
+                ),
+              )
+            ],
+          )),
+    );
   }
 }
 
@@ -1009,68 +1061,103 @@ class PostsByHashtagsState extends State<PostsByHashtags>
     Post post,
     List<Post> posts,
   ) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HashtagPostsView(
-                      hashtag: hashtag,
-                      index: indexPost,
-                      posts: posts,
-                    )));
-      },
-      child: Container(
-        margin: EdgeInsets.all(5.0),
-        width: 110,
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).accentColor
-                ]),
-            image: DecorationImage(
-                fit: BoxFit.cover,
-                image: CachedNetworkImageProvider(post.postUrl))),
+    return Padding(
+      padding: EdgeInsets.all(2.5),
+      child: Material(
+        borderRadius: BorderRadius.circular(5.0),
+        color: Theme.of(context).canvasColor,
+        child: Ink(
+          width: 110,
+          decoration: BoxDecoration(
+              color: Theme.of(context).canvasColor,
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(5.0),
+              image: DecorationImage(
+                  image: CachedNetworkImageProvider(post.postUrl),
+                  fit: BoxFit.cover)),
+          child: Stack(
+            children: [
+              Container(color: Colors.black.withOpacity(0.2)),
+              InkWell(
+                borderRadius: BorderRadius.circular(5.0),
+                splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HashtagPostsView(
+                              hashtag: hashtag,
+                              index: indexPost,
+                              posts: posts,
+                            ))),
+              ),
+              Positioned(
+                  bottom: 5.0,
+                  right: 5.0,
+                  child: Column(
+                    children: [
+                      Icon(Icons.remove_red_eye, color: Colors.white),
+                      Text(
+                        post.viewcount.toString(),
+                        style: mystyle(12, Colors.white),
+                      )
+                    ],
+                  ))
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget video(Hashtag hashtag, int indexPost, Post post, List<Post> posts) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => HashtagPostsView(
-                      hashtag: hashtag,
-                      index: indexPost,
-                      posts: posts,
-                    )));
-      },
-      child: Container(
-        margin: EdgeInsets.all(5.0),
-        width: 110,
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).accentColor
-                ]),
-            image: DecorationImage(
-                fit: BoxFit.cover,
-                image: CachedNetworkImageProvider(post.previewImage!))),
-        child: Align(
-          alignment: Alignment.topRight,
-          child: Icon(
-            Icons.play_arrow,
-            color: Colors.white,
+    return Padding(
+      padding: EdgeInsets.all(2.5),
+      child: Material(
+        color: Theme.of(context).canvasColor,
+        borderRadius: BorderRadius.circular(5.0),
+        child: Ink(
+          width: 110,
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(5.0),
+              image: DecorationImage(
+                  image: CachedNetworkImageProvider(post.previewImage!),
+                  fit: BoxFit.cover)),
+          child: Stack(
+            children: [
+              Container(
+                color: Colors.black.withOpacity(0.2),
+              ),
+              InkWell(
+                borderRadius: BorderRadius.circular(5.0),
+                splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HashtagPostsView(
+                              hashtag: hashtag,
+                              index: indexPost,
+                              posts: posts,
+                            ))),
+              ),
+              Positioned(
+                top: 5.0,
+                left: 5.0,
+                child: Icon(Icons.play_arrow, color: Colors.white),
+              ),
+              Positioned(
+                  bottom: 5.0,
+                  right: 5.0,
+                  child: Column(
+                    children: [
+                      Icon(Icons.remove_red_eye, color: Colors.white),
+                      Text(
+                        post.viewcount.toString(),
+                        style: mystyle(12, Colors.white),
+                      )
+                    ],
+                  ))
+            ],
           ),
         ),
       ),

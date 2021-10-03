@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/ui/widgets/post_tile.dart';
+import 'package:gemu/ui/screens/Autres/post_tile.dart';
 
 class HashtagPostsView extends StatefulWidget {
   final Hashtag hashtag;
@@ -28,52 +29,48 @@ class HashtagPostsViewState extends State<HashtagPostsView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        left: false,
-        right: false,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    size: 30,
-                  ),
-                  onPressed: () => Navigator.pop(context)),
-              title: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          '#${widget.hashtag.name}',
-                          style: TextStyle(color: Colors.white),
-                        )
-                      ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          systemNavigationBarColor: Colors.black),
+      child: SafeArea(
+          left: false,
+          right: false,
+          child: Scaffold(
+            backgroundColor: Colors.black,
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+                elevation: 0,
+                leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5.0),
-                      child: Text(
-                        '${widget.hashtag.postsCount.toString()} publications',
-                        style: mystyle(11),
-                      ),
-                    )
-                  ],
-                ),
-              )),
-          body: PageView.builder(
-              scrollDirection: Axis.vertical,
-              controller: _pageController,
-              itemCount: widget.posts.length,
-              itemBuilder: (BuildContext context, int index) {
-                Post post = widget.posts[index];
-                return PostTile(idUserActual: me!.uid, post: post);
-              }),
-        ));
+                    onPressed: () => Navigator.pop(context)),
+                title: Text(
+                  '#${widget.hashtag.name}',
+                  style: mystyle(16, Colors.white),
+                )),
+            body: PageView.builder(
+                physics: AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics()),
+                scrollDirection: Axis.vertical,
+                controller: _pageController,
+                itemCount: widget.posts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Post post = widget.posts[index];
+                  return PostTile(
+                    idUserActual: me!.uid,
+                    post: post,
+                    positionDescriptionBar: 5.0,
+                    positionActionsBar: 5.0,
+                    isGameBar: true,
+                    isFollowingsSection: false,
+                  );
+                }),
+          )),
+    );
   }
 }
 
@@ -104,35 +101,51 @@ class DiscoverPostsViewState extends State<DiscoverPostsView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        left: false,
-        right: false,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  size: 30,
-                )),
-            title: Text(
-              'Discover',
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          systemNavigationBarColor: Colors.black),
+      child: SafeArea(
+          left: false,
+          right: false,
+          child: Scaffold(
+            backgroundColor: Colors.black,
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  )),
+              title: Text(
+                'Discover',
+                style: mystyle(16, Colors.white),
+              ),
             ),
-          ),
-          body: PageView.builder(
-              scrollDirection: Axis.vertical,
-              controller: _pageController,
-              itemCount: widget.posts.length,
-              itemBuilder: (_, index) {
-                Post post = widget.posts[index];
-                return PostTile(idUserActual: me!.uid, post: post);
-              }),
-        ));
+            body: PageView.builder(
+                physics: AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics()),
+                scrollDirection: Axis.vertical,
+                controller: _pageController,
+                itemCount: widget.posts.length,
+                itemBuilder: (_, index) {
+                  Post post = widget.posts[index];
+                  return PostTile(
+                    idUserActual: me!.uid,
+                    post: post,
+                    positionDescriptionBar: 5.0,
+                    positionActionsBar: 5.0,
+                    isGameBar: true,
+                    isFollowingsSection: false,
+                  );
+                }),
+          )),
+    );
   }
 }

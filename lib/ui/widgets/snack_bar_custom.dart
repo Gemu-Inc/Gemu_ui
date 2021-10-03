@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:gemu/ui/constants/constants.dart';
 
 class SnackBarCustom extends SnackBar {
-  SnackBarCustom({required BuildContext context, required String error})
+  SnackBarCustom(
+      {required BuildContext context,
+      required String error,
+      required double padddingVertical})
       : super(
-            padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 15.0),
+            padding: EdgeInsets.symmetric(
+                vertical: padddingVertical, horizontal: 15.0),
             backgroundColor: Colors.transparent,
             elevation: 0,
             content: Container(

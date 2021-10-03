@@ -437,9 +437,9 @@ class VideoScreenState extends State<VideoScreen>
             onTap: () {
               if (gameName == 'No game') {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-                  context: context,
-                  error: 'Choississez un jeu pour votre post',
-                ));
+                    context: context,
+                    error: 'Choississez un jeu pour votre post',
+                    padddingVertical: 40.0));
               } else {
                 File file = widget.file;
                 uploadVideo(file.path, gameName);

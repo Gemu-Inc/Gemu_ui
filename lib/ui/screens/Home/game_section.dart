@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/ui/widgets/post_tile.dart';
+import 'package:gemu/ui/screens/Autres/post_tile.dart';
 
 class GameSection extends StatefulWidget {
   final Game game;
   final AnimationController animationRotateController, animationGamesController;
+  bool panelGamesThere;
   final PageController pageController;
 
   GameSection(
       {required this.game,
       required this.animationGamesController,
       required this.animationRotateController,
+      required this.panelGamesThere,
       required this.pageController});
 
   @override
@@ -102,49 +102,36 @@ class GameSectionState extends State<GameSection>
     super.build(context);
     return Stack(
       children: [
-        RefreshIndicator(
-            backgroundColor: Theme.of(context).canvasColor,
-            color: Theme.of(context).primaryColor,
-            displacement:
-                widget.animationRotateController.isCompleted ? 170 : 100,
-            onRefresh: () {
-              print('refresh');
-              return refreshData();
-            },
-            child: dataIsThere
-                ? posts.length == 0
-                    ? Center(
-                        child: Text(
-                          'No posts at the moment',
-                          style: mystyle(11, Colors.white),
-                        ),
-                      )
-                    : PageView.builder(
-                        controller: widget.pageController,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        onPageChanged: (index) {
-                          /*setState(() {
-                              currentPageGamesIndex = index;
-                              print(
-                                  'currentPageGamesIndex est à: $currentPageGamesIndex');
-                            });*/
-                          if (widget.animationRotateController.isCompleted) {
-                            widget.animationRotateController.reverse();
-                            widget.animationGamesController.reverse();
-                          }
-                        },
-                        itemCount: posts.length,
-                        itemBuilder: (context, index) {
-                          Post post = posts[index];
-
-                          return PostTile(idUserActual: me!.uid, post: post);
-                        })
-                : Center(
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).primaryColor,
+        dataIsThere
+            ? posts.length == 0
+                ? Center(
+                    child: Text(
+                      'No posts at the moment',
+                      style: mystyle(11, Colors.white),
                     ),
-                  )),
+                  )
+                : PageView.builder(
+                    controller: widget.pageController,
+                    physics: AlwaysScrollableScrollPhysics(
+                        parent: BouncingScrollPhysics()),
+                    scrollDirection: Axis.vertical,
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) {
+                      Post post = posts[index];
+                      return PostTile(
+                        idUserActual: me!.uid,
+                        post: post,
+                        positionDescriptionBar: 15.0,
+                        positionActionsBar: 20.0,
+                        isGameBar: false,
+                        isFollowingsSection: false,
+                      );
+                    })
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
       ],
     );
   }

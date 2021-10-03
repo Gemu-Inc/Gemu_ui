@@ -5,10 +5,10 @@ import 'package:algolia/algolia.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/models/game.dart';
-import 'package:gemu/ui/screens/Games/game_focus_screen.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/ui/providers/index_tab_games_home.dart';
+import 'package:gemu/ui/screens/Autres/game_screen.dart';
 
 class CategorieScreen extends StatefulWidget {
   final Categorie categorie;
@@ -518,8 +518,7 @@ class GameViewState extends State<GameView> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) =>
-                                    GameFocusScreen(game: widget.game)),
+                                builder: (_) => GameScreen(game: widget.game)),
                           ),
                           child: Container(
                             height: 60,
