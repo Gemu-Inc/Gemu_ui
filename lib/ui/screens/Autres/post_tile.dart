@@ -15,12 +15,13 @@ import 'package:video_player/video_player.dart';
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/ui/widgets/expandable_text.dart';
-import 'package:gemu/services/date_helper.dart';
+import 'package:gemu/helpers/date_helper.dart';
 import 'package:gemu/ui/screens/Autres/comments_screen.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/ui/screens/Profil/profil_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/ui/screens/Autres/viewers_screen.dart';
+import 'package:gemu/models/user.dart';
 
 class PostTile extends StatefulWidget {
   final String idUserActual;
@@ -131,6 +132,7 @@ class PictureItemState extends State<PictureItem>
   late AnimationController _upController, _downController;
   late Animation _upAnimation, _downAnimation;
 
+  late UserModel userPost;
   late Post post;
   late StreamSubscription postListener;
 
@@ -158,6 +160,16 @@ class PictureItemState extends State<PictureItem>
   String concatDescriptionHastags(String description, String hashtags) {
     String concatString = description + '\n\n' + hashtags;
     return concatString;
+  }
+
+  getUserPost() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.post.uid)
+        .get()
+        .then((userData) {
+      userPost = UserModel.fromMap(userData, userData.data()!);
+    });
   }
 
   upPost() async {
@@ -210,7 +222,7 @@ class PictureItemState extends State<PictureItem>
         widget.idUserActual, post.uid, "a down votre post", "updown");
   }
 
-  followUser() async {
+  followPublicUser() async {
     FirebaseFirestore.instance
         .collection('users')
         .doc(post.uid)
@@ -228,6 +240,19 @@ class PictureItemState extends State<PictureItem>
             .set({});
         DatabaseService.addNotification(widget.idUserActual, post.uid,
             "a commencé à vous suivre", "follow");
+
+        setState(() {
+          isFollowing = true;
+        });
+      }
+    });
+  }
+
+  followPrivateUser() async {
+    userPost.ref!.collection('followers').doc(me!.uid).get().then((user) {
+      if (!user.exists) {
+        DatabaseService.addNotification(
+            me!.uid, userPost.uid, "voudrait vous suivre", "follow");
 
         setState(() {
           isFollowing = true;
@@ -373,6 +398,7 @@ class PictureItemState extends State<PictureItem>
   void initState() {
     super.initState();
     post = widget.post;
+
     //écoute sur les changements du post
     postListener = FirebaseFirestore.instance
         .collection('posts')
@@ -383,7 +409,6 @@ class PictureItemState extends State<PictureItem>
       setState(() {
         post = Post.fromMap(data, data.data()!);
       });
-      print(post.commentcount);
     });
 
     //Prendre les infos du user du post
@@ -394,11 +419,40 @@ class PictureItemState extends State<PictureItem>
           .collection('followers')
           .doc(widget.idUserActual)
           .get()
-          .then((follower) {
+          .then((follower) async {
+        if (post.uid != me!.uid) {
+          getUserPost();
+        } else {
+          userPost = me!;
+        }
+        await Future.delayed(Duration(milliseconds: 500));
         if (!follower.exists) {
-          setState(() {
-            isFollowing = false;
-          });
+          if (userPost.privacy == 'private') {
+            await FirebaseFirestore.instance
+                .collection('notifications')
+                .doc(userPost.uid)
+                .collection('singleNotif')
+                .where('from', isEqualTo: me!.uid)
+                .where('type', isEqualTo: 'follow')
+                .where('seen', isEqualTo: false)
+                .limit(1)
+                .get()
+                .then((data) {
+              if (data.docs.length == 0) {
+                setState(() {
+                  isFollowing = false;
+                });
+              } else {
+                setState(() {
+                  isFollowing = true;
+                });
+              }
+            });
+          } else {
+            setState(() {
+              isFollowing = false;
+            });
+          }
         } else {
           setState(() {
             isFollowing = true;
@@ -913,7 +967,13 @@ class PictureItemState extends State<PictureItem>
     return Align(
       alignment: Alignment.bottomCenter,
       child: GestureDetector(
-        onTap: () => followUser(),
+        onTap: () {
+          if (userPost.privacy == 'public') {
+            followPublicUser();
+          } else {
+            followPrivateUser();
+          }
+        },
         child: Container(
             width: PlusIconSize,
             height: PlusIconSize,
@@ -1017,6 +1077,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   late AnimationController _upController, _downController;
   late Animation _upAnimation, _downAnimation;
 
+  late UserModel userPost;
   late Post post;
   late StreamSubscription postListener;
 
@@ -1047,6 +1108,16 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   String concatDescriptionHastags(String description, String hashtags) {
     String concatString = description + '\n\n' + hashtags;
     return concatString;
+  }
+
+  getUserPost() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.post.uid)
+        .get()
+        .then((userData) {
+      userPost = UserModel.fromMap(userData, userData.data()!);
+    });
   }
 
   upPost() async {
@@ -1099,7 +1170,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
         widget.idUserActual, post.uid, "a down votre post", "updown");
   }
 
-  followUser() async {
+  followPublicUser() async {
     FirebaseFirestore.instance
         .collection('users')
         .doc(post.uid)
@@ -1117,6 +1188,19 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
             .set({});
         DatabaseService.addNotification(widget.idUserActual, post.uid,
             "a commencé à vous suivre", "follow");
+
+        setState(() {
+          isFollowing = true;
+        });
+      }
+    });
+  }
+
+  followPrivateUser() async {
+    userPost.ref!.collection('followers').doc(me!.uid).get().then((user) {
+      if (!user.exists) {
+        DatabaseService.addNotification(
+            me!.uid, userPost.uid, "voudrait vous suivre", "follow");
 
         setState(() {
           isFollowing = true;
@@ -1289,11 +1373,40 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
           .collection('followers')
           .doc(widget.idUserActual)
           .get()
-          .then((follower) {
+          .then((follower) async {
+        if (post.uid != me!.uid) {
+          getUserPost();
+        } else {
+          userPost = me!;
+        }
+        await Future.delayed(Duration(milliseconds: 500));
         if (!follower.exists) {
-          setState(() {
-            isFollowing = false;
-          });
+          if (userPost.privacy == 'private') {
+            await FirebaseFirestore.instance
+                .collection('notifications')
+                .doc(userPost.uid)
+                .collection('singleNotif')
+                .where('from', isEqualTo: me!.uid)
+                .where('type', isEqualTo: 'follow')
+                .where('seen', isEqualTo: false)
+                .limit(1)
+                .get()
+                .then((data) {
+              if (data.docs.length == 0) {
+                setState(() {
+                  isFollowing = false;
+                });
+              } else {
+                setState(() {
+                  isFollowing = true;
+                });
+              }
+            });
+          } else {
+            setState(() {
+              isFollowing = false;
+            });
+          }
         } else {
           setState(() {
             isFollowing = true;
@@ -1901,7 +2014,13 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     return Align(
       alignment: Alignment.bottomCenter,
       child: GestureDetector(
-        onTap: () => followUser(),
+        onTap: () {
+          if (userPost.privacy == 'public') {
+            followPublicUser();
+          } else {
+            followPrivateUser();
+          }
+        },
         child: Container(
             width: PlusIconSize,
             height: PlusIconSize,

@@ -10,6 +10,7 @@ class UserModel {
   String? email;
   String? imageUrl;
   String? type;
+  String privacy;
 
   UserModel(
       {this.ref,
@@ -19,18 +20,19 @@ class UserModel {
       required this.username,
       this.email,
       this.imageUrl,
-      this.type});
+      this.type,
+      required this.privacy});
 
   factory UserModel.fromMap(
       DocumentSnapshot snapshot, Map<String, dynamic> data) {
     return UserModel(
-      ref: snapshot.reference,
-      documentId: snapshot.id,
-      uid: data['id'],
-      username: data['username'],
-      email: data['email'],
-      imageUrl: data['imageUrl'],
-    );
+        ref: snapshot.reference,
+        documentId: snapshot.id,
+        uid: data['id'],
+        username: data['username'],
+        email: data['email'],
+        imageUrl: data['imageUrl'],
+        privacy: data['privacy']);
   }
 
   factory UserModel.fromMapAlgolia(
@@ -40,7 +42,8 @@ class UserModel {
         uid: data["objectID"],
         username: data["username"],
         imageUrl: data["imageUrl"],
-        type: data["type"]);
+        type: data["type"],
+        privacy: data["privacy"]);
   }
 
   Map<String, dynamic> toMap() {

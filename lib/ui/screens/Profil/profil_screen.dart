@@ -370,42 +370,46 @@ class ProfilUserState extends State<ProfilUser>
   late TabController _tabController;
 
   UserModel? userPost;
+  late bool isWaiting;
 
-  late StreamSubscription followersListener, followingsListener;
-  int followers = 0;
-  int followings = 0;
+  List<String> followers = [];
+  List<String> followings = [];
   int points = 0;
 
-  bool isFollowing = false;
   bool dataIsThere = false;
 
-  @override
-  void initState() {
-    super.initState();
-
+  getDataProfile() async {
     if (widget.userPostID != me!.uid) {
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('users')
           .doc(widget.userPostID)
           .get()
-          .then((data) {
+          .then((data) async {
         userPost = UserModel.fromMap(data, data.data()!);
-      });
-
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.userPostID)
-          .collection('followers')
-          .doc(me!.uid)
-          .get()
-          .then((follower) {
-        if (!follower.exists) {
-          setState(() {
-            isFollowing = false;
-          });
-        } else {
-          setState(() {
-            isFollowing = true;
+        await Future.delayed(Duration(seconds: 1));
+        if (userPost!.privacy == 'private') {
+          await FirebaseFirestore.instance
+              .collection('notifications')
+              .doc(userPost!.uid)
+              .collection('singleNotif')
+              .where('from', isEqualTo: me!.uid)
+              .where('type', isEqualTo: 'follow')
+              .where('seen', isEqualTo: false)
+              .limit(1)
+              .get()
+              .then((data) {
+            if (data.docs.length == 0) {
+              print('dans le if 0');
+              setState(() {
+                isWaiting = false;
+              });
+            } else {
+              print('dans le else du for');
+              setState(() {
+                isWaiting = true;
+              });
+            }
+            print('notif: $isWaiting');
           });
         }
       });
@@ -413,29 +417,29 @@ class ProfilUserState extends State<ProfilUser>
       userPost = me!;
     }
 
-    followersListener = FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.userPostID)
         .collection('followers')
-        .snapshots()
-        .listen((data) {
-      setState(() {
-        followers = data.docs.length;
-      });
-
-      followingsListener = FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.userPostID)
-          .collection('following')
-          .snapshots()
-          .listen((data) {
-        setState(() {
-          followings = data.docs.length;
-        });
-      });
+        .get()
+        .then((data) {
+      for (var item in data.docs) {
+        followers.add(item.id);
+      }
     });
 
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userPostID)
+        .collection('following')
+        .get()
+        .then((data) {
+      for (var item in data.docs) {
+        followings.add(item.id);
+      }
+    });
+
+    await FirebaseFirestore.instance
         .collection('posts')
         .where('uid', isEqualTo: widget.userPostID)
         .get()
@@ -445,22 +449,27 @@ class ProfilUserState extends State<ProfilUser>
       }
     });
 
-    _tabController = TabController(length: 2, vsync: this);
-
     setState(() {
       dataIsThere = true;
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    getDataProfile();
+
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
   void dispose() {
     _tabController.dispose();
-    followersListener.cancel();
-    followingsListener.cancel();
     super.dispose();
   }
 
-  followUser() async {
+  followPublicUser() async {
     userPost!.ref!.collection('followers').doc(me!.uid).get().then((user) {
       if (!user.exists) {
         user.reference.set({});
@@ -472,9 +481,22 @@ class ProfilUserState extends State<ProfilUser>
             .set({});
         DatabaseService.addNotification(
             me!.uid, userPost!.uid, "a commencé à vous suivre", "follow");
+      }
+    });
+
+    setState(() {
+      followers.add(me!.uid);
+    });
+  }
+
+  followPrivateUser() async {
+    userPost!.ref!.collection('followers').doc(me!.uid).get().then((user) {
+      if (!user.exists) {
+        DatabaseService.addNotification(
+            me!.uid, userPost!.uid, "voudrait vous suivre", "follow");
 
         setState(() {
-          isFollowing = true;
+          isWaiting = !isWaiting;
         });
       }
     });
@@ -490,11 +512,11 @@ class ProfilUserState extends State<ProfilUser>
             .collection('following')
             .doc(userPost!.uid)
             .delete();
-
-        setState(() {
-          isFollowing = false;
-        });
       }
+    });
+
+    setState(() {
+      followers.remove(me!.uid);
     });
   }
 
@@ -586,79 +608,205 @@ class ProfilUserState extends State<ProfilUser>
                                     height: 10.0,
                                   ),
                                   if (userPost!.uid != me!.uid)
-                                    Container(
-                                      width: MediaQuery.of(context).size.width /
-                                          2.5,
-                                      height: 30,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10.0),
-                                      child: isFollowing
-                                          ? ElevatedButton(
-                                              onPressed: () => unfollowUser(),
-                                              style: TextButton.styleFrom(
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  elevation: 0,
-                                                  shape: RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                          color: Colors.black),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0))),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Icon(Icons.remove,
-                                                      size: 23,
-                                                      color: Colors.black),
-                                                  SizedBox(
-                                                    width: 5.0,
+                                    userPost!.privacy == 'public'
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                2.5,
+                                            height: 30,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.0),
+                                            child: followers.contains(me!.uid)
+                                                ? ElevatedButton(
+                                                    onPressed: () {
+                                                      unfollowUser();
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        elevation: 0,
+                                                        shape: RoundedRectangleBorder(
+                                                            side: BorderSide(
+                                                                color: Colors
+                                                                    .black),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                    10.0))),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Icon(Icons.remove,
+                                                            size: 23,
+                                                            color:
+                                                                Colors.black),
+                                                        SizedBox(
+                                                          width: 5.0,
+                                                        ),
+                                                        Text(
+                                                          'Unfollow',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
+                                                        )
+                                                      ],
+                                                    ))
+                                                : ElevatedButton(
+                                                    onPressed: () {
+                                                      followPublicUser();
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                        backgroundColor:
+                                                            Theme.of(context)
+                                                                .primaryColor,
+                                                        elevation: 6,
+                                                        shape: RoundedRectangleBorder(
+                                                            side: BorderSide(
+                                                                color: Colors
+                                                                    .black),
+                                                            borderRadius: BorderRadius.circular(10.0))),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Icon(Icons.add,
+                                                            size: 23,
+                                                            color:
+                                                                Colors.black),
+                                                        SizedBox(
+                                                          width: 10.0,
+                                                        ),
+                                                        Text(
+                                                          'Follow',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
+                                                        )
+                                                      ],
+                                                    )),
+                                          )
+                                        : followers.contains(me!.uid)
+                                            ? Container(
+                                                width: MediaQuery.of(context).size.width /
+                                                    2.5,
+                                                height: 30,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10.0),
+                                                child: ElevatedButton(
+                                                    onPressed: () {
+                                                      unfollowUser();
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        elevation: 0,
+                                                        shape: RoundedRectangleBorder(
+                                                            side: BorderSide(
+                                                                color: Colors
+                                                                    .black),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                    10.0))),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Icon(Icons.remove,
+                                                            size: 23,
+                                                            color:
+                                                                Colors.black),
+                                                        SizedBox(
+                                                          width: 5.0,
+                                                        ),
+                                                        Text(
+                                                          'Unfollow',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
+                                                        )
+                                                      ],
+                                                    )))
+                                            : isWaiting
+                                                ? Container(
+                                                    alignment: Alignment.center,
+                                                    width: MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        2.5,
+                                                    height: 30,
+                                                    padding: EdgeInsets.symmetric(
+                                                        horizontal: 10.0),
+                                                    decoration: BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10.0)),
+                                                    child: Text('En attente', style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w700)))
+                                                : Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            2.5,
+                                                    height: 30,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.0),
+                                                    child: ElevatedButton(
+                                                        onPressed: () {
+                                                          followPrivateUser();
+                                                        },
+                                                        style: TextButton.styleFrom(
+                                                            backgroundColor:
+                                                                Theme.of(
+                                                                        context)
+                                                                    .primaryColor,
+                                                            elevation: 6,
+                                                            shape: RoundedRectangleBorder(
+                                                                side: BorderSide(
+                                                                    color: Colors
+                                                                        .black),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10.0))),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Icon(Icons.add,
+                                                                size: 23,
+                                                                color: Colors
+                                                                    .black),
+                                                            SizedBox(
+                                                              width: 10.0,
+                                                            ),
+                                                            Text(
+                                                              'Follow',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700),
+                                                            )
+                                                          ],
+                                                        )),
                                                   ),
-                                                  Text(
-                                                    'Unfollow',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                                  )
-                                                ],
-                                              ))
-                                          : ElevatedButton(
-                                              onPressed: () => followUser(),
-                                              style: TextButton.styleFrom(
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .primaryColor,
-                                                  elevation: 6,
-                                                  shape: RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                          color: Colors.black),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0))),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Icon(Icons.add,
-                                                      size: 23,
-                                                      color: Colors.black),
-                                                  SizedBox(
-                                                    width: 10.0,
-                                                  ),
-                                                  Text(
-                                                    'Follow',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                                  )
-                                                ],
-                                              )),
-                                    ),
                                   SizedBox(
                                     height: 20.0,
                                   ),
@@ -693,7 +841,7 @@ class ProfilUserState extends State<ProfilUser>
                                                   alignment:
                                                       Alignment.bottomCenter,
                                                   child: Text(
-                                                    followers.toString(),
+                                                    followers.length.toString(),
                                                     style:
                                                         TextStyle(fontSize: 23),
                                                   ),
@@ -748,7 +896,8 @@ class ProfilUserState extends State<ProfilUser>
                                                   alignment:
                                                       Alignment.bottomCenter,
                                                   child: Text(
-                                                    followings.toString(),
+                                                    followings.length
+                                                        .toString(),
                                                     style:
                                                         TextStyle(fontSize: 23),
                                                   ),
@@ -791,21 +940,68 @@ class ProfilUserState extends State<ProfilUser>
                             ])))
                   ];
                 },
-                body: TabBarView(controller: _tabController, children: [
-                  PostsPublic(user: userPost!),
-                  Center(
-                    child:
-                        Text('Visible seulement pour les followers du compte'),
-                  )
-                ]),
+                body: TabBarView(
+                    controller: _tabController,
+                    children: userPost!.privacy == 'public'
+                        ? accountPublic()
+                        : accountPrivate()),
               )
             : Center(
                 child: CircularProgressIndicator(
                   color: Theme.of(context).primaryColor,
+                  strokeWidth: 1.5,
                 ),
               ),
       ),
     );
+  }
+
+  List<Widget> accountPublic() {
+    return userPost!.uid == me!.uid
+        ? [PostsPublic(user: userPost!), PostsPrivate(user: userPost!)]
+        : [
+            PostsPublic(user: userPost!),
+            followers.contains(me!.uid)
+                ? PostsPrivate(user: userPost!)
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.lock, size: 33),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Text('Visible seulement par les followers',
+                          style: mystyle(12))
+                    ],
+                  ),
+          ];
+  }
+
+  List<Widget> accountPrivate() {
+    return (userPost!.uid == me!.uid || followers.contains(me!.uid))
+        ? [PostsPublic(user: userPost!), PostsPrivate(user: userPost!)]
+        : [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.lock, size: 33),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text('Visible seulement par les followers', style: mystyle(12))
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.lock, size: 33),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text('Visible seulement par les followers', style: mystyle(12))
+              ],
+            )
+          ];
   }
 }
 

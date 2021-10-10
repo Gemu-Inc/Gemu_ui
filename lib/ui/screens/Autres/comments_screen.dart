@@ -10,7 +10,7 @@ import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/models/commentaire.dart';
 import 'package:gemu/models/user.dart';
-import 'package:gemu/services/date_helper.dart';
+import 'package:gemu/helpers/date_helper.dart';
 import 'package:gemu/ui/screens/Profil/profil_screen.dart';
 import 'package:gemu/ui/widgets/snack_bar_custom.dart';
 import 'package:gemu/ui/screens/Autres/response_comment_screen.dart';
@@ -30,14 +30,18 @@ class CommentsViewState extends State<CommentsView>
     with WidgetsBindingObserver {
   TextEditingController _commentController = TextEditingController();
 
+//Partie commentaires
   bool isCommentsReload = false;
   bool isComment = false;
 
+//Partie réponses
   List<bool> showResponses = [];
   bool isResponseReload = false;
 
+//Variables parties commentaires qui vont être supprimés
   List<String> commentsWillDelete = [];
 
+//Variables parties réponses qui vont être supprimés
   List<String> commentResponsesWillDelete = [];
   List<String> responsesWillDelete = [];
 
@@ -402,6 +406,9 @@ class CommentsViewState extends State<CommentsView>
                       .snapshots(),
                   builder: (_, AsyncSnapshot snapshot) {
                     if (!snapshot.hasData || isCommentsReload) {
+                      if (showResponses.length != 0) {
+                        showResponses.clear();
+                      }
                       return Center(
                         child: CircularProgressIndicator(
                           color: Theme.of(context).primaryColor,
@@ -424,10 +431,10 @@ class CommentsViewState extends State<CommentsView>
                             parent: BouncingScrollPhysics()),
                         itemCount: snapshot.data.docs.length,
                         itemBuilder: (BuildContext context, int index) {
-                          showResponses.add(false);
                           Commentaire comment = Commentaire.fromMap(
                               snapshot.data.docs[index],
                               snapshot.data.docs[index].data());
+                          showResponses.add(false);
 
                           return Padding(
                               padding: EdgeInsets.symmetric(
@@ -451,9 +458,7 @@ class CommentsViewState extends State<CommentsView>
                                     decoration: BoxDecoration(
                                         color: commentsWillDelete
                                                 .contains(comment.id)
-                                            ? Theme.of(context)
-                                                .primaryColor
-                                                .withOpacity(0.5)
+                                            ? Theme.of(context).primaryColor
                                             : Colors.transparent),
                                     child: Column(
                                       children: [
@@ -514,7 +519,11 @@ class CommentsViewState extends State<CommentsView>
                                                           AsyncSnapshot
                                                               snapshot) {
                                                         if (!snapshot.hasData ||
-                                                            isResponseReload) {
+                                                            (commentResponsesWillDelete
+                                                                    .contains(
+                                                                        comment
+                                                                            .id) &&
+                                                                isResponseReload)) {
                                                           return Container(
                                                             height: 30.0,
                                                             width: 30.0,

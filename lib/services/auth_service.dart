@@ -99,7 +99,8 @@ class AuthService {
         'email': email,
         'username': username,
         'imageUrl': null,
-        'country': country
+        'country': country,
+        'privacy': 'public'
       };
       await DatabaseService.instance.addUser(uid, gamesFollow, map);
       Navigator.pushAndRemoveUntil(

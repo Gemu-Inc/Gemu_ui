@@ -9,7 +9,7 @@ import 'package:gemu/models/commentaire.dart';
 import 'package:gemu/ui/widgets/snack_bar_custom.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/user.dart';
-import 'package:gemu/services/date_helper.dart';
+import 'package:gemu/helpers/date_helper.dart';
 import 'package:gemu/ui/screens/Profil/profil_screen.dart';
 import 'package:gemu/models/response.dart';
 

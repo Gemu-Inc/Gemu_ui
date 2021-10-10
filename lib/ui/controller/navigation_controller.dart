@@ -27,8 +27,7 @@ class NavController extends StatefulWidget {
 }
 
 class _NavControllerState extends State<NavController> {
-  bool dataIsHere = false;
-
+  bool dataIsThere = false;
   late StreamSubscription userListener, gamesListener, followingsListener;
 
   List<Game> gamesList = [];
@@ -96,13 +95,14 @@ class _NavControllerState extends State<NavController> {
           followings.add(item.id);
         });
       }
-
-      if (!dataIsHere && mounted) {
-        setState(() {
-          dataIsHere = true;
-        });
-      }
     });
+
+    await Future.delayed(Duration(seconds: 1));
+    if (!dataIsThere && mounted) {
+      setState(() {
+        dataIsThere = true;
+      });
+    }
   }
 
   @override
@@ -126,7 +126,7 @@ class _NavControllerState extends State<NavController> {
     indexGames = Provider.of<IndexGamesHome>(context);
     return Stack(
       children: [
-        !dataIsHere
+        !dataIsThere
             ? AnnotatedRegion<SystemUiOverlayStyle>(
                 child: Scaffold(
                   backgroundColor: Colors.black,

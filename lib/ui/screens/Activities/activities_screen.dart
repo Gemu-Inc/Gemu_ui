@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:gemu/ui/constants/constants.dart';
-import 'package:gemu/ui/providers/conversationProvider.dart';
 
 import 'Notifications/notifications_screen.dart';
 
@@ -16,11 +15,10 @@ class ActivitiesMenuDrawer extends StatefulWidget {
 
 class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
     with TickerProviderStateMixin {
-  late TabController _tabController;
-  int currentTabIndex = 0;
-
   late AnimationController _activitiesController, _rotateController;
   late Animation _activitiesAnimation, _rotateAnimation;
+
+  late ScrollController notifScrollController;
 
   int whatActivity = 0;
   List<String> activities = [
@@ -30,18 +28,6 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
     'Up&Down'
   ];
 
-  void _onTabChanged() {
-    if (!_tabController.indexIsChanging)
-      setState(() {
-        print('Changing to Tab: ${_tabController.index}');
-        currentTabIndex = _tabController.index;
-        if (currentTabIndex == 1 && _activitiesController.value == 1) {
-          _rotateController.reverse();
-          _activitiesController.reverse();
-        }
-      });
-  }
-
   double getRadianFromDegree(double degree) {
     double unitRadian = 57.295779513;
     return degree / unitRadian;
@@ -50,13 +36,6 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
   @override
   void initState() {
     super.initState();
-
-    print('init activities');
-
-    _tabController = TabController(length: 1, vsync: this);
-    _tabController.addListener(_onTabChanged);
-    currentTabIndex = 0;
-
     _activitiesController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _rotateController =
@@ -67,6 +46,8 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
     _rotateAnimation = Tween<double>(begin: 0.0, end: 180.0).animate(
         CurvedAnimation(parent: _rotateController, curve: Curves.easeOut));
 
+    notifScrollController = ScrollController();
+
     _rotateController.addListener(() {
       setState(() {});
     });
@@ -75,13 +56,12 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
   @override
   void deactivate() {
     _rotateController.removeListener(() {});
-    _tabController.removeListener(_onTabChanged);
     super.deactivate();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    notifScrollController.dispose();
     _activitiesController.dispose();
     _rotateController.dispose();
     super.dispose();
@@ -118,56 +98,52 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
         ),
         body: Stack(
           children: [
-            TabBarView(
-                physics: NeverScrollableScrollPhysics(),
-                controller: _tabController,
-                children: [
-                  NotificationsScreen(
-                    whatActivity: activities[whatActivity],
-                  ),
-                ]),
+            NotificationsScreen(
+              whatActivity: activities[whatActivity],
+              notifScrollController: notifScrollController,
+            ),
             Align(alignment: Alignment.topCenter, child: activitiesPanel()),
           ],
         ));
   }
 
   Widget bottomAppBar() {
-    return TabBar(
-      controller: _tabController,
-      isScrollable: true,
-      indicatorSize: TabBarIndicatorSize.tab,
-      labelColor: Theme.of(context).primaryColor,
-      unselectedLabelColor: Colors.grey,
-      indicator: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Theme.of(context).canvasColor,
-      ),
-      tabs: [
-        Tab(
-            child: GestureDetector(
-                onTap: () {
-                  if (_rotateController.isCompleted) {
-                    _rotateController.reverse();
-                    _activitiesController.reverse();
-                  } else {
-                    _rotateController.forward();
-                    _activitiesController.forward();
-                  }
-                },
-                child: Row(
-                  children: [
-                    Text(activities[whatActivity]),
-                    Transform(
-                        transform: Matrix4.rotationZ(
-                            getRadianFromDegree(_rotateAnimation.value)),
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.expand_more,
-                        ))
-                  ],
-                )))
-      ],
-    );
+    return Center(
+        child: GestureDetector(
+            onTap: () {
+              if (_rotateController.isCompleted) {
+                _rotateController.reverse();
+                _activitiesController.reverse();
+              } else {
+                _rotateController.forward();
+                _activitiesController.forward();
+              }
+            },
+            child: Container(
+              height: 50,
+              width: MediaQuery.of(context).size.width / 2,
+              decoration: BoxDecoration(
+                  color: Theme.of(context).canvasColor,
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    activities[whatActivity],
+                    style: mystyle(12, Theme.of(context).primaryColor),
+                  ),
+                  Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadianFromDegree(_rotateAnimation.value)),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.expand_more,
+                        color: Theme.of(context).primaryColor,
+                      ))
+                ],
+              ),
+            )));
   }
 
   Widget activitiesPanel() {
@@ -190,9 +166,15 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                   child: ListView(
                     children: [
                       ListTile(
-                        onTap: () {
+                        onTap: () async {
                           _rotateController.reverse();
                           _activitiesController.reverse();
+                          print('${notifScrollController.offset}');
+                          if (notifScrollController.offset != 0) {
+                            print('remise a zéro');
+                            notifScrollController.position == 0;
+                          }
+                          await Future.delayed(Duration(milliseconds: 500));
                           setState(() {
                             whatActivity = 0;
                           });
@@ -205,9 +187,14 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                             whatActivity == 0 ? Icon(Icons.check) : SizedBox(),
                       ),
                       ListTile(
-                        onTap: () {
+                        onTap: () async {
                           _rotateController.reverse();
                           _activitiesController.reverse();
+
+                          if (notifScrollController.position != 0) {
+                            notifScrollController.jumpTo(0);
+                          }
+                          await Future.delayed(Duration(milliseconds: 500));
                           setState(() {
                             whatActivity = 1;
                           });
@@ -218,9 +205,14 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                             whatActivity == 1 ? Icon(Icons.check) : SizedBox(),
                       ),
                       ListTile(
-                        onTap: () {
+                        onTap: () async {
                           _rotateController.reverse();
                           _activitiesController.reverse();
+
+                          if (notifScrollController.position != 0) {
+                            notifScrollController.jumpTo(0);
+                          }
+                          await Future.delayed(Duration(milliseconds: 500));
                           setState(() {
                             whatActivity = 2;
                           });
@@ -231,9 +223,13 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                             whatActivity == 2 ? Icon(Icons.check) : SizedBox(),
                       ),
                       ListTile(
-                        onTap: () {
+                        onTap: () async {
                           _rotateController.reverse();
                           _activitiesController.reverse();
+                          if (notifScrollController.position != 0) {
+                            notifScrollController.jumpTo(0);
+                          }
+                          await Future.delayed(Duration(milliseconds: 500));
                           setState(() {
                             whatActivity = 3;
                           });

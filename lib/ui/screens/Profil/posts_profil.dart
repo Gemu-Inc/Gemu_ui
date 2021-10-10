@@ -224,54 +224,56 @@ class PostsPrivateState extends State<PostsPrivate>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return FutureBuilder(
-        future: FirebaseFirestore.instance
-            .collection('posts')
-            .where('uid', isEqualTo: me!.uid)
-            .where('privacy', isEqualTo: 'Private')
-            .orderBy('date', descending: true)
-            .get(),
-        builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ),
-            );
-          }
-          if (snapshot.data!.docs.length == 0) {
-            return Center(
-              child: Text(
-                'Pas encore de publications privées',
-                style: mystyle(11),
-              ),
-            );
-          }
-          if (posts.length != 0) {
-            posts.clear();
-          }
-          for (var item in snapshot.data!.docs) {
-            posts.add(Post.fromMap(item, item.data()));
-          }
-          return GridView.builder(
-              scrollDirection: Axis.vertical,
-              physics: AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics()),
-              shrinkWrap: true,
-              itemCount: posts.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 1,
-                  mainAxisSpacing: 1),
-              itemBuilder: (BuildContext context, int index) {
-                Post post = posts[index];
-                return post.type == 'picture'
-                    ? picture(post, index)
-                    : video(post, index);
-              });
-        });
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.0),
+      child: FutureBuilder(
+          future: FirebaseFirestore.instance
+              .collection('posts')
+              .where('uid', isEqualTo: widget.user.uid)
+              .where('privacy', isEqualTo: 'Private')
+              .orderBy('date', descending: true)
+              .get(),
+          builder: (BuildContext context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
+              );
+            }
+            if (snapshot.data!.docs.length == 0) {
+              return Center(
+                child: Text(
+                  'Pas encore de publications privées',
+                  style: mystyle(11),
+                ),
+              );
+            }
+            if (posts.length != 0) {
+              posts.clear();
+            }
+            for (var item in snapshot.data!.docs) {
+              posts.add(Post.fromMap(item, item.data()));
+            }
+            return GridView.builder(
+                scrollDirection: Axis.vertical,
+                physics: AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics()),
+                shrinkWrap: true,
+                itemCount: posts.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 1.0,
+                    mainAxisSpacing: 1.0),
+                itemBuilder: (BuildContext context, int index) {
+                  Post post = posts[index];
+                  return post.type == 'picture'
+                      ? picture(post, index)
+                      : video(post, index);
+                });
+          }),
+    );
   }
 
   Widget picture(Post post, int index) {
