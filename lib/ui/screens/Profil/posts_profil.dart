@@ -116,7 +116,7 @@ class PostsPublicState extends State<PostsPublic>
                   MaterialPageRoute(
                       builder: (_) => PostsView(
                             postIndex: index,
-                            actualUser: me!,
+                            actualUser: widget.user,
                             posts: posts,
                           ))),
               borderRadius: BorderRadius.circular(5.0),
@@ -160,7 +160,7 @@ class PostsPublicState extends State<PostsPublic>
                   MaterialPageRoute(
                       builder: (_) => PostsView(
                             postIndex: index,
-                            actualUser: me!,
+                            actualUser: widget.user,
                             posts: posts,
                           ))),
               borderRadius: BorderRadius.circular(5.0),
@@ -298,7 +298,7 @@ class PostsPrivateState extends State<PostsPrivate>
                   MaterialPageRoute(
                       builder: (_) => PostsView(
                             postIndex: index,
-                            actualUser: me!,
+                            actualUser: widget.user,
                             posts: posts,
                           ))),
               borderRadius: BorderRadius.circular(5.0),
@@ -342,7 +342,7 @@ class PostsPrivateState extends State<PostsPrivate>
                   MaterialPageRoute(
                       builder: (_) => PostsView(
                             postIndex: index,
-                            actualUser: me!,
+                            actualUser: widget.user,
                             posts: posts,
                           ))),
               borderRadius: BorderRadius.circular(5.0),
@@ -424,7 +424,9 @@ class PostsViewState extends State<PostsView> {
                     color: Colors.white,
                   )),
               title: Text(
-                'Mes posts',
+                widget.actualUser.uid == me!.uid
+                    ? 'Mes posts'
+                    : '${widget.actualUser.username}\'s posts',
                 style: mystyle(16, Colors.white),
               ),
             ),

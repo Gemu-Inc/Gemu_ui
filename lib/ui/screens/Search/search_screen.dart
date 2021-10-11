@@ -8,8 +8,8 @@ import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/ui/screens/Profil/profil_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/hashtag.dart';
-
-import './search_views.dart';
+import 'package:gemu/ui/screens/Autres/game_screen.dart';
+import 'package:gemu/ui/screens/Autres/hashtags_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -443,11 +443,10 @@ class SearchScreenState extends State<SearchScreen>
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (_) => HashtagView(
-                                                    hashtag: Hashtag.fromMap(
-                                                        recentSearch,
-                                                        recentSearch.data()!),
-                                                  )));
+                                              builder: (_) => HashtagsScreen(
+                                                  hashtag: Hashtag.fromMap(
+                                                      recentSearch,
+                                                      recentSearch.data()!))));
                                     },
                                     leading: Container(
                                       height: 45,
@@ -547,12 +546,11 @@ class SearchScreenState extends State<SearchScreen>
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (_) => GameView(
-                                                        game: Game.fromMap(
-                                                            recentSearch,
-                                                            recentSearch
-                                                                .data()!),
-                                                      )));
+                                                  builder: (_) => GameScreen(
+                                                      game: Game.fromMap(
+                                                          recentSearch,
+                                                          recentSearch
+                                                              .data()!))));
                                         },
                                         leading: Container(
                                           height: 45,
@@ -759,10 +757,9 @@ class SearchScreenState extends State<SearchScreen>
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => GameView(
-                                              game: Game.fromMap(recentSearch,
-                                                  recentSearch.data()!),
-                                            )));
+                                        builder: (_) => GameScreen(
+                                            game: Game.fromMap(recentSearch,
+                                                recentSearch.data()!))));
                               },
                               leading: Container(
                                 height: 45,
@@ -853,11 +850,10 @@ class SearchScreenState extends State<SearchScreen>
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (_) => HashtagView(
-                                                hashtag: Hashtag.fromMap(
-                                                    recentSearch,
-                                                    recentSearch.data()!),
-                                              )));
+                                          builder: (_) => HashtagsScreen(
+                                              hashtag: Hashtag.fromMap(
+                                                  recentSearch,
+                                                  recentSearch.data()!))));
                                 },
                                 leading: Container(
                                   height: 45,
@@ -951,10 +947,9 @@ class SearchScreenState extends State<SearchScreen>
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (_) => HashtagView(
-                                                hashtag: Hashtag.fromMapAlgolia(
-                                                    snap, snap.data),
-                                              )));
+                                          builder: (_) => HashtagsScreen(
+                                              hashtag: Hashtag.fromMapAlgolia(
+                                                  snap, snap.data))));
                                 },
                                 leading: Container(
                                   height: 45,
@@ -1036,24 +1031,39 @@ class SearchScreenState extends State<SearchScreen>
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (_) => GameView(
-                                                    game: Game.fromMapAlgolia(
-                                                        snap, snap.data),
-                                                  )));
+                                              builder: (_) => GameScreen(
+                                                  game: Game.fromMapAlgolia(
+                                                      snap, snap.data))));
                                     },
-                                    leading: Container(
-                                      height: 45,
-                                      width: 45,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black),
-                                          shape: BoxShape.circle,
-                                          color: Theme.of(context).canvasColor,
-                                          image: DecorationImage(
-                                              image: CachedNetworkImageProvider(
-                                                  snap.data["imageUrl"]),
-                                              fit: BoxFit.cover)),
-                                    ),
+                                    leading: snap.data["imageUrl"] == null
+                                        ? Container(
+                                            height: 45,
+                                            width: 45,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.black),
+                                                shape: BoxShape.circle,
+                                                color: Theme.of(context)
+                                                    .canvasColor),
+                                            child: Icon(Icons.person,
+                                                size: 23, color: Colors.black),
+                                          )
+                                        : Container(
+                                            height: 45,
+                                            width: 45,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.black),
+                                                shape: BoxShape.circle,
+                                                color: Theme.of(context)
+                                                    .canvasColor,
+                                                image: DecorationImage(
+                                                    image:
+                                                        CachedNetworkImageProvider(
+                                                            snap.data[
+                                                                "imageUrl"]),
+                                                    fit: BoxFit.cover)),
+                                          ),
                                     title: Text(
                                       snap.data["name"],
                                       style: mystyle(12),
@@ -1198,10 +1208,9 @@ class SearchScreenState extends State<SearchScreen>
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => GameView(
-                                            game: Game.fromMapAlgolia(
-                                                snap, snap.data),
-                                          )));
+                                      builder: (_) => GameScreen(
+                                          game: Game.fromMapAlgolia(
+                                              snap, snap.data))));
                             },
                             leading: Container(
                               height: 45,
@@ -1273,10 +1282,9 @@ class SearchScreenState extends State<SearchScreen>
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => HashtagView(
-                                          hashtag: Hashtag.fromMapAlgolia(
-                                              snap, snap.data),
-                                        )));
+                                    builder: (_) => HashtagsScreen(
+                                        hashtag: Hashtag.fromMapAlgolia(
+                                            snap, snap.data))));
                           },
                           leading: Container(
                             height: 45,

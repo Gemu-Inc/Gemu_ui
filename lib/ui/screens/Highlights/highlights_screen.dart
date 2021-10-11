@@ -613,7 +613,7 @@ class HighlightsScreenState extends State<HighlightsScreen>
                                             context,
                                             MaterialPageRoute(
                                                 builder: (_) => HashtagsScreen(
-                                                    titleTag: hashtag.name))),
+                                                    hashtag: hashtag))),
                                         child: Container(
                                           height: 50,
                                           width: 50,

@@ -9,9 +9,9 @@ import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/screens/Highlights/highlights_posts_view.dart';
 
 class HashtagsScreen extends StatefulWidget {
-  final String titleTag;
+  final Hashtag hashtag;
 
-  const HashtagsScreen({Key? key, required this.titleTag}) : super(key: key);
+  const HashtagsScreen({Key? key, required this.hashtag}) : super(key: key);
 
   HashtagsScreenState createState() => HashtagsScreenState();
 }
@@ -21,20 +21,12 @@ class HashtagsScreenState extends State<HashtagsScreen> {
 
   late ScrollController _hashtagsScrollController;
 
-  late Hashtag hashtag;
   List<Post> posts = [];
 
   getPostsHahstags() async {
     await FirebaseFirestore.instance
         .collection('hashtags')
-        .doc(widget.titleTag)
-        .get()
-        .then((hashtagDoc) =>
-            hashtag = Hashtag.fromMap(hashtagDoc, hashtagDoc.data()!));
-
-    await FirebaseFirestore.instance
-        .collection('hashtags')
-        .doc(widget.titleTag)
+        .doc(widget.hashtag.name)
         .collection('posts')
         .limit(20)
         .get()
@@ -136,8 +128,9 @@ class HashtagsScreenState extends State<HashtagsScreen> {
           ),
           Expanded(
               child: ListTile(
-            title: Text(widget.titleTag),
-            subtitle: Text('${hashtag.postsCount.toString()} publications'),
+            title: Text(widget.hashtag.name),
+            subtitle:
+                Text('${widget.hashtag.postsCount.toString()} publications'),
           ))
         ],
       ),
@@ -172,7 +165,7 @@ class HashtagsScreenState extends State<HashtagsScreen> {
           )
         : Center(
             child: Text(
-              'No posts for ${widget.titleTag} at this moment',
+              'No posts for ${widget.hashtag.name} at this moment',
               style: mystyle(13),
             ),
           );
@@ -200,7 +193,9 @@ class HashtagsScreenState extends State<HashtagsScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (_) => HashtagPostsView(
-                              hashtag: hashtag, index: index, posts: posts))),
+                              hashtag: widget.hashtag,
+                              index: index,
+                              posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),
                   splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
                 ),
@@ -245,7 +240,9 @@ class HashtagsScreenState extends State<HashtagsScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (_) => HashtagPostsView(
-                              hashtag: hashtag, index: index, posts: posts))),
+                              hashtag: widget.hashtag,
+                              index: index,
+                              posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),
                   splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
                 ),

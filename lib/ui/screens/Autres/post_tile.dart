@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/ui/screens/Autres/game_screen.dart';
 import 'package:gemu/ui/screens/Autres/hashtags_screen.dart';
 import 'package:marquee/marquee.dart';
@@ -22,6 +23,7 @@ import 'package:gemu/ui/screens/Profil/profil_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/ui/screens/Autres/viewers_screen.dart';
 import 'package:gemu/models/user.dart';
+import 'package:gemu/models/hashtag.dart';
 
 class PostTile extends StatefulWidget {
   final String idUserActual;
@@ -743,11 +745,20 @@ class PictureItemState extends State<PictureItem>
                             expandText: 'Plus',
                             collapseText: 'Moins',
                             maxLines: 2,
-                            onHashtagTap: (hashtags) => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) =>
-                                        HashtagsScreen(titleTag: hashtags))),
+                            onHashtagTap: (hashtag) async {
+                              late Hashtag tag;
+                              await FirebaseFirestore.instance
+                                  .collection('hashtags')
+                                  .doc(hashtag)
+                                  .get()
+                                  .then((hashtagData) => tag = Hashtag.fromMap(
+                                      hashtagData, hashtagData.data()!));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) =>
+                                          HashtagsScreen(hashtag: tag)));
+                            },
                             hashtagStyle:
                                 mystyle(12, Theme.of(context).primaryColor),
                           )),
@@ -1786,11 +1797,20 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                             expandText: 'Plus',
                             collapseText: 'Moins',
                             maxLines: 2,
-                            onHashtagTap: (hashtags) => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) =>
-                                        HashtagsScreen(titleTag: hashtags))),
+                            onHashtagTap: (hashtag) async {
+                              late Hashtag tag;
+                              await FirebaseFirestore.instance
+                                  .collection('hashtags')
+                                  .doc(hashtag)
+                                  .get()
+                                  .then((hashtagData) => tag = Hashtag.fromMap(
+                                      hashtagData, hashtagData.data()!));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) =>
+                                          HashtagsScreen(hashtag: tag)));
+                            },
                             hashtagStyle:
                                 mystyle(12, Theme.of(context).primaryColor),
                           )),
