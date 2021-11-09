@@ -308,71 +308,74 @@ class _GamesScreenState extends State<GamesScreen>
                       Categorie categorie = categoriesList[index];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                            height: 100,
-                            child: InkWell(
+                        child: Ink(
+                          height: 100,
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).canvasColor,
                               borderRadius: BorderRadius.circular(5.0),
-                              splashColor: Theme.of(context).primaryColor,
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => CategorieScreen(
-                                            categorie: categorie,
-                                            indexGamesHome:
-                                                widget.indexGamesHome,
-                                          ))),
-                              child: Card(
-                                elevation: 6,
-                                color: Theme.of(context).canvasColor,
-                                shadowColor: Theme.of(context).primaryColor,
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 25.0),
-                                      child: Container(
-                                        height: 60,
-                                        width: 60,
-                                        decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                colors: [
-                                                  Theme.of(context)
-                                                      .primaryColor,
-                                                  Theme.of(context).accentColor
-                                                ]),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: Icon(Icons.category),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              categorie.name,
-                                              style: mystyle(18),
-                                            ),
-                                            SizedBox(
-                                              height: 2.0,
-                                            ),
-                                            Text('Games: ${categorie.games}'),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(context).primaryColor,
+                                  offset: Offset(1.0, 1.0),
+                                )
+                              ]),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(5.0),
+                            splashColor: Theme.of(context).primaryColor,
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => CategorieScreen(
+                                          categorie: categorie,
+                                          indexGamesHome: widget.indexGamesHome,
+                                        ))),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 25.0),
+                                  child: Container(
+                                    height: 60,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Theme.of(context).primaryColor,
+                                              Theme.of(context).accentColor
+                                            ]),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Icon(Icons.category),
+                                  ),
                                 ),
-                              ),
-                            )),
+                                Expanded(
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 15.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          categorie.name,
+                                          style: mystyle(18),
+                                        ),
+                                        SizedBox(
+                                          height: 2.0,
+                                        ),
+                                        Text('Games: ${categorie.games}'),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
                       );
                     }),
                 Padding(

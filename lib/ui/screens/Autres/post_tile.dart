@@ -472,6 +472,8 @@ class PictureItemState extends State<PictureItem>
     //game du post
     FirebaseFirestore.instance
         .collection('games')
+        .doc('verified')
+        .collection('games_verified')
         .doc(post.gameName)
         .get()
         .then((gameDoc) => game = Game.fromMap(gameDoc, gameDoc.data()!));

@@ -80,6 +80,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
     for (var item in data.docs) {
       var game = await FirebaseFirestore.instance
           .collection('games')
+          .doc('verified')
+          .collection('games_verified')
           .doc(item.id)
           .get();
       setState(() {

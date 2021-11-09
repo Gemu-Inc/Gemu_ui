@@ -207,6 +207,8 @@ class VideoScreenState extends State<VideoScreen>
 
       FirebaseFirestore.instance
           .collection('games')
+          .doc('verified')
+          .collection('games_verified')
           .doc(gameName)
           .collection('posts')
           .doc(postName)

@@ -13,18 +13,30 @@ class PanelSupportScreen extends StatefulWidget {
 }
 
 class PanelSupportScreenState extends State<PanelSupportScreen> {
-  validate(String idGame) async {
+  validate(String idGame, String imageUrl, List gameCategories) async {
     await FirebaseFirestore.instance
         .collection('games')
+        .doc('verified')
+        .collection('games_verified')
         .doc(idGame)
-        .update({'verified': true});
+        .set({
+      'categories': gameCategories,
+      'id': idGame,
+      'imageUrl': imageUrl,
+      'name': idGame
+    });
 
     print('success');
   }
 
   decline(String idGame, String imageUrl, List gameCategories) async {
     await FirebaseStorage.instance.refFromURL(imageUrl).delete();
-    await FirebaseFirestore.instance.collection('games').doc(idGame).delete();
+    await FirebaseFirestore.instance
+        .collection('games')
+        .doc('not_verified')
+        .collection('games_not_verified')
+        .doc(idGame)
+        .delete();
 
     print('success');
   }
@@ -46,7 +58,8 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
           child: StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('games')
-                .where('verified', isEqualTo: false)
+                .doc('not_verified')
+                .collection('games_not_verified')
                 .orderBy('name')
                 .snapshots(),
             builder: (_, AsyncSnapshot snapshot) {
@@ -168,8 +181,10 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
                                     MainAxisAlignment.spaceAround,
                                 children: [
                                   GestureDetector(
-                                    onTap: () =>
-                                        validate(gameNoVerified.documentId!),
+                                    onTap: () => validate(
+                                        gameNoVerified.documentId!,
+                                        gameNoVerified.imageUrl,
+                                        gameNoVerified.categories!),
                                     child: Container(
                                       height: 45,
                                       width: 45,

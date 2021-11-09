@@ -86,6 +86,8 @@ class _CategorieScreenState extends State<CategorieScreen>
     for (var item in myGames.docs) {
       var myGame = await FirebaseFirestore.instance
           .collection('games')
+          .doc('verified')
+          .collection('games_verified')
           .doc(item.id)
           .get();
       gamesUser.add(Game.fromMap(myGame, myGame.data()!));
@@ -93,12 +95,12 @@ class _CategorieScreenState extends State<CategorieScreen>
 
     var gamesCat = await FirebaseFirestore.instance
         .collection('games')
+        .doc('verified')
+        .collection('games_verified')
         .where('categories', arrayContains: widget.categorie.name)
         .get();
     for (var item in gamesCat.docs) {
-      if (item.data()['verified'] == true) {
-        gamesCategories.add(Game.fromMap(item, item.data()));
-      }
+      gamesCategories.add(Game.fromMap(item, item.data()));
     }
 
     for (var i = 0; i < gamesUser.length; i++) {

@@ -182,7 +182,9 @@ class _HomeScreenState extends State<HomeScreen>
         case 0:
           return GestureDetector(
             onTap: () {
-              followingsPageController.jumpToPage(0);
+              if (followingsPageController.page != 0) {
+                followingsPageController.jumpToPage(0);
+              }
             },
             child: Container(
               height: 50,
@@ -204,7 +206,9 @@ class _HomeScreenState extends State<HomeScreen>
         case 1:
           return GestureDetector(
             onTap: () {
-              widget.gamePageController[currentTabGamesIndex].jumpToPage(0);
+              if (widget.gamePageController[currentTabGamesIndex].page != 0) {
+                widget.gamePageController[currentTabGamesIndex].jumpToPage(0);
+              }
             },
             child: Container(
               height: 50,

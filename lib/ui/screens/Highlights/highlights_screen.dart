@@ -206,7 +206,12 @@ class HighlightsScreenState extends State<HighlightsScreen>
 
   getDiscoverWithoutGamesUser() async {
     //Charge tous les jeux qui ne suit pas l'utilisateur
-    await FirebaseFirestore.instance.collection('games').get().then((value) {
+    await FirebaseFirestore.instance
+        .collection('games')
+        .doc('verified')
+        .collection('games_verified')
+        .get()
+        .then((value) {
       for (var item in value.docs) {
         discoverGames.add(Game.fromMap(item, item.data()));
       }
@@ -223,6 +228,8 @@ class HighlightsScreenState extends State<HighlightsScreen>
     for (var i = 0; i < discoverGames.length; i++) {
       await FirebaseFirestore.instance
           .collection('games')
+          .doc('verified')
+          .collection('games_verified')
           .doc(discoverGames[i].name)
           .collection('posts')
           .orderBy('date', descending: true)
@@ -283,6 +290,8 @@ class HighlightsScreenState extends State<HighlightsScreen>
 
         await FirebaseFirestore.instance
             .collection('games')
+            .doc('verified')
+            .collection('games_verified')
             .doc(discoverGames[i].name)
             .collection('posts')
             .orderBy('date', descending: true)
@@ -338,7 +347,12 @@ class HighlightsScreenState extends State<HighlightsScreen>
     discoverGames.clear();
     posts.clear();
 
-    await FirebaseFirestore.instance.collection('games').get().then((value) {
+    await FirebaseFirestore.instance
+        .collection('games')
+        .doc('verified')
+        .collection('games_verified')
+        .get()
+        .then((value) {
       for (var item in value.docs) {
         discoverGames.add(Game.fromMap(item, item.data()));
       }
@@ -355,6 +369,8 @@ class HighlightsScreenState extends State<HighlightsScreen>
     for (var i = 0; i < discoverGames.length; i++) {
       await FirebaseFirestore.instance
           .collection('games')
+          .doc('verified')
+          .collection('games_verified')
           .doc(discoverGames[i].name)
           .collection('posts')
           .orderBy('date', descending: true)

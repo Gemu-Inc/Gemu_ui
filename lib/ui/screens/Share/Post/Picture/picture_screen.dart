@@ -235,6 +235,8 @@ class PictureScreenState extends State<PictureScreen>
       }
       FirebaseFirestore.instance
           .collection('games')
+          .doc('verified')
+          .collection('games_verified')
           .doc(gameName)
           .collection('posts')
           .doc(postName)

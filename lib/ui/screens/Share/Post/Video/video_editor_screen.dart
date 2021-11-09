@@ -93,6 +93,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
     for (var item in data.docs) {
       var game = await FirebaseFirestore.instance
           .collection('games')
+          .doc('verified')
+          .collection('games_verified')
           .doc(item.id)
           .get();
       setState(() {

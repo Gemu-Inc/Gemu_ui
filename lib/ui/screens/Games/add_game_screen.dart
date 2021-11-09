@@ -73,13 +73,14 @@ class AddGameScreenState extends State<AddGameScreen> {
 
     FirebaseFirestore.instance
         .collection('games')
+        .doc('not_verified')
+        .collection('games_not_verified')
         .doc(_nameGameController.text)
         .set({
       'id': _nameGameController.text,
       'imageUrl': pictureLogo,
       'name': _nameGameController.text,
       'categories': gameCategories,
-      'verified': false
     });
 
     Navigator.pushAndRemoveUntil(
