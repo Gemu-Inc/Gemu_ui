@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:http/http.dart' as http;
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/controller/navigation_controller.dart';
@@ -85,11 +86,16 @@ class AddGameScreenState extends State<AddGameScreen> {
       'categories': gameCategories,
     });
 
+    var url = Uri.parse(
+        'https://us-central1-gemu-app.cloudfunctions.net/sendMailNewGame?dest=ccommunay@gmail.com');
+    var res = await http.get(url);
+    print(res.body);
+
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
             builder: (_) => NavController(
-                  uid: FirebaseAuth.instance.currentUser!.uid,
+                  uid: me!.uid,
                 )),
         (route) => false);
   }
