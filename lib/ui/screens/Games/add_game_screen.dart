@@ -23,12 +23,14 @@ class AddGameScreenState extends State<AddGameScreen> {
 
   File? fileLogo;
   List categories = [];
+  List<bool> selectCategories = [];
   List gameCategories = [];
 
   getData() async {
     var data = await FirebaseFirestore.instance.collection('categories').get();
     for (var item in data.docs) {
       categories.add(item);
+      selectCategories.add(false);
     }
 
     setState(() {
@@ -127,13 +129,18 @@ class AddGameScreenState extends State<AddGameScreen> {
           ),
           elevation: 6,
           leading: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                if (_nameGameFocusNode.hasFocus) {
+                  _nameGameFocusNode.unfocus();
+                }
+                Navigator.pop(context);
+              },
               icon: Icon(
                 Icons.arrow_back_ios,
                 color: Colors.white,
               )),
           title: Text(
-            'Add game',
+            'Add new game',
             style: mystyle(15, Colors.white),
           ),
         ),
@@ -213,7 +220,7 @@ class AddGameScreenState extends State<AddGameScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Save..',
+                                'Add Game..',
                                 style: mystyle(18),
                               ),
                               SizedBox(
@@ -221,6 +228,7 @@ class AddGameScreenState extends State<AddGameScreen> {
                               ),
                               CircularProgressIndicator(
                                 color: Theme.of(context).primaryColor,
+                                strokeWidth: 1.5,
                               )
                             ],
                           ),
@@ -228,80 +236,77 @@ class AddGameScreenState extends State<AddGameScreen> {
                       ))
                     ],
                   )
-                : GestureDetector(
-                    onTap: () {
-                      if (_nameGameFocusNode.hasFocus) {
-                        _nameGameFocusNode.unfocus();
-                      }
-                    },
-                    child: Container(
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                              child: ListView(
-                            physics: AlwaysScrollableScrollPhysics(
-                                parent: BouncingScrollPhysics()),
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            children: [
-                              SizedBox(
-                                height: 40.0,
-                              ),
-                              nameGame(),
-                              SizedBox(
-                                height: 40.0,
-                              ),
-                              addLogoGame(),
-                              SizedBox(
-                                height: 40.0,
-                              ),
-                              categorieGame()
-                            ],
-                          )),
-                          Container(
-                              alignment: Alignment.centerRight,
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              child: Padding(
-                                  padding: EdgeInsets.only(right: 10.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      if (_nameGameController.text != '' &&
-                                          fileLogo != null &&
-                                          gameCategories.length != 0) {
-                                        saveNewGame();
-                                      } else {
-                                        print('Manque des choses');
-                                      }
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      height: 40,
-                                      width: 70,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Theme.of(context).primaryColor,
-                                                Theme.of(context).accentColor
-                                              ])),
-                                      child: Text(
-                                        'Save',
-                                        style: mystyle(13),
-                                      ),
+                : Stack(
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            if (_nameGameFocusNode.hasFocus) {
+                              _nameGameFocusNode.unfocus();
+                            }
+                          },
+                          child: Container(
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                    child: ListView(
+                                  physics: AlwaysScrollableScrollPhysics(
+                                      parent: BouncingScrollPhysics()),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  children: [
+                                    SizedBox(
+                                      height: 40.0,
                                     ),
-                                  )))
-                        ],
-                      ),
-                    ))
+                                    nameGame(),
+                                    SizedBox(
+                                      height: 40.0,
+                                    ),
+                                    addLogoGame(),
+                                    SizedBox(
+                                      height: 40.0,
+                                    ),
+                                    categorieGame()
+                                  ],
+                                )),
+                              ],
+                            ),
+                          )),
+                      if (_nameGameController.text.isNotEmpty &&
+                          fileLogo != null &&
+                          gameCategories.length != 0)
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                              alignment: Alignment.center,
+                              width: 125,
+                              height: 50,
+                              child: ElevatedButton(
+                                  onPressed: () => saveNewGame(),
+                                  style: TextButton.styleFrom(
+                                      elevation: 6,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0))),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.add),
+                                      SizedBox(
+                                        width: 15.0,
+                                      ),
+                                      Text(
+                                        'Add',
+                                        style: mystyle(15.0),
+                                      )
+                                    ],
+                                  ))),
+                        )
+                    ],
+                  )
             : Center(
                 child: CircularProgressIndicator(
                   color: Theme.of(context).primaryColor,
@@ -327,22 +332,43 @@ class AddGameScreenState extends State<AddGameScreen> {
             controller: _nameGameController,
             focusNode: _nameGameFocusNode,
             maxLines: 1,
+            cursorColor: Theme.of(context).primaryColor,
+            style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black),
+            textInputAction: TextInputAction.done,
             decoration: InputDecoration(
                 labelText: 'Game name',
-                labelStyle: TextStyle(color: Theme.of(context).accentColor),
-                suffixIcon: GestureDetector(
-                  onTap: () => _nameGameController.clear(),
-                  child: Icon(
-                    Icons.clear,
-                    color: Theme.of(context).accentColor,
-                  ),
-                ),
+                labelStyle: TextStyle(
+                    color: _nameGameFocusNode.hasFocus
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey),
+                suffixIcon: _nameGameController.text.isEmpty
+                    ? SizedBox()
+                    : IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _nameGameController.clear();
+                          });
+                        },
+                        icon: Center(
+                            child: Icon(Icons.clear,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black))),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide:
-                        BorderSide(color: Theme.of(context).accentColor))),
+                        BorderSide(color: Theme.of(context).primaryColor))),
+            onChanged: (val) {
+              setState(() {
+                val = _nameGameController.text;
+              });
+            },
           )
         ],
       ),
@@ -363,46 +389,45 @@ class AddGameScreenState extends State<AddGameScreen> {
             height: 25.0,
           ),
           Center(
-            child: GestureDetector(
-              onTap: () => pickLogo(ImageSource.gallery),
-              child: fileLogo == null
-                  ? Container(
-                      height: 60,
-                      width: 60,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(10.0),
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
-                              ])),
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 33,
-                      ),
-                    )
-                  : Container(
-                      height: 60,
-                      width: 60,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(10.0),
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
-                              ]),
-                          image: DecorationImage(
-                              fit: BoxFit.cover, image: FileImage(fileLogo!))),
-                    ),
+              child: Material(
+            elevation: 12,
+            borderRadius: BorderRadius.circular(10.0),
+            child: Ink(
+              height: 60.0,
+              width: 60.0,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10.0),
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).accentColor
+                      ])),
+              child: InkWell(
+                  splashColor: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black.withOpacity(0.6)
+                      : Colors.white.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(10.0),
+                  onTap: () => pickLogo(ImageSource.gallery),
+                  child: fileLogo == null
+                      ? Center(
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 33,
+                          ),
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              image: DecorationImage(
+                                  image: FileImage(fileLogo!),
+                                  fit: BoxFit.cover)),
+                        )),
             ),
-          )
+          ))
         ],
       ),
     );
@@ -425,6 +450,7 @@ class AddGameScreenState extends State<AddGameScreen> {
             child: GridView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
+                padding: const EdgeInsets.only(bottom: 50.0),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     childAspectRatio: 1,
@@ -435,85 +461,77 @@ class AddGameScreenState extends State<AddGameScreen> {
                   DocumentSnapshot<Map<String, dynamic>> category =
                       categories[index];
 
-                  return SelectCategory(
-                    category: category,
-                    gameCategories: gameCategories,
+                  return Container(
+                    height: 100,
+                    width: 100,
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectCategories[index] =
+                                      !selectCategories[index];
+                                });
+                                if (selectCategories[index] == true &&
+                                    !gameCategories
+                                        .contains(category.data()!['name'])) {
+                                  gameCategories.add(category.data()!['name']);
+                                }
+                                if (selectCategories[index] == false &&
+                                    gameCategories
+                                        .contains(category.data()!['name'])) {
+                                  gameCategories
+                                      .remove(category.data()!['name']);
+                                }
+                              },
+                              child: Container(
+                                height: 62,
+                                width: 62,
+                                decoration: BoxDecoration(
+                                    color: selectCategories[index]
+                                        ? Colors.green[100]
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                alignment: Alignment.center,
+                                child: Container(
+                                  height: 60,
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.black),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Theme.of(context).primaryColor,
+                                            Theme.of(context).accentColor
+                                          ])),
+                                  child: Icon(Icons.category),
+                                ),
+                              ),
+                            ),
+                            selectCategories[index]
+                                ? Positioned(
+                                    right: 2,
+                                    bottom: 2,
+                                    child: Icon(
+                                      Icons.check,
+                                      color: Colors.green[100],
+                                    ))
+                                : SizedBox(),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        Text(category.data()!['name'])
+                      ],
+                    ),
                   );
                 }),
           )
-        ],
-      ),
-    );
-  }
-}
-
-class SelectCategory extends StatefulWidget {
-  final DocumentSnapshot<Map<String, dynamic>> category;
-  final List gameCategories;
-
-  SelectCategory({required this.category, required this.gameCategories});
-
-  @override
-  SelectCategoryState createState() => SelectCategoryState();
-}
-
-class SelectCategoryState extends State<SelectCategory> {
-  bool isSelect = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 100,
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isSelect = !isSelect;
-                  });
-                  if (isSelect == true &&
-                      !widget.gameCategories
-                          .contains(widget.category.data()!['name'])) {
-                    widget.gameCategories.add(widget.category.data()!['name']);
-                  }
-                  if (isSelect == false &&
-                      widget.gameCategories
-                          .contains(widget.category.data()!['name'])) {
-                    widget.gameCategories
-                        .remove(widget.category.data()!['name']);
-                  }
-                },
-                child: Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(10.0),
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Theme.of(context).primaryColor,
-                            Theme.of(context).accentColor
-                          ])),
-                  child: Icon(Icons.category),
-                ),
-              ),
-              isSelect
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.green[100],
-                    )
-                  : SizedBox(),
-            ],
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          Text(widget.category.data()!['name'])
         ],
       ),
     );
