@@ -87,7 +87,7 @@ class AddGameScreenState extends State<AddGameScreen> {
     });
 
     var url = Uri.parse(
-        'https://us-central1-gemu-app.cloudfunctions.net/sendMailNewGame?dest=ccommunay@gmail.com');
+        'https://us-central1-gemu-app.cloudfunctions.net/sendMailNewGame?dest=Gemu-Inc@protonmail.com');
     var res = await http.get(url);
     print(res.body);
 
