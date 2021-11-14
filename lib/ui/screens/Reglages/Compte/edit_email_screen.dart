@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/ui/widgets/alert_dialog_custom.dart';
@@ -35,6 +34,7 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
       alertUpdateMail(
           'Email successfully updated', 'Your email has been changed');
     } on FirebaseAuthException catch (e) {
+      print(e);
       return alertUpdateMail('Could not change email', 'Try again');
     }
   }
@@ -145,8 +145,8 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).accentColor
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.secondary
               ])),
         ),
         leading: IconButton(
@@ -211,8 +211,10 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                         colors: [
-                                          Theme.of(context).primaryColor,
-                                          Theme.of(context).accentColor
+                                          Theme.of(context).colorScheme.primary,
+                                          Theme.of(context)
+                                              .colorScheme
+                                              .secondary
                                         ])),
                               ),
                               Align(

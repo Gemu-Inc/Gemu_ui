@@ -313,18 +313,19 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
             autofocus: true,
             minLines: 1,
             maxLines: 15,
-            cursorColor: Theme.of(context).accentColor,
+            cursorColor: Theme.of(context).colorScheme.secondary,
             decoration: InputDecoration(
                 labelText: 'Write caption',
-                labelStyle: TextStyle(color: Theme.of(context).accentColor),
+                labelStyle:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Theme.of(context).accentColor)),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary)),
                 suffixIcon: IconButton(
                     icon: Icon(
                       Icons.clear,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     onPressed: () => _captionController.clear())),
           ))),
@@ -352,11 +353,12 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
                 autofocus: false,
                 decoration: InputDecoration(
                   labelText: 'Write hashtag',
-                  labelStyle: TextStyle(color: Theme.of(context).accentColor),
+                  labelStyle:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).accentColor)),
+                      borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary)),
                   contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   suffixIcon: InkWell(
                     onTap: () {
@@ -370,8 +372,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
                         _hashtagsController.clear();
                       }
                     },
-                    child:
-                        Icon(Icons.add, color: Theme.of(context).accentColor),
+                    child: Icon(Icons.add,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                 ),
               ),
@@ -382,8 +384,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
                   ? Container(
                       height: 50,
                       decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Theme.of(context).accentColor)),
+                          border: Border.all(
+                              color: Theme.of(context).colorScheme.secondary)),
                       child: Center(
                         child: Text('Pas encore d\'hashtags'),
                       ),
@@ -391,8 +393,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
                   : Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Theme.of(context).accentColor)),
+                          border: Border.all(
+                              color: Theme.of(context).colorScheme.secondary)),
                       child: Padding(
                         padding: EdgeInsets.only(left: 10, right: 10),
                         child: Wrap(
@@ -430,8 +432,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Theme.of(context).primaryColor,
-                                      Theme.of(context).accentColor
+                                      Theme.of(context).colorScheme.primary,
+                                      Theme.of(context).colorScheme.secondary
                                     ])),
                             child: Icon(Icons.tag, size: 15)),
                         title: Text(
@@ -501,8 +503,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary
                               ])),
                     ),
                   ),
@@ -535,8 +537,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary
                               ])),
                       child: Center(
                         child: Text('Next', style: mystyle(16, Colors.black38)),
@@ -577,8 +579,8 @@ class PictureEditorScreenState extends State<PictureEditorScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary
                               ])),
                       child: Icon(Icons.check, color: Colors.black38),
                     ),

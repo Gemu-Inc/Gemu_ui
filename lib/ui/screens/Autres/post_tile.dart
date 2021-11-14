@@ -23,7 +23,6 @@ import 'package:gemu/ui/screens/Profil/profil_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/ui/screens/Autres/viewers_screen.dart';
 import 'package:gemu/models/user.dart';
-import 'package:gemu/models/hashtag.dart';
 
 class PostTile extends StatefulWidget {
   final String idUserActual;
@@ -995,8 +994,8 @@ class PictureItemState extends State<PictureItem>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).accentColor
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary
                     ]),
                 borderRadius: BorderRadius.circular(15.0)),
             child: Icon(
@@ -2051,8 +2050,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).accentColor
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary
                     ]),
                 borderRadius: BorderRadius.circular(15.0)),
             child: Icon(

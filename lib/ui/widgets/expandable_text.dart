@@ -276,7 +276,7 @@ class ExpandableTextState extends State<ExpandableText>
             duration: widget.animationDuration ?? Duration(milliseconds: 200),
             curve: widget.animationCurve ?? Curves.fastLinearToSlowEaseIn,
             alignment: Alignment.topLeft,
-            vsync: this,
+            //vsync: this,
           );
         }
 

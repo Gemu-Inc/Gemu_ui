@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:gemu/ui/controller/log_controller.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -356,8 +354,8 @@ class PictureScreenState extends State<PictureScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Theme.of(context).primaryColor.withOpacity(0.3),
-                  Theme.of(context).accentColor.withOpacity(0.3)
+                  Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                  Theme.of(context).colorScheme.secondary.withOpacity(0.3)
                 ])),
         child: Stack(
           children: [
@@ -572,8 +570,8 @@ class PictureScreenState extends State<PictureScreen>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Theme.of(context).primaryColor.withOpacity(0.7),
-                      Theme.of(context).accentColor.withOpacity(0.7)
+                      Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.7)
                     ]),
               ),
               child: Icon(
@@ -768,11 +766,14 @@ class PictureScreenState extends State<PictureScreen>
                           decoration: InputDecoration(
                               labelText: 'Write caption',
                               labelStyle: TextStyle(
-                                  color: Theme.of(context).accentColor),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
                               border: OutlineInputBorder(),
                               focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                      color: Theme.of(context).accentColor))),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary))),
                         ),
                       ),
                     )
@@ -830,12 +831,13 @@ class PictureScreenState extends State<PictureScreen>
                       autofocus: false,
                       decoration: InputDecoration(
                         labelText: 'Write hashtag',
-                        labelStyle:
-                            TextStyle(color: Theme.of(context).accentColor),
+                        labelStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Theme.of(context).accentColor)),
+                                color:
+                                    Theme.of(context).colorScheme.secondary)),
                         contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                         suffixIcon: InkWell(
                           onTap: () {
@@ -851,7 +853,7 @@ class PictureScreenState extends State<PictureScreen>
                           },
                           child: Icon(
                             Icons.add,
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ),
@@ -864,7 +866,9 @@ class PictureScreenState extends State<PictureScreen>
                             height: 50,
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Theme.of(context).accentColor)),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary)),
                             child: Center(
                               child: Text('Pas encore d\'hashtags'),
                             ),
@@ -873,7 +877,9 @@ class PictureScreenState extends State<PictureScreen>
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Theme.of(context).accentColor)),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary)),
                             child: Padding(
                               padding: EdgeInsets.only(left: 10, right: 10),
                               child: Wrap(
@@ -917,8 +923,12 @@ class PictureScreenState extends State<PictureScreen>
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                           colors: [
-                                            Theme.of(context).primaryColor,
-                                            Theme.of(context).accentColor
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .secondary
                                           ])),
                                   child: Icon(Icons.tag, size: 15)),
                               title: Text(

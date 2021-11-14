@@ -730,8 +730,11 @@ class RegisterScreenState extends State<RegisterScreen> {
                                                 end: Alignment.bottomRight,
                                                 colors: [
                                                   Theme.of(context)
-                                                      .primaryColor,
-                                                  Theme.of(context).accentColor
+                                                      .colorScheme
+                                                      .primary,
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary
                                                 ]),
                                             border:
                                                 Border.all(color: Colors.black),
@@ -918,9 +921,11 @@ class RegisterScreenState extends State<RegisterScreen> {
                                                               .bottomRight,
                                                           colors: [
                                                             Theme.of(context)
-                                                                .primaryColor,
+                                                                .colorScheme
+                                                                .primary,
                                                             Theme.of(context)
-                                                                .accentColor
+                                                                .colorScheme
+                                                                .secondary
                                                           ]),
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1016,9 +1021,11 @@ class RegisterScreenState extends State<RegisterScreen> {
                                                               .bottomRight,
                                                           colors: [
                                                             Theme.of(context)
-                                                                .primaryColor,
+                                                                .colorScheme
+                                                                .primary,
                                                             Theme.of(context)
-                                                                .accentColor
+                                                                .colorScheme
+                                                                .secondary
                                                           ]),
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1123,8 +1130,12 @@ class RegisterScreenState extends State<RegisterScreen> {
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                           colors: [
-                                            Theme.of(context).primaryColor,
-                                            Theme.of(context).accentColor
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .secondary
                                           ]),
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: Colors.black),

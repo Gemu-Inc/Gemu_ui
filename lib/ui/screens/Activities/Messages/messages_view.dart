@@ -30,8 +30,8 @@ class NewConversationScreen extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).accentColor
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.secondary
                   ])),
               child: AppBar(
                 elevation: 0,
@@ -177,7 +177,7 @@ class ChatScreenState extends State<ChatScreen> {
             children: [
               Container(
                 child: Bubble(
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   elevation: 0,
                   padding: BubbleEdges.all(10.0),
                   nip: BubbleNip.rightTop,
@@ -269,15 +269,12 @@ class ChatScreenState extends State<ChatScreen> {
     switch (message.messageType) {
       case ChatMessageType.text:
         return TextMessage(message: message);
-        break;
       case ChatMessageType.audio:
         return AudioMessage(message: message);
-        break;
       case ChatMessageType.video:
         return VideoMessage(
           message: message,
         );
-        break;
       default:
         return SizedBox();
     }

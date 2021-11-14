@@ -6,6 +6,7 @@ import 'package:gemu/models/user.dart';
 
 import 'messages_view.dart';
 
+// ignore: must_be_immutable
 class MessageCard extends StatelessWidget {
   MessageCard(
       {Key? key,
@@ -83,7 +84,8 @@ class MessageCard extends StatelessWidget {
                         read!
                             ? Container()
                             : Icon(Icons.brightness_1,
-                                color: Theme.of(context).accentColor, size: 15),
+                                color: Theme.of(context).colorScheme.secondary,
+                                size: 15),
                       ],
                     ),
                     SizedBox(

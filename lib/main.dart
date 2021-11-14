@@ -92,11 +92,14 @@ class MyApp extends StatelessWidget {
             ?
             //Light theme system
             ThemeData(
+                colorScheme: ColorScheme.light(
+                  primary: _primaryColor.getColor(),
+                  secondary: _accentColor.getColor(),
+                ),
                 brightness: Brightness.light,
                 scaffoldBackgroundColor: Color(0xFFDEE4E7),
                 primaryColor: _primaryColor.getColor(),
-                colorScheme: ColorScheme.light(),
-                accentColor: _accentColor.getColor(),
+                //accentColor: _accentColor.getColor(),
                 canvasColor: Color(0xFFD3D3D3),
                 shadowColor: Color(0xFFBDBDBD),
                 iconTheme: IconThemeData(
@@ -125,11 +128,14 @@ class MyApp extends StatelessWidget {
         //Dark theme system
         darkTheme: themeNotifier.getTheme() == null
             ? ThemeData(
+                colorScheme: ColorScheme.dark(
+                  primary: _primaryColor.getColor(),
+                  secondary: _accentColor.getColor(),
+                ),
                 brightness: Brightness.dark,
                 scaffoldBackgroundColor: Color(0xFF1A1C25),
                 primaryColor: _primaryColor.getColor(),
-                accentColor: _accentColor.getColor(),
-                colorScheme: ColorScheme.dark(),
+                //accentColor: _accentColor.getColor(),
                 canvasColor: Color(0xFF222831),
                 shadowColor: Color(0xFF121212),
                 iconTheme: IconThemeData(

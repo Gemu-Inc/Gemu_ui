@@ -81,8 +81,8 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).accentColor
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary
                 ])),
           ),
           leading: IconButton(
@@ -157,8 +157,8 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).accentColor
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary
                     ])),
                 child: Container(
                   color: Theme.of(context).canvasColor.withOpacity(0.5),

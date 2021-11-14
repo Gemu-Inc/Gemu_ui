@@ -6,6 +6,7 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/ui/screens/Autres/post_tile.dart';
 
+// ignore: must_be_immutable
 class GameSection extends StatefulWidget {
   final Game game;
   final AnimationController animationRotateController, animationGamesController;

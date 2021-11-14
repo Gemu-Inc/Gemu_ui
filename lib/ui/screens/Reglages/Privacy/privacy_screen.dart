@@ -79,8 +79,8 @@ class PrivacyScreenState extends State<PrivacyScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).accentColor
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.secondary
               ])),
         ),
       ),

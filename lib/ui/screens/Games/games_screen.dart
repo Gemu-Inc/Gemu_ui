@@ -221,8 +221,8 @@ class _GamesScreenState extends State<GamesScreen>
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    Theme.of(context).primaryColor,
-                                    Theme.of(context).accentColor
+                                    Theme.of(context).colorScheme.primary,
+                                    Theme.of(context).colorScheme.secondary
                                   ]),
                               borderRadius: BorderRadius.circular(10),
                               image: DecorationImage(
@@ -342,8 +342,12 @@ class _GamesScreenState extends State<GamesScreen>
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: [
-                                              Theme.of(context).primaryColor,
-                                              Theme.of(context).accentColor
+                                              Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary
                                             ]),
                                         borderRadius:
                                             BorderRadius.circular(10)),
@@ -409,15 +413,15 @@ class _GamesScreenState extends State<GamesScreen>
       TweenSequenceItem(
         weight: 1.0,
         tween: ColorTween(
-          begin: Theme.of(context).primaryColor,
-          end: Theme.of(context).accentColor,
+          begin: Theme.of(context).colorScheme.primary,
+          end: Theme.of(context).colorScheme.secondary,
         ),
       ),
       TweenSequenceItem(
         weight: 1.0,
         tween: ColorTween(
-          begin: Theme.of(context).accentColor,
-          end: Theme.of(context).primaryColor,
+          begin: Theme.of(context).colorScheme.secondary,
+          end: Theme.of(context).colorScheme.primary,
         ),
       ),
     ]);

@@ -196,8 +196,8 @@ class _HomeScreenState extends State<HomeScreen>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).accentColor
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary
                     ]),
               ),
               child: Icon(Icons.subscriptions, size: 30, color: Colors.black),
@@ -220,8 +220,8 @@ class _HomeScreenState extends State<HomeScreen>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).accentColor
+                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.secondary
                       ]),
                   image: DecorationImage(
                       image: CachedNetworkImageProvider(
@@ -364,8 +364,8 @@ class _HomeScreenState extends State<HomeScreen>
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                       colors: [
-                                        Theme.of(context).primaryColor,
-                                        Theme.of(context).accentColor
+                                        Theme.of(context).colorScheme.primary,
+                                        Theme.of(context).colorScheme.secondary
                                       ]),
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(

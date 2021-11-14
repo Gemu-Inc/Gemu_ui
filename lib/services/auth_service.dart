@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/ui/controller/log_controller.dart';
 import 'package:gemu/ui/controller/navigation_controller.dart';
 import 'package:gemu/ui/widgets/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';

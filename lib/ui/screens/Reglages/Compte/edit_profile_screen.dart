@@ -12,6 +12,7 @@ import 'package:gemu/ui/screens/Reglages/Compte/edit_password_screen.dart';
 import 'package:gemu/ui/screens/Reglages/Compte/edit_user_name_screen.dart';
 import 'package:gemu/ui/widgets/alert_dialog_custom.dart';
 
+// ignore: must_be_immutable
 class EditProfileScreen extends StatefulWidget {
   UserModel user;
 
@@ -216,8 +217,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).accentColor
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary
                 ])),
           ),
           leading: IconButton(
@@ -337,8 +338,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).accentColor
+                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme.secondary
                             ])),
                   ),
                   Align(

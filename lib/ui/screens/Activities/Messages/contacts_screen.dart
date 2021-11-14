@@ -26,8 +26,8 @@ class ContactsScreenState extends State<ContactsScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).accentColor
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.secondary
                   ])),
               child: AppBar(
                 elevation: 0,
@@ -42,7 +42,7 @@ class ContactsScreenState extends State<ContactsScreen> {
               ),
             ),
             preferredSize: Size.fromHeight(60)),
-        body: uid != null && userDirectory != null
+        body: uid.isNotEmpty && userDirectory.isNotEmpty
             ? Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.0),
                 child: ListView(

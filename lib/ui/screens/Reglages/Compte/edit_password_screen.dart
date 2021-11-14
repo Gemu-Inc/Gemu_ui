@@ -27,6 +27,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
       alertUpdatePassword(
           'Password successfully updated', 'Your password has been changed');
     } on FirebaseAuthException catch (e) {
+      print(e);
       return alertUpdatePassword('Could not change password', 'Try again');
     }
   }
@@ -96,8 +97,8 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).accentColor
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.secondary
               ])),
         ),
         leading: IconButton(
@@ -190,8 +191,12 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                           colors: [
-                                            Theme.of(context).primaryColor,
-                                            Theme.of(context).accentColor
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .secondary
                                           ])),
                                 ),
                                 Align(

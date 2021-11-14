@@ -172,8 +172,8 @@ class _CategorieScreenState extends State<CategorieScreen>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).accentColor
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary
                 ])),
           ),
           bottom: PreferredSize(
@@ -530,8 +530,8 @@ class GameViewState extends State<GameView> {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Theme.of(context).primaryColor,
-                                      Theme.of(context).accentColor
+                                      Theme.of(context).colorScheme.primary,
+                                      Theme.of(context).colorScheme.secondary
                                     ]),
                                 border: Border.all(color: Colors.black),
                                 borderRadius: BorderRadius.circular(10),

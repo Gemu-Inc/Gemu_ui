@@ -1,9 +1,4 @@
-import 'package:gemu/models/user.dart';
-import 'package:gemu/ui/screens/Reglages/reglages_screen.dart';
 import 'package:gemu/ui/screens/Welcome/welcome_screen.dart';
-import 'package:gemu/ui/screens/Reglages/Compte/edit_email_screen.dart';
-import 'package:gemu/ui/screens/Reglages/Compte/edit_password_screen.dart';
-import 'package:gemu/ui/screens/Reglages/Compte/edit_user_name_screen.dart';
 import 'package:gemu/ui/screens/Login/login_screen.dart';
 import 'package:gemu/ui/screens/Register/register_screen.dart';
 import 'package:flutter/material.dart';

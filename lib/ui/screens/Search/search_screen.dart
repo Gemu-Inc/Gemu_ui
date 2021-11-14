@@ -369,8 +369,8 @@ class SearchScreenState extends State<SearchScreen>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Theme.of(context).primaryColor.withOpacity(0.7),
-                      Theme.of(context).accentColor.withOpacity(0.7)
+                      Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.7)
                     ])),
             child: Text(title),
           )
@@ -459,8 +459,12 @@ class SearchScreenState extends State<SearchScreen>
                                               begin: Alignment.topLeft,
                                               end: Alignment.bottomRight,
                                               colors: [
-                                                Theme.of(context).primaryColor,
-                                                Theme.of(context).accentColor
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary
                                               ])),
                                       child: Icon(
                                         Icons.tag,
@@ -865,8 +869,12 @@ class SearchScreenState extends State<SearchScreen>
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                           colors: [
-                                            Theme.of(context).primaryColor,
-                                            Theme.of(context).accentColor
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .secondary
                                           ])),
                                   child: Icon(
                                     Icons.tag,
@@ -961,8 +969,12 @@ class SearchScreenState extends State<SearchScreen>
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                           colors: [
-                                            Theme.of(context).primaryColor,
-                                            Theme.of(context).accentColor
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .secondary
                                           ])),
                                   child: Icon(Icons.tag_sharp),
                                 ),
@@ -1296,8 +1308,8 @@ class SearchScreenState extends State<SearchScreen>
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Theme.of(context).primaryColor,
-                                      Theme.of(context).accentColor
+                                      Theme.of(context).colorScheme.primary,
+                                      Theme.of(context).colorScheme.secondary
                                     ])),
                             child: Icon(Icons.tag_sharp),
                           ),

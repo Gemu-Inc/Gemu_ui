@@ -43,7 +43,10 @@ class ThemeButton extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [buttonThemeData.primaryColor, buttonThemeData.accentColor],
+            colors: [
+              buttonThemeData.colorScheme.primary,
+              buttonThemeData.colorScheme.secondary
+            ],
           ),
           borderRadius: BorderRadius.circular(40)),
       child: Icon(

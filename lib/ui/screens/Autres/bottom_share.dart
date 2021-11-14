@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:camera/camera.dart';
+//import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
-import 'package:gemu/ui/screens/Share/Post/camera.dart';
+//import 'package:gemu/ui/screens/Share/Post/camera.dart';
 import 'package:gemu/ui/screens/Share/Post/create_post_screen.dart';
 
 class BottomShare extends StatefulWidget {
@@ -15,7 +15,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
   late Animation degOneTranslationAnimation, degTwoTranslationAnimation;
   late Animation rotationAnimationCircularButton;
   late Animation rotationAnimationFlatButton;
-  List<CameraDescription>? _cameras;
+  //List<CameraDescription>? _cameras;
 
   double getRadianFromDegree(double degree) {
     double unitRadian = 57.295779513;
@@ -25,21 +25,21 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
   void logError(String code, String? message) =>
       print('Error: $code\nError Message: $message');
 
-  Future<void> initializeCamera() async {
-    try {
-      final cameras = await availableCameras();
-      _cameras = cameras;
-      print('Camera description: $_cameras');
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CameraPost(
-                    cameras: _cameras,
-                  )));
-    } on CameraException catch (e) {
-      logError(e.code, e.description);
-    }
-  }
+  // Future<void> initializeCamera() async {
+  //   try {
+  //     final cameras = await availableCameras();
+  //     _cameras = cameras;
+  //     print('Camera description: $_cameras');
+  //     Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => CameraPost(
+  //                   cameras: _cameras,
+  //                 )));
+  //   } on CameraException catch (e) {
+  //     logError(e.code, e.description);
+  //   }
+  // }
 
   @override
   void initState() {
@@ -135,7 +135,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                             width: 45,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
-                                color: Theme.of(context).accentColor),
+                                color: Theme.of(context).colorScheme.secondary),
                             child: Icon(
                               Icons.play_arrow,
                               size: 25,
@@ -180,8 +180,10 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                         colors: [
-                                          Theme.of(context).primaryColor,
-                                          Theme.of(context).accentColor
+                                          Theme.of(context).colorScheme.primary,
+                                          Theme.of(context)
+                                              .colorScheme
+                                              .secondary
                                         ])),
                               ),
                               Align(

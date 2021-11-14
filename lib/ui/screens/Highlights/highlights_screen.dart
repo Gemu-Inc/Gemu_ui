@@ -639,9 +639,11 @@ class HighlightsScreenState extends State<HighlightsScreen>
                                                   end: Alignment.bottomRight,
                                                   colors: [
                                                     Theme.of(context)
-                                                        .primaryColor,
+                                                        .colorScheme
+                                                        .primary,
                                                     Theme.of(context)
-                                                        .accentColor
+                                                        .colorScheme
+                                                        .secondary
                                                   ]),
                                               shape: BoxShape.circle,
                                               boxShadow: [

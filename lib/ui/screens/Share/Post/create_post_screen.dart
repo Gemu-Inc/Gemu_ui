@@ -134,7 +134,7 @@ class AddPostScreenState extends State<AddPostScreen> {
         children: [
           Expanded(
             child: InkWell(
-              splashColor: Theme.of(context).accentColor,
+              splashColor: Theme.of(context).colorScheme.secondary,
               onTap: () => showOptionsImage(),
               child: Center(
                 child: Container(
@@ -154,7 +154,7 @@ class AddPostScreenState extends State<AddPostScreen> {
           ),
           Expanded(
             child: InkWell(
-              splashColor: Theme.of(context).accentColor,
+              splashColor: Theme.of(context).colorScheme.secondary,
               onTap: () => showOptionsVideo(),
               child: Center(
                 child: Container(

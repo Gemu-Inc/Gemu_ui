@@ -40,7 +40,7 @@ class ConversationDetailsProvider extends StatelessWidget {
 
   List<String> getUserIds(List<Convo> _convos) {
     final List<String> users = <String>[];
-    if (_convos != null) {
+    if (_convos.isNotEmpty) {
       for (Convo c in _convos) {
         c.userIds![0] != uid
             ? users.add(c.userIds![0])

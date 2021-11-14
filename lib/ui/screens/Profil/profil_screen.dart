@@ -162,8 +162,8 @@ class _MyProfilScreenState extends State<MyProfilScreen>
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    Theme.of(context).primaryColor,
-                                    Theme.of(context).accentColor
+                                    Theme.of(context).colorScheme.primary,
+                                    Theme.of(context).colorScheme.secondary
                                   ],
                                   tileMode: TileMode.clamp)),
                           child: FlexibleSpaceBar(
@@ -564,8 +564,8 @@ class ProfilUserState extends State<ProfilUser>
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    Theme.of(context).primaryColor,
-                                    Theme.of(context).accentColor
+                                    Theme.of(context).colorScheme.primary,
+                                    Theme.of(context).colorScheme.secondary
                                   ],
                                   tileMode: TileMode.clamp)),
                           child: FlexibleSpaceBar(

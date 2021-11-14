@@ -332,18 +332,19 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
             autofocus: true,
             minLines: 1,
             maxLines: 15,
-            cursorColor: Theme.of(context).accentColor,
+            cursorColor: Theme.of(context).colorScheme.secondary,
             decoration: InputDecoration(
                 labelText: 'Write caption',
-                labelStyle: TextStyle(color: Theme.of(context).accentColor),
+                labelStyle:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Theme.of(context).accentColor)),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary)),
                 suffixIcon: IconButton(
                     icon: Icon(
                       Icons.clear,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     onPressed: () => _captionController.clear())),
           ))),
@@ -371,11 +372,12 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                 autofocus: false,
                 decoration: InputDecoration(
                   labelText: 'Write hashtag',
-                  labelStyle: TextStyle(color: Theme.of(context).accentColor),
+                  labelStyle:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).accentColor)),
+                      borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary)),
                   contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   suffixIcon: InkWell(
                     onTap: () {
@@ -389,8 +391,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                         _hashtagsController.clear();
                       }
                     },
-                    child:
-                        Icon(Icons.add, color: Theme.of(context).accentColor),
+                    child: Icon(Icons.add,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                 ),
               ),
@@ -401,8 +403,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                   ? Container(
                       height: 50,
                       decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Theme.of(context).accentColor)),
+                          border: Border.all(
+                              color: Theme.of(context).colorScheme.secondary)),
                       child: Center(
                         child: Text('Pas encore d\'hashtags'),
                       ),
@@ -410,8 +412,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                   : Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Theme.of(context).accentColor)),
+                          border: Border.all(
+                              color: Theme.of(context).colorScheme.secondary)),
                       child: Padding(
                         padding: EdgeInsets.only(left: 10, right: 10),
                         child: Wrap(
@@ -419,7 +421,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                             runSpacing: 5,
                             children: hashtagsSelected.map((hashtag) {
                               return Chip(
-                                backgroundColor: Theme.of(context).primaryColor,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
                                 label: Text('#$hashtag', style: mystyle(11)),
@@ -449,8 +452,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Theme.of(context).primaryColor,
-                                      Theme.of(context).accentColor
+                                      Theme.of(context).colorScheme.primary,
+                                      Theme.of(context).colorScheme.secondary
                                     ])),
                             child: Icon(Icons.tag, size: 15)),
                         title: Text(
@@ -517,8 +520,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary
                               ])),
                       child: Center(
                         child: Text(
@@ -557,8 +560,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary
                               ])),
                       child: Center(
                         child: Text(
@@ -594,8 +597,8 @@ class VideoEditorScreenState extends State<VideoEditorScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).accentColor
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary
                               ])),
                       child: Center(
                           child: Icon(

@@ -320,8 +320,8 @@ class _DesignScreenState extends State<DesignScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                themeData.primaryColor,
-                themeData.accentColor,
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.secondary
               ]),
           borderRadius: BorderRadius.circular(40)),
       child: Icon(

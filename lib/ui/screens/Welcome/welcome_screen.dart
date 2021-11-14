@@ -258,8 +258,8 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                       height: 5,
                       decoration: BoxDecoration(
                           gradient: LinearGradient(colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).accentColor
+                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.secondary
                       ])),
                     ),
                     VerticalSpacing(

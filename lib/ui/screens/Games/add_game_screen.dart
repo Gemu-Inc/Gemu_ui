@@ -130,8 +130,8 @@ class AddGameScreenState extends State<AddGameScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).accentColor
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary
                 ])),
           ),
           elevation: 6,
@@ -205,8 +205,11 @@ class AddGameScreenState extends State<AddGameScreen> {
                                                 end: Alignment.bottomRight,
                                                 colors: [
                                                   Theme.of(context)
-                                                      .primaryColor,
-                                                  Theme.of(context).accentColor
+                                                      .colorScheme
+                                                      .primary,
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary
                                                 ])),
                                         child: Text(
                                           'Save',
@@ -409,8 +412,8 @@ class AddGameScreenState extends State<AddGameScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).accentColor
+                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.secondary
                       ])),
               child: InkWell(
                   splashColor: Theme.of(context).brightness == Brightness.dark
@@ -512,8 +515,12 @@ class AddGameScreenState extends State<AddGameScreen> {
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                           colors: [
-                                            Theme.of(context).primaryColor,
-                                            Theme.of(context).accentColor
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .secondary
                                           ])),
                                   child: Icon(Icons.category),
                                 ),

@@ -13,11 +13,14 @@ void getColor() async {
 
 /// --- Dark Orange Theme ---
 final darkThemeOrange = ThemeData(
+    colorScheme: ColorScheme.dark(
+      primary: Color(0xFFB27D75),
+      secondary: Color(0xFF6E78B1),
+    ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Color(0xFF1A1C25),
     primaryColor: Color(0xFFB27D75),
-    colorScheme: ColorScheme.dark(),
-    accentColor: Color(0xFF6E78B1),
+    //accentColor: Color(0xFF6E78B1),
     canvasColor: Color(0xFF222831),
     shadowColor: Color(0xFF121212),
     iconTheme: IconThemeData(
@@ -43,11 +46,14 @@ final darkThemeOrange = ThemeData(
 
 /// --- Dark Purple Theme ---
 final darkThemePurple = ThemeData(
+    colorScheme: ColorScheme.dark(
+      primary: Color(0xFF6E78B1),
+      secondary: Color(0xFFB27D75),
+    ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Color(0xFF1A1C25),
     primaryColor: Color(0xFF6E78B1),
-    colorScheme: ColorScheme.dark(),
-    accentColor: Color(0xFFB27D75),
+    //accentColor: Color(0xFFB27D75),
     canvasColor: Color(0xFF222831),
     shadowColor: Color(0xFF121212),
     iconTheme: IconThemeData(
@@ -73,11 +79,14 @@ final darkThemePurple = ThemeData(
 
 /// --- Light Orange Theme ---
 final lightThemeOrange = ThemeData(
+    colorScheme: ColorScheme.light(
+      primary: Color(0xFFB27D75),
+      secondary: Color(0xFF6E78B1),
+    ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: Color(0xFFDEE4E7),
     primaryColor: Color(0xFFB27D75),
-    colorScheme: ColorScheme.light(),
-    accentColor: Color(0xFF6E78B1),
+    //accentColor: Color(0xFF6E78B1),
     canvasColor: Color(0xFFD3D3D3),
     shadowColor: Color(0xFFEEEEEE),
     iconTheme: IconThemeData(
@@ -103,11 +112,14 @@ final lightThemeOrange = ThemeData(
 
 /// --- Light Purple Theme ---
 final lightThemePurple = ThemeData(
+    colorScheme: ColorScheme.light(
+      primary: Color(0xFF6E78B1),
+      secondary: Color(0xFFB27D75),
+    ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: Color(0xFFDEE4E7),
     primaryColor: Color(0xFF6E78B1),
-    colorScheme: ColorScheme.light(),
-    accentColor: Color(0xFFB27D75),
+    //accentColor: Color(0xFFB27D75),
     canvasColor: Color(0xFFD3D3D3),
     shadowColor: Color(0xFFBDBDBD),
     iconTheme: IconThemeData(

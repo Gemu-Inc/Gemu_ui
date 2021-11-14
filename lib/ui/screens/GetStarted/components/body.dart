@@ -95,8 +95,8 @@ class BodyState extends State<Body> {
                 Theme.of(context).scaffoldBackgroundColor
               ])),
           child: IntroSlider(
-            colorDot: Theme.of(context).accentColor.withOpacity(0.5),
-            colorActiveDot: Theme.of(context).accentColor,
+            colorDot: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+            colorActiveDot: Theme.of(context).colorScheme.secondary,
             sizeDot: 13.0,
 
             // Skip button
