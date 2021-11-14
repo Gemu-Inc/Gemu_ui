@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:gemu/models/user.dart';
+
+import 'package:http/http.dart' as http;
 
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/models/game.dart';
@@ -13,7 +16,52 @@ class PanelSupportScreen extends StatefulWidget {
 }
 
 class PanelSupportScreenState extends State<PanelSupportScreen> {
-  validate(String idGame, String imageUrl, List gameCategories) async {
+  late ScrollController _scrollController;
+
+  Map<UserModel, Game> demandesNewGames = {};
+  bool dataIsThere = false;
+
+  getDemandesNewGames() async {
+    List<Game> games = [];
+    List<UserModel> users = [];
+
+    await FirebaseFirestore.instance
+        .collection('games')
+        .doc('not_verified')
+        .collection('games_not_verified')
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        games.add(Game.fromMap(item, item.data()));
+      }
+    });
+
+    for (var i = 0; i < games.length; i++) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(games[i].idDemandeur)
+          .get()
+          .then((value) => users.add(UserModel.fromMap(value, value.data()!)));
+    }
+
+    for (var i = 0; i < users.length; i++) {
+      demandesNewGames[users[i]] = games[i];
+    }
+
+    setState(() {
+      dataIsThere = true;
+    });
+  }
+
+  validate(String idGame, String imageUrl, List gameCategories,
+      UserModel user) async {
+    await FirebaseFirestore.instance
+        .collection('games')
+        .doc('not_verified')
+        .collection('games_not_verified')
+        .doc(idGame)
+        .delete();
+
     await FirebaseFirestore.instance
         .collection('games')
         .doc('verified')
@@ -26,10 +74,16 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
       'name': idGame
     });
 
+    var url = Uri.parse(
+        'https://us-central1-gemu-app.cloudfunctions.net/sendMailAcceptRequestNewGame?dest=${user.uid}');
+    var res = await http.get(url);
+    print(res.body);
+
     print('success');
   }
 
-  decline(String idGame, String imageUrl, List gameCategories) async {
+  decline(String idGame, String imageUrl, List gameCategories,
+      UserModel user) async {
     await FirebaseStorage.instance.refFromURL(imageUrl).delete();
     await FirebaseFirestore.instance
         .collection('games')
@@ -38,209 +92,223 @@ class PanelSupportScreenState extends State<PanelSupportScreen> {
         .doc(idGame)
         .delete();
 
+    var url = Uri.parse(
+        'https://us-central1-gemu-app.cloudfunctions.net/sendMailRefuseRequestNewGame?dest=${user.uid}');
+    var res = await http.get(url);
+    print(res.body);
+
     print('success');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDemandesNewGames();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: false,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBarCustom(
-        context: context,
-        title: 'Panel support',
-        actions: [],
-      ),
-      body: Center(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width / 1.1,
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('games')
-                .doc('not_verified')
-                .collection('games_not_verified')
-                .orderBy('name')
-                .snapshots(),
-            builder: (_, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBarCustom(
+          context: context,
+          title: 'Panel support',
+          actions: [],
+        ),
+        body: dataIsThere
+            ? demandesNewGames.length == 0
+                ? Center(
+                    child: Text(
+                    'Pas encore de demandes',
+                    style: mystyle(14),
+                  ))
+                : Container(
+                    height: MediaQuery.of(context).size.height,
+                    child: ListView.builder(
+                        padding: EdgeInsets.symmetric(vertical: 25.0),
+                        controller: _scrollController,
+                        physics: AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics()),
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: demandesNewGames.length,
+                        itemBuilder: (_, int index) {
+                          UserModel user =
+                              demandesNewGames.keys.elementAt(index);
+                          return demandeGame(user, demandesNewGames[user]!);
+                        }),
+                  )
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                  strokeWidth: 1.5,
+                ),
+              ));
+  }
+
+  Widget demandeGame(UserModel user, Game gameNoVerified) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+      child: Container(
+        height: 250,
+        decoration: BoxDecoration(
+            color: Theme.of(context).canvasColor,
+            border: Border.all(color: Colors.black),
+            boxShadow: [
+              BoxShadow(
+                  color: Theme.of(context).primaryColor,
+                  blurRadius: 3,
+                  spreadRadius: 3)
+            ]),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                child: Container(
+                  height: 70,
+                  alignment: Alignment.center,
+                  child: ListTile(
+                    leading: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: CachedNetworkImageProvider(user.imageUrl!),
+                              fit: BoxFit.cover)),
+                    ),
+                    title: Text(user.username),
+                    subtitle: Text(
+                      'a fait une demande pour ajouter un jeu',
+                      style: mystyle(12),
+                    ),
                   ),
-                );
-              }
-              if (snapshot.data.docs.length == 0) {
-                return Center(
-                  child: Text(
-                    'Aucunes demandes récentes',
-                    style: mystyle(12),
-                  ),
-                );
-              }
-              return ListView.builder(
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: (_, int index) {
-                    Game gameNoVerified = Game.fromMap(
-                        snapshot.data.docs[index],
-                        snapshot.data.docs[index].data());
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Container(
-                        height: MediaQuery.of(context).size.height / 6,
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).canvasColor,
-                            border: Border.all(color: Colors.black),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Theme.of(context).shadowColor,
-                                  blurRadius: 3,
-                                  spreadRadius: 3)
-                            ]),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Expanded(
-                                child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 5.0),
-                                    child: Container(
-                                      height: 60,
-                                      width: 60,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black),
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: CachedNetworkImageProvider(
-                                                  gameNoVerified.imageUrl))),
-                                    )),
-                                Expanded(
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 5.0, top: 5.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text('Name'),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10.0,
-                                                vertical: 10.0),
-                                            child: Text(
-                                              gameNoVerified.name,
-                                              style: mystyle(14),
-                                            ),
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text('Categories'),
-                                        ),
-                                        Expanded(
-                                          child: ListView.builder(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 10.0,
-                                                  vertical: 10.0),
-                                              scrollDirection: Axis.vertical,
-                                              shrinkWrap: true,
-                                              itemCount: gameNoVerified
-                                                  .categories!.length,
-                                              itemBuilder: (_, int index) {
-                                                String category = gameNoVerified
-                                                    .categories![index];
-                                                return Text(
-                                                  category,
-                                                  style: mystyle(14),
-                                                );
-                                              }),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )),
-                            Container(
-                              width: MediaQuery.of(context).size.width / 2.5,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => validate(
-                                        gameNoVerified.documentId!,
-                                        gameNoVerified.imageUrl,
-                                        gameNoVerified.categories!),
-                                    child: Container(
-                                      height: 45,
-                                      width: 45,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black),
-                                          shape: BoxShape.circle,
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Theme.of(context)
-                                                    .primaryColor
-                                                    .withOpacity(0.7),
-                                                Theme.of(context)
-                                                    .accentColor
-                                                    .withOpacity(0.7)
-                                              ])),
-                                      child: Icon(Icons.check),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () => decline(
-                                        gameNoVerified.documentId!,
-                                        gameNoVerified.imageUrl,
-                                        gameNoVerified.categories!),
-                                    child: Container(
-                                      height: 45,
-                                      width: 45,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black),
-                                          shape: BoxShape.circle,
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Theme.of(context)
-                                                    .primaryColor
-                                                    .withOpacity(0.7),
-                                                Theme.of(context)
-                                                    .accentColor
-                                                    .withOpacity(0.7)
-                                              ])),
-                                      child: Icon(Icons.clear),
-                                    ),
-                                  )
-                                ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(10.0),
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: CachedNetworkImageProvider(
+                                      gameNoVerified.imageUrl))),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text('Name', style: mystyle(14)),
+                              const SizedBox(
+                                height: 5,
                               ),
+                              Text(gameNoVerified.name, style: mystyle(12))
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                            child: Column(
+                          children: [
+                            Text('Categories', style: mystyle(14)),
+                            const SizedBox(
+                              height: 5.0,
+                            ),
+                            ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: gameNoVerified.categories!.length,
+                                itemBuilder: (_, int index) {
+                                  String category =
+                                      gameNoVerified.categories![index];
+                                  return Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      category,
+                                      style: mystyle(12),
+                                    ),
+                                  );
+                                })
+                          ],
+                        ))
+                      ]),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: SizedBox(
+                  height: 70,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            ElevatedButton(
+                                onPressed: () => validate(
+                                    gameNoVerified.documentId!,
+                                    gameNoVerified.imageUrl,
+                                    gameNoVerified.categories!,
+                                    user),
+                                style: ElevatedButton.styleFrom(
+                                    elevation: 6,
+                                    primary: Colors.green[200],
+                                    shape: CircleBorder(
+                                        side: BorderSide(color: Colors.black))),
+                                child: Icon(
+                                  Icons.check,
+                                  color: Colors.black,
+                                )),
+                            const SizedBox(
+                              width: 100.0,
+                            ),
+                            Text(
+                              'Accepter',
+                              style: mystyle(12),
                             )
                           ],
                         ),
-                      ),
-                    );
-                  });
-            },
+                        Column(
+                          children: [
+                            ElevatedButton(
+                                onPressed: () => decline(
+                                    gameNoVerified.documentId!,
+                                    gameNoVerified.imageUrl,
+                                    gameNoVerified.categories!,
+                                    user),
+                                style: ElevatedButton.styleFrom(
+                                    elevation: 6,
+                                    primary: Colors.red[200],
+                                    shape: CircleBorder(
+                                        side: BorderSide(color: Colors.black))),
+                                child: Icon(
+                                  Icons.clear,
+                                  color: Colors.black,
+                                )),
+                            Text(
+                              'Refuser',
+                              style: mystyle(12),
+                            )
+                          ],
+                        )
+                      ]),
+                ),
+              )
+            ],
           ),
         ),
       ),

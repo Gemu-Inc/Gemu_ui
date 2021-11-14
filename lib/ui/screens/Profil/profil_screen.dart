@@ -121,12 +121,14 @@ class _MyProfilScreenState extends State<MyProfilScreen>
                         elevation: 6.0,
                         forceElevated: true,
                         pinned: true,
-                        leading: IconButton(
-                            onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => PanelSupportScreen())),
-                            icon: Icon(Icons.support)),
+                        leading: me!.uid == "F65wJ5TGmvgO8t7HUZJYcw1PmbA2"
+                            ? IconButton(
+                                onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => PanelSupportScreen())),
+                                icon: Icon(Icons.support))
+                            : const SizedBox(),
                         centerTitle: true,
                         title: Text(
                           widget.user.username,

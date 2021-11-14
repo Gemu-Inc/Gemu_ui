@@ -67,7 +67,7 @@ class AddGameScreenState extends State<AddGameScreen> {
     return downloadUrl;
   }
 
-  saveNewGame() async {
+  saveNewGame(String uid) async {
     setState(() {
       isSave = !isSave;
     });
@@ -84,6 +84,7 @@ class AddGameScreenState extends State<AddGameScreen> {
       'imageUrl': pictureLogo,
       'name': _nameGameController.text,
       'categories': gameCategories,
+      'idDemandeur': uid
     });
 
     var url = Uri.parse(
@@ -290,7 +291,7 @@ class AddGameScreenState extends State<AddGameScreen> {
                               width: 125,
                               height: 50,
                               child: ElevatedButton(
-                                  onPressed: () => saveNewGame(),
+                                  onPressed: () => saveNewGame(me!.uid),
                                   style: TextButton.styleFrom(
                                       elevation: 6,
                                       backgroundColor:
