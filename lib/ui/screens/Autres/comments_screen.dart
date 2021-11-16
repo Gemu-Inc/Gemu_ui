@@ -19,8 +19,12 @@ import 'package:gemu/models/response.dart';
 class CommentsView extends StatefulWidget {
   final Post post;
   final VideoPlayerController? videoPlayerController;
+  final Object tagHeroPost;
 
-  CommentsView({required this.post, this.videoPlayerController});
+  CommentsView(
+      {required this.post,
+      this.videoPlayerController,
+      required this.tagHeroPost});
 
   @override
   CommentsViewState createState() => CommentsViewState();
@@ -335,7 +339,7 @@ class CommentsViewState extends State<CommentsView>
     return Container(
         color: Colors.black,
         child: Hero(
-          tag: 'post${widget.post.id}',
+          tag: widget.tagHeroPost,
           child: AnimatedContainer(
             duration: Duration(milliseconds: 500),
             curve: Curves.easeInOut,

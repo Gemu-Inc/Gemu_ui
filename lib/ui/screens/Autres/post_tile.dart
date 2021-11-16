@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -148,6 +149,8 @@ class PictureItemState extends State<PictureItem>
   late StreamSubscription downListener;
   List up = [];
   List down = [];
+
+  late Object tagHeroPost;
 
   String concatListHashtags(List hashtags) {
     StringBuffer concat = StringBuffer();
@@ -395,10 +398,21 @@ class PictureItemState extends State<PictureItem>
         });
   }
 
+  String generateRandomString(int len) {
+    var r = Random();
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
+        .join();
+  }
+
   @override
   void initState() {
     super.initState();
     post = widget.post;
+
+    tagHeroPost = 'post' + post.id + generateRandomString(6);
+    print('tagHero: ${tagHeroPost}');
 
     //écoute sur les changements du post
     postListener = FirebaseFirestore.instance
@@ -629,7 +643,7 @@ class PictureItemState extends State<PictureItem>
     return Stack(
       children: [
         Hero(
-          tag: 'post${post.id}',
+          tag: tagHeroPost,
           child: Center(
               child: widget.file != null
                   ? Image.file(
@@ -870,7 +884,10 @@ class PictureItemState extends State<PictureItem>
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => CommentsView(post: post)));
+                    builder: (context) => CommentsView(
+                          post: post,
+                          tagHeroPost: tagHeroPost,
+                        )));
           },
           child: Icon(icon, size: 28, color: Colors.white),
         ),
@@ -1107,6 +1124,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
   bool volumeOn = true;
   bool isNavigateComment = false;
+
+  late Object tagHeroPost;
 
   String concatListHashtags(List hashtags) {
     StringBuffer concat = StringBuffer();
@@ -1354,6 +1373,14 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
         });
   }
 
+  String generateRandomString(int len) {
+    var r = Random();
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
+        .join();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -1366,6 +1393,10 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
     //écoute sur les changements du post
     post = widget.post;
+
+    tagHeroPost = 'post' + post.id + generateRandomString(6);
+    print('tagHero: ${tagHeroPost}');
+
     postListener = FirebaseFirestore.instance
         .collection('posts')
         .doc(post.id)
@@ -1605,46 +1636,49 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   Widget contentPostVideo() {
     return Stack(
       children: [
-        Center(
-          child: videoPlayerController.value.isInitialized
-              ? VisibilityDetector(
-                  key: Key('visibility${post.id}'),
-                  child: AspectRatio(
-                      aspectRatio: videoPlayerController.value.aspectRatio,
-                      child: VideoPlayer(videoPlayerController)),
-                  onVisibilityChanged: (VisibilityInfo info) {
-                    print('info: ${info.visibleFraction}');
-                    if (info.visibleFraction == 0 && !isNavigateComment) {
-                      print('pas visible et false');
-                      if (mounted) {
-                        setState(() {
-                          videoPlayerController.pause();
-                        });
+        Hero(
+          tag: tagHeroPost,
+          child: Center(
+            child: videoPlayerController.value.isInitialized
+                ? VisibilityDetector(
+                    key: Key('visibility${post.id}'),
+                    child: AspectRatio(
+                        aspectRatio: videoPlayerController.value.aspectRatio,
+                        child: VideoPlayer(videoPlayerController)),
+                    onVisibilityChanged: (VisibilityInfo info) {
+                      print('info: ${info.visibleFraction}');
+                      if (info.visibleFraction == 0 && !isNavigateComment) {
+                        print('pas visible et false');
+                        if (mounted) {
+                          setState(() {
+                            videoPlayerController.pause();
+                          });
+                        }
+                      } else if (info.visibleFraction == 1 &&
+                          !isNavigateComment) {
+                        print('visible et false');
+                        if (mounted) {
+                          setState(() {
+                            videoPlayerController.play();
+                          });
+                        }
+                      } else if ((info.visibleFraction == 1 ||
+                              info.visibleFraction == 0) &&
+                          isNavigateComment) {
+                        print('visible ou pas et true');
+                        if (mounted) {
+                          setState(() {
+                            videoPlayerController.play();
+                            isNavigateComment = !isNavigateComment;
+                          });
+                        }
                       }
-                    } else if (info.visibleFraction == 1 &&
-                        !isNavigateComment) {
-                      print('visible et false');
-                      if (mounted) {
-                        setState(() {
-                          videoPlayerController.play();
-                        });
-                      }
-                    } else if ((info.visibleFraction == 1 ||
-                            info.visibleFraction == 0) &&
-                        isNavigateComment) {
-                      print('visible ou pas et true');
-                      if (mounted) {
-                        setState(() {
-                          videoPlayerController.play();
-                          isNavigateComment = !isNavigateComment;
-                        });
-                      }
-                    }
-                  })
-              : CachedNetworkImage(
-                  imageUrl: post.previewImage!,
-                  fit: BoxFit.cover,
-                ),
+                    })
+                : CachedNetworkImage(
+                    imageUrl: post.previewImage!,
+                    fit: BoxFit.cover,
+                  ),
+          ),
         ),
         Container(
           color: Colors.black.withOpacity(0.2),
@@ -1926,7 +1960,10 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                 context,
                 MaterialPageRoute(
                   builder: (context) => CommentsView(
-                      post: post, videoPlayerController: videoPlayerController),
+                    post: post,
+                    videoPlayerController: videoPlayerController,
+                    tagHeroPost: tagHeroPost,
+                  ),
                 ));
           },
           child: Icon(icon, size: 28, color: Colors.white),
