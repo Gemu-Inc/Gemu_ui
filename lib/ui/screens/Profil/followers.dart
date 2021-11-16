@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/models/user.dart';
+import 'package:gemu/ui/constants/constants.dart';
+import 'package:gemu/ui/screens/Profil/profil_screen.dart';
 import 'package:gemu/ui/widgets/app_bar_custom.dart';
 
 class Followers extends StatefulWidget {
@@ -68,23 +70,30 @@ class FollowersState extends State<Followers> {
         actions: [],
       ),
       body: dataIsThere
-          ? Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.0),
-              child: Scrollbar(
+          ? resultFinal.length == 0
+              ? Center(
+                  child: Text(
+                    'Pas encore de followers',
+                    style: mystyle(13),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 5.0),
                   controller: _scrollController,
-                  isAlwaysShown: true,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: resultFinal.length,
-                    itemBuilder: (context, index) {
-                      UserModel user = resultFinal[index];
-                      return ListTile(
-                        /*onTap: () => Navigator.push(
+                  physics: AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics()),
+                  itemCount: resultFinal.length,
+                  itemBuilder: (context, index) {
+                    UserModel user = resultFinal[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      child: ListTile(
+                        onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ProfileView(
-                                      idUser: user.uid,
-                                    ))),*/
+                                builder: (context) =>
+                                    ProfilUser(userPostID: user.uid))),
                         leading: user.imageUrl == null
                             ? Container(
                                 height: 50,
@@ -108,10 +117,10 @@ class FollowersState extends State<Followers> {
                                             user.imageUrl!))),
                               ),
                         title: Text(user.username),
-                      );
-                    },
-                  )),
-            )
+                      ),
+                    );
+                  },
+                )
           : Center(
               child: CircularProgressIndicator(
                 color: Theme.of(context).primaryColor,

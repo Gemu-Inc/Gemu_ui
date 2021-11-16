@@ -207,11 +207,11 @@ class _MyProfilScreenState extends State<MyProfilScreen>
                                 Align(
                                   alignment: Alignment.bottomCenter,
                                   child: Padding(
-                                    padding: EdgeInsets.only(
-                                        right: 15.0, bottom: 10.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15.0, vertical: 10.0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         GestureDetector(
                                           onTap: () => Navigator.push(
@@ -225,22 +225,22 @@ class _MyProfilScreenState extends State<MyProfilScreen>
                                             color: Colors.transparent,
                                             height: 60,
                                             width: 70,
-                                            child: Stack(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                Align(
-                                                    alignment:
-                                                        Alignment.topCenter,
-                                                    child: Text(
-                                                      'Followers',
-                                                    )),
-                                                Align(
-                                                  alignment:
-                                                      Alignment.bottomCenter,
-                                                  child: Text(
-                                                    followers.toString(),
-                                                    style:
-                                                        TextStyle(fontSize: 23),
-                                                  ),
+                                                Text(
+                                                  'Followers',
+                                                ),
+                                                const SizedBox(
+                                                  height: 15.0,
+                                                ),
+                                                Text(
+                                                  followers.toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 23),
                                                 )
                                               ],
                                             ),
@@ -249,23 +249,22 @@ class _MyProfilScreenState extends State<MyProfilScreen>
                                         Container(
                                           color: Colors.transparent,
                                           height: 60,
-                                          width: 50,
-                                          child: Stack(
+                                          width: 70,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              Align(
-                                                  alignment:
-                                                      Alignment.topCenter,
-                                                  child: Text(
-                                                    'Points',
-                                                  )),
-                                              Align(
-                                                alignment:
-                                                    Alignment.bottomCenter,
-                                                child: Text(
-                                                  points.toString(),
-                                                  style:
-                                                      TextStyle(fontSize: 23),
-                                                ),
+                                              Text(
+                                                'Points',
+                                              ),
+                                              const SizedBox(
+                                                height: 15.0,
+                                              ),
+                                              Text(
+                                                points.toString(),
+                                                style: TextStyle(fontSize: 23),
                                               )
                                             ],
                                           ),
@@ -280,23 +279,23 @@ class _MyProfilScreenState extends State<MyProfilScreen>
                                           child: Container(
                                             color: Colors.transparent,
                                             height: 60,
-                                            width: 50,
-                                            child: Stack(
+                                            width: 70,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                Align(
-                                                    alignment:
-                                                        Alignment.topCenter,
-                                                    child: Text(
-                                                      'Follows',
-                                                    )),
-                                                Align(
-                                                  alignment:
-                                                      Alignment.bottomCenter,
-                                                  child: Text(
-                                                    followings.toString(),
-                                                    style:
-                                                        TextStyle(fontSize: 23),
-                                                  ),
+                                                Text(
+                                                  'Follows',
+                                                ),
+                                                const SizedBox(
+                                                  height: 15.0,
+                                                ),
+                                                Text(
+                                                  followings.toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 23),
                                                 )
                                               ],
                                             ),
@@ -810,14 +809,14 @@ class ProfilUserState extends State<ProfilUser>
                                                         )),
                                                   ),
                                   SizedBox(
-                                    height: 20.0,
+                                    height: 15.0,
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        right: 15.0, bottom: 10.0),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 15.0, vertical: 5.0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         GestureDetector(
                                           onTap: () => Navigator.push(
@@ -831,22 +830,22 @@ class ProfilUserState extends State<ProfilUser>
                                             color: Colors.transparent,
                                             height: 60,
                                             width: 70,
-                                            child: Stack(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                Align(
-                                                    alignment:
-                                                        Alignment.topCenter,
-                                                    child: Text(
-                                                      'Followers',
-                                                    )),
-                                                Align(
-                                                  alignment:
-                                                      Alignment.bottomCenter,
-                                                  child: Text(
-                                                    followers.length.toString(),
-                                                    style:
-                                                        TextStyle(fontSize: 23),
-                                                  ),
+                                                Text(
+                                                  'Followers',
+                                                ),
+                                                const SizedBox(
+                                                  height: 15.0,
+                                                ),
+                                                Text(
+                                                  followers.length.toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 23),
                                                 )
                                               ],
                                             ),
@@ -855,23 +854,22 @@ class ProfilUserState extends State<ProfilUser>
                                         Container(
                                           color: Colors.transparent,
                                           height: 60,
-                                          width: 50,
-                                          child: Stack(
+                                          width: 70,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              Align(
-                                                  alignment:
-                                                      Alignment.topCenter,
-                                                  child: Text(
-                                                    'Points',
-                                                  )),
-                                              Align(
-                                                alignment:
-                                                    Alignment.bottomCenter,
-                                                child: Text(
-                                                  points.toString(),
-                                                  style:
-                                                      TextStyle(fontSize: 23),
-                                                ),
+                                              Text(
+                                                'Points',
+                                              ),
+                                              const SizedBox(
+                                                height: 15.0,
+                                              ),
+                                              Text(
+                                                points.toString(),
+                                                style: TextStyle(fontSize: 23),
                                               )
                                             ],
                                           ),
@@ -885,24 +883,19 @@ class ProfilUserState extends State<ProfilUser>
                                           child: Container(
                                             color: Colors.transparent,
                                             height: 60,
-                                            width: 50,
-                                            child: Stack(
+                                            width: 70,
+                                            child: Column(
                                               children: [
-                                                Align(
-                                                    alignment:
-                                                        Alignment.topCenter,
-                                                    child: Text(
-                                                      'Follows',
-                                                    )),
-                                                Align(
-                                                  alignment:
-                                                      Alignment.bottomCenter,
-                                                  child: Text(
-                                                    followings.length
-                                                        .toString(),
-                                                    style:
-                                                        TextStyle(fontSize: 23),
-                                                  ),
+                                                Text(
+                                                  'Follows',
+                                                ),
+                                                const SizedBox(
+                                                  height: 15.0,
+                                                ),
+                                                Text(
+                                                  followings.length.toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 23),
                                                 )
                                               ],
                                             ),
