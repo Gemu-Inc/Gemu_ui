@@ -12,7 +12,6 @@ class AuthService {
   AuthService._();
 
   static final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool get isSignedIn => _auth.currentUser != null;
 
   //Voir les changements au niveau de la connexion de l'utilisateur sur le device
   Stream<User?> authStateChange() => _auth.authStateChanges();

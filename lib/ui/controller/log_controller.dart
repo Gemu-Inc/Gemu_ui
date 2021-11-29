@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/ui/controller/navigation_controller.dart';
-import 'package:gemu/ui/screens/Splash/splash_screen.dart';
-import 'package:gemu/ui/screens/Welcome/welcome_screen.dart';
+import 'package:gemu/ui/views/Splash/splash_screen.dart';
+import 'package:gemu/ui/views/Welcome/welcome_screen.dart';
 
 class LogController extends StatefulWidget {
   @override

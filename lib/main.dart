@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 
 import 'package:gemu/ui/router.dart';
 import 'package:gemu/ui/constants/app_constants.dart';
-import 'package:gemu/ui/screens/Reglages/Design/theme_notifier.dart';
-import 'package:gemu/ui/screens/Reglages/Design/theme_values.dart';
+import 'package:gemu/ui/views/Reglages/Design/theme_notifier.dart';
+import 'package:gemu/ui/views/Reglages/Design/theme_values.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gemu/ui/controller/log_controller.dart';
 import 'package:gemu/ui/providers/index_tab_games_home.dart';

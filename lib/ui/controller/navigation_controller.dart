@@ -8,14 +8,14 @@ import 'package:provider/provider.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/ui/screens/Autres/bottom_share.dart';
+import 'package:gemu/ui/views/Autres/bottom_share.dart';
 import 'package:gemu/ui/constants/constants.dart';
 import 'package:gemu/ui/providers/index_tab_games_home.dart';
 
-import '../screens/Home/home_screen.dart';
-import '../screens/Games/games_screen.dart';
-import '../screens/Highlights/highlights_screen.dart';
-import '../screens/Profil/profil_screen.dart';
+import '../views/Home/home_screen.dart';
+import '../views/Games/games_screen.dart';
+import '../views/Highlights/highlights_screen.dart';
+import '../views/Profil/profil_screen.dart';
 
 class NavController extends StatefulWidget {
   final String uid;

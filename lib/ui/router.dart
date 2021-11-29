@@ -1,10 +1,10 @@
-import 'package:gemu/ui/screens/Welcome/welcome_screen.dart';
-import 'package:gemu/ui/screens/Login/login_screen.dart';
-import 'package:gemu/ui/screens/Register/register_screen.dart';
+import 'package:gemu/ui/views/Welcome/welcome_screen.dart';
+import 'package:gemu/ui/views/Login/login_screen.dart';
+import 'package:gemu/ui/views/Register/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:gemu/ui/constants/route_names.dart';
-import 'package:gemu/ui/screens/Share/Post/create_post_screen.dart';
-import 'package:gemu/ui/screens/GetStarted/get_started_screen.dart';
+import 'package:gemu/ui/views/Share/Post/create_post_screen.dart';
+import 'package:gemu/ui/views/GetStarted/get_started_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
