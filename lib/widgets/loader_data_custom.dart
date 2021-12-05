@@ -4,26 +4,25 @@ import 'package:loader/loader.dart';
 
 class LoaderDataCustom extends StatelessWidget {
   final Widget widgetLoading;
+  final Widget widgetLoad;
   final Future<bool> loadingData;
 
   const LoaderDataCustom(
-      {Key? key, required this.widgetLoading, required this.loadingData})
+      {Key? key,
+      required this.widgetLoading,
+      required this.widgetLoad,
+      required this.loadingData})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Loader<bool>(
-        loadingWidget: Center(
-          child: CircularProgressIndicator(
-            color: Theme.of(context).primaryColor,
-            strokeWidth: 1.5,
-          ),
-        ),
+        loadingWidget: widgetLoading,
         load: () async {
           return await loadingData;
         },
         builder: (_, value) {
-          return widgetLoading;
+          return widgetLoad;
         },
         errorBuilder: (error) {
           return Center(

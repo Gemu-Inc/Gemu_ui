@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/Splash/splash_screen.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
+import 'package:gemu/widgets/loader_data_custom.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -92,21 +93,9 @@ class LogController extends StatefulWidget {
 }
 
 class _LogControllerState extends State<LogController> {
-  bool isLoading = true;
-
-  loading() async {
-    await Future.delayed(Duration(seconds: 6));
-    if (isLoading && mounted) {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loading();
+  Future<bool> loading() async {
+    await Future.delayed(Duration(seconds: 3));
+    return true;
   }
 
   @override
@@ -193,14 +182,16 @@ class _LogControllerState extends State<LogController> {
             : themeNotifier.getTheme(),
         onGenerateRoute: generateRoute,
         home: StreamBuilder<User?>(
-            stream: AuthService.instance.authStateChange(),
-            builder: (context, snapshot) {
-              final isSignedIn = snapshot.data != null;
-              return isLoading
-                  ? SplashScreen()
-                  : isSignedIn
-                      ? NavigationScreen(uid: snapshot.data!.uid)
-                      : WelcomeScreen();
-            }));
+          stream: AuthService.instance.authStateChange(),
+          builder: (context, snapshot) {
+            final isSignedIn = snapshot.data != null;
+            return LoaderDataCustom(
+                widgetLoading: SplashScreen(),
+                widgetLoad: isSignedIn
+                    ? NavigationScreen(uid: snapshot.data!.uid)
+                    : WelcomeScreen(),
+                loadingData: loading());
+          },
+        ));
   }
 }
