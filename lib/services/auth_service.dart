@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/ui/controller/navigation_controller.dart';
-import 'package:gemu/ui/widgets/snack_bar_custom.dart';
+import 'package:gemu/views/Navigation/navigation_screen.dart';
+import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';
 
 class AuthService {
@@ -30,7 +30,7 @@ class AuthService {
             context,
             MaterialPageRoute(
                 builder: (BuildContext context) =>
-                    NavController(uid: _auth.currentUser!.uid)),
+                    NavigationScreen(uid: _auth.currentUser!.uid)),
             (route) => false);
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-email') {
@@ -104,7 +104,7 @@ class AuthService {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => NavController(uid: uid)),
+              builder: (BuildContext context) => NavigationScreen(uid: uid)),
           (route) => false);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

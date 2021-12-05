@@ -1,15 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:gemu/services/auth_service.dart';
+import 'package:gemu/views/Splash/splash_screen.dart';
+import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:gemu/ui/router.dart';
-import 'package:gemu/ui/constants/app_constants.dart';
-import 'package:gemu/ui/views/Reglages/Design/theme_notifier.dart';
-import 'package:gemu/ui/views/Reglages/Design/theme_values.dart';
+import 'package:gemu/router.dart';
+import 'package:gemu/constants/constants.dart';
+import 'package:gemu/views/Reglages/Design/theme_notifier.dart';
+import 'package:gemu/views/Reglages/Design/theme_values.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gemu/ui/controller/log_controller.dart';
-import 'package:gemu/ui/providers/index_tab_games_home.dart';
+import 'package:gemu/providers/index_tab_games_home.dart';
+import 'package:gemu/views/Navigation/navigation_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +42,7 @@ Future<void> main() async {
         return AccentColorNotifier(accentColor);
       }),
       ChangeNotifierProvider<ThemeNotifier>(create: (_) {
-        String? theme = value.getString(Constants.appTheme);
+        String? theme = value.getString(appTheme);
         ThemeData themeData;
         if (theme == 'DarkPurple') {
           themeData = darkThemePurple;
@@ -74,11 +80,35 @@ Future<void> main() async {
           return IndexGamesHome(0);
         },
       )
-    ], child: MyApp()));
+    ], child: LogController()));
   });
 }
 
-class MyApp extends StatelessWidget {
+class LogController extends StatefulWidget {
+  const LogController({Key? key}) : super(key: key);
+
+  @override
+  _LogControllerState createState() => _LogControllerState();
+}
+
+class _LogControllerState extends State<LogController> {
+  bool isLoading = true;
+
+  loading() async {
+    await Future.delayed(Duration(seconds: 6));
+    if (isLoading && mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loading();
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
@@ -162,6 +192,15 @@ class MyApp extends StatelessWidget {
                     unselectedItemColor: Colors.white60))
             : themeNotifier.getTheme(),
         onGenerateRoute: generateRoute,
-        home: LogController());
+        home: StreamBuilder<User?>(
+            stream: AuthService.instance.authStateChange(),
+            builder: (context, snapshot) {
+              final isSignedIn = snapshot.data != null;
+              return isLoading
+                  ? SplashScreen()
+                  : isSignedIn
+                      ? NavigationScreen(uid: snapshot.data!.uid)
+                      : WelcomeScreen();
+            }));
   }
 }
