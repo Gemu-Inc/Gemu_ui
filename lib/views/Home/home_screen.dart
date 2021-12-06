@@ -182,7 +182,8 @@ class _Homeviewstate extends State<HomeScreen>
         case 0:
           return GestureDetector(
             onTap: () {
-              if (followingsPageController.page != 0) {
+              if (followingsPageController.positions.isNotEmpty &&
+                  followingsPageController.page != 0) {
                 followingsPageController.jumpToPage(0);
               }
             },
@@ -206,7 +207,10 @@ class _Homeviewstate extends State<HomeScreen>
         case 1:
           return GestureDetector(
             onTap: () {
-              if (widget.gamePageController[currentTabGamesIndex].page != 0) {
+              //voir comment faire pour dire qu'on ne rentre pas dans cette condition si 0 posts dans la section
+              if (widget.gamePageController[currentTabGamesIndex].positions
+                      .isNotEmpty &&
+                  widget.gamePageController[currentTabGamesIndex].page != 0) {
                 widget.gamePageController[currentTabGamesIndex].jumpToPage(0);
               }
             },

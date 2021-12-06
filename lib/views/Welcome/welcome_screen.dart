@@ -64,7 +64,7 @@ class Welcomeviewstate extends State<WelcomeScreen> {
                 color: Colors.white,
                 size: 26,
               ),
-              onPressed: () => Navigator.pushNamed(context, GetStartedRoute))
+              onPressed: () => Navigator.pushNamed(context, GetStarted))
         ],
       ),
       body: AnimatedContainer(

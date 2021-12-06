@@ -180,7 +180,7 @@ class _LogControllerState extends State<LogController> {
                     unselectedLabelStyle: TextStyle(fontSize: 12.0),
                     unselectedItemColor: Colors.white60))
             : themeNotifier.getTheme(),
-        onGenerateRoute: generateRoute,
+        onGenerateRoute: (settings) => generateRoute(settings, context),
         home: StreamBuilder<User?>(
           stream: AuthService.instance.authStateChange(),
           builder: (context, snapshot) {

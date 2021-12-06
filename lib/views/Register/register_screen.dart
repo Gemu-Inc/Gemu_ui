@@ -95,6 +95,8 @@ class Registerviewstate extends State<RegisterScreen> {
   getGames() async {
     await FirebaseFirestore.instance
         .collection('games')
+        .doc('verified')
+        .collection('games_verified')
         .orderBy('name')
         .limit(12)
         .get()
@@ -127,6 +129,8 @@ class Registerviewstate extends State<RegisterScreen> {
 
     await FirebaseFirestore.instance
         .collection('games')
+        .doc('verified')
+        .collection('games_verified')
         .orderBy('name')
         .startAfterDocument(game.snapshot!)
         .limit(12)

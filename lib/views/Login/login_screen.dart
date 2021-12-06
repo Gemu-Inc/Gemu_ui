@@ -296,7 +296,7 @@ class Loginviewstate extends State<LoginScreen> {
               width: 5,
             ),
             InkWell(
-              onTap: () => Navigator.pushNamed(context, RegisterScreenRoute),
+              onTap: () => Navigator.pushNamed(context, Register),
               child: Text(
                 'Register',
                 style: mystyle(12, Theme.of(context).primaryColor),
