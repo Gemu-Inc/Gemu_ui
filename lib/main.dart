@@ -5,6 +5,7 @@ import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/Splash/splash_screen.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/widgets/loader_data_custom.dart';
+import 'package:loader/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -180,17 +181,20 @@ class _LogControllerState extends State<LogController> {
                     unselectedLabelStyle: TextStyle(fontSize: 12.0),
                     unselectedItemColor: Colors.white60))
             : themeNotifier.getTheme(),
-        onGenerateRoute: (settings) => generateRoute(settings, context),
+        //onGenerateRoute: (settings) => generateRoute(settings, context),
         home: StreamBuilder<User?>(
           stream: AuthService.instance.authStateChange(),
           builder: (context, snapshot) {
             final isSignedIn = snapshot.data != null;
-            return LoaderDataCustom(
-                widgetLoading: SplashScreen(),
-                widgetLoad: isSignedIn
+            return Loader<bool>(
+              load: loading,
+              loadingWidget: SplashScreen(),
+              builder: (_, value) {
+                return isSignedIn
                     ? NavigationScreen(uid: snapshot.data!.uid)
-                    : WelcomeScreen(),
-                loadingData: loading());
+                    : WelcomeScreen();
+              },
+            );
           },
         ));
   }

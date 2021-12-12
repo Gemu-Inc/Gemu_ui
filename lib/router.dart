@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/models/user.dart';
 import 'package:gemu/providers/index_tab_games_home.dart';
 import 'package:gemu/views/Games/games_screen.dart';
 import 'package:gemu/views/Highlights/highlights_screen.dart';
@@ -39,7 +38,6 @@ Route<dynamic> generateRoute(RouteSettings settings, BuildContext context) {
       return _getPageRoute(
           routeName: settings.name,
           viewToShow: HomeScreen(
-              userActual: UserModel(uid: '', username: '', privacy: ''),
               followings: [],
               games: [],
               gamePageController: [],
@@ -47,17 +45,15 @@ Route<dynamic> generateRoute(RouteSettings settings, BuildContext context) {
     case Highlights:
       return _getPageRoute(
           routeName: settings.name,
-          viewToShow: HighlightsScreen(uid: '', gamesUser: []));
+          viewToShow: HighlightsScreen(gamesUser: []));
     case Games:
       return _getPageRoute(
           routeName: settings.name,
-          viewToShow: GamesScreen(
-              uid: '', games: [], indexGamesHome: IndexGamesHome(0)));
+          viewToShow:
+              GamesScreen(games: [], indexGamesHome: IndexGamesHome(0)));
     case MyProfil:
       return _getPageRoute(
-          routeName: settings.name,
-          viewToShow: MyProfilScreen(
-              user: UserModel(uid: '', username: '', privacy: '')));
+          routeName: settings.name, viewToShow: MyProfilScreen());
     case AddPost:
       return _getPageRoute(
           routeName: settings.name, viewToShow: AddPostScreen());

@@ -18,11 +18,8 @@ import 'follows.dart';
 import 'posts_profil.dart';
 
 class MyProfilScreen extends StatefulWidget {
-  final UserModel user;
-
   const MyProfilScreen({
     Key? key,
-    required this.user,
   }) : super(key: key);
   @override
   _MyProfilviewstate createState() => _MyProfilviewstate();
@@ -50,7 +47,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
 
     //Listener on followers
     followersListener = DatabaseService.usersCollectionReference
-        .doc(widget.user.uid)
+        .doc(me!.uid)
         .collection('followers')
         .snapshots()
         .listen((data) {
@@ -62,7 +59,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
     //Listener on points
     pointsListener = FirebaseFirestore.instance
         .collection('posts')
-        .where('uid', isEqualTo: widget.user.uid)
+        .where('uid', isEqualTo: me!.uid)
         .snapshots()
         .listen((data) {
       for (var item in data.docs) {
@@ -72,7 +69,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
 
     //Listener on followings
     followingsListener = DatabaseService.usersCollectionReference
-        .doc(widget.user.uid)
+        .doc(me!.uid)
         .collection('following')
         .snapshots()
         .listen((data) {
@@ -102,7 +99,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
     super.build(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
+          statusBarColor: Theme.of(context).scaffoldBackgroundColor,
           statusBarIconBrightness:
               Theme.of(context).brightness == Brightness.dark
                   ? Brightness.light
@@ -131,7 +128,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                             : const SizedBox(),
                         centerTitle: true,
                         title: Text(
-                          widget.user.username,
+                          me!.username,
                           style: TextStyle(fontSize: 23),
                         ),
                         actions: [
@@ -139,8 +136,8 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                               onPressed: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => ActivitiesMenuDrawer(
-                                          uid: widget.user.uid))),
+                                      builder: (_) =>
+                                          ActivitiesMenuDrawer(uid: me!.uid))),
                               icon: Icon(Icons.notifications_active)),
                           IconButton(
                               icon: Icon(
@@ -153,7 +150,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                                       settings:
                                           RouteSettings(name: "/Réglages"),
                                       builder: (BuildContext context) =>
-                                          ReglagesScreen(user: widget.user)))),
+                                          ReglagesScreen(user: me!)))),
                         ],
                         expandedHeight: 255,
                         flexibleSpace: Container(
@@ -172,7 +169,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                               children: [
                                 Align(
                                     alignment: Alignment.center,
-                                    child: widget.user.imageUrl == null
+                                    child: me!.imageUrl == null
                                         ? Container(
                                             height: 90,
                                             width: 90,
@@ -201,8 +198,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                                                     fit: BoxFit.cover,
                                                     image:
                                                         CachedNetworkImageProvider(
-                                                            widget.user
-                                                                .imageUrl!))),
+                                                            me!.imageUrl!))),
                                           )),
                                 Align(
                                   alignment: Alignment.bottomCenter,
@@ -219,7 +215,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       Followers(
-                                                        idUser: widget.user.uid,
+                                                        idUser: me!.uid,
                                                       ))),
                                           child: Container(
                                             color: Colors.transparent,
@@ -274,8 +270,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) => Follows(
-                                                      idUser:
-                                                          widget.user.uid))),
+                                                      idUser: me!.uid))),
                                           child: Container(
                                             color: Colors.transparent,
                                             height: 60,
@@ -342,8 +337,8 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                             parent: BouncingScrollPhysics()),
                         controller: _tabController,
                         children: [
-                          PostsPublic(user: widget.user),
-                          PostsPrivate(user: widget.user)
+                          PostsPublic(user: me!),
+                          PostsPrivate(user: me!)
                         ]),
                   ],
                 ))

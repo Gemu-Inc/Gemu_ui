@@ -17,11 +17,9 @@ import '../Search/search_screen.dart';
 import 'highlights_posts_view.dart';
 
 class HighlightsScreen extends StatefulWidget {
-  final String uid;
   final List<Game> gamesUser;
 
-  const HighlightsScreen({Key? key, required this.uid, required this.gamesUser})
-      : super(key: key);
+  const HighlightsScreen({Key? key, required this.gamesUser}) : super(key: key);
 
   Highlightsviewstate createState() => Highlightsviewstate();
 }
@@ -443,7 +441,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
     super.build(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
+          statusBarColor: Theme.of(context).scaffoldBackgroundColor,
           statusBarIconBrightness:
               Theme.of(context).brightness == Brightness.dark
                   ? Brightness.light

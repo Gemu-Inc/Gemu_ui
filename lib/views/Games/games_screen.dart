@@ -15,15 +15,11 @@ import 'package:gemu/views/Autres/game_screen.dart';
 import 'add_game_screen.dart';
 
 class GamesScreen extends StatefulWidget {
-  final String uid;
   final List<Game> games;
   final IndexGamesHome indexGamesHome;
 
   const GamesScreen(
-      {Key? key,
-      required this.uid,
-      required this.games,
-      required this.indexGamesHome})
+      {Key? key, required this.games, required this.indexGamesHome})
       : super(key: key);
 
   @override
@@ -126,7 +122,7 @@ class _Gamesviewstate extends State<GamesScreen>
     super.build(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
+          statusBarColor: Theme.of(context).scaffoldBackgroundColor,
           statusBarIconBrightness:
               Theme.of(context).brightness == Brightness.dark
                   ? Brightness.light

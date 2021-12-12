@@ -17,11 +17,13 @@ class LoaderDataCustom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Loader<bool>(
+        autoReload: false,
         loadingWidget: widgetLoading,
-        load: () async {
-          return await loadingData;
+        load: () {
+          return loadingData;
         },
         builder: (_, value) {
+          print('value:' + value.toString());
           return widgetLoad;
         },
         errorBuilder: (error) {

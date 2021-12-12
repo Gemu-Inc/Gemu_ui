@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 
-import 'package:gemu/models/user.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/index_tab_games_home.dart';
@@ -11,7 +10,6 @@ import 'game_section.dart';
 import 'following_section.dart';
 
 class HomeScreen extends StatefulWidget {
-  final UserModel userActual;
   final List followings;
   final List<Game> games;
   final List<PageController> gamePageController;
@@ -19,7 +17,6 @@ class HomeScreen extends StatefulWidget {
 
   HomeScreen(
       {Key? key,
-      required this.userActual,
       required this.followings,
       required this.games,
       required this.gamePageController,
@@ -138,7 +135,7 @@ class _Homeviewstate extends State<HomeScreen>
     currentTabGamesIndex = widget.indexGamesHome.getIndex();
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
+          statusBarColor: Colors.black,
           statusBarIconBrightness: Brightness.light,
           systemNavigationBarColor: Colors.black),
       child: SafeArea(
