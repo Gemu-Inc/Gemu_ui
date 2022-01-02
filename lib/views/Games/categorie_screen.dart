@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:algolia/algolia.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
+import 'package:gemu/providers/index_games_provider.dart';
 import 'package:gemu/services/algolia_service.dart';
-import 'package:gemu/providers/index_tab_games_home.dart';
 import 'package:gemu/views/Autres/game_screen.dart';
 
 class CategorieScreen extends StatefulWidget {
   final Categorie categorie;
-  final IndexGamesHome indexGamesHome;
+  final int indexGamesHome;
 
   CategorieScreen(
       {Key? key, required this.categorie, required this.indexGamesHome})
@@ -426,7 +427,7 @@ class _Categorieviewstate extends State<CategorieScreen>
 
 class GameView extends StatefulWidget {
   final Game game;
-  final IndexGamesHome indexGamesHome;
+  final int indexGamesHome;
 
   const GameView({Key? key, required this.game, required this.indexGamesHome})
       : super(key: key);
@@ -476,9 +477,11 @@ class GameViewState extends State<GameView> {
     }
   }
 
-  follow() async {
+  follow(WidgetRef ref) async {
     if (games.any((element) => element.name == widget.game.name)) {
-      await widget.indexGamesHome.setIndexNewGame(games.length - 1);
+      ref
+          .read(indexGamesNotifierProvider.notifier)
+          .updateIndexNewGame(games.length - 1);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(me!.uid)
@@ -559,28 +562,30 @@ class GameViewState extends State<GameView> {
   }
 
   Widget followGame() {
-    return GestureDetector(
-        //key: widget.key,
-        onTap: () {
-          follow();
-        },
-        child: Container(
-            height: 25,
-            width: 25,
-            decoration: BoxDecoration(
-                color: isFollow ? Colors.green[400] : Colors.red[400],
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.black)),
-            child: isFollow
-                ? Icon(
-                    Icons.check,
-                    size: 20,
-                    color: Colors.black,
-                  )
-                : Icon(
-                    Icons.add,
-                    size: 20,
-                    color: Colors.black,
-                  )));
+    return Consumer(builder: (_, ref, child) {
+      return GestureDetector(
+          //key: widget.key,
+          onTap: () {
+            follow(ref);
+          },
+          child: Container(
+              height: 25,
+              width: 25,
+              decoration: BoxDecoration(
+                  color: isFollow ? Colors.green[400] : Colors.red[400],
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.black)),
+              child: isFollow
+                  ? Icon(
+                      Icons.check,
+                      size: 20,
+                      color: Colors.black,
+                    )
+                  : Icon(
+                      Icons.add,
+                      size: 20,
+                      color: Colors.black,
+                    )));
+    });
   }
 }

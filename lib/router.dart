@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/providers/index_tab_games_home.dart';
 import 'package:gemu/views/Games/games_screen.dart';
 import 'package:gemu/views/Highlights/highlights_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
@@ -41,7 +40,7 @@ Route<dynamic> generateRoute(RouteSettings settings, BuildContext context) {
               followings: [],
               games: [],
               gamePageController: [],
-              indexGamesHome: IndexGamesHome(0)));
+              indexGamesHome: 0));
     case Highlights:
       return _getPageRoute(
           routeName: settings.name,
@@ -49,8 +48,7 @@ Route<dynamic> generateRoute(RouteSettings settings, BuildContext context) {
     case Games:
       return _getPageRoute(
           routeName: settings.name,
-          viewToShow:
-              GamesScreen(games: [], indexGamesHome: IndexGamesHome(0)));
+          viewToShow: GamesScreen(games: [], indexGamesHome: 0));
     case MyProfil:
       return _getPageRoute(
           routeName: settings.name, viewToShow: MyProfilScreen());

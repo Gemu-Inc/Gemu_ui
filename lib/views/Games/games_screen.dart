@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:gemu/providers/index_games_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
@@ -9,14 +11,13 @@ import 'package:gemu/views/Games/categorie_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
-import 'package:gemu/providers/index_tab_games_home.dart';
 import 'package:gemu/views/Autres/game_screen.dart';
 
 import 'add_game_screen.dart';
 
 class GamesScreen extends StatefulWidget {
   final List<Game> games;
-  final IndexGamesHome indexGamesHome;
+  final int indexGamesHome;
 
   const GamesScreen(
       {Key? key, required this.games, required this.indexGamesHome})
@@ -38,8 +39,10 @@ class _Gamesviewstate extends State<GamesScreen>
 
   scrollListener() {}
 
-  unfollowGame(Game game) async {
-    await widget.indexGamesHome.setIndexNewGame(widget.games.length - 1);
+  unfollowGame(Game game, WidgetRef ref) async {
+    ref
+        .read(indexGamesNotifierProvider.notifier)
+        .updateIndexNewGame(widget.games.length - 1);
     await FirebaseFirestore.instance
         .collection('users')
         .doc(me!.uid)
@@ -239,27 +242,29 @@ class _Gamesviewstate extends State<GamesScreen>
     return showDialog(
         context: context,
         builder: (context) {
-          return AlertDialogCustom(context, 'Unfollow game',
-              'Êtes-vous sur de vouloir retirer ce jeu de vos abonnements?', [
-            TextButton(
-                onPressed: () async {
-                  await unfollowGame(game);
-                  print(widget.games.length);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'Oui',
-                  style: TextStyle(color: Colors.blue[200]),
-                )),
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'Non',
-                  style: TextStyle(color: Colors.red[200]),
-                )),
-          ]);
+          return Consumer(builder: (_, ref, child) {
+            return AlertDialogCustom(context, 'Unfollow game',
+                'Êtes-vous sur de vouloir retirer ce jeu de vos abonnements?', [
+              TextButton(
+                  onPressed: () async {
+                    await unfollowGame(game, ref);
+                    print(widget.games.length);
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Oui',
+                    style: TextStyle(color: Colors.blue[200]),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Non',
+                    style: TextStyle(color: Colors.red[200]),
+                  )),
+            ]);
+          });
         });
   }
 

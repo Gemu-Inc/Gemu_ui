@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gemu/widgets/app_bar_custom.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Reglages/Design/theme_notifier.dart';
-import 'package:gemu/views/Reglages/Design/theme_values.dart';
+import 'package:gemu/providers/theme_provider.dart';
 
 class DesignScreen extends StatefulWidget {
   @override
@@ -14,11 +13,7 @@ class DesignScreen extends StatefulWidget {
 }
 
 class _Designviewstate extends State<DesignScreen> {
-  List themes = appThemesColors;
   late SharedPreferences prefs;
-  late ThemeNotifier themeNotifier;
-  late PrimaryColorNotifier _primaryColorNotifier;
-  late AccentColorNotifier _accentColorNotifier;
 
   bool isSwitched = false;
 
@@ -34,32 +29,36 @@ class _Designviewstate extends State<DesignScreen> {
 
   @override
   Widget build(BuildContext context) {
-    themeNotifier = Provider.of<ThemeNotifier>(context);
-    _primaryColorNotifier = Provider.of<PrimaryColorNotifier>(context);
-    _accentColorNotifier = Provider.of<AccentColorNotifier>(context);
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBarCustom(context: context, title: 'Design', actions: []),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: systemTheme(),
-              ),
-              Expanded(
-                child: lightThemes(),
-              ),
-              Expanded(
-                child: darkThemes(),
-              )
-            ],
-          ),
-        ));
+        body: Consumer(builder: (_, ref, child) {
+          final themeNotifier = ref.watch(themeProviderNotifier);
+          final primaryColorNotifier = ref.watch(primaryProviderNotifier);
+          final accentColorNotifier = ref.watch(accentProviderNotifier);
+          return Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: systemTheme(themeNotifier, ref, primaryColorNotifier,
+                      accentColorNotifier),
+                ),
+                Expanded(
+                  child: lightThemes(themeNotifier, ref),
+                ),
+                Expanded(
+                  child: darkThemes(themeNotifier, ref),
+                )
+              ],
+            ),
+          );
+        }));
   }
 
-  Widget systemTheme() {
+  Widget systemTheme(
+      ThemeData theme, WidgetRef ref, Color primaryColor, Color accentColor) {
     return Container(
         width: MediaQuery.of(context).size.width,
         child: Column(
@@ -84,16 +83,17 @@ class _Designviewstate extends State<DesignScreen> {
                     children: [
                       RawMaterialButton(
                         onPressed: () {
-                          colorChangedPrimary(orangeApp.value);
-                          colorChangedAccent(purpleApp.value);
-                          onThemeChanged('ThemeCustomSystem');
+                          colorChangedPrimary(orangeApp.value, ref);
+                          colorChangedAccent(purpleApp.value, ref);
+                          onThemeChanged('ThemeSystem', ref);
                         },
                         child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 400),
                             transitionBuilder: (Widget child,
                                     Animation<double> animation) =>
                                 ScaleTransition(child: child, scale: animation),
-                            child: _getIconSystem(orangeApp, purpleApp)),
+                            child: _getIconSystem(orangeApp, purpleApp, theme,
+                                primaryColor, accentColor)),
                         shape: CircleBorder(),
                         elevation: 6.0,
                         padding: EdgeInsets.all(5.0),
@@ -110,16 +110,17 @@ class _Designviewstate extends State<DesignScreen> {
                     children: [
                       RawMaterialButton(
                         onPressed: () {
-                          colorChangedPrimary(purpleApp.value);
-                          colorChangedAccent(orangeApp.value);
-                          onThemeChanged('ThemeCustomSystem');
+                          colorChangedPrimary(purpleApp.value, ref);
+                          colorChangedAccent(orangeApp.value, ref);
+                          onThemeChanged('ThemeSystem', ref);
                         },
                         child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 400),
                             transitionBuilder: (Widget child,
                                     Animation<double> animation) =>
                                 ScaleTransition(child: child, scale: animation),
-                            child: _getIconSystem(purpleApp, orangeApp)),
+                            child: _getIconSystem(purpleApp, orangeApp, theme,
+                                primaryColor, accentColor)),
                         shape: CircleBorder(),
                         elevation: 6.0,
                         padding: EdgeInsets.all(5.0),
@@ -137,7 +138,7 @@ class _Designviewstate extends State<DesignScreen> {
         ));
   }
 
-  Widget lightThemes() {
+  Widget lightThemes(ThemeData theme, WidgetRef ref) {
     return Container(
         width: MediaQuery.of(context).size.width,
         child: Column(
@@ -161,13 +162,13 @@ class _Designviewstate extends State<DesignScreen> {
                   child: Column(
                     children: [
                       RawMaterialButton(
-                        onPressed: () => onThemeChanged('LightOrange'),
+                        onPressed: () => onThemeChanged('LightOrange', ref),
                         child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 400),
                             transitionBuilder: (Widget child,
                                     Animation<double> animation) =>
                                 ScaleTransition(child: child, scale: animation),
-                            child: _getIcon(themeNotifier, lightThemeOrange)),
+                            child: _getIcon(theme, lightThemeOrange)),
                         shape: CircleBorder(),
                         elevation: 6.0,
                         fillColor: lightThemeOrange.scaffoldBackgroundColor,
@@ -184,13 +185,13 @@ class _Designviewstate extends State<DesignScreen> {
                   child: Column(
                     children: [
                       RawMaterialButton(
-                        onPressed: () => onThemeChanged('LightPurple'),
+                        onPressed: () => onThemeChanged('LightPurple', ref),
                         child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 400),
                             transitionBuilder: (Widget child,
                                     Animation<double> animation) =>
                                 ScaleTransition(child: child, scale: animation),
-                            child: _getIcon(themeNotifier, lightThemePurple)),
+                            child: _getIcon(theme, lightThemePurple)),
                         shape: CircleBorder(),
                         elevation: 6.0,
                         fillColor: lightThemePurple.scaffoldBackgroundColor,
@@ -209,7 +210,7 @@ class _Designviewstate extends State<DesignScreen> {
         ));
   }
 
-  Widget darkThemes() {
+  Widget darkThemes(ThemeData theme, WidgetRef ref) {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Column(
@@ -233,13 +234,13 @@ class _Designviewstate extends State<DesignScreen> {
                 child: Column(
                   children: [
                     RawMaterialButton(
-                      onPressed: () => onThemeChanged('DarkOrange'),
+                      onPressed: () => onThemeChanged('DarkOrange', ref),
                       child: AnimatedSwitcher(
                         duration: Duration(milliseconds: 400),
                         transitionBuilder:
                             (Widget child, Animation<double> animation) =>
                                 ScaleTransition(child: child, scale: animation),
-                        child: _getIcon(themeNotifier, darkThemeOrange),
+                        child: _getIcon(theme, darkThemeOrange),
                       ),
                       shape: CircleBorder(),
                       elevation: 6.0,
@@ -257,13 +258,13 @@ class _Designviewstate extends State<DesignScreen> {
                 child: Column(
                   children: [
                     RawMaterialButton(
-                      onPressed: () => onThemeChanged('DarkPurple'),
+                      onPressed: () => onThemeChanged('DarkPurple', ref),
                       child: AnimatedSwitcher(
                           duration: Duration(milliseconds: 400),
                           transitionBuilder: (Widget child,
                                   Animation<double> animation) =>
                               ScaleTransition(child: child, scale: animation),
-                          child: _getIcon(themeNotifier, darkThemePurple)),
+                          child: _getIcon(theme, darkThemePurple)),
                       shape: CircleBorder(),
                       elevation: 6.0,
                       fillColor: darkThemePurple.scaffoldBackgroundColor,
@@ -283,10 +284,15 @@ class _Designviewstate extends State<DesignScreen> {
     );
   }
 
-  Widget _getIconSystem(Color primaryColor, Color accentColor) {
-    bool selected = (_primaryColorNotifier.getColor() == primaryColor &&
-        _accentColorNotifier.getColor() == accentColor &&
-        themeNotifier.getTheme() == null);
+  Widget _getIconSystem(
+      Color primaryColor,
+      Color accentColor,
+      ThemeData themeNotifier,
+      Color primaryColorNotifier,
+      Color accentColorNotifier) {
+    bool selected = (primaryColorNotifier == primaryColor &&
+        accentColorNotifier == accentColor &&
+        themeNotifier == ThemeData());
 
     return Container(
       height: 50,
@@ -308,8 +314,8 @@ class _Designviewstate extends State<DesignScreen> {
     );
   }
 
-  Widget _getIcon(ThemeNotifier themeNotifier, ThemeData themeData) {
-    bool selected = (themeNotifier.getTheme() == themeData);
+  Widget _getIcon(ThemeData themeNotifier, ThemeData themeData) {
+    bool selected = (themeNotifier == themeData);
 
     return Container(
       height: 50,
@@ -331,34 +337,34 @@ class _Designviewstate extends State<DesignScreen> {
     );
   }
 
-  void onThemeChanged(String value) async {
+  void onThemeChanged(String value, WidgetRef ref) async {
     var prefs = await SharedPreferences.getInstance();
     if (value == 'LightOrange') {
-      themeNotifier.setTheme(lightThemeOrange);
+      ref.read(themeProviderNotifier.notifier).updateTheme(lightThemeOrange);
       //Mise en place de l'overlay des notifications Android
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'LightPurple') {
-      themeNotifier.setTheme(lightThemePurple);
+      ref.read(themeProviderNotifier.notifier).updateTheme(lightThemePurple);
       //Mise en place de l'overlay des notifications Android
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'DarkOrange') {
-      themeNotifier.setTheme(darkThemeOrange);
+      ref.read(themeProviderNotifier.notifier).updateTheme(darkThemeOrange);
       //Mise en place de l'overlay des notifications Android
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: Color(0xFF1A1C25)));
     } else if (value == 'DarkPurple') {
-      themeNotifier.setTheme(darkThemePurple);
+      ref.read(themeProviderNotifier.notifier).updateTheme(darkThemePurple);
       //Mise en place de l'overlay des notifications Android
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: Color(0xFF1A1C25)));
-    } else if (value == 'ThemeCustomSystem') {
-      themeNotifier.setTheme(null);
+    } else {
+      ref.read(themeProviderNotifier.notifier).updateTheme(ThemeData());
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: Colors.transparent));
@@ -366,22 +372,22 @@ class _Designviewstate extends State<DesignScreen> {
     prefs.setString(appTheme, value);
   }
 
-  void colorChangedPrimary(int value) async {
+  void colorChangedPrimary(int value, WidgetRef ref) async {
     var prefs = await SharedPreferences.getInstance();
     if (value == orangeApp.value) {
-      _primaryColorNotifier.setColor(orangeApp);
+      ref.read(primaryProviderNotifier.notifier).updatePrimaryColor(orangeApp);
     } else if (value == purpleApp.value) {
-      _primaryColorNotifier.setColor(purpleApp);
+      ref.read(primaryProviderNotifier.notifier).updatePrimaryColor(purpleApp);
     }
     prefs.setInt('color_primary', value);
   }
 
-  void colorChangedAccent(int value) async {
+  void colorChangedAccent(int value, WidgetRef ref) async {
     var prefs = await SharedPreferences.getInstance();
     if (value == orangeApp.value) {
-      _accentColorNotifier.setColor(orangeApp);
+      ref.read(accentProviderNotifier.notifier).updateAccentColor(orangeApp);
     } else if (value == purpleApp.value) {
-      _accentColorNotifier.setColor(purpleApp);
+      ref.read(accentProviderNotifier.notifier).updateAccentColor(purpleApp);
     }
     prefs.setInt('color_accent', value);
   }

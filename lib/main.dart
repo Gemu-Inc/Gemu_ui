@@ -1,23 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gemu/providers/theme_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/Splash/splash_screen.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
-import 'package:gemu/widgets/loader_data_custom.dart';
 import 'package:loader/loader.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/router.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Reglages/Design/theme_notifier.dart';
-import 'package:gemu/views/Reglages/Design/theme_values.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gemu/providers/index_tab_games_home.dart';
 import 'package:gemu/views/Navigation/navigation_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,65 +21,7 @@ Future<void> main() async {
     print(error);
   });
 
-  //Mise en place du blocage de rotation automatique de l'écran sur l'app
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-  Future<SharedPreferences> prefs = SharedPreferences.getInstance();
-  prefs.then((value) {
-    runApp(MultiProvider(providers: [
-      ChangeNotifierProvider<PrimaryColorNotifier>(create: (_) {
-        Color primaryColor;
-        primaryColor =
-            Color(value.getInt('color_primary') ?? Color(0xFFB27D75).value);
-        return PrimaryColorNotifier(primaryColor);
-      }),
-      ChangeNotifierProvider<AccentColorNotifier>(create: (_) {
-        Color accentColor;
-        accentColor =
-            Color(value.getInt('color_accent') ?? Color(0xFF6E78B1).value);
-        return AccentColorNotifier(accentColor);
-      }),
-      ChangeNotifierProvider<ThemeNotifier>(create: (_) {
-        String? theme = value.getString(appTheme);
-        ThemeData themeData;
-        if (theme == 'DarkPurple') {
-          themeData = darkThemePurple;
-          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Color(0xFF1A1C25)));
-          return ThemeNotifier(themeData);
-        } else if (theme == 'LightOrange') {
-          themeData = lightThemeOrange;
-          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Color(0xFFDEE4E7)));
-          return ThemeNotifier(themeData);
-        } else if (theme == 'LightPurple') {
-          themeData = lightThemePurple;
-          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Color(0xFFDEE4E7)));
-          return ThemeNotifier(themeData);
-        } else if (theme == 'DarkOrange') {
-          themeData = darkThemeOrange;
-          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Color(0xFF1A1C25)));
-          return ThemeNotifier(themeData);
-        } else {
-          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Colors.transparent));
-          return ThemeNotifier(null);
-        }
-      }),
-      ChangeNotifierProvider<IndexGamesHome>(
-        create: (_) {
-          return IndexGamesHome(0);
-        },
-      )
-    ], child: LogController()));
-  });
+  runApp(ProviderScope(child: LogController()));
 }
 
 class LogController extends StatefulWidget {
@@ -94,108 +32,74 @@ class LogController extends StatefulWidget {
 }
 
 class _LogControllerState extends State<LogController> {
-  Future<bool> loading() async {
+  late Color primaryColor, accentColor;
+
+  Future<bool> loading(WidgetRef ref) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? theme = await prefs.getString(appTheme);
+    if (theme == null || theme == "ThemeSystem") {
+      if (theme == null) theme = "ThemeSystem";
+      if (await prefs.getInt('color_primary') != null) {
+        primaryColor = Color(await prefs.getInt('color_primary')!);
+      } else {
+        primaryColor = cOrange;
+      }
+      if (await prefs.getInt('color_accent') != null) {
+        accentColor = Color(await prefs.getInt('color_accent')!);
+      } else {
+        accentColor = cMauve;
+      }
+      print("primary: ${primaryColor}");
+      print("accent: ${accentColor}");
+
+      ref
+          .read(primaryProviderNotifier.notifier)
+          .createPrimaryColor(primaryColor);
+      ref.read(accentProviderNotifier.notifier).createAccentColor(accentColor);
+    }
+    print("prefs: ${theme}");
+    ref.read(themeProviderNotifier.notifier).createTheme(theme);
     await Future.delayed(Duration(seconds: 3));
     return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    final _primaryColor = Provider.of<PrimaryColorNotifier>(context);
-    final _accentColor = Provider.of<AccentColorNotifier>(context);
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Gemu',
-        themeMode: ThemeMode.system,
-        theme: themeNotifier.getTheme() == null
-            ?
-            //Light theme system
-            ThemeData(
-                colorScheme: ColorScheme.light(
-                  primary: _primaryColor.getColor(),
-                  secondary: _accentColor.getColor(),
-                ),
-                brightness: Brightness.light,
-                scaffoldBackgroundColor: Color(0xFFDEE4E7),
-                primaryColor: _primaryColor.getColor(),
-                //accentColor: _accentColor.getColor(),
-                canvasColor: Color(0xFFD3D3D3),
-                shadowColor: Color(0xFFBDBDBD),
-                iconTheme: IconThemeData(
-                  color: Colors.black45,
-                ),
-                appBarTheme: AppBarTheme(
-                  color: Colors.transparent,
-                  titleTextStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                  iconTheme: IconThemeData(
-                    color: Colors.black,
-                  ),
-                ),
-                bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                    elevation: 0,
-                    type: BottomNavigationBarType.fixed,
-                    selectedIconTheme: IconThemeData(size: 26),
-                    selectedLabelStyle: TextStyle(fontSize: 14.0),
-                    selectedItemColor: _primaryColor.getColor(),
-                    unselectedIconTheme: IconThemeData(size: 23),
-                    unselectedLabelStyle: TextStyle(fontSize: 12.0),
-                    unselectedItemColor: Colors.black45))
-            : themeNotifier.getTheme(),
-        //Dark theme system
-        darkTheme: themeNotifier.getTheme() == null
-            ? ThemeData(
-                colorScheme: ColorScheme.dark(
-                  primary: _primaryColor.getColor(),
-                  secondary: _accentColor.getColor(),
-                ),
-                brightness: Brightness.dark,
-                scaffoldBackgroundColor: Color(0xFF1A1C25),
-                primaryColor: _primaryColor.getColor(),
-                //accentColor: _accentColor.getColor(),
-                canvasColor: Color(0xFF222831),
-                shadowColor: Color(0xFF121212),
-                iconTheme: IconThemeData(
-                  color: Colors.white60,
-                ),
-                appBarTheme: AppBarTheme(
-                  color: Colors.transparent,
-                  titleTextStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                  iconTheme: IconThemeData(
-                    color: Colors.white,
-                  ),
-                ),
-                bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                    elevation: 0,
-                    type: BottomNavigationBarType.fixed,
-                    selectedIconTheme: IconThemeData(size: 26),
-                    selectedLabelStyle: TextStyle(fontSize: 14.0),
-                    selectedItemColor: _primaryColor.getColor(),
-                    unselectedIconTheme: IconThemeData(size: 23),
-                    unselectedLabelStyle: TextStyle(fontSize: 12.0),
-                    unselectedItemColor: Colors.white60))
-            : themeNotifier.getTheme(),
-        //onGenerateRoute: (settings) => generateRoute(settings, context),
-        home: StreamBuilder<User?>(
-          stream: AuthService.instance.authStateChange(),
-          builder: (context, snapshot) {
-            final isSignedIn = snapshot.data != null;
-            return Loader<bool>(
-              load: loading,
-              loadingWidget: SplashScreen(),
-              builder: (_, value) {
-                return isSignedIn
-                    ? NavigationScreen(uid: snapshot.data!.uid)
-                    : WelcomeScreen();
-              },
-            );
-          },
-        ));
+    return Consumer(builder: (_, ref, child) {
+      final theme = ref.watch(themeProviderNotifier);
+      final primaryColor = ref.watch(primaryProviderNotifier);
+      final accentColor = ref.watch(accentProviderNotifier);
+      print("theme: ${theme}");
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Gemu',
+          themeMode: ThemeMode.system,
+          theme: theme == ThemeData()
+              ? (primaryColor == cOrange && accentColor == cMauve)
+                  ? lightThemeSystemOrange
+                  : lightThemePurple
+              : theme,
+          darkTheme: theme == ThemeData()
+              ? (primaryColor == cOrange && accentColor == cMauve)
+                  ? darkThemeSystemOrange
+                  : darkThemeSystemPurple
+              : theme,
+          onGenerateRoute: (settings) => generateRoute(settings, context),
+          home: StreamBuilder<User?>(
+            stream: AuthService.instance.authStateChange(),
+            builder: (context, snapshot) {
+              final isSignedIn = snapshot.data != null;
+              return Loader<bool>(
+                load: () => loading(ref),
+                loadingWidget: SplashScreen(),
+                builder: (_, value) {
+                  return isSignedIn
+                      ? NavigationScreen(uid: snapshot.data!.uid)
+                      : WelcomeScreen();
+                },
+              );
+            },
+          ));
+    });
   }
 }
