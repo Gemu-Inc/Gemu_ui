@@ -412,7 +412,7 @@ class PictureItemState extends State<PictureItem>
     post = widget.post;
 
     tagHeroPost = 'post' + post.id + generateRandomString(6);
-    print('tagHero: ${tagHeroPost}');
+    print('tagHero: $tagHeroPost');
 
     //écoute sur les changements du post
     postListener = FirebaseFirestore.instance
@@ -1395,7 +1395,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     post = widget.post;
 
     tagHeroPost = 'post' + post.id + generateRandomString(6);
-    print('tagHero: ${tagHeroPost}');
+    print('tagHero: $tagHeroPost');
 
     postListener = FirebaseFirestore.instance
         .collection('posts')

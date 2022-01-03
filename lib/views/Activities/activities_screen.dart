@@ -20,6 +20,8 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
 
   late ScrollController notifScrollController;
 
+  double positionScroll = 0.0;
+
   int whatActivity = 0;
   List<String> activities = [
     'All notifications',
@@ -51,11 +53,16 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
     _rotateController.addListener(() {
       setState(() {});
     });
+
+    notifScrollController.addListener(() { 
+        positionScroll = notifScrollController.position.pixels;
+    });
   }
 
   @override
   void deactivate() {
     _rotateController.removeListener(() {});
+    notifScrollController.removeListener(() {});
     super.deactivate();
   }
 
@@ -172,7 +179,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                           print('${notifScrollController.offset}');
                           if (notifScrollController.offset != 0) {
                             print('remise a zéro');
-                            notifScrollController.position == 0;
+                            notifScrollController.jumpTo(0.0);
                           }
                           await Future.delayed(Duration(milliseconds: 500));
                           setState(() {
@@ -191,7 +198,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                           _rotateController.reverse();
                           _activitiesController.reverse();
 
-                          if (notifScrollController.position != 0) {
+                          if (positionScroll != 0) {
                             notifScrollController.jumpTo(0);
                           }
                           await Future.delayed(Duration(milliseconds: 500));
@@ -209,7 +216,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                           _rotateController.reverse();
                           _activitiesController.reverse();
 
-                          if (notifScrollController.position != 0) {
+                          if (positionScroll != 0) {
                             notifScrollController.jumpTo(0);
                           }
                           await Future.delayed(Duration(milliseconds: 500));
@@ -226,7 +233,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                         onTap: () async {
                           _rotateController.reverse();
                           _activitiesController.reverse();
-                          if (notifScrollController.position != 0) {
+                          if (positionScroll != 0) {
                             notifScrollController.jumpTo(0);
                           }
                           await Future.delayed(Duration(milliseconds: 500));

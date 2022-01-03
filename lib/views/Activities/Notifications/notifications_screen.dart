@@ -46,7 +46,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
   }
 
   getNotifications() async {
-    notificationsListener = await FirebaseFirestore.instance
+    notificationsListener = FirebaseFirestore.instance
         .collection('notifications')
         .doc(me!.uid)
         .collection("singleNotif")

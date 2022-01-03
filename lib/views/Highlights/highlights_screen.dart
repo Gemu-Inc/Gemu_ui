@@ -30,6 +30,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
   int currentTabIndex = 0;
 
   ScrollController _mainScrollController = ScrollController();
+  double positionScroll = 0.0;
 
 //Variables Hashtags
   bool dataHashtagsIsThere = false;
@@ -58,7 +59,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
         print(currentTabIndex);
       });
 
-      if (_mainScrollController.position != 0.0) {
+      if (positionScroll != 0.0) {
         _mainScrollController.jumpTo(0.0);
       }
     }
@@ -66,6 +67,8 @@ class Highlightsviewstate extends State<HighlightsScreen>
 
 //Listener scroll controller
   void scrollListener() {
+    positionScroll = _mainScrollController.position.pixels;
+
     if (currentTabIndex == 0 &&
         _mainScrollController.offset <=
             (_mainScrollController.position.minScrollExtent - 50.0) &&

@@ -140,7 +140,7 @@ class _Categorieviewstate extends State<CategorieScreen>
       _searching = true;
     });
 
-    AlgoliaQuery query = await algolia.instance
+    AlgoliaQuery query = algolia.instance
         .index("games")
         .query(_searchController.text)
         .facetFilter('categories:${widget.categorie.name}');

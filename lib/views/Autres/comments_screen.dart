@@ -725,7 +725,6 @@ class CommentTile extends StatefulWidget {
 class CommentTileState extends State<CommentTile> {
   late StreamSubscription upListener;
   late StreamSubscription downListener;
-  late StreamSubscription commentListener;
   List upper = [];
   List downer = [];
 

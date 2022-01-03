@@ -36,28 +36,28 @@ class _LogControllerState extends State<LogController> {
 
   Future<bool> loading(WidgetRef ref) async {
     final prefs = await SharedPreferences.getInstance();
-    String? theme = await prefs.getString(appTheme);
+    String? theme = prefs.getString(appTheme);
     if (theme == null || theme == "ThemeSystem") {
       if (theme == null) theme = "ThemeSystem";
-      if (await prefs.getInt('color_primary') != null) {
-        primaryColor = Color(await prefs.getInt('color_primary')!);
+      if (prefs.getInt('color_primary') != null) {
+        primaryColor = Color(prefs.getInt('color_primary')!);
       } else {
         primaryColor = cOrange;
       }
-      if (await prefs.getInt('color_accent') != null) {
-        accentColor = Color(await prefs.getInt('color_accent')!);
+      if (prefs.getInt('color_accent') != null) {
+        accentColor = Color(prefs.getInt('color_accent')!);
       } else {
         accentColor = cMauve;
       }
-      print("primary: ${primaryColor}");
-      print("accent: ${accentColor}");
+      print("primary: $primaryColor");
+      print("accent: $accentColor");
 
       ref
           .read(primaryProviderNotifier.notifier)
           .createPrimaryColor(primaryColor);
       ref.read(accentProviderNotifier.notifier).createAccentColor(accentColor);
     }
-    print("prefs: ${theme}");
+    print("prefs: $theme");
     ref.read(themeProviderNotifier.notifier).createTheme(theme);
     await Future.delayed(Duration(seconds: 3));
     return true;
@@ -69,7 +69,7 @@ class _LogControllerState extends State<LogController> {
       final theme = ref.watch(themeProviderNotifier);
       final primaryColor = ref.watch(primaryProviderNotifier);
       final accentColor = ref.watch(accentProviderNotifier);
-      print("theme: ${theme}");
+      print("theme: $theme");
       return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Gemu',
