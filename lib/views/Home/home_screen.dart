@@ -134,25 +134,25 @@ class _Homeviewstate extends State<HomeScreen>
     super.build(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-          statusBarColor: Colors.black,
+          statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
           systemNavigationBarColor: Colors.black),
-      child: SafeArea(
-          left: false,
-          right: false,
-          child: DefaultTabController(
-            initialIndex: widget.indexGamesHome,
-            length: widget.games.length,
-            child: Scaffold(
-              backgroundColor: Colors.black,
-              body: Stack(
-                children: [
-                  bodyHome(widget.games[widget.indexGamesHome]),
-                  topHome(widget.games[widget.indexGamesHome]),
-                ],
-              ),
+      child: DefaultTabController(
+        initialIndex: widget.indexGamesHome,
+        length: widget.games.length,
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: Stack(
+              children: [
+                bodyHome(widget.games[widget.indexGamesHome]),
+                topHome(widget.games[widget.indexGamesHome]),
+              ],
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 

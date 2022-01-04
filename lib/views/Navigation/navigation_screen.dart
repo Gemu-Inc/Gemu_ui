@@ -147,106 +147,102 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Loader<void>(
-      load: loadingData,
-      loadingWidget: AnnotatedRegion<SystemUiOverlayStyle>(
-        child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
-              strokeWidth: 1.5,
-            ),
-          ),
-        ),
-        value: SystemUiOverlayStyle(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Colors.black,
           statusBarIconBrightness:
               Theme.of(context).brightness == Brightness.dark
                   ? Brightness.light
                   : Brightness.dark,
-        ),
-      ),
-      builder: (_, value) {
-        return Scaffold(
-          body: Consumer(builder: (_, ref, child) {
-            final indexGames = ref.watch(indexGamesNotifierProvider);
-            return Stack(
-              children: [
-                PageView(
-                  controller: _navPageController,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    HomeScreen(
-                        followings: followings,
-                        games: gamesList,
-                        gamePageController: gamePageController,
-                        indexGamesHome: indexGames),
-                    HighlightsScreen(
-                      gamesUser: gamesList,
-                    ),
-                    GamesScreen(games: gamesList, indexGamesHome: indexGames),
-                    MyProfilScreen()
-                  ],
+          systemNavigationBarColor: Colors.transparent),
+      child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          body: Stack(
+            children: [
+              Loader<void>(
+                load: loadingData,
+                loadingWidget: Center(
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor,
+                    strokeWidth: 1.5,
+                  ),
                 ),
-                Positioned(
-                    bottom: 0,
-                    child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height / 11,
-                        decoration: selectedPage != 0
-                            ? BoxDecoration(boxShadow: [
-                                BoxShadow(
-                                  color: Theme.of(context).shadowColor,
-                                  blurRadius: 1,
-                                  spreadRadius: 3,
-                                )
-                              ])
-                            : BoxDecoration(
-                                border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white60, width: 0.5)),
-                              ),
-                        child: BottomNavigationBar(
-                            backgroundColor: selectedPage != 0
-                                ? Theme.of(context).scaffoldBackgroundColor
-                                : Colors.black.withOpacity(0.2),
-                            currentIndex: selectedPage,
-                            onTap: (index) async {
-                              onTap(index);
-                            },
-                            unselectedItemColor: selectedPage == 0
-                                ? Colors.white60
-                                : Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white60
-                                    : Colors.black45,
-                            selectedItemColor: Theme.of(context).primaryColor,
-                            items: [
-                              BottomNavigationBarItem(
-                                  activeIcon: Icon(Icons.home),
-                                  icon: Icon(Icons.home_outlined),
-                                  label: 'Home'),
-                              BottomNavigationBarItem(
-                                  activeIcon: Icon(Icons.highlight),
-                                  icon: Icon(Icons.highlight_outlined),
-                                  label: 'Highlights'),
-                              BottomNavigationBarItem(
-                                  activeIcon: Icon(Icons.videogame_asset),
-                                  icon: Icon(Icons.videogame_asset_outlined),
-                                  label: 'Games'),
-                              BottomNavigationBarItem(
-                                  activeIcon: Icon(Icons.person),
-                                  icon: Icon(Icons.person_outline),
-                                  label: 'Profil')
-                            ]))),
-                BottomShare(),
-              ],
-            );
-          }),
-        );
-      },
+                builder: (_, value) {
+                  return Consumer(builder: (_, ref, child) {
+                    final indexGames = ref.watch(indexGamesNotifierProvider);
+                    return PageView(
+                      controller: _navPageController,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        HomeScreen(
+                            followings: followings,
+                            games: gamesList,
+                            gamePageController: gamePageController,
+                            indexGamesHome: indexGames),
+                        HighlightsScreen(
+                          gamesUser: gamesList,
+                        ),
+                        GamesScreen(
+                            games: gamesList, indexGamesHome: indexGames),
+                        MyProfilScreen()
+                      ],
+                    );
+                  });
+                },
+              ),
+              Positioned(
+                  bottom: 0,
+                  child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 11,
+                      decoration: selectedPage != 0
+                          ? BoxDecoration(boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).shadowColor,
+                                blurRadius: 1,
+                                spreadRadius: 3,
+                              )
+                            ])
+                          : BoxDecoration(
+                              border: Border(
+                                  top: BorderSide(
+                                      color: Colors.white60, width: 0.5)),
+                            ),
+                      child: BottomNavigationBar(
+                          backgroundColor: selectedPage != 0
+                              ? Theme.of(context).scaffoldBackgroundColor
+                              : Colors.black.withOpacity(0.2),
+                          currentIndex: selectedPage,
+                          onTap: (index) async {
+                            onTap(index);
+                          },
+                          unselectedItemColor: selectedPage == 0
+                              ? Colors.white60
+                              : Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white60
+                                  : Colors.black45,
+                          selectedItemColor: Theme.of(context).primaryColor,
+                          items: [
+                            BottomNavigationBarItem(
+                                activeIcon: Icon(Icons.home),
+                                icon: Icon(Icons.home_outlined),
+                                label: 'Home'),
+                            BottomNavigationBarItem(
+                                activeIcon: Icon(Icons.highlight),
+                                icon: Icon(Icons.highlight_outlined),
+                                label: 'Highlights'),
+                            BottomNavigationBarItem(
+                                activeIcon: Icon(Icons.videogame_asset),
+                                icon: Icon(Icons.videogame_asset_outlined),
+                                label: 'Games'),
+                            BottomNavigationBarItem(
+                                activeIcon: Icon(Icons.person),
+                                icon: Icon(Icons.person_outline),
+                                label: 'Profil')
+                          ]))),
+              BottomShare(),
+            ],
+          )),
     );
   }
 }

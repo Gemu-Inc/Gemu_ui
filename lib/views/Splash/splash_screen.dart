@@ -6,7 +6,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
+          statusBarColor: Theme.of(context).scaffoldBackgroundColor,
           statusBarIconBrightness:
               Theme.of(context).brightness == Brightness.dark
                   ? Brightness.light
