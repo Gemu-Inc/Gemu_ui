@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gemu/providers/theme_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/Splash/splash_screen.dart';
@@ -20,6 +21,10 @@ Future<void> main() async {
   await Firebase.initializeApp().catchError((error) {
     print(error);
   });
+
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.black,
+      systemNavigationBarIconBrightness: Brightness.light));
 
   runApp(ProviderScope(child: LogController()));
 }
@@ -58,7 +63,7 @@ class _LogControllerState extends State<LogController> {
       ref.read(accentProviderNotifier.notifier).createAccentColor(accentColor);
     }
     print("prefs: $theme");
-    ref.read(themeProviderNotifier.notifier).createTheme(theme);
+    ref.read(themeProviderNotifier.notifier).createTheme(theme, context);
     await Future.delayed(Duration(seconds: 3));
     return true;
   }

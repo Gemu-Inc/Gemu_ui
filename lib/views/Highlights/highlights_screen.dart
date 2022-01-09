@@ -422,7 +422,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
     _tabController.addListener(_onTabChanged);
 
     getHashtags();
-    getDiscoverWithoutGamesUser();
+    //getDiscoverWithoutGamesUser();
   }
 
   @override
@@ -442,79 +442,76 @@ class Highlightsviewstate extends State<HighlightsScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Theme.of(context).scaffoldBackgroundColor,
-          statusBarIconBrightness:
-              Theme.of(context).brightness == Brightness.dark
-                  ? Brightness.light
-                  : Brightness.dark,
-          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor),
-      child: Scaffold(
-        appBar: PreferredSize(
-            child: AppBar(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              elevation: 6,
-              title: Text(
-                'Highlights',
-                style: mystyle(20),
-              ),
-              bottom: PreferredSize(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
-                    child:
-                        Container(color: Colors.transparent, child: search()),
-                  ),
-                  preferredSize: Size.fromHeight(100)),
+    return Scaffold(
+      appBar: PreferredSize(
+          child: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 6,
+            systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor:
+                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
+                statusBarIconBrightness:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark),
+            title: Text(
+              'Highlights',
+              style: mystyle(20),
             ),
-            preferredSize:
-                Size.fromHeight(MediaQuery.of(context).size.height / 6)),
-        body: SingleChildScrollView(
-          controller: _mainScrollController,
-          physics:
-              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-          child: Column(
-            children: [
-              currentTabIndex == 0
-                  ? Padding(
-                      padding: EdgeInsets.only(top: 20.0),
-                      child: Container(
-                        height: isReloadHashtags ? 50.0 : 0.0,
-                        child: Center(
-                          child: SizedBox(
-                            height: 30.0,
-                            width: 30.0,
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).primaryColor,
-                              strokeWidth: 1.5,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  : Padding(
-                      padding: EdgeInsets.only(top: 20.0),
-                      child: Container(
-                        height: isReloadDiscover ? 50.0 : 0.0,
-                        child: Center(
-                          child: SizedBox(
-                            height: 30.0,
-                            width: 30.0,
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).primaryColor,
-                              strokeWidth: 1.5,
-                            ),
-                          ),
+            bottom: PreferredSize(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15.0),
+                  child: Container(
+                    child: search(),
+                  ),
+                ),
+                preferredSize: Size.fromHeight(100)),
+          ),
+          preferredSize:
+              Size.fromHeight(MediaQuery.of(context).size.height / 6)),
+      body: ListView(
+        controller: _mainScrollController,
+        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        shrinkWrap: true,
+        children: [
+          currentTabIndex == 0
+              ? Padding(
+                  padding: EdgeInsets.only(top: 20.0),
+                  child: Container(
+                    height: isReloadHashtags ? 50.0 : 0.0,
+                    child: Center(
+                      child: SizedBox(
+                        height: 30.0,
+                        width: 30.0,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                          strokeWidth: 1.5,
                         ),
                       ),
                     ),
-              StickyHeader(
-                  controller: _mainScrollController,
-                  header: stickyHeader(),
-                  content: tabBarView())
-            ],
-          ),
-        ),
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.only(top: 20.0),
+                  child: Container(
+                    height: isReloadDiscover ? 50.0 : 0.0,
+                    child: Center(
+                      child: SizedBox(
+                        height: 30.0,
+                        width: 30.0,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                          strokeWidth: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+          StickyHeader(
+              controller: _mainScrollController,
+              header: stickyHeader(),
+              content: tabBarView())
+        ],
       ),
     );
   }

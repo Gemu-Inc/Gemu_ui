@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
@@ -15,7 +16,7 @@ final accentProviderNotifier =
 class ThemeProvider extends StateNotifier<ThemeData> {
   ThemeProvider() : super(ThemeData());
 
-  createTheme(String theme) {
+  createTheme(String theme, BuildContext context) {
     if (theme == 'DarkPurple') {
       state = darkThemePurple;
     } else if (theme == 'DarkOrange') {

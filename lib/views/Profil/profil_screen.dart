@@ -96,15 +96,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Theme.of(context).scaffoldBackgroundColor,
-          statusBarIconBrightness:
-              Theme.of(context).brightness == Brightness.dark
-                  ? Brightness.light
-                  : Brightness.dark,
-          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor),
-      child: Scaffold(
+    return Scaffold(
         body: dataIsThere
             ? NestedScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
@@ -115,6 +107,12 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                             Theme.of(context).scaffoldBackgroundColor,
                         automaticallyImplyLeading: false,
                         elevation: 6.0,
+                        systemOverlayStyle: SystemUiOverlayStyle(
+                            statusBarColor: Colors.transparent,
+                            statusBarIconBrightness:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Brightness.light
+                                    : Brightness.dark),
                         forceElevated: true,
                         pinned: true,
                         leading: me!.uid == "F65wJ5TGmvgO8t7HUZJYcw1PmbA2"
@@ -345,9 +343,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                 child: CircularProgressIndicator(
                   color: Theme.of(context).primaryColor,
                 ),
-              ),
-      ),
-    );
+              ));
   }
 }
 
@@ -517,335 +513,286 @@ class ProfilUserState extends State<ProfilUser>
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness:
-              Theme.of(context).brightness == Brightness.dark
-                  ? Brightness.light
-                  : Brightness.dark,
-          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: (dataIsThere && userPost != null)
-            ? NestedScrollView(
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  return <Widget>[
-                    SliverAppBar(
-                        backgroundColor:
-                            Theme.of(context).scaffoldBackgroundColor,
-                        automaticallyImplyLeading: false,
-                        elevation: 6.0,
-                        forceElevated: true,
-                        pinned: true,
-                        leading: IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: Icon(
-                              Icons.arrow_back_ios,
-                              size: 23,
-                            )),
-                        centerTitle: true,
-                        title: Text(
-                          userPost!.username,
-                          style: TextStyle(fontSize: 23),
-                        ),
-                        expandedHeight: userPost!.uid != me!.uid ? 285 : 255,
-                        flexibleSpace: Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Theme.of(context).colorScheme.primary,
-                                    Theme.of(context).colorScheme.secondary
-                                  ],
-                                  tileMode: TileMode.clamp)),
-                          child: FlexibleSpaceBar(
-                            collapseMode: CollapseMode.parallax,
-                            background: Padding(
-                              padding: EdgeInsets.only(top: 80.0),
-                              child: Column(
-                                children: [
-                                  userPost!.imageUrl == null
-                                      ? Container(
-                                          height: 90,
-                                          width: 90,
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Theme.of(context).canvasColor,
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: (dataIsThere && userPost != null)
+          ? NestedScrollView(
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                return <Widget>[
+                  SliverAppBar(
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
+                      automaticallyImplyLeading: false,
+                      elevation: 6.0,
+                      forceElevated: true,
+                      pinned: true,
+                      leading: IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(
+                            Icons.arrow_back_ios,
+                            size: 23,
+                          )),
+                      centerTitle: true,
+                      title: Text(
+                        userPost!.username,
+                        style: TextStyle(fontSize: 23),
+                      ),
+                      expandedHeight: userPost!.uid != me!.uid ? 285 : 255,
+                      flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.secondary
+                                ],
+                                tileMode: TileMode.clamp)),
+                        child: FlexibleSpaceBar(
+                          collapseMode: CollapseMode.parallax,
+                          background: Padding(
+                            padding: EdgeInsets.only(top: 80.0),
+                            child: Column(
+                              children: [
+                                userPost!.imageUrl == null
+                                    ? Container(
+                                        height: 90,
+                                        width: 90,
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).canvasColor,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                              color: Colors.black, width: 2.0),
+                                        ),
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 50,
+                                        ))
+                                    : Container(
+                                        margin: EdgeInsets.all(3.0),
+                                        width: 90,
+                                        height: 90,
+                                        decoration: BoxDecoration(
+                                            color: Colors.transparent,
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                                color: Colors.black,
-                                                width: 2.0),
-                                          ),
-                                          child: Icon(
-                                            Icons.person,
-                                            size: 50,
-                                          ))
-                                      : Container(
-                                          margin: EdgeInsets.all(3.0),
-                                          width: 90,
-                                          height: 90,
-                                          decoration: BoxDecoration(
-                                              color: Colors.transparent,
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                  color: Color(0xFF222831)),
-                                              image: DecorationImage(
-                                                  fit: BoxFit.cover,
-                                                  image:
-                                                      CachedNetworkImageProvider(
-                                                          userPost!
-                                                              .imageUrl!))),
-                                        ),
-                                  SizedBox(
-                                    height: 10.0,
-                                  ),
-                                  if (userPost!.uid != me!.uid)
-                                    userPost!.privacy == 'public'
-                                        ? Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                2.5,
-                                            height: 30,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10.0),
-                                            child: followers.contains(me!.uid)
-                                                ? ElevatedButton(
-                                                    onPressed: () {
-                                                      unfollowUser();
-                                                    },
-                                                    style: TextButton.styleFrom(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        elevation: 0,
-                                                        shape: RoundedRectangleBorder(
-                                                            side: BorderSide(
-                                                                color: Colors
-                                                                    .black),
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10.0))),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Icon(Icons.remove,
-                                                            size: 23,
-                                                            color:
-                                                                Colors.black),
-                                                        SizedBox(
-                                                          width: 5.0,
-                                                        ),
-                                                        Text(
-                                                          'Unfollow',
-                                                          style: TextStyle(
+                                                color: Color(0xFF222831)),
+                                            image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image:
+                                                    CachedNetworkImageProvider(
+                                                        userPost!.imageUrl!))),
+                                      ),
+                                SizedBox(
+                                  height: 10.0,
+                                ),
+                                if (userPost!.uid != me!.uid)
+                                  userPost!.privacy == 'public'
+                                      ? Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2.5,
+                                          height: 30,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                          child: followers.contains(me!.uid)
+                                              ? ElevatedButton(
+                                                  onPressed: () {
+                                                    unfollowUser();
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      elevation: 0,
+                                                      shape: RoundedRectangleBorder(
+                                                          side: BorderSide(
                                                               color:
-                                                                  Colors.black,
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700),
-                                                        )
-                                                      ],
-                                                    ))
-                                                : ElevatedButton(
-                                                    onPressed: () {
-                                                      followPublicUser();
-                                                    },
-                                                    style: TextButton.styleFrom(
-                                                        backgroundColor:
-                                                            Theme.of(context)
-                                                                .primaryColor,
-                                                        elevation: 6,
-                                                        shape: RoundedRectangleBorder(
-                                                            side: BorderSide(
-                                                                color: Colors
-                                                                    .black),
-                                                            borderRadius: BorderRadius.circular(10.0))),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Icon(Icons.add,
-                                                            size: 23,
-                                                            color:
-                                                                Colors.black),
-                                                        SizedBox(
-                                                          width: 10.0,
-                                                        ),
-                                                        Text(
-                                                          'Follow',
-                                                          style: TextStyle(
+                                                                  Colors.black),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  10.0))),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Icon(Icons.remove,
+                                                          size: 23,
+                                                          color: Colors.black),
+                                                      SizedBox(
+                                                        width: 5.0,
+                                                      ),
+                                                      Text(
+                                                        'Unfollow',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w700),
+                                                      )
+                                                    ],
+                                                  ))
+                                              : ElevatedButton(
+                                                  onPressed: () {
+                                                    followPublicUser();
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                      backgroundColor:
+                                                          Theme.of(context)
+                                                              .primaryColor,
+                                                      elevation: 6,
+                                                      shape: RoundedRectangleBorder(
+                                                          side: BorderSide(
                                                               color:
-                                                                  Colors.black,
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700),
-                                                        )
-                                                      ],
-                                                    )),
-                                          )
-                                        : followers.contains(me!.uid)
-                                            ? Container(
-                                                width: MediaQuery.of(context).size.width /
-                                                    2.5,
-                                                height: 30,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.0),
-                                                child: ElevatedButton(
-                                                    onPressed: () {
-                                                      unfollowUser();
-                                                    },
-                                                    style: TextButton.styleFrom(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        elevation: 0,
-                                                        shape: RoundedRectangleBorder(
-                                                            side: BorderSide(
-                                                                color: Colors
-                                                                    .black),
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10.0))),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Icon(Icons.remove,
-                                                            size: 23,
-                                                            color:
-                                                                Colors.black),
-                                                        SizedBox(
-                                                          width: 5.0,
-                                                        ),
-                                                        Text(
-                                                          'Unfollow',
-                                                          style: TextStyle(
+                                                                  Colors.black),
+                                                          borderRadius:
+                                                              BorderRadius.circular(10.0))),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Icon(Icons.add,
+                                                          size: 23,
+                                                          color: Colors.black),
+                                                      SizedBox(
+                                                        width: 10.0,
+                                                      ),
+                                                      Text(
+                                                        'Follow',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w700),
+                                                      )
+                                                    ],
+                                                  )),
+                                        )
+                                      : followers.contains(me!.uid)
+                                          ? Container(
+                                              width: MediaQuery.of(context).size.width /
+                                                  2.5,
+                                              height: 30,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.0),
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    unfollowUser();
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      elevation: 0,
+                                                      shape: RoundedRectangleBorder(
+                                                          side: BorderSide(
                                                               color:
-                                                                  Colors.black,
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700),
-                                                        )
-                                                      ],
-                                                    )))
-                                            : isWaiting
-                                                ? Container(
-                                                    alignment: Alignment.center,
-                                                    width: MediaQuery.of(context)
-                                                            .size
-                                                            .width /
-                                                        2.5,
-                                                    height: 30,
-                                                    padding: EdgeInsets.symmetric(
-                                                        horizontal: 10.0),
-                                                    decoration: BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10.0)),
-                                                    child: Text('En attente', style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w700)))
-                                                : Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            2.5,
-                                                    height: 30,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10.0),
-                                                    child: ElevatedButton(
-                                                        onPressed: () {
-                                                          followPrivateUser();
-                                                        },
-                                                        style: TextButton.styleFrom(
-                                                            backgroundColor:
-                                                                Theme.of(
-                                                                        context)
-                                                                    .primaryColor,
-                                                            elevation: 6,
-                                                            shape: RoundedRectangleBorder(
-                                                                side: BorderSide(
-                                                                    color: Colors
-                                                                        .black),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10.0))),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Icon(Icons.add,
-                                                                size: 23,
-                                                                color: Colors
-                                                                    .black),
-                                                            SizedBox(
-                                                              width: 10.0,
-                                                            ),
-                                                            Text(
-                                                              'Follow',
-                                                              style: TextStyle(
+                                                                  Colors.black),
+                                                          borderRadius: BorderRadius.circular(
+                                                              10.0))),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Icon(Icons.remove,
+                                                          size: 23,
+                                                          color: Colors.black),
+                                                      SizedBox(
+                                                        width: 5.0,
+                                                      ),
+                                                      Text(
+                                                        'Unfollow',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w700),
+                                                      )
+                                                    ],
+                                                  )))
+                                          : isWaiting
+                                              ? Container(
+                                                  alignment: Alignment.center,
+                                                  width: MediaQuery.of(context).size.width /
+                                                      2.5,
+                                                  height: 30,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.0),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(color: Colors.black),
+                                                      borderRadius: BorderRadius.circular(10.0)),
+                                                  child: Text('En attente', style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w700)))
+                                              : Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2.5,
+                                                  height: 30,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.0),
+                                                  child: ElevatedButton(
+                                                      onPressed: () {
+                                                        followPrivateUser();
+                                                      },
+                                                      style: TextButton.styleFrom(
+                                                          backgroundColor:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                          elevation: 6,
+                                                          shape: RoundedRectangleBorder(
+                                                              side: BorderSide(
                                                                   color: Colors
-                                                                      .black,
-                                                                  fontSize: 13,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700),
-                                                            )
-                                                          ],
-                                                        )),
-                                                  ),
-                                  SizedBox(
-                                    height: 15.0,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15.0, vertical: 5.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Followers(
-                                                        idUser: userPost!.uid,
-                                                      ))),
-                                          child: Container(
-                                            color: Colors.transparent,
-                                            height: 60,
-                                            width: 70,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Followers',
+                                                                      .black),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0))),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Icon(Icons.add,
+                                                              size: 23,
+                                                              color:
+                                                                  Colors.black),
+                                                          SizedBox(
+                                                            width: 10.0,
+                                                          ),
+                                                          Text(
+                                                            'Follow',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700),
+                                                          )
+                                                        ],
+                                                      )),
                                                 ),
-                                                const SizedBox(
-                                                  height: 15.0,
-                                                ),
-                                                Text(
-                                                  followers.length.toString(),
-                                                  style:
-                                                      TextStyle(fontSize: 23),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15.0, vertical: 5.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Followers(
+                                                      idUser: userPost!.uid,
+                                                    ))),
+                                        child: Container(
                                           color: Colors.transparent,
                                           height: 60,
                                           width: 70,
@@ -856,92 +803,114 @@ class ProfilUserState extends State<ProfilUser>
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                'Points',
+                                                'Followers',
                                               ),
                                               const SizedBox(
                                                 height: 15.0,
                                               ),
                                               Text(
-                                                points.toString(),
+                                                followers.length.toString(),
                                                 style: TextStyle(fontSize: 23),
                                               )
                                             ],
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => Follows(
-                                                      idUser: userPost!.uid))),
-                                          child: Container(
-                                            color: Colors.transparent,
-                                            height: 60,
-                                            width: 70,
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  'Follows',
-                                                ),
-                                                const SizedBox(
-                                                  height: 15.0,
-                                                ),
-                                                Text(
-                                                  followings.length.toString(),
-                                                  style:
-                                                      TextStyle(fontSize: 23),
-                                                )
-                                              ],
+                                      ),
+                                      Container(
+                                        color: Colors.transparent,
+                                        height: 60,
+                                        width: 70,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Points',
                                             ),
+                                            const SizedBox(
+                                              height: 15.0,
+                                            ),
+                                            Text(
+                                              points.toString(),
+                                              style: TextStyle(fontSize: 23),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Follows(
+                                                    idUser: userPost!.uid))),
+                                        child: Container(
+                                          color: Colors.transparent,
+                                          height: 60,
+                                          width: 70,
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                'Follows',
+                                              ),
+                                              const SizedBox(
+                                                height: 15.0,
+                                              ),
+                                              Text(
+                                                followings.length.toString(),
+                                                style: TextStyle(fontSize: 23),
+                                              )
+                                            ],
                                           ),
-                                        )
-                                      ],
-                                    ),
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        )),
-                    SliverPersistentHeader(
-                        pinned: true,
-                        delegate: _SliverAppBarDelegate(TabBar(
-                            controller: _tabController,
-                            isScrollable: true,
-                            indicatorSize: TabBarIndicatorSize.tab,
-                            labelColor: Theme.of(context).primaryColor,
-                            unselectedLabelColor: Colors.grey,
-                            indicator: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Theme.of(context).canvasColor,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Theme.of(context).primaryColor,
-                                      offset: Offset(1.0, 1.0))
-                                ]),
-                            tabs: [
-                              Tab(
-                                text: 'Public',
-                              ),
-                              Tab(
-                                text: 'Private',
-                              ),
-                            ])))
-                  ];
-                },
-                body: TabBarView(
-                    controller: _tabController,
-                    children: userPost!.privacy == 'public'
-                        ? accountPublic()
-                        : accountPrivate()),
-              )
-            : Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
-                  strokeWidth: 1.5,
-                ),
+                        ),
+                      )),
+                  SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverAppBarDelegate(TabBar(
+                          controller: _tabController,
+                          isScrollable: true,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          labelColor: Theme.of(context).primaryColor,
+                          unselectedLabelColor: Colors.grey,
+                          indicator: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Theme.of(context).canvasColor,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Theme.of(context).primaryColor,
+                                    offset: Offset(1.0, 1.0))
+                              ]),
+                          tabs: [
+                            Tab(
+                              text: 'Public',
+                            ),
+                            Tab(
+                              text: 'Private',
+                            ),
+                          ])))
+                ];
+              },
+              body: TabBarView(
+                  controller: _tabController,
+                  children: userPost!.privacy == 'public'
+                      ? accountPublic()
+                      : accountPrivate()),
+            )
+          : Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+                strokeWidth: 1.5,
               ),
-      ),
+            ),
     );
   }
 

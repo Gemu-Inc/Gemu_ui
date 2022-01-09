@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/services.dart';
 import 'package:gemu/providers/index_games_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Games/categorie_screen.dart';
@@ -123,56 +123,51 @@ class _Gamesviewstate extends State<GamesScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Theme.of(context).scaffoldBackgroundColor,
-          statusBarIconBrightness:
-              Theme.of(context).brightness == Brightness.dark
-                  ? Brightness.light
-                  : Brightness.dark,
-          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor),
-      child: Scaffold(
-        appBar: PreferredSize(
-            child: AppBar(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              elevation: 6,
-              title: Text(
-                'Games',
-                style: mystyle(20),
-              ),
-              bottom: PreferredSize(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 15.0),
-                    child: Container(
-                      child: followGames(),
-                    ),
-                  ),
-                  preferredSize: Size.fromHeight(100)),
+    return Scaffold(
+      appBar: PreferredSize(
+          child: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 6,
+            systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor:
+                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
+                statusBarIconBrightness:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark),
+            title: Text(
+              'Games',
+              style: mystyle(20),
             ),
-            preferredSize:
-                Size.fromHeight(MediaQuery.of(context).size.height / 4)),
-        body: SingleChildScrollView(
-          controller: _mainScrollController,
-          scrollDirection: Axis.vertical,
-          physics:
-              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 20.0,
-              ),
-              StickyHeader(
-                  controller: _mainScrollController,
-                  header: stickyHeader(),
-                  content: categories())
-            ],
+            bottom: PreferredSize(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15.0),
+                  child: Container(
+                    child: followGames(),
+                  ),
+                ),
+                preferredSize: Size.fromHeight(100)),
           ),
-        ),
-        floatingActionButton: Padding(
-          padding: EdgeInsets.only(
-              right: 5.0, bottom: (MediaQuery.of(context).size.height / 11)),
-          child: addGame(),
-        ),
+          preferredSize:
+              Size.fromHeight(MediaQuery.of(context).size.height / 4)),
+      body: ListView(
+        controller: _mainScrollController,
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        children: [
+          SizedBox(
+            height: 20.0,
+          ),
+          StickyHeader(
+              controller: _mainScrollController,
+              header: stickyHeader(),
+              content: categories())
+        ],
+      ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+            right: 5.0, bottom: (MediaQuery.of(context).size.height / 11)),
+        child: addGame(),
       ),
     );
   }

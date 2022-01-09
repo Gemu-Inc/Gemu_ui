@@ -72,38 +72,28 @@ class Gameviewstate extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness:
-              Theme.of(context).brightness == Brightness.dark
-                  ? Brightness.light
-                  : Brightness.dark,
-          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor),
-      child: gamePostsIsThere
-          ? Scaffold(
-              appBar: AppBar(
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                elevation: 6,
-                leading: IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.arrow_back_ios)),
-                title: Text('Games'),
-                bottom: PreferredSize(
-                    child: bottomAppBar(),
-                    preferredSize: Size.fromHeight(100.0)),
-              ),
-              body: bodyView(),
-            )
-          : Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
-                  strokeWidth: 1.5,
-                ),
+    return gamePostsIsThere
+        ? Scaffold(
+            appBar: AppBar(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              elevation: 6,
+              leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.arrow_back_ios)),
+              title: Text('Games'),
+              bottom: PreferredSize(
+                  child: bottomAppBar(), preferredSize: Size.fromHeight(100.0)),
+            ),
+            body: bodyView(),
+          )
+        : Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+                strokeWidth: 1.5,
               ),
             ),
-    );
+          );
   }
 
   Widget bottomAppBar() {

@@ -29,48 +29,42 @@ class HashtagPostsViewState extends State<HashtagPostsView> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: Colors.black),
-      child: SafeArea(
-          left: false,
-          right: false,
-          child: Scaffold(
-            backgroundColor: Colors.black,
-            extendBodyBehindAppBar: true,
-            appBar: AppBar(
-                elevation: 0,
-                leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                    ),
-                    onPressed: () => Navigator.pop(context)),
-                title: Text(
-                  '#${widget.hashtag.name}',
-                  style: mystyle(16, Colors.white),
-                )),
-            body: PageView.builder(
-                physics: AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics()),
-                scrollDirection: Axis.vertical,
-                controller: _pageController,
-                itemCount: widget.posts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Post post = widget.posts[index];
-                  return PostTile(
-                    idUserActual: me!.uid,
-                    post: post,
-                    positionDescriptionBar: 5.0,
-                    positionActionsBar: 5.0,
-                    isGameBar: true,
-                    isFollowingsSection: false,
-                  );
-                }),
-          )),
-    );
+    return SafeArea(
+        left: false,
+        right: false,
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+              elevation: 0,
+              leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => Navigator.pop(context)),
+              title: Text(
+                '#${widget.hashtag.name}',
+                style: mystyle(16, Colors.white),
+              )),
+          body: PageView.builder(
+              physics: AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics()),
+              scrollDirection: Axis.vertical,
+              controller: _pageController,
+              itemCount: widget.posts.length,
+              itemBuilder: (BuildContext context, int index) {
+                Post post = widget.posts[index];
+                return PostTile(
+                  idUserActual: me!.uid,
+                  post: post,
+                  positionDescriptionBar: 5.0,
+                  positionActionsBar: 5.0,
+                  isGameBar: true,
+                  isFollowingsSection: false,
+                );
+              }),
+        ));
   }
 }
 
@@ -101,51 +95,45 @@ class DiscoverPostsViewState extends State<DiscoverPostsView> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: Colors.black),
-      child: SafeArea(
-          left: false,
-          right: false,
-          child: Scaffold(
-            backgroundColor: Colors.black,
-            extendBodyBehindAppBar: true,
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  )),
-              title: Text(
-                'Discover',
-                style: mystyle(16, Colors.white),
-              ),
+    return SafeArea(
+        left: false,
+        right: false,
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                )),
+            title: Text(
+              'Discover',
+              style: mystyle(16, Colors.white),
             ),
-            body: PageView.builder(
-                physics: AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics()),
-                scrollDirection: Axis.vertical,
-                controller: _pageController,
-                itemCount: widget.posts.length,
-                itemBuilder: (_, index) {
-                  Post post = widget.posts[index];
-                  return PostTile(
-                    idUserActual: me!.uid,
-                    post: post,
-                    positionDescriptionBar: 5.0,
-                    positionActionsBar: 5.0,
-                    isGameBar: true,
-                    isFollowingsSection: false,
-                  );
-                }),
-          )),
-    );
+          ),
+          body: PageView.builder(
+              physics: AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics()),
+              scrollDirection: Axis.vertical,
+              controller: _pageController,
+              itemCount: widget.posts.length,
+              itemBuilder: (_, index) {
+                Post post = widget.posts[index];
+                return PostTile(
+                  idUserActual: me!.uid,
+                  post: post,
+                  positionDescriptionBar: 5.0,
+                  positionActionsBar: 5.0,
+                  isGameBar: true,
+                  isFollowingsSection: false,
+                );
+              }),
+        ));
   }
 }

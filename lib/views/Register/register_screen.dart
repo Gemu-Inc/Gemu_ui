@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:algolia/algolia.dart';
 import 'package:country_calling_code_picker/picker.dart';
+import 'package:flutter/services.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/constants/constants.dart';
@@ -380,84 +381,96 @@ class Registerviewstate extends State<RegisterScreen> {
     final country = _selectedCountry;
 
     return WillPopScope(
-        child: AnimatedContainer(
-          duration: _duration,
-          curve: Curves.easeInOut,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: isDayMood ? lightBgColors : darkBgColors,
-            ),
-          ),
-          child: Container(
+        child: Scaffold(
+          body: AnimatedContainer(
+              duration: _duration,
+              curve: Curves.easeInOut,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
-                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
-                  ])),
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  leading: Container(
-                    padding: EdgeInsets.all(7.5),
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  WelcomeScreen()),
-                          (route) => false),
-                      style: TextButton.styleFrom(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: isDayMood ? lightBgColors : darkBgColors,
+                ),
+              ),
+              child: SafeArea(
+                child: Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                          Theme.of(context)
+                              .scaffoldBackgroundColor
+                              .withOpacity(0.1),
+                          Theme.of(context)
+                              .scaffoldBackgroundColor
+                              .withOpacity(0.8)
+                        ])),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height / 8,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 6,
+                                alignment: Alignment.center,
+                                child: IconButton(
+                                    onPressed: () =>
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        WelcomeScreen()),
+                                            (route) => false),
+                                    icon: Icon(
+                                      Icons.arrow_back_ios,
+                                      color: Theme.of(context).canvasColor,
+                                    )),
+                              ),
+                              Expanded(
+                                  child: Container(
+                                alignment: Alignment.center,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width /
+                                          6),
+                                  child: Text('Register',
+                                      style: mystyle(25, Colors.white)),
+                                ),
+                              ))
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                            child: PageView(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            if (index == 0) {
+                              _hideKeyboard();
+                              setState(() {
+                                currentPageIndex = 0;
+                              });
+                            } else {
+                              _hideKeyboard();
+                              setState(() {
+                                currentPageIndex = 1;
+                              });
+                            }
+                          },
+                          children: [firstPage(country), secondPage()],
+                        )),
+                        Container(
+                          height: MediaQuery.of(context).size.height / 14,
                           alignment: Alignment.center,
-                          backgroundColor: Colors.black.withOpacity(0.3),
-                          elevation: 0,
-                          shape: CircleBorder(
-                              side: BorderSide(color: Colors.black))),
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                  title: Text('Register', style: mystyle(25, Colors.white)),
-                  centerTitle: true,
-                ),
-                body: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        child: PageView(
-                      controller: _pageController,
-                      onPageChanged: (index) {
-                        if (index == 0) {
-                          _hideKeyboard();
-                          setState(() {
-                            currentPageIndex = 0;
-                          });
-                        } else {
-                          _hideKeyboard();
-                          setState(() {
-                            currentPageIndex = 1;
-                          });
-                        }
-                      },
-                      children: [firstPage(country), secondPage()],
+                          child: bottomBar(country),
+                        ),
+                      ],
                     )),
-                    Container(
-                      height: MediaQuery.of(context).size.height / 14,
-                      alignment: Alignment.center,
-                      child: bottomBar(country),
-                    ),
-                  ],
-                ),
               )),
         ),
         onWillPop: () => _willPopCallback());

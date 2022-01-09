@@ -403,49 +403,43 @@ class PostsViewState extends State<PostsView> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: Colors.black),
-      child: SafeArea(
-        left: false,
-        right: false,
-        child: Scaffold(
-            backgroundColor: Colors.black,
-            extendBodyBehindAppBar: true,
-            appBar: AppBar(
-              elevation: 0,
-              leading: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  )),
-              title: Text(
-                widget.actualUser.uid == me!.uid
-                    ? 'Mes posts'
-                    : '${widget.actualUser.username}\'s posts',
-                style: mystyle(16, Colors.white),
-              ),
+    return SafeArea(
+      left: false,
+      right: false,
+      child: Scaffold(
+          backgroundColor: Colors.black,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            elevation: 0,
+            leading: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                )),
+            title: Text(
+              widget.actualUser.uid == me!.uid
+                  ? 'Mes posts'
+                  : '${widget.actualUser.username}\'s posts',
+              style: mystyle(16, Colors.white),
             ),
-            body: PageView.builder(
-                controller: _pageController,
-                physics: AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics()),
-                scrollDirection: Axis.vertical,
-                itemCount: widget.posts.length,
-                itemBuilder: (_, int index) {
-                  return PostTile(
-                    idUserActual: widget.actualUser.uid,
-                    post: widget.posts[index],
-                    positionDescriptionBar: 5.0,
-                    positionActionsBar: 5.0,
-                    isGameBar: true,
-                    isFollowingsSection: false,
-                  );
-                })),
-      ),
+          ),
+          body: PageView.builder(
+              controller: _pageController,
+              physics: AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics()),
+              scrollDirection: Axis.vertical,
+              itemCount: widget.posts.length,
+              itemBuilder: (_, int index) {
+                return PostTile(
+                  idUserActual: widget.actualUser.uid,
+                  post: widget.posts[index],
+                  positionDescriptionBar: 5.0,
+                  positionActionsBar: 5.0,
+                  isGameBar: true,
+                  isFollowingsSection: false,
+                );
+              })),
     );
   }
 }

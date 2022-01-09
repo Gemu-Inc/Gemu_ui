@@ -132,25 +132,19 @@ class _Homeviewstate extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: Colors.black),
-      child: DefaultTabController(
-        initialIndex: widget.indexGamesHome,
-        length: widget.games.length,
-        child: Scaffold(
-          backgroundColor: Colors.black,
-          body: Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-            child: Stack(
-              children: [
-                bodyHome(widget.games[widget.indexGamesHome]),
-                topHome(widget.games[widget.indexGamesHome]),
-              ],
+    return DefaultTabController(
+      initialIndex: widget.indexGamesHome,
+      length: widget.games.length,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            bodyHome(widget.games[widget.indexGamesHome]),
+            Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              child: topHome(widget.games[widget.indexGamesHome]),
             ),
-          ),
+          ],
         ),
       ),
     );

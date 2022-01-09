@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 
 import 'package:gemu/constants/constants.dart';
 
-class GetStartedScreen extends StatelessWidget {
+class GetStartedScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Body(),
-    );
-  }
+  _GetStartedScreenState createState() => _GetStartedScreenState();
 }
 
-class Body extends StatefulWidget {
-  @override
-  BodyState createState() => BodyState();
-}
-
-class BodyState extends State<Body> {
+class _GetStartedScreenState extends State<GetStartedScreen> {
   bool isDayMood = true;
   Duration _duration = Duration(seconds: 1);
 
@@ -82,46 +74,50 @@ class BodyState extends State<Body> {
       Color(0xFF6E78B1),
       Color(0xFF947B8F),
     ];
-    return AnimatedContainer(
-        duration: _duration,
-        curve: Curves.easeInOut,
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDayMood ? lightBgColors : darkBgColors,
-          ),
-        ),
-        child: Container(
+    return Scaffold(
+      body: AnimatedContainer(
+          duration: _duration,
+          curve: Curves.easeInOut,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
-              ])),
-          child: IntroSlider(
-            colorDot: Theme.of(context).primaryColor.withOpacity(0.5),
-            colorActiveDot: Theme.of(context).primaryColor,
-            sizeDot: 13.0,
-
-            // Skip button
-            colorSkipBtn: Color(0x33000000),
-            highlightColorSkipBtn: Color(0xff000000),
-
-            // Next button
-            showNextBtn: true,
-
-            // Done button
-            colorDoneBtn: Color(0x33000000),
-            highlightColorDoneBtn: Color(0xff000000),
-            onDonePress: this.onDonePress,
-
-            slides: this.slides,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: isDayMood ? lightBgColors : darkBgColors,
+            ),
           ),
-        ));
+          child: SafeArea(
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
+                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
+                  ])),
+              child: IntroSlider(
+                colorDot: Theme.of(context).primaryColor.withOpacity(0.5),
+                colorActiveDot: Theme.of(context).primaryColor,
+                sizeDot: 13.0,
+
+                // Skip button
+                colorSkipBtn: Color(0x33000000),
+                highlightColorSkipBtn: Color(0xff000000),
+
+                // Next button
+                showNextBtn: true,
+
+                // Done button
+                colorDoneBtn: Color(0x33000000),
+                highlightColorDoneBtn: Color(0xff000000),
+                onDonePress: this.onDonePress,
+
+                slides: this.slides,
+              ),
+            ),
+          )),
+    );
   }
 }

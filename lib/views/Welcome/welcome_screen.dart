@@ -8,10 +8,10 @@ import 'package:gemu/views/Register/register_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
-  Welcomeviewstate createState() => Welcomeviewstate();
+  WelcomeviewState createState() => WelcomeviewState();
 }
 
-class Welcomeviewstate extends State<WelcomeScreen> {
+class WelcomeviewState extends State<WelcomeScreen> {
   Duration _duration = Duration(seconds: 1);
   bool isDayMood = false;
 
@@ -52,42 +52,24 @@ class Welcomeviewstate extends State<WelcomeScreen> {
       Color(0xFF6E78B1),
       Color(0xFF947B8F),
     ];
-    return AnnotatedRegion<SystemUiOverlayStyle>(
+    return Scaffold(
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness:
-              Theme.of(context).brightness == Brightness.dark
-                  ? Brightness.light
-                  : Brightness.dark,
-          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor),
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-                icon: Icon(
-                  Icons.info_outline,
-                  color: Colors.white,
-                  size: 26,
-                ),
-                onPressed: () => Navigator.pushNamed(context, GetStarted))
-          ],
-        ),
-        body: AnimatedContainer(
-          duration: _duration,
-          curve: Curves.easeInOut,
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: isDayMood ? lightBgColors : darkBgColors,
-            ),
+          statusBarIconBrightness: Brightness.dark),
+      child: AnimatedContainer(
+        duration: _duration,
+        curve: Curves.easeInOut,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDayMood ? lightBgColors : darkBgColors,
           ),
+        ),
+        child: SafeArea(
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -101,8 +83,16 @@ class Welcomeviewstate extends State<WelcomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 100.0,
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                      icon: Icon(
+                        Icons.info_outline,
+                        color: Colors.white,
+                        size: 26,
+                      ),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, GetStarted)),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
@@ -295,6 +285,6 @@ class Welcomeviewstate extends State<WelcomeScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 }

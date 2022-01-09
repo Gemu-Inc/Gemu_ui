@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:gemu/services/auth_service.dart';
 
 import 'package:gemu/constants/constants.dart';
@@ -124,62 +125,73 @@ class Loginviewstate extends State<LoginScreen> {
       Color(0xFF947B8F),
     ];
     return WillPopScope(
-        child: AnimatedContainer(
-          duration: _duration,
-          curve: Curves.easeInOut,
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: isDayMood ? lightBgColors : darkBgColors,
-            ),
-          ),
-          child: Container(
+        child: Scaffold(
+          body: AnimatedContainer(
+              duration: _duration,
+              curve: Curves.easeInOut,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
-                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
-                  ])),
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  leading: Container(
-                    padding: EdgeInsets.all(7.5),
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  WelcomeScreen()),
-                          (route) => false),
-                      style: TextButton.styleFrom(
-                          alignment: Alignment.center,
-                          backgroundColor: Colors.black.withOpacity(0.3),
-                          elevation: 0,
-                          shape: CircleBorder(
-                              side: BorderSide(color: Colors.black))),
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                  title: Text('Login', style: mystyle(25, Colors.white)),
-                  centerTitle: true,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: isDayMood ? lightBgColors : darkBgColors,
                 ),
-                body: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(child: login()),
-                  ],
-                ),
+              ),
+              child: SafeArea(
+                child: Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                          Theme.of(context)
+                              .scaffoldBackgroundColor
+                              .withOpacity(0.1),
+                          Theme.of(context)
+                              .scaffoldBackgroundColor
+                              .withOpacity(0.8)
+                        ])),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height / 8,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 6,
+                                alignment: Alignment.center,
+                                child: IconButton(
+                                    onPressed: () =>
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        WelcomeScreen()),
+                                            (route) => false),
+                                    icon: Icon(Icons.arrow_back_ios,
+                                        color: Theme.of(context).canvasColor)),
+                              ),
+                              Expanded(
+                                  child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width /
+                                          6),
+                                  child: Text(
+                                    'Login',
+                                    style: mystyle(25, Colors.white),
+                                  ),
+                                ),
+                              ))
+                            ],
+                          ),
+                        ),
+                        Expanded(child: login()),
+                      ],
+                    )),
               )),
         ),
         onWillPop: () => _willPopCallback());

@@ -341,33 +341,14 @@ class _Designviewstate extends State<DesignScreen> {
     var prefs = await SharedPreferences.getInstance();
     if (value == 'LightOrange') {
       ref.read(themeProviderNotifier.notifier).updateTheme(lightThemeOrange);
-      //Mise en place de l'overlay des notifications Android
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'LightPurple') {
       ref.read(themeProviderNotifier.notifier).updateTheme(lightThemePurple);
-      //Mise en place de l'overlay des notifications Android
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Color(0xFFDEE4E7)));
     } else if (value == 'DarkOrange') {
       ref.read(themeProviderNotifier.notifier).updateTheme(darkThemeOrange);
-      //Mise en place de l'overlay des notifications Android
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Color(0xFF1A1C25)));
     } else if (value == 'DarkPurple') {
       ref.read(themeProviderNotifier.notifier).updateTheme(darkThemePurple);
-      //Mise en place de l'overlay des notifications Android
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Color(0xFF1A1C25)));
     } else {
       ref.read(themeProviderNotifier.notifier).updateTheme(ThemeData());
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Colors.transparent));
     }
     prefs.setString(appTheme, value);
   }

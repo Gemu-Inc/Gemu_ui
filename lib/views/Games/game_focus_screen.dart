@@ -36,48 +36,42 @@ class _GameFocusviewstate extends State<GameFocusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: Colors.black),
-      child: SafeArea(
-        left: false,
-        right: false,
-        bottom: false,
-        child: Scaffold(
-          backgroundColor: Colors.black,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                )),
-            title: Text(
-              widget.game.name,
-              style: mystyle(16, Colors.white),
-            ),
+    return SafeArea(
+      left: false,
+      right: false,
+      bottom: false,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              )),
+          title: Text(
+            widget.game.name,
+            style: mystyle(16, Colors.white),
           ),
-          body: PageView.builder(
-              scrollDirection: Axis.vertical,
-              controller: _pageController,
-              itemCount: widget.posts.length,
-              itemBuilder: (BuildContext context, int index) {
-                Post post = widget.posts[index];
-                return PostTile(
-                  idUserActual: me!.uid,
-                  post: post,
-                  positionDescriptionBar: 5.0,
-                  positionActionsBar: 5.0,
-                  isGameBar: true,
-                  isFollowingsSection: false,
-                );
-              }),
         ),
+        body: PageView.builder(
+            scrollDirection: Axis.vertical,
+            controller: _pageController,
+            itemCount: widget.posts.length,
+            itemBuilder: (BuildContext context, int index) {
+              Post post = widget.posts[index];
+              return PostTile(
+                idUserActual: me!.uid,
+                post: post,
+                positionDescriptionBar: 5.0,
+                positionActionsBar: 5.0,
+                isGameBar: true,
+                isFollowingsSection: false,
+              );
+            }),
       ),
     );
   }
