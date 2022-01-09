@@ -15,7 +15,7 @@ class ReglagesScreen extends StatelessWidget {
   const ReglagesScreen({Key? key, required this.user}) : super(key: key);
 
   _signOut(BuildContext context) async {
-    await AuthService.instance.signOut();
+    await AuthService.signOut();
     await Future.delayed(Duration(seconds: 1));
     Navigator.pushAndRemoveUntil(
         context,

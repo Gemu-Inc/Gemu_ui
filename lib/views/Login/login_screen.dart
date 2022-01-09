@@ -55,8 +55,7 @@ class Loginviewstate extends State<LoginScreen> {
 
     await Future.delayed(Duration(seconds: 2));
 
-    AuthService.instance
-        .signIn(context: context, email: email, password: password);
+    AuthService.signIn(context: context, email: email, password: password);
 
     setState(() {
       isLoading = false;

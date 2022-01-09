@@ -91,7 +91,7 @@ class _LogControllerState extends State<LogController> {
               : theme,
           onGenerateRoute: (settings) => generateRoute(settings, context),
           home: StreamBuilder<User?>(
-            stream: AuthService.instance.authStateChange(),
+            stream: AuthService.authStateChange(),
             builder: (context, snapshot) {
               final isSignedIn = snapshot.data != null;
               return Loader<bool>(

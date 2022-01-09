@@ -215,8 +215,8 @@ class Registerviewstate extends State<RegisterScreen> {
           error: 'Selects at least two games',
           padddingVertical: 40.0));
     } else {
-      AuthService.instance.registerUser(context, gamesFollow, username, email,
-          password, confirmPassword, country);
+      AuthService.registerUser(context, gamesFollow, username, email, password,
+          confirmPassword, country);
     }
   }
 

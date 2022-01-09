@@ -8,16 +8,13 @@ import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';
 
 class AuthService {
-  static final instance = AuthService._();
-  AuthService._();
-
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   //Voir les changements au niveau de la connexion de l'utilisateur sur le device
-  Stream<User?> authStateChange() => _auth.authStateChanges();
+  static Stream<User?> authStateChange() => _auth.authStateChanges();
 
   //Se connecter
-  Future<void> signIn(
+  static Future<void> signIn(
       {required BuildContext context,
       required String email,
       required String password}) async {
@@ -80,7 +77,7 @@ class AuthService {
   }
 
   //Créer un utilisateur
-  Future<void> registerUser(
+  static Future<void> registerUser(
       BuildContext context,
       List<Game> gamesFollow,
       String username,
@@ -100,7 +97,7 @@ class AuthService {
         'country': country,
         'privacy': 'public'
       };
-      await DatabaseService.instance.addUser(uid, gamesFollow, map);
+      await DatabaseService.addUser(uid, gamesFollow, map);
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -136,13 +133,13 @@ class AuthService {
   }
 
   //Fonction de déconnexion de l'application
-  Future signOut() => _auth.signOut();
+  static Future signOut() => _auth.signOut();
 
   //Update
   static Future updateEmail(
       {required String password, required String newEmail}) async {
     try {
-      var email = FirebaseAuth.instance.currentUser!.email;
+      var email = _auth.currentUser!.email;
       AuthCredential authCredential =
           EmailAuthProvider.credential(email: email!, password: password);
       UserCredential authResult = await FirebaseAuth.instance.currentUser!
