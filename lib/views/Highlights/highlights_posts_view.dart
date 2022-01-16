@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/views/Autres/post_tile.dart';
+import 'package:gemu/widgets/post_tile.dart';
 
 class HashtagPostsView extends StatefulWidget {
   final Hashtag hashtag;

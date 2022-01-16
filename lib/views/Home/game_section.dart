@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/views/Autres/post_tile.dart';
+import 'package:gemu/widgets/post_tile.dart';
 
 // ignore: must_be_immutable
 class GameSection extends StatefulWidget {

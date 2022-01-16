@@ -9,7 +9,7 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/providers/index_games_provider.dart';
 import 'package:gemu/services/algolia_service.dart';
-import 'package:gemu/views/Autres/game_screen.dart';
+import 'package:gemu/views/Games/game_screen.dart';
 
 class CategorieScreen extends StatefulWidget {
   final Categorie categorie;

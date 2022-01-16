@@ -11,7 +11,7 @@ import 'package:gemu/views/Games/categorie_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
-import 'package:gemu/views/Autres/game_screen.dart';
+import 'package:gemu/views/Games/game_screen.dart';
 
 import 'add_game_screen.dart';
 

@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gemu/models/hashtag.dart';
-import 'package:gemu/views/Autres/game_screen.dart';
-import 'package:gemu/views/Autres/hashtags_screen.dart';
+import 'package:gemu/views/Games/game_screen.dart';
+import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
 import 'package:marquee/marquee.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -18,11 +18,11 @@ import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/widgets/expandable_text.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:gemu/views/Autres/comments_screen.dart';
+import 'package:gemu/views/Post/Comments/comments_screen.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/views/Profil/profil_screen.dart';
 import 'package:gemu/models/game.dart';
-import 'package:gemu/views/Autres/viewers_screen.dart';
+import 'package:gemu/views/Post/Viewers/viewers_screen.dart';
 import 'package:gemu/models/user.dart';
 
 class PostTile extends StatefulWidget {

@@ -11,7 +11,7 @@ import 'package:gemu/widgets/bouncing_button.dart';
 import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/models/game.dart';
-import 'package:gemu/views/Autres/hashtags_screen.dart';
+import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
 
 import '../Search/search_screen.dart';
 import 'highlights_posts_view.dart';

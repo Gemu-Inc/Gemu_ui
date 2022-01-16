@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/views/Autres/post_tile.dart';
+import 'package:gemu/widgets/post_tile.dart';
 
 class PostsPublic extends StatefulWidget {
   final UserModel user;

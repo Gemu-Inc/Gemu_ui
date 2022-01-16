@@ -13,8 +13,9 @@ import 'package:gemu/models/user.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/views/Profil/profil_screen.dart';
 import 'package:gemu/widgets/snack_bar_custom.dart';
-import 'package:gemu/views/Autres/response_comment_screen.dart';
 import 'package:gemu/models/response.dart';
+
+import './response_comment_screen.dart';
 
 class CommentsView extends StatefulWidget {
   final Post post;

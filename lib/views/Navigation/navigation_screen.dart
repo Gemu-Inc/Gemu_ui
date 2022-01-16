@@ -8,7 +8,7 @@ import 'package:loader/loader.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/views/Autres/bottom_share.dart';
+import 'package:gemu/widgets/bottom_share.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/index_games_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

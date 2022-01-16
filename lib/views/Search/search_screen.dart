@@ -8,8 +8,8 @@ import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/views/Profil/profil_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/hashtag.dart';
-import 'package:gemu/views/Autres/game_screen.dart';
-import 'package:gemu/views/Autres/hashtags_screen.dart';
+import 'package:gemu/views/Games/game_screen.dart';
+import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   @override

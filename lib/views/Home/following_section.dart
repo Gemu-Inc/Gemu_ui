@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/views/Autres/post_tile.dart';
+import 'package:gemu/widgets/post_tile.dart';
 
 class FollowingSection extends StatefulWidget {
   final List followings;
