@@ -22,10 +22,6 @@ Future<void> main() async {
     print(error);
   });
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.black,
-      systemNavigationBarIconBrightness: Brightness.light));
-
   runApp(ProviderScope(child: LogController()));
 }
 
@@ -54,15 +50,12 @@ class _LogControllerState extends State<LogController> {
       } else {
         accentColor = cMauve;
       }
-      print("primary: $primaryColor");
-      print("accent: $accentColor");
 
       ref
           .read(primaryProviderNotifier.notifier)
           .createPrimaryColor(primaryColor);
       ref.read(accentProviderNotifier.notifier).createAccentColor(accentColor);
     }
-    print("prefs: $theme");
     ref.read(themeProviderNotifier.notifier).createTheme(theme, context);
     await Future.delayed(Duration(seconds: 3));
     return true;
@@ -74,7 +67,6 @@ class _LogControllerState extends State<LogController> {
       final theme = ref.watch(themeProviderNotifier);
       final primaryColor = ref.watch(primaryProviderNotifier);
       final accentColor = ref.watch(accentProviderNotifier);
-      print("theme: $theme");
       return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Gemu',

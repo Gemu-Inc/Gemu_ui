@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 class SplashScreen extends StatelessWidget {
   @override
@@ -36,11 +37,16 @@ class SplashScreen extends StatelessWidget {
               height: 50,
               width: 50,
               child: Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
-                  strokeWidth: 1.5,
-                ),
-              ),
+                  child: LoadingIndicator(
+                indicatorType: Indicator.pacman,
+                colors: [
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).colorScheme.secondary,
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).colorScheme.secondary
+                ],
+                strokeWidth: 6,
+              )),
             )
           ],
         )),
