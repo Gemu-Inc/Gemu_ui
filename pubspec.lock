@@ -63,14 +63,21 @@ packages:
       name: camera
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.1"
+    version: "0.9.4+6"
   camera_platform_interface:
     dependency: transitive
     description:
       name: camera_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.2"
+  camera_web:
+    dependency: transitive
+    description:
+      name: camera_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1+1"
   carousel_slider:
     dependency: "direct main"
     description:
@@ -355,7 +362,7 @@ packages:
       name: flutter_plugin_android_lifecycle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.5"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -485,6 +492,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  loading_indicator:
+    dependency: "direct main"
+    description:
+      name: loading_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.2"
   marquee:
     dependency: "direct main"
     description:
@@ -933,4 +947,4 @@ packages:
     version: "3.1.0"
 sdks:
   dart: ">=2.14.0 <3.0.0"
-  flutter: ">2.0.0"
+  flutter: ">=2.5.0"
