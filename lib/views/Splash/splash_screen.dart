@@ -20,35 +20,20 @@ class SplashScreen extends StatelessWidget {
                     ? Brightness.light
                     : Brightness.dark),
         child: Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 125,
-              width: 125,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("assets/icons/icon.png"))),
-            ),
-            SizedBox(
-              height: 5.0,
-            ),
-            SizedBox(
-              height: 50,
-              width: 50,
-              child: Center(
-                  child: LoadingIndicator(
-                indicatorType: Indicator.pacman,
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).colorScheme.secondary,
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).colorScheme.secondary
-                ],
-                strokeWidth: 6,
-              )),
-            )
-          ],
+            child: SizedBox(
+          height: 90,
+          width: 90,
+          child: Center(
+              child: LoadingIndicator(
+            indicatorType: Indicator.pacman,
+            colors: [
+              Theme.of(context).primaryColor,
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).primaryColor,
+            ],
+            strokeWidth: 6,
+          )),
         )),
       ),
     );
