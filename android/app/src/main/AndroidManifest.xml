@@ -11,6 +11,7 @@
         android:icon="@mipmap/gemu_launcher">
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

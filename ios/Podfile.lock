@@ -344,8 +344,6 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.7):
     - BoringSSL-GRPC/Interface (= 0.0.7)
   - BoringSSL-GRPC/Interface (0.0.7)
-  - camera (0.0.1):
-    - Flutter
   - cloud_firestore (2.0.0):
     - Firebase/Firestore (= 8.6.0)
     - firebase_core
@@ -562,7 +560,6 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - camera (from `.symlinks/plugins/camera/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - cloud_functions (from `.symlinks/plugins/cloud_functions/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
@@ -612,8 +609,6 @@ SPEC REPOS:
     - TOCropViewController
 
 EXTERNAL SOURCES:
-  camera:
-    :path: ".symlinks/plugins/camera/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   cloud_functions:
@@ -654,7 +649,6 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
-  camera: fe33292aff715a981eb34d7ce7b35b54337ff34c
   cloud_firestore: c4dc3467229292a2179adcf66f8ed5423ea98ed9
   cloud_functions: eb40a5d5eed6baa51d163b7d0b06d2679ba4aac6
   Firebase: 21ac9f28b09a8bdfc005f34c984fca84e7e8786d
