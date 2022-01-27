@@ -46,7 +46,6 @@ dependencies:
   timeago: ^3.0.2
   video_player: ^2.1.1 
   expandable: ^5.0.1
-  video_compress: ^3.0.0
   video_thumbnail: ^0.4.3
   modal_bottom_sheet: ^2.0.0
   bouncing_widget: ^2.0.0
@@ -62,6 +61,12 @@ dependencies:
   loader: ^1.0.0
   flutter_overlay_loader: ^1.0.3
   loading_indicator: ^3.0.2
+  # video_compress: ^3.1.0
+  ## TODO attendre une nouvelle version du package video_compress afin d'enlever le git ##
+  video_compress:
+    git:
+      url: https://github.com/jonataslaw/VideoCompress.git
+      ref: master
 
 
 dev_dependencies:

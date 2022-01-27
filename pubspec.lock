@@ -801,10 +801,12 @@ packages:
   video_compress:
     dependency: "direct main"
     description:
-      name: video_compress
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0"
+      path: "."
+      ref: master
+      resolved-ref: e51b3eb0f357f5e478e1fd4e51a87219155ed178
+      url: "https://github.com/jonataslaw/VideoCompress.git"
+    source: git
+    version: "3.1.1"
   video_player:
     dependency: "direct main"
     description:
