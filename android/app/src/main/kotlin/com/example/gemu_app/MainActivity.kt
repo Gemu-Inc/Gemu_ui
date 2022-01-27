@@ -1,4 +1,4 @@
-package com.android.gemu_app
+package gemu.apppackage
 
 import io.flutter.embedding.android.FlutterActivity
 
