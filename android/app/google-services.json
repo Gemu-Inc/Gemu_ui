@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:231323160206:android:c17bc3eebfb4f52ca743df",
+        "mobilesdk_app_id": "1:231323160206:android:8e34ea89ee974f95a743df",
         "android_client_info": {
-          "package_name": "gemu.apppackage"
+          "package_name": "com.android.gemu"
         }
       },
       "oauth_client": [
@@ -30,6 +30,13 @@
             {
               "client_id": "231323160206-73j05ecpunncgqheoa51mb01bl2cq53c.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "231323160206-huahd72p6hnkn6ng786aid009h9drt2g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ios.gemu"
+              }
             }
           ]
         }
