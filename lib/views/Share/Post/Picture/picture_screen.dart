@@ -556,7 +556,7 @@ class Pictureviewstate extends State<PictureScreen>
                 ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
                     context: context,
                     error: 'Choississez un jeu pour votre post',
-                    padddingVertical: 40.0));
+                   ));
               } else {
                 uploadPicture(widget.file.path, gameName);
               }

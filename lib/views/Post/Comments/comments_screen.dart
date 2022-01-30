@@ -676,7 +676,7 @@ class CommentsViewState extends State<CommentsView>
                                 .showSnackBar(SnackBarCustom(
                               context: context,
                               error: 'Comment should not be empty',
-                              padddingVertical: 60.0,
+                        
                             ));
                           } else {
                             publishComment();
@@ -695,7 +695,7 @@ class CommentsViewState extends State<CommentsView>
                                 .showSnackBar(SnackBarCustom(
                               context: context,
                               error: 'Comment should not be empty',
-                              padddingVertical: 60.0,
+                            
                             ));
                           } else {
                             publishComment();

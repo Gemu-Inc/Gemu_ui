@@ -2,51 +2,96 @@ import 'package:flutter/material.dart';
 
 import 'package:gemu/constants/constants.dart';
 
-class TextFieldCustom extends TextField {
-  TextFieldCustom({
-    required BuildContext context,
-    required TextEditingController controller,
-    required FocusNode focusNode,
-    required String label,
-    required bool obscure,
-    required IconData icon,
-    required TextInputAction textInputAction,
-    TextInputType? textInputType,
-    required Function() clear,
-    Function(String)? submit,
-  }) : super(
-            obscureText: obscure,
-            controller: controller,
-            focusNode: focusNode,
+class TextFieldCustom extends StatefulWidget {
+  final BuildContext context;
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final String label;
+  final bool obscure;
+  final IconData icon;
+  final TextInputAction textInputAction;
+  final TextInputType? textInputType;
+  final Function() clear;
+  final Function(String)? submit;
+
+  const TextFieldCustom({Key? key, required this.context,
+    required this.controller,
+    required this.focusNode,
+    required this.label,
+    required this.obscure,
+    required this.icon,
+    required this.textInputAction,
+    this.textInputType,
+    required this.clear,
+    this.submit}) : super(key: key);
+
+  @override 
+  _TextFieldCustomState createState() => _TextFieldCustomState();
+}
+
+class _TextFieldCustomState extends State<TextFieldCustom> {
+
+  bool pwdVisible = false;
+
+  @override
+  void initState() {
+    if (widget.obscure) {
+      setState(() {
+        pwdVisible = !pwdVisible;
+      });
+    }
+    super.initState();
+  }
+
+  @override 
+  Widget build(BuildContext context) {
+    return TextField(
+      maxLines: 1,
+      obscureText: pwdVisible,
+            controller: widget.controller,
+            focusNode: widget.focusNode,
             cursorColor: Theme.of(context).primaryColor,
-            keyboardType: textInputType,
-            textInputAction: textInputAction,
-            onSubmitted: submit,
+            keyboardType: widget.textInputType,
+            textInputAction: widget.textInputAction,
+            onSubmitted: widget.submit,
             decoration: InputDecoration(
                 fillColor: Theme.of(context).canvasColor,
                 filled: true,
-                labelText: label,
+                labelText: widget.label,
                 labelStyle: mystyle(
                     15,
-                    focusNode.hasFocus
+                    widget.focusNode.hasFocus
                         ? Theme.of(context).primaryColor
                         : Colors.grey),
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
                     borderSide:
                         BorderSide(color: Theme.of(context).primaryColor)),
-                prefixIcon: Icon(icon,
-                    color: focusNode.hasFocus
+                prefixIcon: Icon(widget.icon,
+                    color: widget.focusNode.hasFocus
                         ? Theme.of(context).primaryColor
                         : Colors.grey),
-                suffixIcon: controller.text.isEmpty
+                suffixIcon: widget.controller.text.isEmpty
                     ? SizedBox()
-                    : IconButton(
+                    : widget.obscure ? IconButton(
                         icon: Icon(
-                          Icons.clear,
-                          color: focusNode.hasFocus
+                          Icons.remove_red_eye_sharp,
+                          color: widget.focusNode.hasFocus
                               ? Theme.of(context).primaryColor
                               : Colors.grey,
                         ),
-                        onPressed: clear)));
+                        onPressed: () {
+                          setState(() {
+                            pwdVisible = !pwdVisible;
+                          });
+                        }): IconButton(
+                        icon: Icon(
+                          Icons.clear,
+                          color: widget.focusNode.hasFocus
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey,
+                        ),
+                        onPressed: widget.clear))
+    );
+  }
 }

@@ -439,7 +439,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
                     context: context,
                     error: 'Choississez un jeu pour votre post',
-                    padddingVertical: 40.0));
+                   ));
               } else {
                 File file = widget.file;
                 uploadVideo(file.path, gameName);

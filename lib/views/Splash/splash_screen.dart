@@ -21,8 +21,8 @@ class SplashScreen extends StatelessWidget {
                     : Brightness.dark),
         child: Center(
             child: SizedBox(
-          height: 90,
-          width: 90,
+          height: MediaQuery.of(context).size.height / 4,
+          width: MediaQuery.of(context).size.width / 4,
           child: Center(
               child: LoadingIndicator(
             indicatorType: Indicator.pacman,

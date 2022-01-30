@@ -35,35 +35,30 @@ class AuthService {
           ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
             context: context,
             error: 'Try again, invalid email',
-            padddingVertical: 40.0,
           ));
         } else if (e.code == 'user-disabled') {
           print('user disabled');
           ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
             context: context,
             error: 'Try again, user disabled',
-            padddingVertical: 40.0,
           ));
         } else if (e.code == 'user-not-found') {
           print('No user found for that email.');
           ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
             context: context,
             error: 'Try again, user not found for that email',
-            padddingVertical: 40.0,
           ));
         } else if (e.code == 'wrong-password') {
           print('Wrong password provided for that user.');
           ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
             context: context,
             error: 'Try again, wrong password for that user',
-            padddingVertical: 40.0,
           ));
         } else {
           print('Try again');
           ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
             context: context,
             error: 'Try again',
-            padddingVertical: 40.0,
           ));
         }
       }
@@ -71,7 +66,6 @@ class AuthService {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
         context: context,
         error: 'Try again, no email or password',
-        padddingVertical: 40.0,
       ));
     }
   }
@@ -108,25 +102,21 @@ class AuthService {
         ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
           context: context,
           error: 'Email already use, try again',
-          padddingVertical: 40.0,
         ));
       } else if (e.code == 'invalid-email') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
           context: context,
           error: 'Invalid email, try again',
-          padddingVertical: 40.0,
         ));
       } else if (e.code == 'operation-not-allowed') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
           context: context,
           error: 'Operation not allowed',
-          padddingVertical: 40.0,
         ));
       } else if (e.code == 'weak-password') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
           context: context,
           error: 'Weak password, try again',
-          padddingVertical: 40.0,
         ));
       }
     }

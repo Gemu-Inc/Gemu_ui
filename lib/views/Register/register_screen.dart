@@ -1,13 +1,17 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:algolia/algolia.dart';
 import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
+import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/algolia_service.dart';
@@ -206,14 +210,14 @@ class Registerviewstate extends State<RegisterScreen> {
         confirmPassword.isEmpty ||
         password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Write user information',
-          padddingVertical: 40.0));
+        context: context,
+        error: 'Write user information',
+      ));
     } else if (gamesFollow.length == 0 || gamesFollow.length == 1) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Selects at least two games',
-          padddingVertical: 40.0));
+        context: context,
+        error: 'Selects at least two games',
+      ));
     } else {
       AuthService.registerUser(context, gamesFollow, username, email, password,
           confirmPassword, country);
@@ -382,982 +386,1226 @@ class Registerviewstate extends State<RegisterScreen> {
 
     return WillPopScope(
         child: Scaffold(
-          body: AnimatedContainer(
-              duration: _duration,
-              curve: Curves.easeInOut,
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: isDayMood ? lightBgColors : darkBgColors,
-                ),
-              ),
-              child: SafeArea(
-                child: Container(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                          Theme.of(context)
-                              .scaffoldBackgroundColor
-                              .withOpacity(0.1),
-                          Theme.of(context)
-                              .scaffoldBackgroundColor
-                              .withOpacity(0.8)
-                        ])),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height / 8,
-                          child: Row(
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width / 6,
-                                alignment: Alignment.center,
-                                child: IconButton(
-                                    onPressed: () =>
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        WelcomeScreen()),
-                                            (route) => false),
-                                    icon: Icon(
-                                      Icons.arrow_back_ios,
-                                      color: Theme.of(context).canvasColor,
-                                    )),
-                              ),
-                              Expanded(
-                                  child: Container(
-                                alignment: Alignment.center,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      right: MediaQuery.of(context).size.width /
-                                          6),
-                                  child: Text('Register',
-                                      style: mystyle(25, Colors.white)),
-                                ),
-                              ))
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                            child: PageView(
-                          controller: _pageController,
-                          onPageChanged: (index) {
-                            if (index == 0) {
-                              _hideKeyboard();
-                              setState(() {
-                                currentPageIndex = 0;
-                              });
-                            } else {
-                              _hideKeyboard();
-                              setState(() {
-                                currentPageIndex = 1;
-                              });
-                            }
-                          },
-                          children: [firstPage(country), secondPage()],
-                        )),
-                        Container(
-                          height: MediaQuery.of(context).size.height / 14,
-                          alignment: Alignment.center,
-                          child: bottomBar(country),
-                        ),
-                      ],
-                    )),
-              )),
-        ),
+            body: AnnotatedRegion<SystemUiOverlayStyle>(
+                value: SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    statusBarIconBrightness:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Brightness.light
+                            : Brightness.dark),
+                child: Column(children: [
+                  Container(
+                      height: MediaQuery.of(context).size.height / 2.25,
+                      child: topRegister(lightBgColors, darkBgColors)),
+                  Expanded(child: bodyRegister(lightBgColors, darkBgColors)),
+                ]))),
         onWillPop: () => _willPopCallback());
   }
 
-  Widget firstPage(Country? country) {
-    return ListView(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+  Widget topRegister(List<Color> lightBgColors, List<Color> darkBgColors) {
+    return Stack(
       children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.only(left: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'User information',
-                style: mystyle(28),
+        ClipPath(
+          clipper: MyClipper(),
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isDayMood ? lightBgColors : darkBgColors)),
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height / 10,
+              alignment: Alignment.bottomLeft,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+              child: Container(
+                child: InkWell(
+                  onTap: () => Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => WelcomeScreen()),
+                      (route) => false),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(Icons.arrow_back_ios,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                          size: 25),
+                      Text(
+                        "Retour",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 19),
+                      )
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(
-                height: 5.0,
+            ),
+            Expanded(
+                flex: 2,
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  alignment: Alignment.bottomCenter,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 5.0, vertical: 15.0),
+                  child: Text(
+                    "Inscription",
+                    style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 36),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                  ),
+                )),
+            Expanded(
+              flex: 3,
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Image.asset("assets/images/gameuse.png"),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 75),
+                      child: Image.asset("assets/images/gamer.png"),
+                    ),
+                  ),
+                ],
               ),
-              Text('Enter your personnal information'),
-            ],
-          ),
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget bodyRegister(List<Color> lightBgColors, List<Color> darkBgColors) {
+    return Column(
+      children: [
+        Expanded(child: registerFournisseurNatifs()),
+        Expanded(child: registerEmail())
+      ],
+    );
+  }
+
+  Widget registerFournisseurNatifs() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text(
+          "Inscrivez-vous directement avec vos identifiants:",
+          style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+              fontSize: 13,
+              fontWeight: FontWeight.bold),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text(
-            'Enter your username',
-            style: mystyle(12),
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.only(left: 20.0, right: 20.0),
-          child: TextFieldCustom(
-            context: context,
-            controller: _usernameController,
-            focusNode: _focusNodeUsername,
-            label: 'Username',
-            obscure: false,
-            icon: Icons.person,
-            textInputAction: TextInputAction.next,
-            clear: () {
-              setState(() {
-                _usernameController.clear();
-              });
-            },
-            submit: (value) {
-              value = _usernameController.text;
-              _focusNodeUsername.unfocus();
-              FocusScope.of(context).requestFocus(_focusNodeEmail);
-            },
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text(
-            'Enter your email',
-            style: mystyle(12),
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.only(left: 20.0, right: 20.0),
-          child: TextFieldCustom(
-            context: context,
-            controller: _emailController,
-            focusNode: _focusNodeEmail,
-            label: 'Email',
-            obscure: false,
-            icon: Icons.mail,
-            textInputAction: TextInputAction.next,
-            textInputType: TextInputType.emailAddress,
-            clear: () {
-              setState(() {
-                _emailController.clear();
-              });
-            },
-            submit: (value) {
-              value = _emailController.text;
-              _focusNodeEmail.unfocus();
-              FocusScope.of(context).requestFocus(_focusNodePassword);
-            },
-          ),
-        ),
-        const SizedBox(
-          height: 20.0,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text(
-            'Enter your password',
-            style: mystyle(12),
-          ),
-        ),
-        Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: TextFieldCustom(
-              context: context,
-              controller: _passwordController,
-              focusNode: _focusNodePassword,
-              label: 'Password',
-              obscure: true,
-              icon: Icons.lock,
-              textInputAction: TextInputAction.next,
-              clear: () {
-                setState(() {
-                  _passwordController.clear();
-                });
-              },
-              submit: (value) {
-                value = _passwordController.text;
-                _focusNodePassword.unfocus();
-                FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
-              },
-            )),
-        const SizedBox(
-          height: 10.0,
-        ),
-        Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: TextFieldCustom(
-              context: context,
-              controller: _confirmPasswordController,
-              focusNode: _focusNodeConfirmPassword,
-              label: 'Confirm password',
-              obscure: true,
-              icon: Icons.lock,
-              textInputAction: TextInputAction.go,
-              clear: () {
-                setState(() {
-                  _confirmPasswordController.clear();
-                });
-              },
-              submit: (value) {
-                value = _confirmPasswordController.text;
-                _focusNodeConfirmPassword.unfocus();
-              },
-            )),
-        const SizedBox(
-          height: 20.0,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text(
-            'Select your nationnality',
-            style: mystyle(11),
-          ),
-        ),
-        Container(
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              country == null
-                  ? Container()
-                  : Column(
-                      children: <Widget>[
-                        Container(
-                          height: 30,
-                          width: 50,
-                          child: Image.asset(
-                            country.flag,
-                            package: countryCodePackageName,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Text(
-                          '${country.name} (${country.countryCode})',
-                          textAlign: TextAlign.center,
-                          style: mystyle(11),
-                        ),
-                      ],
+              ElevatedButton(
+                  onPressed: () => print("sign up google"),
+                  style: ElevatedButton.styleFrom(
+                      elevation: 6,
+                      shadowColor: Theme.of(context).shadowColor,
+                      primary: Theme.of(context).canvasColor,
+                      onPrimary: Theme.of(context).primaryColor,
+                      shape: CircleBorder()),
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      "assets/images/Google_line.svg",
+                      height: 30,
+                      width: 30,
+                      color: Theme.of(context).primaryColor,
                     ),
-              MaterialButton(
-                child: Text('Select'),
-                color: Theme.of(context).canvasColor,
-                onPressed: _onPressedShowBottomSheet,
-              ),
+                  )),
+              ElevatedButton(
+                  onPressed: () => print("sign up facebook"),
+                  style: ElevatedButton.styleFrom(
+                      elevation: 6,
+                      shadowColor: Theme.of(context).shadowColor,
+                      primary: Theme.of(context).canvasColor,
+                      onPrimary: Theme.of(context).primaryColor,
+                      shape: CircleBorder()),
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset("assets/images/Facebook_line.svg",
+                        height: 30,
+                        width: 30,
+                        color: Theme.of(context).primaryColor),
+                  )),
+              if (Platform.isIOS)
+                ElevatedButton(
+                    onPressed: () => print("sign up apple"),
+                    style: ElevatedButton.styleFrom(
+                        elevation: 6,
+                        shadowColor: Theme.of(context).shadowColor,
+                        primary: Theme.of(context).canvasColor,
+                        onPrimary: Theme.of(context).primaryColor,
+                        shape: CircleBorder()),
+                    child: Container(
+                      height: 60,
+                      width: 60,
+                      alignment: Alignment.center,
+                      child: SvgPicture.asset("assets/images/Apple_line.svg",
+                          height: 30,
+                          width: 30,
+                          color: Theme.of(context).primaryColor),
+                    )),
             ],
           ),
-        ),
+        )
       ],
     );
   }
 
-  Widget secondPage() {
-    return ListView(
-      controller: _mainScrollController,
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-      children: [
-        topSelectionGames(),
-        StickyHeader(
-          controller: _mainScrollController,
-          header: _getStickyWidget(),
-          content: dataIsThere
-              ? Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
-                  child: searchGames(),
-                )
-              : Center(
-                  child: CircularProgressIndicator(),
-                ),
-        ),
-      ],
-    );
-  }
-
-  Widget topSelectionGames() {
-    return gamesFollow.length != 0
-        ? Container(
-            height: 250,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(left: 20.0),
-            child: Column(
-              children: [
-                Text(
-                  'Selected games',
-                  style: mystyle(28),
-                ),
-                const SizedBox(
-                  height: 5.0,
-                ),
-                Text('Selects at least two games'),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Container(
-                    height: MediaQuery.of(context).size.height / 8,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: gamesFollow.length,
-                      itemBuilder: (_, index) {
-                        Game game = gamesFollow[index];
-                        return Container(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 5.0, horizontal: 5.0),
-                            child: Container(
-                              height: 70,
-                              width: 70,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          gamesFollow.remove(game);
-                                          allGames.add(game);
-                                        });
-                                      },
-                                      child: Container(
-                                        height: 60,
-                                        width: 60,
-                                        decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                colors: [
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary
-                                                ]),
-                                            border:
-                                                Border.all(color: Colors.black),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            image: DecorationImage(
-                                                image:
-                                                    CachedNetworkImageProvider(
-                                                        game.imageUrl),
-                                                fit: BoxFit.cover)),
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            gamesFollow.remove(game);
-                                            allGames.add(game);
-                                          });
-                                        },
-                                        child: Container(
-                                            height: 25,
-                                            width: 25,
-                                            decoration: BoxDecoration(
-                                                color: Colors.red[400],
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                    color: Colors.black)),
-                                            child: Icon(
-                                              Icons.remove,
-                                              size: 20,
-                                              color: Colors.black,
-                                            )),
-                                      )),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    )),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Text(
-                  'Selection games',
-                  style: mystyle(28),
-                ),
-                const SizedBox(
-                  height: 5.0,
-                ),
-                Text('Choose the games you want to follow'),
-                const SizedBox(
-                  height: 5.0,
-                ),
-              ],
-            ),
-          )
-        : Container(
-            height: 100,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(left: 20.0),
-            child: Column(
-              children: [
-                Text(
-                  'Selection games',
-                  style: mystyle(28),
-                ),
-                const SizedBox(
-                  height: 5.0,
-                ),
-                Text('Choose the games you want to follow'),
-              ],
-            ),
-          );
-  }
-
-  Widget _getStickyWidget() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: TextFieldCustom(
-        context: context,
-        controller: _searchController,
-        focusNode: _focusNodeSearch,
-        label: 'Search',
-        obscure: false,
-        icon: Icons.search,
-        textInputAction: TextInputAction.search,
-        clear: () {
-          setState(() {
-            _searchController.clear();
-          });
-        },
-        submit: (value) {
-          value = _searchController.text;
-          _searchGames(value);
-        },
-      ),
-    );
-  }
-
-  Widget searchGames() {
-    return Container(
-      child: isSearching
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 15.0,
-                  width: 15.0,
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                SizedBox(
-                  width: 5.0,
-                ),
-                Text(
-                  _searchController.text.length < 10
-                      ? 'Recherche de "${_searchController.text}.."'
-                      : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
-                  style: mystyle(11),
-                )
-              ],
-            )
-          : _searchController.text.isEmpty
-              ? selectionGames()
-              : gamesAlgolia.length == 0
-                  ? Center(
-                      child: Text(
-                        'No games found',
-                        style: mystyle(12),
-                      ),
-                    )
-                  : GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 1.0,
-                          crossAxisSpacing: 6,
-                          mainAxisSpacing: 6),
-                      shrinkWrap: true,
-                      itemCount: gamesAlgolia.length,
-                      itemBuilder: (_, index) {
-                        Game gameAlgolia = Game.fromMapAlgolia(
-                            gamesAlgolia[index], gamesAlgolia[index].data);
-                        return gamesFollow.any(
-                                (element) => element.name == gameAlgolia.name)
-                            ? Container(
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5.0),
-                                      child: Container(
-                                        height: 70,
-                                        width: 70,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    gamesFollow.removeWhere(
-                                                        (element) =>
-                                                            element.name ==
-                                                            gameAlgolia.name);
-                                                    allGames.add(gameAlgolia);
-                                                  });
-
-                                                  _focusNodeSearch.unfocus();
-                                                  _searchController.clear();
-                                                },
-                                                child: Container(
-                                                  height: 60,
-                                                  width: 60,
-                                                  decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
-                                                          begin:
-                                                              Alignment.topLeft,
-                                                          end: Alignment
-                                                              .bottomRight,
-                                                          colors: [
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .primary,
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .secondary
-                                                          ]),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: Border.all(
-                                                          color: Colors.black),
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: CachedNetworkImageProvider(
-                                                              gameAlgolia
-                                                                  .imageUrl))),
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                                bottom: 0,
-                                                right: 0,
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      gamesFollow.removeWhere(
-                                                          (element) =>
-                                                              element.name ==
-                                                              gameAlgolia.name);
-                                                      allGames.add(gameAlgolia);
-                                                    });
-                                                    _focusNodeSearch.unfocus();
-                                                    _searchController.clear();
-                                                  },
-                                                  child: Container(
-                                                      height: 25,
-                                                      width: 25,
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Colors.red[400],
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .black)),
-                                                      child: Icon(
-                                                        Icons.remove,
-                                                        size: 20,
-                                                        color: Colors.black,
-                                                      )),
-                                                )),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      gameAlgolia.name,
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5.0),
-                                      child: Container(
-                                        height: 70,
-                                        width: 70,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    allGames.removeWhere(
-                                                        (element) =>
-                                                            element.name ==
-                                                            gameAlgolia.name);
-                                                    gamesFollow
-                                                        .add(gameAlgolia);
-                                                  });
-
-                                                  _focusNodeSearch.unfocus();
-                                                  _searchController.clear();
-                                                },
-                                                child: Container(
-                                                  height: 60,
-                                                  width: 60,
-                                                  decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
-                                                          begin:
-                                                              Alignment.topLeft,
-                                                          end: Alignment
-                                                              .bottomRight,
-                                                          colors: [
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .primary,
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .secondary
-                                                          ]),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: Border.all(
-                                                          color: Colors.black),
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: CachedNetworkImageProvider(
-                                                              gameAlgolia
-                                                                  .imageUrl))),
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                                bottom: 0,
-                                                right: 0,
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      allGames.removeWhere(
-                                                          (element) =>
-                                                              element.name ==
-                                                              gameAlgolia.name);
-                                                      gamesFollow
-                                                          .add(gameAlgolia);
-                                                    });
-                                                    _focusNodeSearch.unfocus();
-                                                    _searchController.clear();
-                                                  },
-                                                  child: Container(
-                                                      height: 25,
-                                                      width: 25,
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Colors.green[400],
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .black)),
-                                                      child: Icon(
-                                                        Icons.add,
-                                                        size: 20,
-                                                        color: Colors.black,
-                                                      )),
-                                                )),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      gameAlgolia.name,
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                ),
-                              );
-                      }),
-    );
-  }
-
-  Widget selectionGames() {
+  Widget registerEmail() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        GridView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            controller: _gamesScrollController,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 1.0,
-                crossAxisSpacing: 6,
-                mainAxisSpacing: 6),
-            itemCount: allGames.length,
-            itemBuilder: (_, int index) {
-              Game game = allGames[index];
-              return Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: Container(
-                        height: 70,
-                        width: 70,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    allGames.remove(game);
-                                    gamesFollow.add(game);
-                                  });
-                                },
-                                child: Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .secondary
-                                          ]),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Colors.black),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: CachedNetworkImageProvider(
-                                              game.imageUrl))),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      allGames.remove(game);
-                                      gamesFollow.add(game);
-                                    });
-                                  },
-                                  child: Container(
-                                      height: 25,
-                                      width: 25,
-                                      decoration: BoxDecoration(
-                                          color: Colors.green[400],
-                                          shape: BoxShape.circle,
-                                          border:
-                                              Border.all(color: Colors.black)),
-                                      child: Icon(
-                                        Icons.add,
-                                        size: 20,
-                                        color: Colors.black,
-                                      )),
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Text(
-                      game.name,
-                      textAlign: TextAlign.center,
-                    )
-                  ],
-                ),
-              );
-            }),
-        Padding(
-            padding: const EdgeInsets.only(bottom: 30.0),
-            child: Stack(
-              children: [
-                Container(
-                  height: isLoadingMoreData ? 50.0 : 0.0,
-                  child: Center(
-                    child: SizedBox(
-                      height: 30.0,
-                      width: 30.0,
-                      child: CircularProgressIndicator(
-                        color: Theme.of(context).primaryColor,
-                        strokeWidth: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: isResultLoading && newGames.length == 0 ? 50.0 : 0.0,
-                  child: Center(
-                    child: Text('C\'est tout pour le moment'),
-                  ),
-                )
-              ],
-            )),
-      ],
-    );
-  }
-
-  Widget bottomBar(Country? country) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 10.0),
-          child: currentPageIndex == 1
-              ? GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      currentPageIndex = 0;
-                    });
-                    _pageController.previousPage(
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.ease);
-                  },
-                  child: Container(
-                    height: 35,
-                    width: 60,
-                    child: Center(
-                      child: Text('Prev', style: mystyle(16, Colors.white)),
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color(0x33000000)),
-                  ),
-                )
-              : SizedBox(
-                  height: 30,
-                  width: 60,
-                ),
-        ),
-        Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 3.0),
-              child: Container(
-                height: currentPageIndex == 0 ? 15 : 15,
-                width: currentPageIndex == 0 ? 15 : 15,
-                decoration: BoxDecoration(
-                    color: currentPageIndex == 0
-                        ? Theme.of(context).primaryColor
-                        : Theme.of(context).primaryColor.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black)),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 3.0),
-              child: Container(
-                height: currentPageIndex == 1 ? 15 : 15,
-                width: currentPageIndex == 1 ? 15 : 15,
-                decoration: BoxDecoration(
-                    color: currentPageIndex == 1
-                        ? Theme.of(context).primaryColor
-                        : Theme.of(context).primaryColor.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black)),
-              ),
-            ),
-          ],
+        Text(
+          "Inscrivez-vous avec votre email:",
+          style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+              fontSize: 13,
+              fontWeight: FontWeight.bold),
         ),
         Padding(
-          padding: EdgeInsets.only(right: 10.0),
-          child: currentPageIndex == 0
-              ? GestureDetector(
-                  onTap: () {
-                    _hideKeyboard();
-                    setState(() {
-                      currentPageIndex = 1;
-                    });
-                    _pageController.nextPage(
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.ease);
-                  },
-                  child: Container(
-                    height: 35,
-                    width: 60,
-                    child: Center(
-                      child: Text('Next', style: mystyle(16, Colors.white)),
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color(0x33000000)),
-                  ),
-                )
-              : GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    await Future.delayed(Duration(seconds: 2));
-                    _registerAccount(
-                        _emailController.text,
-                        _passwordController.text,
-                        _confirmPasswordController.text,
-                        _usernameController.text,
-                        gamesFollow,
-                        country!.countryCode);
-                    setState(() {
-                      isLoading = false;
-                    });
-                  },
-                  child: Container(
-                    height: 35,
-                    width: 60,
-                    child: Center(
-                        child: isLoading
-                            ? SizedBox(
-                                height: 15.0,
-                                width: 15.0,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 1.0,
-                                ),
-                              )
-                            : Icon(
-                                Icons.check,
-                                color: Colors.white,
-                              )),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color(0x33000000)),
-                  ),
-                ),
+          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+          child: Container(
+            height: MediaQuery.of(context).size.height / 12,
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: ElevatedButton(
+              onPressed: () => print("c'est parti pour l'inscription"),
+              style: ElevatedButton.styleFrom(
+                  elevation: 6,
+                  shadowColor: Theme.of(context).shadowColor,
+                  primary: Theme.of(context).canvasColor,
+                  onPrimary: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  )),
+              child: Text(
+                "C'est parti!",
+                style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700),
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 }
+
+  // AnimatedContainer(
+  //             duration: _duration,
+  //             curve: Curves.easeInOut,
+  //             height: MediaQuery.of(context).size.height,
+  //             width: MediaQuery.of(context).size.width,
+  //             decoration: BoxDecoration(
+  //               gradient: LinearGradient(
+  //                 begin: Alignment.topCenter,
+  //                 end: Alignment.bottomCenter,
+  //                 colors: isDayMood ? lightBgColors : darkBgColors,
+  //               ),
+  //             ),
+  //             child: SafeArea(
+  //               child: Container(
+  //                   decoration: BoxDecoration(
+  //                       gradient: LinearGradient(
+  //                           begin: Alignment.topCenter,
+  //                           end: Alignment.bottomCenter,
+  //                           colors: [
+  //                         Theme.of(context)
+  //                             .scaffoldBackgroundColor
+  //                             .withOpacity(0.1),
+  //                         Theme.of(context)
+  //                             .scaffoldBackgroundColor
+  //                             .withOpacity(0.8)
+  //                       ])),
+  //                   child: Column(
+  //                     mainAxisAlignment: MainAxisAlignment.start,
+  //                     children: [
+  //                       Container(
+  //                         height: MediaQuery.of(context).size.height / 8,
+  //                         child: Row(
+  //                           children: [
+  //                             Container(
+  //                               width: MediaQuery.of(context).size.width / 6,
+  //                               alignment: Alignment.center,
+  //                               child: IconButton(
+  //                                   onPressed: () =>
+  //                                       Navigator.pushAndRemoveUntil(
+  //                                           context,
+  //                                           MaterialPageRoute(
+  //                                               builder:
+  //                                                   (BuildContext context) =>
+  //                                                       WelcomeScreen()),
+  //                                           (route) => false),
+  //                                   icon: Icon(
+  //                                     Icons.arrow_back_ios,
+  //                                     color: Theme.of(context).canvasColor,
+  //                                   )),
+  //                             ),
+  //                             Expanded(
+  //                                 child: Container(
+  //                               alignment: Alignment.center,
+  //                               child: Padding(
+  //                                 padding: EdgeInsets.only(
+  //                                     right: MediaQuery.of(context).size.width /
+  //                                         6),
+  //                                 child: Text('Register',
+  //                                     style: mystyle(25, Colors.white)),
+  //                               ),
+  //                             ))
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       Expanded(
+  //                           child: PageView(
+  //                         controller: _pageController,
+  //                         onPageChanged: (index) {
+  //                           if (index == 0) {
+  //                             _hideKeyboard();
+  //                             setState(() {
+  //                               currentPageIndex = 0;
+  //                             });
+  //                           } else {
+  //                             _hideKeyboard();
+  //                             setState(() {
+  //                               currentPageIndex = 1;
+  //                             });
+  //                           }
+  //                         },
+  //                         children: [firstPage(country), secondPage()],
+  //                       )),
+  //                       Container(
+  //                         height: MediaQuery.of(context).size.height / 14,
+  //                         alignment: Alignment.center,
+  //                         child: bottomBar(country),
+  //                       ),
+  //                     ],
+  //                   )),
+  //             )),
+
+  // Widget firstPage(Country? country) {
+  //   return ListView(
+  //     padding: EdgeInsets.zero,
+  //     shrinkWrap: true,
+  //     physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+  //     children: [
+  //       Container(
+  //         width: MediaQuery.of(context).size.width,
+  //         padding: EdgeInsets.only(left: 20.0),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           children: [
+  //             Text(
+  //               'User information',
+  //               style: mystyle(28),
+  //             ),
+  //             const SizedBox(
+  //               height: 5.0,
+  //             ),
+  //             Text('Enter your personnal information'),
+  //           ],
+  //         ),
+  //       ),
+  //       Padding(
+  //         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+  //         child: Text(
+  //           'Enter your username',
+  //           style: mystyle(12),
+  //         ),
+  //       ),
+  //       Container(
+  //         width: MediaQuery.of(context).size.width,
+  //         margin: EdgeInsets.only(left: 20.0, right: 20.0),
+  //         child: TextFieldCustom(
+  //           context: context,
+  //           controller: _usernameController,
+  //           focusNode: _focusNodeUsername,
+  //           label: 'Username',
+  //           obscure: false,
+  //           icon: Icons.person,
+  //           textInputAction: TextInputAction.next,
+  //           clear: () {
+  //             setState(() {
+  //               _usernameController.clear();
+  //             });
+  //           },
+  //           submit: (value) {
+  //             value = _usernameController.text;
+  //             _focusNodeUsername.unfocus();
+  //             FocusScope.of(context).requestFocus(_focusNodeEmail);
+  //           },
+  //         ),
+  //       ),
+  //       const SizedBox(
+  //         height: 20,
+  //       ),
+  //       Padding(
+  //         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+  //         child: Text(
+  //           'Enter your email',
+  //           style: mystyle(12),
+  //         ),
+  //       ),
+  //       Container(
+  //         width: MediaQuery.of(context).size.width,
+  //         margin: EdgeInsets.only(left: 20.0, right: 20.0),
+  //         child: TextFieldCustom(
+  //           context: context,
+  //           controller: _emailController,
+  //           focusNode: _focusNodeEmail,
+  //           label: 'Email',
+  //           obscure: false,
+  //           icon: Icons.mail,
+  //           textInputAction: TextInputAction.next,
+  //           textInputType: TextInputType.emailAddress,
+  //           clear: () {
+  //             setState(() {
+  //               _emailController.clear();
+  //             });
+  //           },
+  //           submit: (value) {
+  //             value = _emailController.text;
+  //             _focusNodeEmail.unfocus();
+  //             FocusScope.of(context).requestFocus(_focusNodePassword);
+  //           },
+  //         ),
+  //       ),
+  //       const SizedBox(
+  //         height: 20.0,
+  //       ),
+  //       Padding(
+  //         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+  //         child: Text(
+  //           'Enter your password',
+  //           style: mystyle(12),
+  //         ),
+  //       ),
+  //       Container(
+  //           width: MediaQuery.of(context).size.width,
+  //           margin: EdgeInsets.only(left: 20.0, right: 20.0),
+  //           child: TextFieldCustom(
+  //             context: context,
+  //             controller: _passwordController,
+  //             focusNode: _focusNodePassword,
+  //             label: 'Password',
+  //             obscure: true,
+  //             icon: Icons.lock,
+  //             textInputAction: TextInputAction.next,
+  //             clear: () {
+  //               setState(() {
+  //                 _passwordController.clear();
+  //               });
+  //             },
+  //             submit: (value) {
+  //               value = _passwordController.text;
+  //               _focusNodePassword.unfocus();
+  //               FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
+  //             },
+  //           )),
+  //       const SizedBox(
+  //         height: 10.0,
+  //       ),
+  //       Container(
+  //           width: MediaQuery.of(context).size.width,
+  //           margin: EdgeInsets.only(left: 20.0, right: 20.0),
+  //           child: TextFieldCustom(
+  //             context: context,
+  //             controller: _confirmPasswordController,
+  //             focusNode: _focusNodeConfirmPassword,
+  //             label: 'Confirm password',
+  //             obscure: true,
+  //             icon: Icons.lock,
+  //             textInputAction: TextInputAction.go,
+  //             clear: () {
+  //               setState(() {
+  //                 _confirmPasswordController.clear();
+  //               });
+  //             },
+  //             submit: (value) {
+  //               value = _confirmPasswordController.text;
+  //               _focusNodeConfirmPassword.unfocus();
+  //             },
+  //           )),
+  //       const SizedBox(
+  //         height: 20.0,
+  //       ),
+  //       Padding(
+  //         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+  //         child: Text(
+  //           'Select your nationnality',
+  //           style: mystyle(11),
+  //         ),
+  //       ),
+  //       Container(
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           children: [
+  //             country == null
+  //                 ? Container()
+  //                 : Column(
+  //                     children: <Widget>[
+  //                       Container(
+  //                         height: 30,
+  //                         width: 50,
+  //                         child: Image.asset(
+  //                           country.flag,
+  //                           package: countryCodePackageName,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: 5.0,
+  //                       ),
+  //                       Text(
+  //                         '${country.name} (${country.countryCode})',
+  //                         textAlign: TextAlign.center,
+  //                         style: mystyle(11),
+  //                       ),
+  //                     ],
+  //                   ),
+  //             MaterialButton(
+  //               child: Text('Select'),
+  //               color: Theme.of(context).canvasColor,
+  //               onPressed: _onPressedShowBottomSheet,
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  // Widget secondPage() {
+  //   return ListView(
+  //     controller: _mainScrollController,
+  //     padding: EdgeInsets.zero,
+  //     shrinkWrap: true,
+  //     physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+  //     children: [
+  //       topSelectionGames(),
+  //       StickyHeader(
+  //         controller: _mainScrollController,
+  //         header: _getStickyWidget(),
+  //         content: dataIsThere
+  //             ? Padding(
+  //                 padding: EdgeInsets.symmetric(vertical: 15.0),
+  //                 child: searchGames(),
+  //               )
+  //             : Center(
+  //                 child: CircularProgressIndicator(),
+  //               ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  // Widget topSelectionGames() {
+  //   return gamesFollow.length != 0
+  //       ? Container(
+  //           height: 250,
+  //           width: MediaQuery.of(context).size.width,
+  //           padding: EdgeInsets.only(left: 20.0),
+  //           child: Column(
+  //             children: [
+  //               Text(
+  //                 'Selected games',
+  //                 style: mystyle(28),
+  //               ),
+  //               const SizedBox(
+  //                 height: 5.0,
+  //               ),
+  //               Text('Selects at least two games'),
+  //               const SizedBox(
+  //                 height: 10.0,
+  //               ),
+  //               Container(
+  //                   height: MediaQuery.of(context).size.height / 8,
+  //                   child: ListView.builder(
+  //                     shrinkWrap: true,
+  //                     scrollDirection: Axis.horizontal,
+  //                     itemCount: gamesFollow.length,
+  //                     itemBuilder: (_, index) {
+  //                       Game game = gamesFollow[index];
+  //                       return Container(
+  //                         child: Padding(
+  //                           padding: EdgeInsets.symmetric(
+  //                               vertical: 5.0, horizontal: 5.0),
+  //                           child: Container(
+  //                             height: 70,
+  //                             width: 70,
+  //                             child: Stack(
+  //                               children: [
+  //                                 Align(
+  //                                   alignment: Alignment.center,
+  //                                   child: GestureDetector(
+  //                                     onTap: () {
+  //                                       setState(() {
+  //                                         gamesFollow.remove(game);
+  //                                         allGames.add(game);
+  //                                       });
+  //                                     },
+  //                                     child: Container(
+  //                                       height: 60,
+  //                                       width: 60,
+  //                                       decoration: BoxDecoration(
+  //                                           gradient: LinearGradient(
+  //                                               begin: Alignment.topLeft,
+  //                                               end: Alignment.bottomRight,
+  //                                               colors: [
+  //                                                 Theme.of(context)
+  //                                                     .colorScheme
+  //                                                     .primary,
+  //                                                 Theme.of(context)
+  //                                                     .colorScheme
+  //                                                     .secondary
+  //                                               ]),
+  //                                           border:
+  //                                               Border.all(color: Colors.black),
+  //                                           borderRadius:
+  //                                               BorderRadius.circular(10),
+  //                                           image: DecorationImage(
+  //                                               image:
+  //                                                   CachedNetworkImageProvider(
+  //                                                       game.imageUrl),
+  //                                               fit: BoxFit.cover)),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                                 Positioned(
+  //                                     bottom: 0,
+  //                                     right: 0,
+  //                                     child: GestureDetector(
+  //                                       onTap: () {
+  //                                         setState(() {
+  //                                           gamesFollow.remove(game);
+  //                                           allGames.add(game);
+  //                                         });
+  //                                       },
+  //                                       child: Container(
+  //                                           height: 25,
+  //                                           width: 25,
+  //                                           decoration: BoxDecoration(
+  //                                               color: Colors.red[400],
+  //                                               shape: BoxShape.circle,
+  //                                               border: Border.all(
+  //                                                   color: Colors.black)),
+  //                                           child: Icon(
+  //                                             Icons.remove,
+  //                                             size: 20,
+  //                                             color: Colors.black,
+  //                                           )),
+  //                                     )),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                   )),
+  //               const SizedBox(
+  //                 height: 10.0,
+  //               ),
+  //               Text(
+  //                 'Selection games',
+  //                 style: mystyle(28),
+  //               ),
+  //               const SizedBox(
+  //                 height: 5.0,
+  //               ),
+  //               Text('Choose the games you want to follow'),
+  //               const SizedBox(
+  //                 height: 5.0,
+  //               ),
+  //             ],
+  //           ),
+  //         )
+  //       : Container(
+  //           height: 100,
+  //           width: MediaQuery.of(context).size.width,
+  //           padding: EdgeInsets.only(left: 20.0),
+  //           child: Column(
+  //             children: [
+  //               Text(
+  //                 'Selection games',
+  //                 style: mystyle(28),
+  //               ),
+  //               const SizedBox(
+  //                 height: 5.0,
+  //               ),
+  //               Text('Choose the games you want to follow'),
+  //             ],
+  //           ),
+  //         );
+  // }
+
+  // Widget _getStickyWidget() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
+  //     child: TextFieldCustom(
+  //       context: context,
+  //       controller: _searchController,
+  //       focusNode: _focusNodeSearch,
+  //       label: 'Search',
+  //       obscure: false,
+  //       icon: Icons.search,
+  //       textInputAction: TextInputAction.search,
+  //       clear: () {
+  //         setState(() {
+  //           _searchController.clear();
+  //         });
+  //       },
+  //       submit: (value) {
+  //         value = _searchController.text;
+  //         _searchGames(value);
+  //       },
+  //     ),
+  //   );
+  // }
+
+  // Widget searchGames() {
+  //   return Container(
+  //     child: isSearching
+  //         ? Row(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: [
+  //               Container(
+  //                 height: 15.0,
+  //                 width: 15.0,
+  //                 child: CircularProgressIndicator(
+  //                   color: Theme.of(context).primaryColor,
+  //                 ),
+  //               ),
+  //               SizedBox(
+  //                 width: 5.0,
+  //               ),
+  //               Text(
+  //                 _searchController.text.length < 10
+  //                     ? 'Recherche de "${_searchController.text}.."'
+  //                     : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
+  //                 style: mystyle(11),
+  //               )
+  //             ],
+  //           )
+  //         : _searchController.text.isEmpty
+  //             ? selectionGames()
+  //             : gamesAlgolia.length == 0
+  //                 ? Center(
+  //                     child: Text(
+  //                       'No games found',
+  //                       style: mystyle(12),
+  //                     ),
+  //                   )
+  //                 : GridView.builder(
+  //                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //                         crossAxisCount: 3,
+  //                         childAspectRatio: 1.0,
+  //                         crossAxisSpacing: 6,
+  //                         mainAxisSpacing: 6),
+  //                     shrinkWrap: true,
+  //                     itemCount: gamesAlgolia.length,
+  //                     itemBuilder: (_, index) {
+  //                       Game gameAlgolia = Game.fromMapAlgolia(
+  //                           gamesAlgolia[index], gamesAlgolia[index].data);
+  //                       return gamesFollow.any(
+  //                               (element) => element.name == gameAlgolia.name)
+  //                           ? Container(
+  //                               child: Column(
+  //                                 children: [
+  //                                   Padding(
+  //                                     padding: const EdgeInsets.symmetric(
+  //                                         vertical: 5.0),
+  //                                     child: Container(
+  //                                       height: 70,
+  //                                       width: 70,
+  //                                       child: Stack(
+  //                                         children: [
+  //                                           Align(
+  //                                             alignment: Alignment.center,
+  //                                             child: GestureDetector(
+  //                                               onTap: () {
+  //                                                 setState(() {
+  //                                                   gamesFollow.removeWhere(
+  //                                                       (element) =>
+  //                                                           element.name ==
+  //                                                           gameAlgolia.name);
+  //                                                   allGames.add(gameAlgolia);
+  //                                                 });
+
+  //                                                 _focusNodeSearch.unfocus();
+  //                                                 _searchController.clear();
+  //                                               },
+  //                                               child: Container(
+  //                                                 height: 60,
+  //                                                 width: 60,
+  //                                                 decoration: BoxDecoration(
+  //                                                     gradient: LinearGradient(
+  //                                                         begin:
+  //                                                             Alignment.topLeft,
+  //                                                         end: Alignment
+  //                                                             .bottomRight,
+  //                                                         colors: [
+  //                                                           Theme.of(context)
+  //                                                               .colorScheme
+  //                                                               .primary,
+  //                                                           Theme.of(context)
+  //                                                               .colorScheme
+  //                                                               .secondary
+  //                                                         ]),
+  //                                                     borderRadius:
+  //                                                         BorderRadius.circular(
+  //                                                             10),
+  //                                                     border: Border.all(
+  //                                                         color: Colors.black),
+  //                                                     image: DecorationImage(
+  //                                                         fit: BoxFit.cover,
+  //                                                         image: CachedNetworkImageProvider(
+  //                                                             gameAlgolia
+  //                                                                 .imageUrl))),
+  //                                               ),
+  //                                             ),
+  //                                           ),
+  //                                           Positioned(
+  //                                               bottom: 0,
+  //                                               right: 0,
+  //                                               child: GestureDetector(
+  //                                                 onTap: () {
+  //                                                   setState(() {
+  //                                                     gamesFollow.removeWhere(
+  //                                                         (element) =>
+  //                                                             element.name ==
+  //                                                             gameAlgolia.name);
+  //                                                     allGames.add(gameAlgolia);
+  //                                                   });
+  //                                                   _focusNodeSearch.unfocus();
+  //                                                   _searchController.clear();
+  //                                                 },
+  //                                                 child: Container(
+  //                                                     height: 25,
+  //                                                     width: 25,
+  //                                                     decoration: BoxDecoration(
+  //                                                         color:
+  //                                                             Colors.red[400],
+  //                                                         shape:
+  //                                                             BoxShape.circle,
+  //                                                         border: Border.all(
+  //                                                             color: Colors
+  //                                                                 .black)),
+  //                                                     child: Icon(
+  //                                                       Icons.remove,
+  //                                                       size: 20,
+  //                                                       color: Colors.black,
+  //                                                     )),
+  //                                               )),
+  //                                         ],
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                   Text(
+  //                                     gameAlgolia.name,
+  //                                     textAlign: TextAlign.center,
+  //                                   )
+  //                                 ],
+  //                               ),
+  //                             )
+  //                           : Container(
+  //                               child: Column(
+  //                                 children: [
+  //                                   Padding(
+  //                                     padding: const EdgeInsets.symmetric(
+  //                                         vertical: 5.0),
+  //                                     child: Container(
+  //                                       height: 70,
+  //                                       width: 70,
+  //                                       child: Stack(
+  //                                         children: [
+  //                                           Align(
+  //                                             alignment: Alignment.center,
+  //                                             child: GestureDetector(
+  //                                               onTap: () {
+  //                                                 setState(() {
+  //                                                   allGames.removeWhere(
+  //                                                       (element) =>
+  //                                                           element.name ==
+  //                                                           gameAlgolia.name);
+  //                                                   gamesFollow
+  //                                                       .add(gameAlgolia);
+  //                                                 });
+
+  //                                                 _focusNodeSearch.unfocus();
+  //                                                 _searchController.clear();
+  //                                               },
+  //                                               child: Container(
+  //                                                 height: 60,
+  //                                                 width: 60,
+  //                                                 decoration: BoxDecoration(
+  //                                                     gradient: LinearGradient(
+  //                                                         begin:
+  //                                                             Alignment.topLeft,
+  //                                                         end: Alignment
+  //                                                             .bottomRight,
+  //                                                         colors: [
+  //                                                           Theme.of(context)
+  //                                                               .colorScheme
+  //                                                               .primary,
+  //                                                           Theme.of(context)
+  //                                                               .colorScheme
+  //                                                               .secondary
+  //                                                         ]),
+  //                                                     borderRadius:
+  //                                                         BorderRadius.circular(
+  //                                                             10),
+  //                                                     border: Border.all(
+  //                                                         color: Colors.black),
+  //                                                     image: DecorationImage(
+  //                                                         fit: BoxFit.cover,
+  //                                                         image: CachedNetworkImageProvider(
+  //                                                             gameAlgolia
+  //                                                                 .imageUrl))),
+  //                                               ),
+  //                                             ),
+  //                                           ),
+  //                                           Positioned(
+  //                                               bottom: 0,
+  //                                               right: 0,
+  //                                               child: GestureDetector(
+  //                                                 onTap: () {
+  //                                                   setState(() {
+  //                                                     allGames.removeWhere(
+  //                                                         (element) =>
+  //                                                             element.name ==
+  //                                                             gameAlgolia.name);
+  //                                                     gamesFollow
+  //                                                         .add(gameAlgolia);
+  //                                                   });
+  //                                                   _focusNodeSearch.unfocus();
+  //                                                   _searchController.clear();
+  //                                                 },
+  //                                                 child: Container(
+  //                                                     height: 25,
+  //                                                     width: 25,
+  //                                                     decoration: BoxDecoration(
+  //                                                         color:
+  //                                                             Colors.green[400],
+  //                                                         shape:
+  //                                                             BoxShape.circle,
+  //                                                         border: Border.all(
+  //                                                             color: Colors
+  //                                                                 .black)),
+  //                                                     child: Icon(
+  //                                                       Icons.add,
+  //                                                       size: 20,
+  //                                                       color: Colors.black,
+  //                                                     )),
+  //                                               )),
+  //                                         ],
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                   Text(
+  //                                     gameAlgolia.name,
+  //                                     textAlign: TextAlign.center,
+  //                                   )
+  //                                 ],
+  //                               ),
+  //                             );
+  //                     }),
+  //   );
+  // }
+
+  // Widget selectionGames() {
+  //   return Column(
+  //     children: [
+  //       GridView.builder(
+  //           shrinkWrap: true,
+  //           scrollDirection: Axis.vertical,
+  //           controller: _gamesScrollController,
+  //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //               crossAxisCount: 3,
+  //               childAspectRatio: 1.0,
+  //               crossAxisSpacing: 6,
+  //               mainAxisSpacing: 6),
+  //           itemCount: allGames.length,
+  //           itemBuilder: (_, int index) {
+  //             Game game = allGames[index];
+  //             return Container(
+  //               child: Column(
+  //                 children: [
+  //                   Padding(
+  //                     padding: const EdgeInsets.symmetric(vertical: 5.0),
+  //                     child: Container(
+  //                       height: 70,
+  //                       width: 70,
+  //                       child: Stack(
+  //                         children: [
+  //                           Align(
+  //                             alignment: Alignment.center,
+  //                             child: GestureDetector(
+  //                               onTap: () {
+  //                                 setState(() {
+  //                                   allGames.remove(game);
+  //                                   gamesFollow.add(game);
+  //                                 });
+  //                               },
+  //                               child: Container(
+  //                                 height: 60,
+  //                                 width: 60,
+  //                                 decoration: BoxDecoration(
+  //                                     gradient: LinearGradient(
+  //                                         begin: Alignment.topLeft,
+  //                                         end: Alignment.bottomRight,
+  //                                         colors: [
+  //                                           Theme.of(context)
+  //                                               .colorScheme
+  //                                               .primary,
+  //                                           Theme.of(context)
+  //                                               .colorScheme
+  //                                               .secondary
+  //                                         ]),
+  //                                     borderRadius: BorderRadius.circular(10),
+  //                                     border: Border.all(color: Colors.black),
+  //                                     image: DecorationImage(
+  //                                         fit: BoxFit.cover,
+  //                                         image: CachedNetworkImageProvider(
+  //                                             game.imageUrl))),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           Positioned(
+  //                               bottom: 0,
+  //                               right: 0,
+  //                               child: GestureDetector(
+  //                                 onTap: () {
+  //                                   setState(() {
+  //                                     allGames.remove(game);
+  //                                     gamesFollow.add(game);
+  //                                   });
+  //                                 },
+  //                                 child: Container(
+  //                                     height: 25,
+  //                                     width: 25,
+  //                                     decoration: BoxDecoration(
+  //                                         color: Colors.green[400],
+  //                                         shape: BoxShape.circle,
+  //                                         border:
+  //                                             Border.all(color: Colors.black)),
+  //                                     child: Icon(
+  //                                       Icons.add,
+  //                                       size: 20,
+  //                                       color: Colors.black,
+  //                                     )),
+  //                               )),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Text(
+  //                     game.name,
+  //                     textAlign: TextAlign.center,
+  //                   )
+  //                 ],
+  //               ),
+  //             );
+  //           }),
+  //       Padding(
+  //           padding: const EdgeInsets.only(bottom: 30.0),
+  //           child: Stack(
+  //             children: [
+  //               Container(
+  //                 height: isLoadingMoreData ? 50.0 : 0.0,
+  //                 child: Center(
+  //                   child: SizedBox(
+  //                     height: 30.0,
+  //                     width: 30.0,
+  //                     child: CircularProgressIndicator(
+  //                       color: Theme.of(context).primaryColor,
+  //                       strokeWidth: 1.5,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //               Container(
+  //                 height: isResultLoading && newGames.length == 0 ? 50.0 : 0.0,
+  //                 child: Center(
+  //                   child: Text('C\'est tout pour le moment'),
+  //                 ),
+  //               )
+  //             ],
+  //           )),
+  //     ],
+  //   );
+  // }
+
+//   Widget bottomBar(Country? country) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         Padding(
+//           padding: EdgeInsets.only(left: 10.0),
+//           child: currentPageIndex == 1
+//               ? GestureDetector(
+//                   onTap: () {
+//                     setState(() {
+//                       currentPageIndex = 0;
+//                     });
+//                     _pageController.previousPage(
+//                         duration: Duration(milliseconds: 500),
+//                         curve: Curves.ease);
+//                   },
+//                   child: Container(
+//                     height: 35,
+//                     width: 60,
+//                     child: Center(
+//                       child: Text('Prev', style: mystyle(16, Colors.white)),
+//                     ),
+//                     decoration: BoxDecoration(
+//                         border: Border.all(color: Colors.black),
+//                         borderRadius: BorderRadius.circular(15),
+//                         color: Color(0x33000000)),
+//                   ),
+//                 )
+//               : SizedBox(
+//                   height: 30,
+//                   width: 60,
+//                 ),
+//         ),
+//         Row(
+//           children: [
+//             Padding(
+//               padding: EdgeInsets.symmetric(horizontal: 3.0),
+//               child: Container(
+//                 height: currentPageIndex == 0 ? 15 : 15,
+//                 width: currentPageIndex == 0 ? 15 : 15,
+//                 decoration: BoxDecoration(
+//                     color: currentPageIndex == 0
+//                         ? Theme.of(context).primaryColor
+//                         : Theme.of(context).primaryColor.withOpacity(0.5),
+//                     shape: BoxShape.circle,
+//                     border: Border.all(color: Colors.black)),
+//               ),
+//             ),
+//             Padding(
+//               padding: EdgeInsets.symmetric(horizontal: 3.0),
+//               child: Container(
+//                 height: currentPageIndex == 1 ? 15 : 15,
+//                 width: currentPageIndex == 1 ? 15 : 15,
+//                 decoration: BoxDecoration(
+//                     color: currentPageIndex == 1
+//                         ? Theme.of(context).primaryColor
+//                         : Theme.of(context).primaryColor.withOpacity(0.5),
+//                     shape: BoxShape.circle,
+//                     border: Border.all(color: Colors.black)),
+//               ),
+//             ),
+//           ],
+//         ),
+//         Padding(
+//           padding: EdgeInsets.only(right: 10.0),
+//           child: currentPageIndex == 0
+//               ? GestureDetector(
+//                   onTap: () {
+//                     _hideKeyboard();
+//                     setState(() {
+//                       currentPageIndex = 1;
+//                     });
+//                     _pageController.nextPage(
+//                         duration: Duration(milliseconds: 500),
+//                         curve: Curves.ease);
+//                   },
+//                   child: Container(
+//                     height: 35,
+//                     width: 60,
+//                     child: Center(
+//                       child: Text('Next', style: mystyle(16, Colors.white)),
+//                     ),
+//                     decoration: BoxDecoration(
+//                         border: Border.all(color: Colors.black),
+//                         borderRadius: BorderRadius.circular(15),
+//                         color: Color(0x33000000)),
+//                   ),
+//                 )
+//               : GestureDetector(
+//                   onTap: () async {
+//                     setState(() {
+//                       isLoading = true;
+//                     });
+//                     await Future.delayed(Duration(seconds: 2));
+//                     _registerAccount(
+//                         _emailController.text,
+//                         _passwordController.text,
+//                         _confirmPasswordController.text,
+//                         _usernameController.text,
+//                         gamesFollow,
+//                         country!.countryCode);
+//                     setState(() {
+//                       isLoading = false;
+//                     });
+//                   },
+//                   child: Container(
+//                     height: 35,
+//                     width: 60,
+//                     child: Center(
+//                         child: isLoading
+//                             ? SizedBox(
+//                                 height: 15.0,
+//                                 width: 15.0,
+//                                 child: CircularProgressIndicator(
+//                                   color: Colors.white,
+//                                   strokeWidth: 1.0,
+//                                 ),
+//                               )
+//                             : Icon(
+//                                 Icons.check,
+//                                 color: Colors.white,
+//                               )),
+//                     decoration: BoxDecoration(
+//                         border: Border.all(color: Colors.black),
+//                         borderRadius: BorderRadius.circular(15),
+//                         color: Color(0x33000000)),
+//                   ),
+//                 ),
+//         ),
+//       ],
+//     );
+//   }

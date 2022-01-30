@@ -171,7 +171,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                 .showSnackBar(SnackBarCustom(
                               context: context,
                               error: 'Response should not be empty',
-                              padddingVertical: 60.0,
+                      
                             ));
                           } else {
                             publishResponse();
@@ -190,7 +190,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                 .showSnackBar(SnackBarCustom(
                               context: context,
                               error: 'Response should not be empty',
-                              padddingVertical: 60.0,
+                          
                             ));
                           } else {
                             publishResponse();
