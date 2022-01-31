@@ -17,14 +17,14 @@ class WelcomeviewState extends State<WelcomeScreen> {
   bool isDayMood = false;
 
   List<Color> lightBgColors = [
-    Color(0xFF947B8F).withOpacity(0.8),
-    Color(0xFFB27D75).withOpacity(0.8),
-    Color(0xFFE38048).withOpacity(0.8),
+    Color(0xFF947B8F),
+    Color(0xFFB27D75),
+    Color(0xFFE38048),
   ];
   List<Color> darkBgColors = [
-    Color(0xFF4075DA).withOpacity(0.8),
-    Color(0xFF6E78B1).withOpacity(0.8),
-    Color(0xFF947B8F).withOpacity(0.8),
+    Color(0xFF4075DA),
+    Color(0xFF6E78B1),
+    Color(0xFF947B8F)
   ];
 
   void timeMood() {
@@ -63,7 +63,9 @@ class WelcomeviewState extends State<WelcomeScreen> {
                         ? Brightness.light
                         : Brightness.dark),
             child: Column(children: [
-              Expanded(child: topWelcome(lightBgColors, darkBgColors)),
+              Container(
+                  height: MediaQuery.of(context).size.height / 2.25,
+                  child: topWelcome(lightBgColors, darkBgColors)),
               Expanded(child: bodyWelcome(lightBgColors, darkBgColors)),
             ])));
   }

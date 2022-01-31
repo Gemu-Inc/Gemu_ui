@@ -120,14 +120,14 @@ class Loginviewstate extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     List<Color> lightBgColors = [
-      Color(0xFF947B8F).withOpacity(0.8),
-      Color(0xFFB27D75).withOpacity(0.8),
-      Color(0xFFE38048).withOpacity(0.8),
+      Color(0xFF947B8F),
+      Color(0xFFB27D75),
+      Color(0xFFE38048),
     ];
     List<Color> darkBgColors = [
-      Color(0xFF4075DA).withOpacity(0.8),
-      Color(0xFF6E78B1).withOpacity(0.8),
-      Color(0xFF947B8F).withOpacity(0.8),
+      Color(0xFF4075DA),
+      Color(0xFF6E78B1),
+      Color(0xFF947B8F),
     ];
 
     return WillPopScope(
@@ -149,7 +149,8 @@ class Loginviewstate extends State<LoginScreen> {
                         child: IntrinsicHeight(
                           child: Column(children: [
                             Container(
-                                height: MediaQuery.of(context).size.height / 2.25,
+                                height:
+                                    MediaQuery.of(context).size.height / 2.25,
                                 child: topLogin(lightBgColors, darkBgColors)),
                             Expanded(
                                 child: bodyLogin(lightBgColors, darkBgColors)),
@@ -188,10 +189,10 @@ class Loginviewstate extends State<LoginScreen> {
                   onTap: () {
                     _hideKeyboard();
                     Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => WelcomeScreen()),
-                      (route) => false);
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => WelcomeScreen()),
+                        (route) => false);
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -287,7 +288,7 @@ class Loginviewstate extends State<LoginScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 5.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                     onPressed: () => print("sign in google"),

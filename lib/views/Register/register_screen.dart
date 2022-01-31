@@ -24,7 +24,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class Registerviewstate extends State<RegisterScreen> {
-  Duration _duration = Duration(seconds: 1);
   bool isDayMood = false;
   bool dataIsThere = false;
   bool isLoading = false;
@@ -376,7 +375,7 @@ class Registerviewstate extends State<RegisterScreen> {
       Color(0xFFB27D75),
       Color(0xFFE38048),
     ];
-    var darkBgColors = [
+    List<Color> darkBgColors = [
       Color(0xFF4075DA),
       Color(0xFF6E78B1),
       Color(0xFF947B8F),
@@ -501,11 +500,14 @@ class Registerviewstate extends State<RegisterScreen> {
   }
 
   Widget bodyRegister(List<Color> lightBgColors, List<Color> darkBgColors) {
-    return Column(
-      children: [
-        Expanded(child: registerFournisseurNatifs()),
-        Expanded(child: registerEmail())
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 15.0),
+      child: Column(
+        children: [
+          Expanded(child: registerFournisseurNatifs()),
+          Expanded(child: registerEmail())
+        ],
+      ),
     );
   }
 
@@ -514,18 +516,19 @@ class Registerviewstate extends State<RegisterScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Text(
-          "Inscrivez-vous directement avec vos identifiants:",
+          "Inscrivez-vous directement avec vos identifiants et créer votre compte:",
           style: TextStyle(
               color: Theme.of(context).brightness == Brightness.dark
                   ? Colors.white
                   : Colors.black,
               fontSize: 13,
               fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
                   onPressed: () => print("sign up google"),
@@ -541,8 +544,8 @@ class Registerviewstate extends State<RegisterScreen> {
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       "assets/images/Google_line.svg",
-                      height: 30,
-                      width: 30,
+                      height: 25,
+                      width: 25,
                       color: Theme.of(context).primaryColor,
                     ),
                   )),
@@ -559,8 +562,8 @@ class Registerviewstate extends State<RegisterScreen> {
                     width: 60,
                     alignment: Alignment.center,
                     child: SvgPicture.asset("assets/images/Facebook_line.svg",
-                        height: 30,
-                        width: 30,
+                        height: 25,
+                        width: 25,
                         color: Theme.of(context).primaryColor),
                   )),
               if (Platform.isIOS)
@@ -577,8 +580,8 @@ class Registerviewstate extends State<RegisterScreen> {
                       width: 60,
                       alignment: Alignment.center,
                       child: SvgPicture.asset("assets/images/Apple_line.svg",
-                          height: 30,
-                          width: 30,
+                          height: 25,
+                          width: 25,
                           color: Theme.of(context).primaryColor),
                     )),
             ],
@@ -593,13 +596,14 @@ class Registerviewstate extends State<RegisterScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Text(
-          "Inscrivez-vous avec votre email:",
+          "Créer votre propre compte à partir de votre email:",
           style: TextStyle(
               color: Theme.of(context).brightness == Brightness.dark
                   ? Colors.white
                   : Colors.black,
               fontSize: 13,
               fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -618,7 +622,7 @@ class Registerviewstate extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(15.0),
                   )),
               child: Text(
-                "C'est parti!",
+                "Commencer",
                 style: TextStyle(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? Colors.white
