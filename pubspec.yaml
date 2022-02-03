@@ -61,6 +61,7 @@ dependencies:
   loader: ^1.0.0
   flutter_overlay_loader: ^1.0.3
   loading_indicator: ^3.0.2
+  material_design_icons_flutter: ^5.0.6595
   # video_compress: ^3.1.0
   ## TODO attendre une nouvelle version du package video_compress afin d'enlever le git ##
   video_compress:

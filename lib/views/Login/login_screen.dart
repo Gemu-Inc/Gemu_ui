@@ -6,10 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/views/Register/register_screen.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -66,6 +69,180 @@ class Loginviewstate extends State<LoginScreen> {
 
   _hideKeyboard() {
     FocusScope.of(context).unfocus();
+  }
+
+  Future _inscriptionBottomSheet() {
+    return Platform.isIOS
+        ? showCupertinoModalBottomSheet(
+            context: context,
+            enableDrag: true,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15.0),
+                    topRight: Radius.circular(15.0))),
+            builder: (context) {
+              return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 2.5,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15.0, horizontal: 5.0),
+                    child: Column(
+                      children: [
+                        Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            "Choississez votre type d'inscription:",
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black,
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                              child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                              Container(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        print("inscription avec google");
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Icon(MdiIcons.google, color: Colors.black,),
+                                          const SizedBox(width: 15.0,),
+                                          Text(
+                                          "S'inscrire' avec Google", textAlign: TextAlign.center,)
+                                        ],
+                                      ))),
+                              Container(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        print("inscription avec apple");
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Icon(MdiIcons.apple, color: Colors.black,),
+                                          const SizedBox(width: 15.0,),
+                                          Text(
+                                          "S'inscrire avec Apple", textAlign: TextAlign.center,)
+                                        ],
+                                      ))),
+                              Container(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ElevatedButton(
+                                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RegisterScreen())),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Icon(Icons.mail),
+                                          const SizedBox(width: 15.0,),
+                                          Text(
+                                          "S'inscrire avec une adresse mail", textAlign: TextAlign.center,)
+                                        ],
+                                      )))
+                          ],
+                        ),
+                            ))
+                      ],
+                    ),
+                  ));
+            })
+        : showMaterialModalBottomSheet(
+            context: context,
+            enableDrag: true,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15.0),
+                    topRight: Radius.circular(15.0))),
+            builder: (context) {
+              return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 3,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15.0, horizontal: 5.0),
+                    child: Column(
+                      children: [
+                        Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            "Choississez votre type d'inscription:",
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black,
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                              child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                              Container(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        print("inscription avec google");
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Icon(MdiIcons.google, color: Colors.black,),
+                                          const SizedBox(width: 15.0,),
+                                          Text(
+                                          "S'inscrire avec Google", textAlign: TextAlign.center,)
+                                        ],
+                                      ))),
+                              Container(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ElevatedButton(
+                                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RegisterScreen())),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Icon(Icons.mail),
+                                          const SizedBox(width: 15.0,),
+                                          Text(
+                                          "S'inscrire avec une adresse mail", textAlign: TextAlign.center,)
+                                        ],
+                                      )))
+                          ],
+                        ),
+                            ))
+                      ],
+                    ),
+                  ));
+            });
   }
 
   @override
@@ -265,236 +442,144 @@ class Loginviewstate extends State<LoginScreen> {
   }
 
   bodyLogin(List<Color> lightBgColors, List<Color> darkBgColors) {
-    return Column(
-      children: [loginFournisseursNatifs(), loginEmail()],
-    );
-  }
-
-  Widget loginFournisseursNatifs() {
-    return Container(
-      height: MediaQuery.of(context).size.height / 8,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-            "Connectez-vous directement avec vos identifiants:",
-            style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
-                fontSize: 13,
-                fontWeight: FontWeight.bold),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    onPressed: () => print("sign in google"),
-                    style: ElevatedButton.styleFrom(
-                        elevation: 6,
-                        shadowColor: Theme.of(context).shadowColor,
-                        primary: Theme.of(context).canvasColor,
-                        onPrimary: Theme.of(context).primaryColor,
-                        shape: CircleBorder()),
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      alignment: Alignment.center,
-                      child: SvgPicture.asset(
-                        "assets/images/Google_line.svg",
-                        height: 25,
-                        width: 25,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    )),
-                ElevatedButton(
-                    onPressed: () => print("sign in facebook"),
-                    style: ElevatedButton.styleFrom(
-                        elevation: 6,
-                        shadowColor: Theme.of(context).shadowColor,
-                        primary: Theme.of(context).canvasColor,
-                        onPrimary: Theme.of(context).primaryColor,
-                        shape: CircleBorder()),
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      alignment: Alignment.center,
-                      child: SvgPicture.asset("assets/images/Facebook_line.svg",
-                          height: 25,
-                          width: 25,
-                          color: Theme.of(context).primaryColor),
-                    )),
-                if (Platform.isIOS)
-                  ElevatedButton(
-                      onPressed: () => print("sign in apple"),
-                      style: ElevatedButton.styleFrom(
-                          elevation: 6,
-                          shadowColor: Theme.of(context).shadowColor,
-                          primary: Theme.of(context).canvasColor,
-                          onPrimary: Theme.of(context).primaryColor,
-                          shape: CircleBorder()),
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        alignment: Alignment.center,
-                        child: SvgPicture.asset("assets/images/Apple_line.svg",
-                            height: 25,
-                            width: 25,
-                            color: Theme.of(context).primaryColor),
-                      )),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+    return loginEmail();
   }
 
   Widget loginEmail() {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10.0),
-        child: Column(
-          children: [
-            Text("Connectez-vous avec votre email:",
-                style: TextStyle(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold)),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 12,
-                child: TextFieldCustom(
-                  context: context,
-                  controller: _emailController,
-                  focusNode: _focusNodeEmail,
-                  label: 'Email',
-                  obscure: false,
-                  icon: Icons.mail,
-                  textInputAction: TextInputAction.next,
-                  textInputType: TextInputType.emailAddress,
-                  clear: () {
-                    setState(() {
-                      _emailController.clear();
-                    });
-                  },
-                  submit: (value) {
-                    value = _emailController.text;
-                    _focusNodeEmail.unfocus();
-                    FocusScope.of(context).requestFocus(_focusNodePassword);
-                  },
-                ),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Column(
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
+            child: Container(
+              height: MediaQuery.of(context).size.height / 12,
+              child: TextFieldCustom(
+                context: context,
+                controller: _emailController,
+                focusNode: _focusNodeEmail,
+                label: 'Email',
+                obscure: false,
+                icon: Icons.mail,
+                textInputAction: TextInputAction.next,
+                textInputType: TextInputType.emailAddress,
+                clear: () {
+                  setState(() {
+                    _emailController.clear();
+                  });
+                },
+                submit: (value) {
+                  value = _emailController.text;
+                  _focusNodeEmail.unfocus();
+                  FocusScope.of(context).requestFocus(_focusNodePassword);
+                },
               ),
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 12,
-                child: TextFieldCustom(
-                  context: context,
-                  controller: _passwordController,
-                  focusNode: _focusNodePassword,
-                  label: 'Password',
-                  obscure: true,
-                  icon: Icons.lock,
-                  textInputAction: TextInputAction.go,
-                  clear: () {
-                    setState(() {
-                      _passwordController.clear();
-                    });
-                  },
-                  submit: (value) {
-                    value = _passwordController.text;
-                    _focusNodePassword.unfocus();
-                    _signIn(_emailController.text, value);
-                  },
-                ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
+            child: Container(
+              height: MediaQuery.of(context).size.height / 12,
+              child: TextFieldCustom(
+                context: context,
+                controller: _passwordController,
+                focusNode: _focusNodePassword,
+                label: 'Password',
+                obscure: true,
+                icon: Icons.lock,
+                textInputAction: TextInputAction.go,
+                clear: () {
+                  setState(() {
+                    _passwordController.clear();
+                  });
+                },
+                submit: (value) {
+                  value = _passwordController.text;
+                  _focusNodePassword.unfocus();
+                  _signIn(_emailController.text, value);
+                },
               ),
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 45.0, vertical: 5.0),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 15,
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                child: ElevatedButton(
-                  onPressed: () =>
-                      _signIn(_emailController.text, _passwordController.text),
-                  style: ElevatedButton.styleFrom(
-                      elevation: 6,
-                      shadowColor: Theme.of(context).shadowColor,
-                      primary: Theme.of(context).canvasColor,
-                      onPrimary: Theme.of(context).primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      )),
-                  child: isLoading
-                      ? SizedBox(
-                          height: 15,
-                          width: 15,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1.0,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                          ),
-                        )
-                      : Text(
-                          'Login',
-                          style: TextStyle(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 45.0, vertical: 15.0),
+            child: Container(
+              height: MediaQuery.of(context).size.height / 15,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: ElevatedButton(
+                onPressed: () =>
+                    _signIn(_emailController.text, _passwordController.text),
+                style: ElevatedButton.styleFrom(
+                    elevation: 6,
+                    shadowColor: Theme.of(context).shadowColor,
+                    primary: Theme.of(context).canvasColor,
+                    onPrimary: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    )),
+                child: isLoading
+                    ? SizedBox(
+                        height: 15,
+                        width: 15,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1.0,
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
                                   ? Colors.white
                                   : Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700),
                         ),
-                ),
+                      )
+                    : Text(
+                        'Login',
+                        style: TextStyle(
+                            color: Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700),
+                      ),
               ),
             ),
-            Expanded(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InkWell(
-                  onTap: () => print("mot de passe oublié"),
-                  child: Text(
-                    'Mot de passe oublié',
-                    style: mystyle(12, Theme.of(context).primaryColor),
+          ),
+          Expanded(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () => print("mot de passe oublié"),
+                child: Text(
+                  'Mot de passe oublié',
+                  style: mystyle(12, Theme.of(context).primaryColor),
+                ),
+              ),
+              const SizedBox(height: 15.0,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Vous n'avez pas encore un compte?",
+                    style: mystyle(12),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Vous n'avez pas encore un compte?",
-                      style: mystyle(12),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  InkWell(
+                    onTap: () => _inscriptionBottomSheet(),
+                    child: Text(
+                      'Inscription',
+                      style: mystyle(12, Theme.of(context).primaryColor),
                     ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    InkWell(
-                      onTap: () => Navigator.pushNamed(context, Register),
-                      child: Text(
-                        'Inscription',
-                        style: mystyle(12, Theme.of(context).primaryColor),
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ))
-          ],
-        ),
+                  )
+                ],
+              ),
+            ],
+          ))
+        ],
       ),
     );
   }
