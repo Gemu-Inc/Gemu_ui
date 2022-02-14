@@ -96,10 +96,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(MdiIcons.google, color: Colors.black,),
+                                          Icon(MdiIcons.google, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
-                                          "S'inscrire' avec Google", textAlign: TextAlign.center,)
+                                          "S'inscrire' avec Google", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),)
                                         ],
                                       ))),
                               Container(
@@ -112,10 +112,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(MdiIcons.apple, color: Colors.black,),
+                                          Icon(MdiIcons.apple, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
-                                          "S'inscrire avec Apple", textAlign: TextAlign.center,)
+                                          "S'inscrire avec Apple", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),)
                                         ],
                                       ))),
                               Container(
@@ -126,10 +126,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(Icons.mail),
+                                          Icon(Icons.mail, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
-                                          "S'inscrire avec une adresse mail", textAlign: TextAlign.center,)
+                                          "S'inscrire avec une adresse mail", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),)
                                         ],
                                       )))
                           ],
@@ -189,10 +189,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(MdiIcons.google, color: Colors.black,),
+                                          Icon(MdiIcons.google, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
-                                          "S'inscrire avec Google", textAlign: TextAlign.center,)
+                                          "S'inscrire avec Google", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),)
                                         ],
                                       ))),
                               Container(
@@ -203,10 +203,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(Icons.mail),
+                                          Icon(Icons.mail, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
-                                          "S'inscrire avec une adresse mail", textAlign: TextAlign.center,)
+                                          "S'inscrire avec une adresse mail", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),)
                                         ],
                                       )))
                           ],
@@ -270,10 +270,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(MdiIcons.google, color: Colors.black,),
+                                          Icon(MdiIcons.google, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
-                                          "Se connecter avec Google", textAlign: TextAlign.center,)
+                                          "Se connecter avec Google", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),)
                                         ],
                                       ))),
                               Container(
@@ -286,7 +286,7 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(MdiIcons.apple, color: Colors.black,),
+                                          Icon(MdiIcons.apple, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
                                           "Se connecter avec Apple", textAlign: TextAlign.center,)
@@ -300,10 +300,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(Icons.mail),
+                                          Icon(Icons.mail, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
-                                          "Se connecter avec une adresse mail", textAlign: TextAlign.center,)
+                                          "Se connecter avec une adresse mail", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),)
                                         ],
                                       )))
                           ],
@@ -363,10 +363,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(MdiIcons.google, color: Colors.black,),
+                                          Icon(MdiIcons.google, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
-                                          "Se connecter avec Google", textAlign: TextAlign.center,)
+                                          "Se connecter avec Google", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),)
                                         ],
                                       ))),
                               Container(
@@ -377,10 +377,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Icon(Icons.mail),
+                                          Icon(Icons.mail, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,),
                                           const SizedBox(width: 15.0,),
                                           Text(
-                                          "Se connecter avec une adresse mail", textAlign: TextAlign.center,)
+                                          "Se connecter avec une adresse mail", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),)
                                         ],
                                       )))
                           ],
