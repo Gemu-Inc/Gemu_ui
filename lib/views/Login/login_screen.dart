@@ -1,18 +1,14 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Register/register_screen.dart';
+import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
-import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:helpers/helpers.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -312,226 +308,10 @@ class Loginviewstate extends State<LoginScreen> {
                     style: mystyle(
                         12, !isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA)),
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () => _inscriptionBottomSheet(),
+                      ..onTap = () => Helpers.inscriptionBottomSheet(context),
                   )
                 ])),
       ],
     );
-  }
-
-  Future _inscriptionBottomSheet() {
-    return Platform.isIOS
-        ? showCupertinoModalBottomSheet(
-            context: context,
-            enableDrag: true,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15.0),
-                    topRight: Radius.circular(15.0))),
-            builder: (context) {
-              return Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 2.5,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 5.0),
-                    child: Column(
-                      children: [
-                        Material(
-                          type: MaterialType.transparency,
-                          child: Text(
-                            "Choississez votre type d'inscription:",
-                            style: TextStyle(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Expanded(
-                            child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        print("inscription avec google");
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Icon(
-                                            MdiIcons.google,
-                                            color: Colors.black,
-                                          ),
-                                          const SizedBox(
-                                            width: 15.0,
-                                          ),
-                                          Text(
-                                            "S'inscrire' avec Google",
-                                            textAlign: TextAlign.center,
-                                          )
-                                        ],
-                                      ))),
-                              Container(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        print("inscription avec apple");
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Icon(
-                                            MdiIcons.apple,
-                                            color: Colors.black,
-                                          ),
-                                          const SizedBox(
-                                            width: 15.0,
-                                          ),
-                                          Text(
-                                            "S'inscrire avec Apple",
-                                            textAlign: TextAlign.center,
-                                          )
-                                        ],
-                                      ))),
-                              Container(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ElevatedButton(
-                                      onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) =>
-                                                  RegisterScreen())),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Icon(Icons.mail),
-                                          const SizedBox(
-                                            width: 15.0,
-                                          ),
-                                          Text(
-                                            "S'inscrire avec une adresse mail",
-                                            textAlign: TextAlign.center,
-                                          )
-                                        ],
-                                      )))
-                            ],
-                          ),
-                        ))
-                      ],
-                    ),
-                  ));
-            })
-        : showMaterialModalBottomSheet(
-            context: context,
-            enableDrag: true,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15.0),
-                    topRight: Radius.circular(15.0))),
-            builder: (context) {
-              return Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 3,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 5.0),
-                    child: Column(
-                      children: [
-                        Material(
-                          type: MaterialType.transparency,
-                          child: Text(
-                            "Choississez votre type d'inscription:",
-                            style: TextStyle(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Expanded(
-                            child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        print("inscription avec google");
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Icon(
-                                            MdiIcons.google,
-                                            color: Colors.black,
-                                          ),
-                                          const SizedBox(
-                                            width: 15.0,
-                                          ),
-                                          Text(
-                                            "S'inscrire avec Google",
-                                            textAlign: TextAlign.center,
-                                          )
-                                        ],
-                                      ))),
-                              Container(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ElevatedButton(
-                                      onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) =>
-                                                  RegisterScreen())),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Icon(Icons.mail),
-                                          const SizedBox(
-                                            width: 15.0,
-                                          ),
-                                          Text(
-                                            "S'inscrire avec une adresse mail",
-                                            textAlign: TextAlign.center,
-                                          )
-                                        ],
-                                      )))
-                            ],
-                          ),
-                        ))
-                      ],
-                    ),
-                  ));
-            });
   }
 }
