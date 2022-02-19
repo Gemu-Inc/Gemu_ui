@@ -93,6 +93,21 @@ class WelcomeviewState extends State<WelcomeScreen> {
                 ),
               ),
               Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 25.0, right: 15.0),
+                  child: IconButton(
+                      onPressed: () => Navigator.pushNamed(context, GetStarted),
+                      icon: Icon(
+                        Icons.info_outline,
+                        size: 28,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                      )),
+                ),
+              ),
+              Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 25, left: 70),
@@ -134,7 +149,7 @@ class WelcomeviewState extends State<WelcomeScreen> {
                   height: 10.0,
                 ),
                 Text(
-                  "Rejoignez-nous et venez découvrir l'univers de Gemu et sa communauté",
+                  "Rejoins-nous et vient découvrir l'univers de Gemu et de ses joueurs",
                   style: TextStyle(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? Colors.white
@@ -266,7 +281,7 @@ class WelcomeviewState extends State<WelcomeScreen> {
             child: RichText(
                 text: TextSpan(
                     text:
-                        "En vous connectant ou en vous inscrivant, vous devez être en accord avec les ",
+                        "En te connectant ou en t'inscrivant, tu dois être en accord avec les ",
                     style: TextStyle(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white
@@ -278,7 +293,9 @@ class WelcomeviewState extends State<WelcomeScreen> {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () => print("terms and conditions"),
                           style: TextStyle(
-                              color: Theme.of(context).primaryColor,
+                              color: !isDayMood
+                                  ? Color(0xFF947B8F)
+                                  : Color(0xFF4075DA),
                               fontSize: 12)),
                       TextSpan(
                           text: " et les ",
@@ -293,7 +310,9 @@ class WelcomeviewState extends State<WelcomeScreen> {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () => print("privacy policy"),
                           style: TextStyle(
-                              color: Theme.of(context).primaryColor,
+                              color: !isDayMood
+                                  ? Color(0xFF947B8F)
+                                  : Color(0xFF4075DA),
                               fontSize: 12))
                     ]),
                 textAlign: TextAlign.center)),
