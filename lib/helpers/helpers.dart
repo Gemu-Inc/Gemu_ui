@@ -655,6 +655,10 @@ class Helpers {
             });
   }
 
+  static hideKeyboard(BuildContext context) {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
   static String datePostView(int timestamp) {
     initializeDateFormatting();
     DateTime timePost = DateTime.fromMillisecondsSinceEpoch(timestamp);

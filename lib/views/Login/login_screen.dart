@@ -63,10 +63,6 @@ class Loginviewstate extends State<LoginScreen> {
     });
   }
 
-  _hideKeyboard() {
-    FocusScope.of(context).unfocus();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -128,7 +124,7 @@ class Loginviewstate extends State<LoginScreen> {
                             ? Brightness.light
                             : Brightness.dark),
                 child: GestureDetector(
-                  onTap: () => _hideKeyboard(),
+                  onTap: () => Helpers.hideKeyboard(context),
                   child: Column(children: [
                     topLoginEmail(),
                     Container(
@@ -158,7 +154,7 @@ class Loginviewstate extends State<LoginScreen> {
         shadowColor: Colors.transparent,
         leading: IconButton(
             onPressed: () {
-              _hideKeyboard();
+              Helpers.hideKeyboard(context);
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
@@ -286,6 +282,8 @@ class Loginviewstate extends State<LoginScreen> {
             textAlign: TextAlign.center,
             text: TextSpan(
               text: "Mot de passe oublié",
+              recognizer: TapGestureRecognizer()
+                ..onTap = () => print("Mot de passe oublié"),
               style: mystyle(
                   12, !isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA)),
             )),
