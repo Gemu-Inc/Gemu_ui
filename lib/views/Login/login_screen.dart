@@ -284,8 +284,7 @@ class Loginviewstate extends State<LoginScreen> {
               text: "Mot de passe oublié",
               recognizer: TapGestureRecognizer()
                 ..onTap = () => print("Mot de passe oublié"),
-              style: mystyle(
-                  12, !isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA)),
+              style: mystyle(12, Theme.of(context).primaryColor),
             )),
         const SizedBox(
           height: 5.0,
@@ -303,8 +302,7 @@ class Loginviewstate extends State<LoginScreen> {
                 children: [
                   TextSpan(
                     text: "Inscription",
-                    style: mystyle(
-                        12, !isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA)),
+                    style: mystyle(12, Theme.of(context).primaryColor),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () => Helpers.inscriptionBottomSheet(context),
                   )

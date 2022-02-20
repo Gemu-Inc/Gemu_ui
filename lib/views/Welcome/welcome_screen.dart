@@ -287,9 +287,7 @@ class WelcomeviewState extends State<WelcomeScreen> {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () => print("terms and conditions"),
                           style: TextStyle(
-                              color: !isDayMood
-                                  ? Color(0xFF947B8F)
-                                  : Color(0xFF4075DA),
+                              color: Theme.of(context).primaryColor,
                               fontSize: 12)),
                       TextSpan(
                           text: " et les ",
@@ -304,9 +302,7 @@ class WelcomeviewState extends State<WelcomeScreen> {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () => print("privacy policy"),
                           style: TextStyle(
-                              color: !isDayMood
-                                  ? Color(0xFF947B8F)
-                                  : Color(0xFF4075DA),
+                              color: Theme.of(context).primaryColor,
                               fontSize: 12))
                     ]),
                 textAlign: TextAlign.center)),
