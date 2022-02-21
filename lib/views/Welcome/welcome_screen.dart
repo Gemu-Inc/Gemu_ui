@@ -15,14 +15,20 @@ class WelcomeviewState extends State<WelcomeScreen> {
   bool isDayMood = false;
 
   List<Color> lightBgColors = [
-    Color(0xFF947B8F),
-    Color(0xFFB27D75),
-    Color(0xFFE38048),
+    // Color(0xFF947B8F),
+    // Color(0xFFB27D75),
+    // Color(0xFFE38048),
+    cOrangeTest,
+    cMiddleTest,
+    cMauveTest
   ];
   List<Color> darkBgColors = [
-    Color(0xFF4075DA),
-    Color(0xFF6E78B1),
-    Color(0xFF947B8F)
+    // Color(0xFF4075DA),
+    // Color(0xFF6E78B1),
+    // Color(0xFF947B8F)
+    cMauveTest,
+    cMiddleTest,
+    cOrangeTest
   ];
 
   void timeMood() {
@@ -62,7 +68,7 @@ class WelcomeviewState extends State<WelcomeScreen> {
                         : Brightness.dark),
             child: Column(children: [
               Container(
-                height: MediaQuery.of(context).size.height / 1.75,
+                height: MediaQuery.of(context).size.height / 1.9,
                 child: topWelcome(lightBgColors, darkBgColors),
               ),
               Expanded(child: bodyWelcome(lightBgColors, darkBgColors))
@@ -81,8 +87,8 @@ class WelcomeviewState extends State<WelcomeScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
                           colors: isDayMood ? lightBgColors : darkBgColors)),
                 ),
               ),
@@ -104,22 +110,26 @@ class WelcomeviewState extends State<WelcomeScreen> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 25, left: 70),
-                  child: Image.asset("assets/images/gameuse.png"),
-                ),
+                    padding: const EdgeInsets.only(bottom: 30, left: 50),
+                    child: Container(
+                      height: 175,
+                      width: 175,
+                      child: Image.asset("assets/images/gameuse.png"),
+                    )),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 25, right: 70),
-                  child: Image.asset("assets/images/gamer.png"),
+                  padding: const EdgeInsets.only(bottom: 25, right: 50),
+                  child: Container(
+                    height: 175,
+                    width: 175,
+                    child: Image.asset("assets/images/gamer.png"),
+                  ),
                 ),
               ),
             ],
           ),
-        ),
-        const SizedBox(
-          height: 35.0,
         ),
         Expanded(
           child: Container(
@@ -161,7 +171,7 @@ class WelcomeviewState extends State<WelcomeScreen> {
 
   Widget bodyWelcome(List<Color> lightBgColors, List<Color> darkBgColors) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Container(
           padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),

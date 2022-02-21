@@ -23,7 +23,7 @@ class Helpers {
             builder: (context) {
               return Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 2.5,
+                  height: MediaQuery.of(context).size.height / 2.25,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
                   child: Padding(
@@ -208,7 +208,7 @@ class Helpers {
             builder: (context) {
               return Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 2.5,
+                  height: MediaQuery.of(context).size.height / 2.25,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
                   child: Padding(
@@ -346,7 +346,7 @@ class Helpers {
             builder: (context) {
               return Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 2.5,
+                  height: MediaQuery.of(context).size.height / 2.25,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
                   child: Padding(
@@ -530,7 +530,7 @@ class Helpers {
             builder: (context) {
               return Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 2.5,
+                  height: MediaQuery.of(context).size.height / 2.25,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
                   child: Padding(

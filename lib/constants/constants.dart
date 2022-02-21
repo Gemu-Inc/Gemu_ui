@@ -13,7 +13,12 @@ mystyle(double size, [Color? color, FontWeight fw = FontWeight.w700]) {
 
 //colors app
 const cOrange = Color(0xFFB27D75);
-const cMauve = Color(0xFF6E78B1); 
+const cMauve = Color(0xFF6E78B1);
+
+// --- new colors app à tester ---
+const cOrangeTest = Color(0xFFAB7D7C);
+const cMiddleTest = Color(0xFF817AA1);
+const cMauveTest = Color(0xFF5777C6);
 
 //Themes
 final String appTheme = "Theme";
