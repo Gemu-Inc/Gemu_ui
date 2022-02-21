@@ -675,4 +675,11 @@ class Helpers {
 
     return format.format(timePost).toString();
   }
+
+  static String dateBirthday(DateTime date) {
+    initializeDateFormatting();
+    DateFormat format = new DateFormat.yMMMd("fr_FR");
+
+    return format.format(date).toString();
+  }
 }

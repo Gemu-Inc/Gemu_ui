@@ -1,10 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:algolia/algolia.dart';
 import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
-import 'package:gemu/helpers/helpers.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/constants/constants.dart';
@@ -14,7 +16,7 @@ import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/models/game.dart';
-import 'package:sticky_headers/sticky_headers/widget.dart';
+import 'package:gemu/helpers/helpers.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -25,22 +27,15 @@ class _RegisterScreenState extends State<RegisterScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  bool isDayMood = false;
-  bool dataIsThere = false;
-  bool isLoading = false;
-  bool isLoadingMoreData = false;
-  bool isResultLoading = false;
+  ScrollController _firstPageScrollController = ScrollController();
+  ScrollController _secondPageScrollController = ScrollController();
+  ScrollController _mainScrollController = ScrollController();
+  ScrollController _gamesScrollController = ScrollController();
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
   late TextEditingController _usernameController;
-
-  String value = "";
-  bool isSearching = false;
-  late TextEditingController _searchController;
-  Algolia algolia = AlgoliaService.algolia;
-  List<AlgoliaObjectSnapshot> gamesAlgolia = [];
 
   late FocusNode _focusNodeEmail;
   late FocusNode _focusNodePassword;
@@ -48,18 +43,25 @@ class _RegisterScreenState extends State<RegisterScreen>
   late FocusNode _focusNodeUsername;
   late FocusNode _focusNodeSearch;
 
-  late PageController _pageController;
-  int currentPageIndex = 0;
+  String value = "";
+  bool isSearching = false;
+  late TextEditingController _searchController;
+  Algolia algolia = AlgoliaService.algolia;
+  List<AlgoliaObjectSnapshot> gamesAlgolia = [];
+
+  bool isDayMood = false;
+  bool dataIsThere = false;
+  bool isLoading = false;
+  bool isLoadingMoreData = false;
+  bool isResultLoading = false;
+  bool isStickyOnTop = false;
 
   List<Game> allGames = [];
   List<Game> gamesFollow = [];
   List<Game> newGames = [];
 
-  ScrollController _mainScrollController = ScrollController();
-  ScrollController _gamesScrollController = ScrollController();
-  bool isStickyOnTop = false;
-
   Country? _selectedCountry;
+  DateTime? _dateBirthday;
 
   void timeMood() {
     int hour = DateTime.now().hour;
@@ -76,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   void initCountry() async {
-    final country = await getDefaultCountry(context);
+    final country = await getCountryByCountryCode(context, 'FR');
     setState(() {
       _selectedCountry = country;
     });
@@ -84,12 +86,12 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   void _onPressedShowBottomSheet() async {
     final country = await showCountryPickerSheet(context,
-        cornerRadius: 10.0,
-        heightFactor: 0.8,
         title: Text(
-          'Choose region',
-          style: mystyle(15),
-        ));
+          'Sélectionne ta nationnalité',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        heightFactor: 0.79,
+        cornerRadius: 15.0);
     if (country != null) {
       setState(() {
         _selectedCountry = country;
@@ -229,8 +231,6 @@ class _RegisterScreenState extends State<RegisterScreen>
     initCountry();
     getGames();
 
-    _pageController = PageController(initialPage: currentPageIndex);
-
     _emailController = TextEditingController();
     _focusNodeEmail = FocusNode();
 
@@ -358,11 +358,12 @@ class _RegisterScreenState extends State<RegisterScreen>
     _emailController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
-    _pageController.dispose();
 
     _searchController.dispose();
     _focusNodeSearch.dispose();
 
+    _firstPageScrollController.dispose();
+    _secondPageScrollController.dispose();
     _mainScrollController.dispose();
     _gamesScrollController.dispose();
 
@@ -384,6 +385,7 @@ class _RegisterScreenState extends State<RegisterScreen>
 
     return WillPopScope(
         child: Scaffold(
+            resizeToAvoidBottomInset: false,
             body: AnnotatedRegion<SystemUiOverlayStyle>(
                 value: SystemUiOverlayStyle(
                     statusBarColor: Colors.transparent,
@@ -391,10 +393,13 @@ class _RegisterScreenState extends State<RegisterScreen>
                         Theme.of(context).brightness == Brightness.dark
                             ? Brightness.light
                             : Brightness.dark),
-                child: Column(children: [
-                  topRegisterEmail(),
-                  Expanded(child: bodyRegister(lightBgColors, darkBgColors)),
-                ]))),
+                child: GestureDetector(
+                  onTap: () => Helpers.hideKeyboard(context),
+                  child: Column(children: [
+                    topRegisterEmail(),
+                    Expanded(child: bodyRegister(lightBgColors, darkBgColors)),
+                  ]),
+                ))),
         onWillPop: () => _willPopCallback());
   }
 
@@ -453,47 +458,38 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget stepsRegister() {
-    return Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: TabPageSelector(
-          controller: _tabController,
-          selectedColor: Theme.of(context).primaryColor,
-          color: Colors.transparent,
-          indicatorSize: 14,
-        ));
-  }
-
-  Widget bodyRegister(List<Color> lightBgColors, List<Color> darkBgColors) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-      child: bodySteps(),
+    return TabPageSelector(
+      controller: _tabController,
+      selectedColor: isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA),
+      color: Colors.transparent,
+      indicatorSize: 14,
     );
   }
 
-  Widget bodySteps() {
+  Widget bodyRegister(List<Color> lightBgColors, List<Color> darkBgColors) {
     final country = _selectedCountry;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
       child: TabBarView(
           controller: _tabController,
           physics: NeverScrollableScrollPhysics(),
           children: [
             Column(
               children: [
-                Expanded(child: firstPage(country)),
+                Expanded(child: firstPage()),
                 btnNext(),
               ],
             ),
             Column(
               children: [
-                Expanded(child: secondPage()),
+                Expanded(child: secondPage(country)),
                 btnPrevious(),
                 btnNext(),
               ],
             ),
             Column(
               children: [
-                Expanded(child: Container(color: Colors.yellow)),
+                Expanded(child: thirdPage()),
                 btnPrevious(),
                 btnFinish(),
               ],
@@ -502,380 +498,410 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 
-  Widget firstPage(Country? country) {
-    return ListView(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+  Widget btnNext() {
+    return Container(
+      height: MediaQuery.of(context).size.height / 12,
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      child: ElevatedButton(
+        onPressed: () {
+          if (_tabController.index != _tabController.length - 1) {
+            Helpers.hideKeyboard(context);
+            setState(() {
+              _tabController.index += 1;
+            });
+          }
+        },
+        style: ElevatedButton.styleFrom(
+            elevation: 6,
+            primary: isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA),
+            onPrimary: Theme.of(context).canvasColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            )),
+        child: Text(
+          "Suivant",
+          style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+              fontSize: 15,
+              fontWeight: FontWeight.w700),
+        ),
+      ),
+    );
+  }
+
+  btnPrevious() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            text: "Précédent",
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                if (_tabController.index != 0) {
+                  Helpers.hideKeyboard(context);
+                  setState(() {
+                    _tabController.index -= 1;
+                  });
+                }
+              },
+            style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+                decoration: TextDecoration.underline),
+          )),
+    );
+  }
+
+  Widget btnFinish() {
+    return Container(
+      height: MediaQuery.of(context).size.height / 12,
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      child: ElevatedButton(
+        onPressed: () {
+          Helpers.hideKeyboard(context);
+          print("s'inscrire");
+        },
+        style: ElevatedButton.styleFrom(
+            elevation: 6,
+            primary: isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA),
+            onPrimary: Theme.of(context).canvasColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            )),
+        child: Text(
+          "Terminer",
+          style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+              fontSize: 15,
+              fontWeight: FontWeight.w700),
+        ),
+      ),
+    );
+  }
+
+  Widget firstPage() {
+    return Column(
       children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.only(left: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'User information',
-                style: mystyle(28),
+        Text(
+          "Allez c'est parti pour ton inscription, la première étape étant de renseigner les informations personnelles pour te connecter à ton compte!",
+          style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+              fontWeight: FontWeight.w500,
+              fontSize: 12),
+        ),
+        Expanded(
+            child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          shrinkWrap: true,
+          physics:
+              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          controller: _firstPageScrollController,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                'Renseigne ton email',
+                style: mystyle(12),
               ),
-              const SizedBox(
-                height: 5.0,
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height / 12,
+              child: TextFieldCustom(
+                context: context,
+                controller: _emailController,
+                focusNode: _focusNodeEmail,
+                label: 'Email',
+                obscure: false,
+                icon: Icons.mail,
+                textInputAction: TextInputAction.next,
+                textInputType: TextInputType.emailAddress,
+                clear: () {
+                  setState(() {
+                    _emailController.clear();
+                  });
+                },
+                submit: (value) {
+                  value = _emailController.text;
+                  _focusNodeEmail.unfocus();
+                  FocusScope.of(context).requestFocus(_focusNodePassword);
+                },
               ),
-              Text('Enter your personnal information'),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text(
-            'Enter your username',
-            style: mystyle(12),
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.only(left: 20.0, right: 20.0),
-          child: TextFieldCustom(
-            context: context,
-            controller: _usernameController,
-            focusNode: _focusNodeUsername,
-            label: 'Username',
-            obscure: false,
-            icon: Icons.person,
-            textInputAction: TextInputAction.next,
-            clear: () {
-              setState(() {
-                _usernameController.clear();
-              });
-            },
-            submit: (value) {
-              value = _usernameController.text;
-              _focusNodeUsername.unfocus();
-              FocusScope.of(context).requestFocus(_focusNodeEmail);
-            },
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text(
-            'Enter your email',
-            style: mystyle(12),
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.only(left: 20.0, right: 20.0),
-          child: TextFieldCustom(
-            context: context,
-            controller: _emailController,
-            focusNode: _focusNodeEmail,
-            label: 'Email',
-            obscure: false,
-            icon: Icons.mail,
-            textInputAction: TextInputAction.next,
-            textInputType: TextInputType.emailAddress,
-            clear: () {
-              setState(() {
-                _emailController.clear();
-              });
-            },
-            submit: (value) {
-              value = _emailController.text;
-              _focusNodeEmail.unfocus();
-              FocusScope.of(context).requestFocus(_focusNodePassword);
-            },
-          ),
-        ),
-        const SizedBox(
-          height: 20.0,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text(
-            'Enter your password',
-            style: mystyle(12),
-          ),
-        ),
-        Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: TextFieldCustom(
-              context: context,
-              controller: _passwordController,
-              focusNode: _focusNodePassword,
-              label: 'Password',
-              obscure: true,
-              icon: Icons.lock,
-              textInputAction: TextInputAction.next,
-              clear: () {
-                setState(() {
-                  _passwordController.clear();
-                });
-              },
-              submit: (value) {
-                value = _passwordController.text;
-                _focusNodePassword.unfocus();
-                FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
-              },
-            )),
-        const SizedBox(
-          height: 10.0,
-        ),
-        Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: TextFieldCustom(
-              context: context,
-              controller: _confirmPasswordController,
-              focusNode: _focusNodeConfirmPassword,
-              label: 'Confirm password',
-              obscure: true,
-              icon: Icons.lock,
-              textInputAction: TextInputAction.go,
-              clear: () {
-                setState(() {
-                  _confirmPasswordController.clear();
-                });
-              },
-              submit: (value) {
-                value = _confirmPasswordController.text;
-                _focusNodeConfirmPassword.unfocus();
-              },
-            )),
-        const SizedBox(
-          height: 20.0,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text(
-            'Select your nationnality',
-            style: mystyle(11),
-          ),
-        ),
-        Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              country == null
-                  ? Container()
-                  : Column(
-                      children: <Widget>[
-                        Container(
-                          height: 30,
-                          width: 50,
-                          child: Image.asset(
-                            country.flag,
-                            package: countryCodePackageName,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Text(
-                          '${country.name} (${country.countryCode})',
-                          textAlign: TextAlign.center,
-                          style: mystyle(11),
-                        ),
-                      ],
-                    ),
-              MaterialButton(
-                child: Text('Select'),
-                color: Theme.of(context).canvasColor,
-                onPressed: _onPressedShowBottomSheet,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                'Renseigne ton mot de passe',
+                style: mystyle(12),
               ),
-            ],
-          ),
-        ),
+            ),
+            Container(
+                height: MediaQuery.of(context).size.height / 12,
+                child: TextFieldCustom(
+                  context: context,
+                  controller: _passwordController,
+                  focusNode: _focusNodePassword,
+                  label: 'Mot de passe',
+                  obscure: true,
+                  icon: Icons.lock,
+                  textInputAction: TextInputAction.next,
+                  clear: () {
+                    setState(() {
+                      _passwordController.clear();
+                    });
+                  },
+                  submit: (value) {
+                    value = _passwordController.text;
+                    _focusNodePassword.unfocus();
+                    FocusScope.of(context)
+                        .requestFocus(_focusNodeConfirmPassword);
+                  },
+                )),
+            const SizedBox(
+              height: 10.0,
+            ),
+            Container(
+                height: MediaQuery.of(context).size.height / 12,
+                child: TextFieldCustom(
+                  context: context,
+                  controller: _confirmPasswordController,
+                  focusNode: _focusNodeConfirmPassword,
+                  label: 'Confirme ton mot de passe',
+                  obscure: true,
+                  icon: Icons.lock,
+                  textInputAction: TextInputAction.go,
+                  clear: () {
+                    setState(() {
+                      _confirmPasswordController.clear();
+                    });
+                  },
+                  submit: (value) {
+                    value = _confirmPasswordController.text;
+                    _focusNodeConfirmPassword.unfocus();
+                  },
+                )),
+          ],
+        ))
       ],
     );
   }
 
-  Widget secondPage() {
-    return ListView(
-      controller: _mainScrollController,
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+  Widget secondPage(Country? country) {
+    return Column(
       children: [
-        topSelectionGames(),
-        StickyHeader(
-          controller: _mainScrollController,
-          header: _getStickyWidget(),
-          content: dataIsThere
-              ? Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
-                  child: searchGames(),
-                )
-              : Center(
-                  child: CircularProgressIndicator(),
-                ),
+        Text(
+          "La seconde étape est pour te reconnaître et te retrouver au sein de la communauté, renseigne ton pseudonyme, ta date d'anniversaire et ta nationnalité",
+          style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+              fontWeight: FontWeight.w500,
+              fontSize: 12),
         ),
-      ],
-    );
-  }
-
-  Widget topSelectionGames() {
-    return gamesFollow.length != 0
-        ? Container(
-            height: 250,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(left: 20.0),
-            child: Column(
+        Expanded(
+            child: ListView(
+          controller: _secondPageScrollController,
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          shrinkWrap: true,
+          physics:
+              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                'Entre ton pseudonyme',
+                style: mystyle(12),
+              ),
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height / 12,
+              child: TextFieldCustom(
+                context: context,
+                controller: _usernameController,
+                focusNode: _focusNodeUsername,
+                label: 'Pseudonyme',
+                obscure: false,
+                icon: Icons.person,
+                textInputAction: TextInputAction.go,
+                clear: () {
+                  setState(() {
+                    _usernameController.clear();
+                  });
+                },
+                submit: (value) {
+                  value = _usernameController.text;
+                  _focusNodeUsername.unfocus();
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                "Sélectionne ta date d'anniversaire",
+                style: mystyle(12),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  'Selected games',
-                  style: mystyle(28),
+                  _dateBirthday == null
+                      ? "01 Janvier 1997"
+                      : Helpers.dateBirthday(_dateBirthday!),
+                  textAlign: TextAlign.center,
+                  style: mystyle(12),
                 ),
                 const SizedBox(
-                  height: 5.0,
+                  width: 5.0,
                 ),
-                Text('Selects at least two games'),
-                const SizedBox(
-                  height: 10.0,
+                MaterialButton(
+                  child: Text('Sélectionner'),
+                  color: Theme.of(context).canvasColor,
+                  onPressed: () {
+                    DatePicker.showDatePicker(context,
+                        showTitleActions: true,
+                        theme: DatePickerTheme(
+                          backgroundColor: Theme.of(context).canvasColor,
+                          cancelStyle:
+                              TextStyle(color: Colors.red[200], fontSize: 16),
+                          doneStyle:
+                              TextStyle(color: Colors.blue[200], fontSize: 16),
+                          itemStyle: TextStyle(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 18),
+                        ),
+                        minTime: DateTime(1900, 1, 1),
+                        maxTime: DateTime.now(), onChanged: (date) {
+                      setState(() {
+                        _dateBirthday = date;
+                      });
+                    }, onConfirm: (date) {
+                      setState(() {
+                        _dateBirthday = date;
+                      });
+                    }, currentTime: DateTime.now(), locale: LocaleType.fr);
+                  },
+                  elevation: 6,
                 ),
-                Container(
-                    height: MediaQuery.of(context).size.height / 8,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: gamesFollow.length,
-                      itemBuilder: (_, index) {
-                        Game game = gamesFollow[index];
-                        return Container(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 5.0, horizontal: 5.0),
-                            child: Container(
-                              height: 70,
-                              width: 70,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          gamesFollow.remove(game);
-                                          allGames.add(game);
-                                        });
-                                      },
-                                      child: Container(
-                                        height: 60,
-                                        width: 60,
-                                        decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                colors: [
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary
-                                                ]),
-                                            border:
-                                                Border.all(color: Colors.black),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            image: DecorationImage(
-                                                image:
-                                                    CachedNetworkImageProvider(
-                                                        game.imageUrl),
-                                                fit: BoxFit.cover)),
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            gamesFollow.remove(game);
-                                            allGames.add(game);
-                                          });
-                                        },
-                                        child: Container(
-                                            height: 25,
-                                            width: 25,
-                                            decoration: BoxDecoration(
-                                                color: Colors.red[400],
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                    color: Colors.black)),
-                                            child: Icon(
-                                              Icons.remove,
-                                              size: 20,
-                                              color: Colors.black,
-                                            )),
-                                      )),
-                                ],
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                'Sélectionne ta nationnalité',
+                style: mystyle(12),
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  country == null
+                      ? Container()
+                      : Row(
+                          children: [
+                            Container(
+                              height: 50,
+                              width: 50,
+                              child: Image.asset(
+                                country.flag,
+                                package: countryCodePackageName,
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    )),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Text(
-                  'Selection games',
-                  style: mystyle(28),
-                ),
-                const SizedBox(
-                  height: 5.0,
-                ),
-                Text('Choose the games you want to follow'),
-                const SizedBox(
-                  height: 5.0,
-                ),
-              ],
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text(
+                              '${country.name}',
+                              textAlign: TextAlign.center,
+                              style: mystyle(12),
+                            ),
+                          ],
+                        ),
+                  MaterialButton(
+                    child: Text('Sélectionner'),
+                    color: Theme.of(context).canvasColor,
+                    onPressed: _onPressedShowBottomSheet,
+                    elevation: 6,
+                  ),
+                ],
+              ),
             ),
-          )
-        : Container(
-            height: 100,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(left: 20.0),
-            child: Column(
-              children: [
-                Text(
-                  'Selection games',
-                  style: mystyle(28),
-                ),
-                const SizedBox(
-                  height: 5.0,
-                ),
-                Text('Choose the games you want to follow'),
-              ],
-            ),
-          );
+          ],
+        ))
+      ],
+    );
+  }
+
+  Widget thirdPage() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10.0),
+          child: Text(
+            "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu",
+            style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+                fontWeight: FontWeight.w500,
+                fontSize: 12),
+          ),
+        ),
+        _getStickyWidget(),
+        Expanded(
+            child: ListView(
+          controller: _mainScrollController,
+          shrinkWrap: true,
+          physics:
+              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          children: [
+            dataIsThere
+                ? searchGames()
+                : Center(
+                    child: CircularProgressIndicator(),
+                  ),
+          ],
+        ))
+      ],
+    );
   }
 
   Widget _getStickyWidget() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: TextFieldCustom(
-        context: context,
-        controller: _searchController,
-        focusNode: _focusNodeSearch,
-        label: 'Search',
-        obscure: false,
-        icon: Icons.search,
-        textInputAction: TextInputAction.search,
-        clear: () {
-          setState(() {
-            _searchController.clear();
-          });
-        },
-        submit: (value) {
-          value = _searchController.text;
-          _searchGames(value);
-        },
+      padding: const EdgeInsets.only(top: 10.0),
+      child: Container(
+        height: MediaQuery.of(context).size.height / 14,
+        child: TextFieldCustom(
+          context: context,
+          controller: _searchController,
+          focusNode: _focusNodeSearch,
+          label: 'Chercher un jeu',
+          obscure: false,
+          icon: Icons.search,
+          textInputAction: TextInputAction.search,
+          clear: () {
+            setState(() {
+              _searchController.clear();
+            });
+          },
+          submit: (value) {
+            value = _searchController.text;
+            _searchGames(value);
+          },
+        ),
       ),
     );
   }
@@ -930,16 +956,60 @@ class _RegisterScreenState extends State<RegisterScreen>
                             ? Container(
                                 child: Column(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5.0),
-                                      child: Container(
-                                        height: 70,
-                                        width: 70,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.center,
+                                    Container(
+                                      height: 70,
+                                      width: 70,
+                                      child: Stack(
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  gamesFollow.removeWhere(
+                                                      (element) =>
+                                                          element.name ==
+                                                          gameAlgolia.name);
+                                                  allGames.add(gameAlgolia);
+                                                });
+
+                                                _focusNodeSearch.unfocus();
+                                                _searchController.clear();
+                                              },
+                                              child: Container(
+                                                height: 60,
+                                                width: 60,
+                                                decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                        begin: Alignment
+                                                            .topLeft,
+                                                        end: Alignment
+                                                            .bottomRight,
+                                                        colors: [
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .primary,
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .secondary
+                                                        ]),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: Colors.black),
+                                                    image: DecorationImage(
+                                                        fit: BoxFit.cover,
+                                                        image:
+                                                            CachedNetworkImageProvider(
+                                                                gameAlgolia
+                                                                    .imageUrl))),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                              bottom: 0,
+                                              right: 0,
                                               child: GestureDetector(
                                                 onTap: () {
                                                   setState(() {
@@ -949,74 +1019,25 @@ class _RegisterScreenState extends State<RegisterScreen>
                                                             gameAlgolia.name);
                                                     allGames.add(gameAlgolia);
                                                   });
-
                                                   _focusNodeSearch.unfocus();
                                                   _searchController.clear();
                                                 },
                                                 child: Container(
-                                                  height: 60,
-                                                  width: 60,
-                                                  decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
-                                                          begin:
-                                                              Alignment.topLeft,
-                                                          end: Alignment
-                                                              .bottomRight,
-                                                          colors: [
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .primary,
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .secondary
-                                                          ]),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: Border.all(
-                                                          color: Colors.black),
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: CachedNetworkImageProvider(
-                                                              gameAlgolia
-                                                                  .imageUrl))),
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                                bottom: 0,
-                                                right: 0,
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      gamesFollow.removeWhere(
-                                                          (element) =>
-                                                              element.name ==
-                                                              gameAlgolia.name);
-                                                      allGames.add(gameAlgolia);
-                                                    });
-                                                    _focusNodeSearch.unfocus();
-                                                    _searchController.clear();
-                                                  },
-                                                  child: Container(
-                                                      height: 25,
-                                                      width: 25,
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Colors.red[400],
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .black)),
-                                                      child: Icon(
-                                                        Icons.remove,
-                                                        size: 20,
-                                                        color: Colors.black,
-                                                      )),
-                                                )),
-                                          ],
-                                        ),
+                                                    height: 25,
+                                                    width: 25,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.red[400],
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                            color:
+                                                                Colors.black)),
+                                                    child: Icon(
+                                                      Icons.remove,
+                                                      size: 20,
+                                                      color: Colors.black,
+                                                    )),
+                                              )),
+                                        ],
                                       ),
                                     ),
                                     Text(
@@ -1029,16 +1050,60 @@ class _RegisterScreenState extends State<RegisterScreen>
                             : Container(
                                 child: Column(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5.0),
-                                      child: Container(
-                                        height: 70,
-                                        width: 70,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.center,
+                                    Container(
+                                      height: 70,
+                                      width: 70,
+                                      child: Stack(
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  allGames.removeWhere(
+                                                      (element) =>
+                                                          element.name ==
+                                                          gameAlgolia.name);
+                                                  gamesFollow.add(gameAlgolia);
+                                                });
+
+                                                _focusNodeSearch.unfocus();
+                                                _searchController.clear();
+                                              },
+                                              child: Container(
+                                                height: 60,
+                                                width: 60,
+                                                decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                        begin: Alignment
+                                                            .topLeft,
+                                                        end: Alignment
+                                                            .bottomRight,
+                                                        colors: [
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .primary,
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .secondary
+                                                        ]),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: Colors.black),
+                                                    image: DecorationImage(
+                                                        fit: BoxFit.cover,
+                                                        image:
+                                                            CachedNetworkImageProvider(
+                                                                gameAlgolia
+                                                                    .imageUrl))),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                              bottom: 0,
+                                              right: 0,
                                               child: GestureDetector(
                                                 onTap: () {
                                                   setState(() {
@@ -1049,75 +1114,26 @@ class _RegisterScreenState extends State<RegisterScreen>
                                                     gamesFollow
                                                         .add(gameAlgolia);
                                                   });
-
                                                   _focusNodeSearch.unfocus();
                                                   _searchController.clear();
                                                 },
                                                 child: Container(
-                                                  height: 60,
-                                                  width: 60,
-                                                  decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
-                                                          begin:
-                                                              Alignment.topLeft,
-                                                          end: Alignment
-                                                              .bottomRight,
-                                                          colors: [
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .primary,
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .secondary
-                                                          ]),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: Border.all(
-                                                          color: Colors.black),
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: CachedNetworkImageProvider(
-                                                              gameAlgolia
-                                                                  .imageUrl))),
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                                bottom: 0,
-                                                right: 0,
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      allGames.removeWhere(
-                                                          (element) =>
-                                                              element.name ==
-                                                              gameAlgolia.name);
-                                                      gamesFollow
-                                                          .add(gameAlgolia);
-                                                    });
-                                                    _focusNodeSearch.unfocus();
-                                                    _searchController.clear();
-                                                  },
-                                                  child: Container(
-                                                      height: 25,
-                                                      width: 25,
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Colors.green[400],
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .black)),
-                                                      child: Icon(
-                                                        Icons.add,
-                                                        size: 20,
-                                                        color: Colors.black,
-                                                      )),
-                                                )),
-                                          ],
-                                        ),
+                                                    height: 25,
+                                                    width: 25,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.green[400],
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                            color:
+                                                                Colors.black)),
+                                                    child: Icon(
+                                                      Icons.add,
+                                                      size: 20,
+                                                      color: Colors.black,
+                                                    )),
+                                              )),
+                                        ],
                                       ),
                                     ),
                                     Text(
@@ -1245,7 +1261,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 Container(
                   height: isResultLoading && newGames.length == 0 ? 50.0 : 0.0,
                   child: Center(
-                    child: Text('C\'est tout pour le moment'),
+                    child: Text("C'est tout pour le moment"),
                   ),
                 )
               ],
@@ -1253,176 +1269,4 @@ class _RegisterScreenState extends State<RegisterScreen>
       ],
     );
   }
-
-  Widget btnNext() {
-    return Container(
-      height: MediaQuery.of(context).size.height / 12,
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-      child: ElevatedButton(
-        onPressed: () {
-          if (_tabController.index != _tabController.length - 1) {
-            setState(() {
-              _tabController.index += 1;
-            });
-          }
-        },
-        style: ElevatedButton.styleFrom(
-            elevation: 6,
-            shadowColor: Theme.of(context).primaryColor,
-            primary: Theme.of(context).primaryColor,
-            onPrimary: Theme.of(context).canvasColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            )),
-        child: Text(
-          "Suivant",
-          style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
-              fontSize: 15,
-              fontWeight: FontWeight.w700),
-        ),
-      ),
-    );
-  }
-
-  btnPrevious() {
-    return TextButton(
-        onPressed: () {
-          if (_tabController.index != 0) {
-            setState(() {
-              _tabController.index -= 1;
-            });
-          }
-        },
-        child: Text("Précédent",
-            style: TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
-                decoration: TextDecoration.underline),
-            textAlign: TextAlign.center));
-  }
-
-  Widget btnFinish() {
-    return Container(
-      height: MediaQuery.of(context).size.height / 12,
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-      child: ElevatedButton(
-        onPressed: () {
-          print("s'inscrire");
-        },
-        style: ElevatedButton.styleFrom(
-            elevation: 6,
-            shadowColor: Theme.of(context).primaryColor,
-            primary: Theme.of(context).primaryColor,
-            onPrimary: Theme.of(context).canvasColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            )),
-        child: Text(
-          "Terminer",
-          style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
-              fontSize: 15,
-              fontWeight: FontWeight.w700),
-        ),
-      ),
-    );
-  }
 }
-
-// AnimatedContainer(
-//             duration: _duration,
-//             curve: Curves.easeInOut,
-//             height: MediaQuery.of(context).size.height,
-//             width: MediaQuery.of(context).size.width,
-//             decoration: BoxDecoration(
-//               gradient: LinearGradient(
-//                 begin: Alignment.topCenter,
-//                 end: Alignment.bottomCenter,
-//                 colors: isDayMood ? lightBgColors : darkBgColors,
-//               ),
-//             ),
-//             child: SafeArea(
-//               child: Container(
-//                   decoration: BoxDecoration(
-//                       gradient: LinearGradient(
-//                           begin: Alignment.topCenter,
-//                           end: Alignment.bottomCenter,
-//                           colors: [
-//                         Theme.of(context)
-//                             .scaffoldBackgroundColor
-//                             .withOpacity(0.1),
-//                         Theme.of(context)
-//                             .scaffoldBackgroundColor
-//                             .withOpacity(0.8)
-//                       ])),
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.start,
-//                     children: [
-//                       Container(
-//                         height: MediaQuery.of(context).size.height / 8,
-//                         child: Row(
-//                           children: [
-//                             Container(
-//                               width: MediaQuery.of(context).size.width / 6,
-//                               alignment: Alignment.center,
-//                               child: IconButton(
-//                                   onPressed: () =>
-//                                       Navigator.pushAndRemoveUntil(
-//                                           context,
-//                                           MaterialPageRoute(
-//                                               builder:
-//                                                   (BuildContext context) =>
-//                                                       WelcomeScreen()),
-//                                           (route) => false),
-//                                   icon: Icon(
-//                                     Icons.arrow_back_ios,
-//                                     color: Theme.of(context).canvasColor,
-//                                   )),
-//                             ),
-//                             Expanded(
-//                                 child: Container(
-//                               alignment: Alignment.center,
-//                               child: Padding(
-//                                 padding: EdgeInsets.only(
-//                                     right: MediaQuery.of(context).size.width /
-//                                         6),
-//                                 child: Text('Register',
-//                                     style: mystyle(25, Colors.white)),
-//                               ),
-//                             ))
-//                           ],
-//                         ),
-//                       ),
-//                       Expanded(
-//                           child: PageView(
-//                         controller: _pageController,
-//                         onPageChanged: (index) {
-//                           if (index == 0) {
-//                             _hideKeyboard();
-//                             setState(() {
-//                               currentPageIndex = 0;
-//                             });
-//                           } else {
-//                             _hideKeyboard();
-//                             setState(() {
-//                               currentPageIndex = 1;
-//                             });
-//                           }
-//                         },
-//                         children: [firstPage(country), secondPage()],
-//                       )),
-//                       Container(
-//                         height: MediaQuery.of(context).size.height / 14,
-//                         alignment: Alignment.center,
-//                         child: bottomBar(country),
-//                       ),
-//                     ],
-//                   )),
-//             )),
