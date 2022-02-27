@@ -169,7 +169,7 @@ class Loginviewstate extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(vertical: 15.0),
           child: Container(
             height: MediaQuery.of(context).size.height / 12,
-            child: TextFieldCustom(
+            child: TextFieldCustomLogin(
               context: context,
               controller: _emailController,
               focusNode: _focusNodeEmail,
@@ -188,6 +188,7 @@ class Loginviewstate extends State<LoginScreen> {
                 _focusNodeEmail.unfocus();
                 FocusScope.of(context).requestFocus(_focusNodePassword);
               },
+              isDayMood: isDayMood,
             ),
           ),
         ),
@@ -195,7 +196,7 @@ class Loginviewstate extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(vertical: 25.0),
           child: Container(
             height: MediaQuery.of(context).size.height / 12,
-            child: TextFieldCustom(
+            child: TextFieldCustomLogin(
               context: context,
               controller: _passwordController,
               focusNode: _focusNodePassword,
@@ -213,6 +214,7 @@ class Loginviewstate extends State<LoginScreen> {
                 _focusNodePassword.unfocus();
                 _signIn(_emailController.text, value);
               },
+              isDayMood: isDayMood,
             ),
           ),
         ),

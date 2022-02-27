@@ -450,20 +450,20 @@ class _RegisterScreenState extends State<RegisterScreen>
             children: [
               Column(
                 children: [
-                  Expanded(child: firstPage()),
+                  Expanded(child: firstPage(isDayMood)),
                   btnNext(isDayMood),
                 ],
               ),
               Column(
                 children: [
-                  Expanded(child: secondPage(country)),
+                  Expanded(child: secondPage(country, isDayMood)),
                   btnPrevious(),
                   btnNext(isDayMood),
                 ],
               ),
               Column(
                 children: [
-                  Expanded(child: thirdPage()),
+                  Expanded(child: thirdPage(isDayMood)),
                   btnPrevious(),
                   btnFinish(isDayMood),
                 ],
@@ -561,7 +561,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 
-  Widget firstPage() {
+  Widget firstPage(bool isDayMood) {
     return Column(
       children: [
         Text(
@@ -590,7 +590,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
             Container(
               height: MediaQuery.of(context).size.height / 12,
-              child: TextFieldCustom(
+              child: TextFieldCustomRegister(
                 context: context,
                 controller: _emailController,
                 focusNode: _focusNodeEmail,
@@ -609,6 +609,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   _focusNodeEmail.unfocus();
                   FocusScope.of(context).requestFocus(_focusNodePassword);
                 },
+                isDayMood: isDayMood,
               ),
             ),
             Padding(
@@ -620,7 +621,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
             Container(
                 height: MediaQuery.of(context).size.height / 12,
-                child: TextFieldCustom(
+                child: TextFieldCustomRegister(
                   context: context,
                   controller: _passwordController,
                   focusNode: _focusNodePassword,
@@ -639,13 +640,14 @@ class _RegisterScreenState extends State<RegisterScreen>
                     FocusScope.of(context)
                         .requestFocus(_focusNodeConfirmPassword);
                   },
+                  isDayMood: isDayMood,
                 )),
             const SizedBox(
               height: 10.0,
             ),
             Container(
                 height: MediaQuery.of(context).size.height / 12,
-                child: TextFieldCustom(
+                child: TextFieldCustomRegister(
                   context: context,
                   controller: _confirmPasswordController,
                   focusNode: _focusNodeConfirmPassword,
@@ -662,6 +664,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                     value = _confirmPasswordController.text;
                     _focusNodeConfirmPassword.unfocus();
                   },
+                  isDayMood: isDayMood,
                 )),
           ],
         ))
@@ -669,7 +672,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 
-  Widget secondPage(Country? country) {
+  Widget secondPage(Country? country, bool isDayMood) {
     return Column(
       children: [
         Text(
@@ -698,7 +701,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
             Container(
               height: MediaQuery.of(context).size.height / 12,
-              child: TextFieldCustom(
+              child: TextFieldCustomRegister(
                 context: context,
                 controller: _usernameController,
                 focusNode: _focusNodeUsername,
@@ -715,6 +718,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   value = _usernameController.text;
                   _focusNodeUsername.unfocus();
                 },
+                isDayMood: isDayMood,
               ),
             ),
             Padding(
@@ -819,7 +823,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 
-  Widget thirdPage() {
+  Widget thirdPage(bool isDayMood) {
     return Column(
       children: [
         Padding(
@@ -834,7 +838,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 fontSize: 12),
           ),
         ),
-        _getStickyWidget(),
+        _getStickyWidget(isDayMood),
         Expanded(
             child: ListView(
           controller: _mainScrollController,
@@ -854,12 +858,12 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 
-  Widget _getStickyWidget() {
+  Widget _getStickyWidget(bool isDayMood) {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: Container(
         height: MediaQuery.of(context).size.height / 14,
-        child: TextFieldCustom(
+        child: TextFieldCustomRegister(
           context: context,
           controller: _searchController,
           focusNode: _focusNodeSearch,
@@ -876,6 +880,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             value = _searchController.text;
             _searchGames(value);
           },
+          isDayMood: isDayMood,
         ),
       ),
     );
