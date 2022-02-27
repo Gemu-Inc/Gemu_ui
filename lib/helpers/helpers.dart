@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:gemu/constants/constants.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +11,44 @@ import 'package:gemu/views/Register/register_screen.dart';
 import 'package:gemu/views/Login/login_screen.dart';
 
 class Helpers {
-  static Future inscriptionBottomSheet(BuildContext context) {
+  static Future<bool> willPopCallback(
+      BuildContext context, Widget navigation) async {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => navigation),
+        (route) => false);
+    return true;
+  }
+
+  static hideKeyboard(BuildContext context) {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  static String datePostView(int timestamp) {
+    initializeDateFormatting();
+    DateTime timePost = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+    return time.format(timePost);
+  }
+
+  static String datePostInfo(int timestamp) {
+    initializeDateFormatting();
+    DateTime timePost = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    DateFormat format;
+
+    format = new DateFormat.yMMMd("fr_FR");
+
+    return format.format(timePost).toString();
+  }
+
+  static String dateBirthday(DateTime date) {
+    initializeDateFormatting();
+    DateFormat format = new DateFormat.yMMMd("fr_FR");
+
+    return format.format(date).toString();
+  }
+
+  static Future inscriptionBottomSheet(BuildContext context, bool isDayMood) {
     return Platform.isIOS
         ? showCupertinoModalBottomSheet(
             context: context,
@@ -67,8 +105,9 @@ class Helpers {
                                                   RegisterScreen())),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary:
-                                              Theme.of(context).primaryColor,
+                                          primary: isDayMood
+                                              ? cDarkPink
+                                              : cLightPurple,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -251,8 +290,9 @@ class Helpers {
                                                   RegisterScreen())),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary:
-                                              Theme.of(context).primaryColor,
+                                          primary: isDayMood
+                                              ? cDarkPink
+                                              : cLightPurple,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -333,7 +373,7 @@ class Helpers {
             });
   }
 
-  static Future connexionBottomSheet(BuildContext context) {
+  static Future connexionBottomSheet(BuildContext context, bool isDayMood) {
     return Platform.isIOS
         ? showCupertinoModalBottomSheet(
             context: context,
@@ -389,8 +429,9 @@ class Helpers {
                                               builder: (_) => LoginScreen())),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary:
-                                              Theme.of(context).primaryColor,
+                                          primary: isDayMood
+                                              ? cLightPurple
+                                              : cDarkPink,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -573,8 +614,9 @@ class Helpers {
                                               builder: (_) => LoginScreen())),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary:
-                                              Theme.of(context).primaryColor,
+                                          primary: isDayMood
+                                              ? cLightPurple
+                                              : cDarkPink,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -653,33 +695,5 @@ class Helpers {
                     ),
                   ));
             });
-  }
-
-  static hideKeyboard(BuildContext context) {
-    FocusScope.of(context).requestFocus(FocusNode());
-  }
-
-  static String datePostView(int timestamp) {
-    initializeDateFormatting();
-    DateTime timePost = DateTime.fromMillisecondsSinceEpoch(timestamp);
-
-    return time.format(timePost);
-  }
-
-  static String datePostInfo(int timestamp) {
-    initializeDateFormatting();
-    DateTime timePost = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    DateFormat format;
-
-    format = new DateFormat.yMMMd("fr_FR");
-
-    return format.format(timePost).toString();
-  }
-
-  static String dateBirthday(DateTime date) {
-    initializeDateFormatting();
-    DateFormat format = new DateFormat.yMMMd("fr_FR");
-
-    return format.format(date).toString();
   }
 }

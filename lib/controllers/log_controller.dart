@@ -30,12 +30,12 @@ class _LogControllerState extends State<LogController> {
       if (prefs.getInt('color_primary') != null) {
         primaryColor = Color(prefs.getInt('color_primary')!);
       } else {
-        primaryColor = cOrange;
+        primaryColor = cDarkPink;
       }
       if (prefs.getInt('color_accent') != null) {
         accentColor = Color(prefs.getInt('color_accent')!);
       } else {
-        accentColor = cMauve;
+        accentColor = cLightPurple;
       }
 
       ref
@@ -59,12 +59,12 @@ class _LogControllerState extends State<LogController> {
           title: 'Gemu',
           themeMode: ThemeMode.system,
           theme: theme == ThemeData()
-              ? (primaryColor == cOrange && accentColor == cMauve)
+              ? (primaryColor == cDarkPink && accentColor == cLightPurple)
                   ? lightThemeSystemOrange
-                  : lightThemePurple
+                  : lightThemeSystemPurple
               : theme,
           darkTheme: theme == ThemeData()
-              ? (primaryColor == cOrange && accentColor == cMauve)
+              ? (primaryColor == cDarkPink && accentColor == cLightPurple)
                   ? darkThemeSystemOrange
                   : darkThemeSystemPurple
               : theme,

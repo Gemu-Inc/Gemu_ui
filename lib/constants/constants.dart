@@ -11,14 +11,16 @@ mystyle(double size, [Color? color, FontWeight fw = FontWeight.w700]) {
   return GoogleFonts.montserrat(fontSize: size, color: color, fontWeight: fw);
 }
 
-//colors app
-const cOrange = Color(0xFFB27D75);
-const cMauve = Color(0xFF6E78B1);
+// --- Colors palette ---
+const cLightPink = Color(0xFFDE5767);
+const cDarkPink = Color(0xFFAF4259);
+const cLightPurple = Color(0xFF4F234C);
+const cDarkPurple = Color(0xFF140934);
+// Color(0xFF753052);
 
-// --- new colors app à tester ---
-const cOrangeTest = Color(0xFFAB7D7C);
-const cMiddleTest = Color(0xFF817AA1);
-const cMauveTest = Color(0xFF5777C6);
+//Lists colors dayMood
+List<Color> lightBgColors = [cLightPink, cDarkPink, cLightPurple, cDarkPurple];
+List<Color> darkBgColors = [cDarkPurple, cLightPurple, cDarkPink, cLightPink];
 
 //Themes
 final String appTheme = "Theme";
@@ -26,14 +28,14 @@ final String appTheme = "Theme";
 /// --- Dark theme system orange ---
 final darkThemeSystemOrange = ThemeData(
     colorScheme: ColorScheme.dark(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cDarkPink,
+      secondary: cLightPurple,
     ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Color(0xFF1A1C25),
-    primaryColor: cOrange,
+    primaryColor: cDarkPink,
     canvasColor: Color(0xFF222831),
-    shadowColor: Color(0xFF121212),
+    shadowColor: Color(0xFF3E3C3E),
     iconTheme: IconThemeData(
       color: Colors.white60,
     ),
@@ -50,7 +52,7 @@ final darkThemeSystemOrange = ThemeData(
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: cOrange,
+        selectedItemColor: cDarkPink,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.white60));
@@ -58,12 +60,12 @@ final darkThemeSystemOrange = ThemeData(
 /// --- Dark theme system purple
 final darkThemeSystemPurple = ThemeData(
     colorScheme: ColorScheme.dark(
-      primary: cMauve,
-      secondary: cOrange,
+      primary: cLightPurple,
+      secondary: cDarkPink,
     ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Color(0xFF1A1C25),
-    primaryColor: cMauve,
+    primaryColor: cLightPurple,
     canvasColor: Color(0xFF222831),
     shadowColor: Color(0xFF121212),
     iconTheme: IconThemeData(
@@ -82,7 +84,7 @@ final darkThemeSystemPurple = ThemeData(
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: cOrange,
+        selectedItemColor: cDarkPink,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.white60));
@@ -90,12 +92,12 @@ final darkThemeSystemPurple = ThemeData(
 /// --- Dark Orange Theme ---
 final darkThemeOrange = ThemeData(
     colorScheme: ColorScheme.dark(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cDarkPink,
+      secondary: cLightPurple,
     ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Color(0xFF1A1C25),
-    primaryColor: cOrange,
+    primaryColor: cDarkPink,
     canvasColor: Color(0xFF222831),
     shadowColor: Color(0xFF121212),
     iconTheme: IconThemeData(
@@ -122,12 +124,12 @@ final darkThemeOrange = ThemeData(
 /// --- Dark Purple Theme ---
 final darkThemePurple = ThemeData(
     colorScheme: ColorScheme.dark(
-      primary: cMauve,
-      secondary: cOrange,
+      primary: cLightPurple,
+      secondary: cDarkPink,
     ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Color(0xFF1A1C25),
-    primaryColor: cMauve,
+    primaryColor: cLightPurple,
     canvasColor: Color(0xFF222831),
     shadowColor: Color(0xFF121212),
     iconTheme: IconThemeData(
@@ -154,14 +156,14 @@ final darkThemePurple = ThemeData(
 /// --- Light theme system orange ---
 final lightThemeSystemOrange = ThemeData(
     colorScheme: ColorScheme.light(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cDarkPink,
+      secondary: cLightPurple,
     ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: Color(0xFFDEE4E7),
-    primaryColor: cOrange,
+    primaryColor: cDarkPink,
     canvasColor: Color(0xFFD3D3D3),
-    shadowColor: Color(0xFFBDBDBD),
+    shadowColor: Color(0xFF3E3C3E),
     iconTheme: IconThemeData(
       color: Colors.black45,
     ),
@@ -178,7 +180,7 @@ final lightThemeSystemOrange = ThemeData(
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: cOrange,
+        selectedItemColor: cDarkPink,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.black45));
@@ -186,14 +188,14 @@ final lightThemeSystemOrange = ThemeData(
 /// --- Light theme system purple ---
 final lightThemeSystemPurple = ThemeData(
     colorScheme: ColorScheme.light(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cDarkPink,
+      secondary: cLightPurple,
     ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: Color(0xFFDEE4E7),
-    primaryColor: cMauve,
+    primaryColor: cLightPurple,
     canvasColor: Color(0xFFD3D3D3),
-    shadowColor: Color(0xFFBDBDBD),
+    shadowColor: Color(0xFF3E3C3E),
     iconTheme: IconThemeData(
       color: Colors.black45,
     ),
@@ -210,7 +212,7 @@ final lightThemeSystemPurple = ThemeData(
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: cOrange,
+        selectedItemColor: cDarkPink,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.black45));
@@ -218,12 +220,12 @@ final lightThemeSystemPurple = ThemeData(
 /// --- Light Orange Theme ---
 final lightThemeOrange = ThemeData(
     colorScheme: ColorScheme.light(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cDarkPink,
+      secondary: cLightPurple,
     ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: Color(0xFFDEE4E7),
-    primaryColor: cOrange,
+    primaryColor: cDarkPink,
     canvasColor: Color(0xFFD3D3D3),
     shadowColor: Color(0xFFEEEEEE),
     iconTheme: IconThemeData(
@@ -250,12 +252,12 @@ final lightThemeOrange = ThemeData(
 /// --- Light Purple Theme ---
 final lightThemePurple = ThemeData(
     colorScheme: ColorScheme.light(
-      primary: cMauve,
-      secondary: cOrange,
+      primary: cLightPurple,
+      secondary: cDarkPink,
     ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: Color(0xFFDEE4E7),
-    primaryColor: cMauve,
+    primaryColor: cLightPurple,
     canvasColor: Color(0xFFD3D3D3),
     shadowColor: Color(0xFFBDBDBD),
     iconTheme: IconThemeData(

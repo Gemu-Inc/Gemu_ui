@@ -35,7 +35,7 @@ class ThemeProvider extends StateNotifier<ThemeData> {
 }
 
 class PrimaryColorProvider extends StateNotifier<Color> {
-  PrimaryColorProvider() : super(cOrange);
+  PrimaryColorProvider() : super(cDarkPink);
 
   createPrimaryColor(Color color) {
     state = color;
@@ -47,7 +47,7 @@ class PrimaryColorProvider extends StateNotifier<Color> {
 }
 
 class AccentColorProvider extends StateNotifier<Color> {
-  AccentColorProvider() : super(cMauve);
+  AccentColorProvider() : super(cLightPurple);
 
   createAccentColor(Color color) {
     state = color;

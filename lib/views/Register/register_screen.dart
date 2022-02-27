@@ -5,6 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:algolia/algolia.dart';
 import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/providers/dayMood_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
@@ -49,7 +51,6 @@ class _RegisterScreenState extends State<RegisterScreen>
   Algolia algolia = AlgoliaService.algolia;
   List<AlgoliaObjectSnapshot> gamesAlgolia = [];
 
-  bool isDayMood = false;
   bool dataIsThere = false;
   bool isLoading = false;
   bool isLoadingMoreData = false;
@@ -62,20 +63,6 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   Country? _selectedCountry;
   DateTime? _dateBirthday;
-
-  void timeMood() {
-    int hour = DateTime.now().hour;
-
-    if (hour >= 8 && hour <= 18) {
-      setState(() {
-        isDayMood = true;
-      });
-    } else {
-      setState(() {
-        isDayMood = false;
-      });
-    }
-  }
 
   void initCountry() async {
     final country = await getCountryByCountryCode(context, 'FR');
@@ -169,14 +156,6 @@ class _RegisterScreenState extends State<RegisterScreen>
     });
   }
 
-  Future<bool> _willPopCallback() async {
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
-        (route) => false);
-    return true;
-  }
-
   _searchGames(String value) async {
     if (gamesAlgolia.length != 0) {
       gamesAlgolia.clear();
@@ -227,7 +206,6 @@ class _RegisterScreenState extends State<RegisterScreen>
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
 
-    timeMood();
     initCountry();
     getGames();
 
@@ -372,17 +350,6 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   @override
   Widget build(BuildContext context) {
-    List<Color> lightBgColors = [
-      Color(0xFF947B8F),
-      Color(0xFFB27D75),
-      Color(0xFFE38048),
-    ];
-    List<Color> darkBgColors = [
-      Color(0xFF4075DA),
-      Color(0xFF6E78B1),
-      Color(0xFF947B8F),
-    ];
-
     return WillPopScope(
         child: Scaffold(
             resizeToAvoidBottomInset: false,
@@ -397,10 +364,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                   onTap: () => Helpers.hideKeyboard(context),
                   child: Column(children: [
                     topRegisterEmail(),
-                    Expanded(child: bodyRegister(lightBgColors, darkBgColors)),
+                    Expanded(child: bodyRegister()),
                   ]),
                 ))),
-        onWillPop: () => _willPopCallback());
+        onWillPop: () => Helpers.willPopCallback(context, WelcomeScreen()));
   }
 
   Widget topRegisterEmail() {
@@ -458,47 +425,55 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget stepsRegister() {
-    return TabPageSelector(
-      controller: _tabController,
-      selectedColor: isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA),
-      color: Colors.transparent,
-      indicatorSize: 14,
-    );
+    return Consumer(builder: (_, ref, child) {
+      ref.read(dayMoodNotifierProvider.notifier).timeMood();
+      bool isDayMood = ref.watch(dayMoodNotifierProvider);
+      return TabPageSelector(
+        controller: _tabController,
+        selectedColor: isDayMood ? cDarkPink : cLightPurple,
+        color: Colors.transparent,
+        indicatorSize: 14,
+      );
+    });
   }
 
-  Widget bodyRegister(List<Color> lightBgColors, List<Color> darkBgColors) {
+  Widget bodyRegister() {
     final country = _selectedCountry;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
-      child: TabBarView(
-          controller: _tabController,
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            Column(
-              children: [
-                Expanded(child: firstPage()),
-                btnNext(),
-              ],
-            ),
-            Column(
-              children: [
-                Expanded(child: secondPage(country)),
-                btnPrevious(),
-                btnNext(),
-              ],
-            ),
-            Column(
-              children: [
-                Expanded(child: thirdPage()),
-                btnPrevious(),
-                btnFinish(),
-              ],
-            )
-          ]),
+      child: Consumer(builder: (_, ref, child) {
+        ref.read(dayMoodNotifierProvider.notifier).timeMood();
+        bool isDayMood = ref.watch(dayMoodNotifierProvider);
+        return TabBarView(
+            controller: _tabController,
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              Column(
+                children: [
+                  Expanded(child: firstPage()),
+                  btnNext(isDayMood),
+                ],
+              ),
+              Column(
+                children: [
+                  Expanded(child: secondPage(country)),
+                  btnPrevious(),
+                  btnNext(isDayMood),
+                ],
+              ),
+              Column(
+                children: [
+                  Expanded(child: thirdPage()),
+                  btnPrevious(),
+                  btnFinish(isDayMood),
+                ],
+              )
+            ]);
+      }),
     );
   }
 
-  Widget btnNext() {
+  Widget btnNext(bool isDayMood) {
     return Container(
       height: MediaQuery.of(context).size.height / 12,
       width: double.infinity,
@@ -514,7 +489,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         },
         style: ElevatedButton.styleFrom(
             elevation: 6,
-            primary: isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA),
+            primary: isDayMood ? cDarkPink : cLightPurple,
             onPrimary: Theme.of(context).canvasColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
@@ -556,7 +531,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 
-  Widget btnFinish() {
+  Widget btnFinish(bool isDayMood) {
     return Container(
       height: MediaQuery.of(context).size.height / 12,
       width: double.infinity,
@@ -568,7 +543,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         },
         style: ElevatedButton.styleFrom(
             elevation: 6,
-            primary: isDayMood ? Color(0xFF947B8F) : Color(0xFF4075DA),
+            primary: isDayMood ? cDarkPink : cLightPurple,
             onPrimary: Theme.of(context).canvasColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
