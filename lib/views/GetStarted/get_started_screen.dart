@@ -11,24 +11,7 @@ class GetStartedScreen extends StatefulWidget {
 }
 
 class _GetStartedScreenState extends State<GetStartedScreen> {
-  bool isDayMood = true;
-  Duration _duration = Duration(seconds: 1);
-
   List<Slide> slides = [];
-
-  void timeMood() {
-    int hour = DateTime.now().hour;
-
-    if (hour >= 8 && hour <= 18) {
-      setState(() {
-        isDayMood = true;
-      });
-    } else {
-      setState(() {
-        isDayMood = false;
-      });
-    }
-  }
 
   void onDonePress() {
     Navigator.pop(context);
@@ -37,7 +20,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
   @override
   void initState() {
     super.initState();
-    timeMood();
 
     slides.add(Slide(
         title: 'COMMUNITY',
@@ -64,30 +46,15 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Color> lightBgColors = [
-      Color(0xFF947B8F),
-      Color(0xFFB27D75),
-      Color(0xFFE38048),
-    ];
-    var darkBgColors = [
-      Color(0xFF4075DA),
-      Color(0xFF6E78B1),
-      Color(0xFF947B8F),
-    ];
     return Scaffold(
-      body: AnimatedContainer(
-          duration: _duration,
-          curve: Curves.easeInOut,
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: isDayMood ? lightBgColors : darkBgColors,
-            ),
-          ),
-          child: SafeArea(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark),
             child: Container(
               decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -116,8 +83,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
 
                 slides: this.slides,
               ),
-            ),
-          )),
-    );
+            )));
   }
 }
