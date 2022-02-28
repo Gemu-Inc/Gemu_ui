@@ -430,7 +430,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       bool isDayMood = ref.watch(dayMoodNotifierProvider);
       return TabPageSelector(
         controller: _tabController,
-        selectedColor: isDayMood ? cDarkPink : cLightPurple,
+        selectedColor: isDayMood ? cPinkBtn : cPurpleBtn,
         color: Colors.transparent,
         indicatorSize: 14,
       );
@@ -489,7 +489,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         },
         style: ElevatedButton.styleFrom(
             elevation: 6,
-            primary: isDayMood ? cDarkPink : cLightPurple,
+            primary: isDayMood ? cPinkBtn : cPurpleBtn,
             onPrimary: Theme.of(context).canvasColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
@@ -543,7 +543,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         },
         style: ElevatedButton.styleFrom(
             elevation: 6,
-            primary: isDayMood ? cDarkPink : cLightPurple,
+            primary: isDayMood ? cPinkBtn : cPurpleBtn,
             onPrimary: Theme.of(context).canvasColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),

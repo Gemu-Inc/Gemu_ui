@@ -176,7 +176,8 @@ class WelcomeviewState extends State<WelcomeScreen> {
                               style: ElevatedButton.styleFrom(
                                   elevation: 6,
                                   shadowColor: Theme.of(context).shadowColor,
-                                  primary: isDayMood ? cDarkPink : cLightPurple,
+                                  primary: isDayMood ? cPinkBtn : cPurpleBtn,
+                                  // cLightPurple,
                                   onPrimary: Theme.of(context).canvasColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15.0),
@@ -231,7 +232,7 @@ class WelcomeviewState extends State<WelcomeScreen> {
                               style: ElevatedButton.styleFrom(
                                   elevation: 6,
                                   shadowColor: Theme.of(context).shadowColor,
-                                  primary: isDayMood ? cLightPurple : cDarkPink,
+                                  primary: isDayMood ? cPurpleBtn : cPinkBtn,
                                   onPrimary: Theme.of(context).canvasColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15.0),
@@ -270,9 +271,8 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                       ..onTap =
                                           () => print("terms and conditions"),
                                     style: TextStyle(
-                                        color: isDayMood
-                                            ? cDarkPink
-                                            : cLightPurple,
+                                        color:
+                                            isDayMood ? cPinkBtn : cPurpleBtn,
                                         fontSize: 12)),
                                 TextSpan(
                                     text: " et les ",
@@ -287,9 +287,8 @@ class WelcomeviewState extends State<WelcomeScreen> {
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () => print("privacy policy"),
                                     style: TextStyle(
-                                        color: isDayMood
-                                            ? cDarkPink
-                                            : cLightPurple,
+                                        color:
+                                            isDayMood ? cPinkBtn : cPurpleBtn,
                                         fontSize: 12))
                               ]),
                           textAlign: TextAlign.center)),

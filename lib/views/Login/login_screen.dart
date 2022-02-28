@@ -229,7 +229,7 @@ class Loginviewstate extends State<LoginScreen> {
               style: ElevatedButton.styleFrom(
                   elevation: 6,
                   shadowColor: Theme.of(context).shadowColor,
-                  primary: isDayMood ? cLightPurple : cDarkPink,
+                  primary: isDayMood ? cPurpleBtn : cPinkBtn,
                   onPrimary: Theme.of(context).canvasColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),

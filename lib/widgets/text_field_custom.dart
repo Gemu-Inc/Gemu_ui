@@ -150,7 +150,7 @@ class _TextFieldCustomLoginState extends State<TextFieldCustomLogin> {
         obscureText: pwdVisible,
         controller: widget.controller,
         focusNode: widget.focusNode,
-        cursorColor: widget.isDayMood ? cLightPurple : cDarkPink,
+        cursorColor: widget.isDayMood ? cPurpleBtn : cPinkBtn,
         keyboardType: widget.textInputType,
         textInputAction: widget.textInputAction,
         onSubmitted: widget.submit,
@@ -168,7 +168,7 @@ class _TextFieldCustomLoginState extends State<TextFieldCustomLogin> {
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-              color: widget.isDayMood ? cLightPurple : cDarkPink,
+              color: widget.isDayMood ? cPurpleBtn : cPinkBtn,
             )),
             prefixIcon: Icon(widget.icon,
                 color: widget.focusNode.hasFocus
@@ -259,7 +259,7 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
         obscureText: pwdVisible,
         controller: widget.controller,
         focusNode: widget.focusNode,
-        cursorColor: widget.isDayMood ? cDarkPink : cLightPurple,
+        cursorColor: widget.isDayMood ? cPinkBtn : cPurpleBtn,
         keyboardType: widget.textInputType,
         textInputAction: widget.textInputAction,
         onSubmitted: widget.submit,
@@ -277,7 +277,7 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-              color: widget.isDayMood ? cDarkPink : cLightPurple,
+              color: widget.isDayMood ? cPinkBtn : cPurpleBtn,
             )),
             prefixIcon: Icon(widget.icon,
                 color: widget.focusNode.hasFocus

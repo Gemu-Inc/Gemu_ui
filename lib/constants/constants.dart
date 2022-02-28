@@ -16,7 +16,8 @@ const cLightPink = Color(0xFFDE5767);
 const cDarkPink = Color(0xFFAF4259);
 const cLightPurple = Color(0xFF4F234C);
 const cDarkPurple = Color(0xFF140934);
-const cPurpleBtn = Color(0xFF753052);
+const cPurpleBtn = Color(0xFF482049);
+const cPinkBtn = Color(0xFFAF4259);
 
 //Lists colors dayMood
 List<Color> lightBgColors = [cLightPink, cDarkPink, cLightPurple, cDarkPurple];

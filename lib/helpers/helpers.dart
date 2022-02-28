@@ -105,9 +105,8 @@ class Helpers {
                                                   RegisterScreen())),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary: isDayMood
-                                              ? cDarkPink
-                                              : cLightPurple,
+                                          primary:
+                                              isDayMood ? cPinkBtn : cPurpleBtn,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -290,9 +289,8 @@ class Helpers {
                                                   RegisterScreen())),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary: isDayMood
-                                              ? cDarkPink
-                                              : cLightPurple,
+                                          primary:
+                                              isDayMood ? cPinkBtn : cPurpleBtn,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -429,9 +427,8 @@ class Helpers {
                                               builder: (_) => LoginScreen())),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary: isDayMood
-                                              ? cLightPurple
-                                              : cDarkPink,
+                                          primary:
+                                              isDayMood ? cPurpleBtn : cPinkBtn,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -614,9 +611,8 @@ class Helpers {
                                               builder: (_) => LoginScreen())),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary: isDayMood
-                                              ? cLightPurple
-                                              : cDarkPink,
+                                          primary:
+                                              isDayMood ? cPurpleBtn : cPinkBtn,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
