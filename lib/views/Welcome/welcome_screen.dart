@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/dayMood_provider.dart';
+import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/widgets/clip_shadow_path.dart';
 import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/helpers/helpers.dart';
@@ -68,7 +69,10 @@ class WelcomeviewState extends State<WelcomeScreen> {
           child: Padding(
             padding: const EdgeInsets.only(top: 25.0, right: 15.0),
             child: IconButton(
-                onPressed: () => Navigator.pushNamed(context, GetStarted),
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => GetStartedBeforeScreen())),
                 icon: Icon(
                   Icons.info_outline,
                   size: 28,

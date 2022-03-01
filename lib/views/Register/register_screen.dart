@@ -6,7 +6,6 @@ import 'package:algolia/algolia.dart';
 import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemu/providers/dayMood_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
@@ -19,6 +18,7 @@ import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/helpers/helpers.dart';
+import 'package:gemu/providers/dayMood_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -360,17 +360,20 @@ class _RegisterScreenState extends State<RegisterScreen>
                         Theme.of(context).brightness == Brightness.dark
                             ? Brightness.light
                             : Brightness.dark),
-                child: GestureDetector(
-                  onTap: () => Helpers.hideKeyboard(context),
-                  child: Column(children: [
-                    topRegisterEmail(),
-                    Expanded(child: bodyRegister()),
-                  ]),
-                ))),
+                child: Consumer(builder: (_, ref, child) {
+                  bool isDayMood = ref.watch(dayMoodNotifierProvider);
+                  return GestureDetector(
+                    onTap: () => Helpers.hideKeyboard(context),
+                    child: Column(children: [
+                      topRegisterEmail(isDayMood),
+                      Expanded(child: bodyRegister(isDayMood)),
+                    ]),
+                  );
+                }))),
         onWillPop: () => Helpers.willPopCallback(context, WelcomeScreen()));
   }
 
-  Widget topRegisterEmail() {
+  Widget topRegisterEmail(bool isDayMood) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: AppBar(
@@ -419,32 +422,25 @@ class _RegisterScreenState extends State<RegisterScreen>
               fontSize: 23),
         ),
         centerTitle: false,
-        actions: [stepsRegister()],
+        actions: [stepsRegister(isDayMood)],
       ),
     );
   }
 
-  Widget stepsRegister() {
-    return Consumer(builder: (_, ref, child) {
-      ref.read(dayMoodNotifierProvider.notifier).timeMood();
-      bool isDayMood = ref.watch(dayMoodNotifierProvider);
-      return TabPageSelector(
-        controller: _tabController,
-        selectedColor: isDayMood ? cPinkBtn : cPurpleBtn,
-        color: Colors.transparent,
-        indicatorSize: 14,
-      );
-    });
+  Widget stepsRegister(bool isDayMood) {
+    return TabPageSelector(
+      controller: _tabController,
+      selectedColor: isDayMood ? cPinkBtn : cPurpleBtn,
+      color: Colors.transparent,
+      indicatorSize: 14,
+    );
   }
 
-  Widget bodyRegister() {
+  Widget bodyRegister(bool isDayMood) {
     final country = _selectedCountry;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
-      child: Consumer(builder: (_, ref, child) {
-        ref.read(dayMoodNotifierProvider.notifier).timeMood();
-        bool isDayMood = ref.watch(dayMoodNotifierProvider);
-        return TabBarView(
+        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+        child: TabBarView(
             controller: _tabController,
             physics: NeverScrollableScrollPhysics(),
             children: [
@@ -468,9 +464,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   btnFinish(isDayMood),
                 ],
               )
-            ]);
-      }),
-    );
+            ]));
   }
 
   Widget btnNext(bool isDayMood) {

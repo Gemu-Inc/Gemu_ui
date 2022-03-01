@@ -1,47 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intro_slider/intro_slider.dart';
-import 'package:intro_slider/slide_object.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/providers/dayMood_provider.dart';
 
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/views/Welcome/welcome_screen.dart';
+
+class GetStartedBeforeScreen extends StatefulWidget {
+  @override
+  _GetStartedBeforeScreenState createState() => _GetStartedBeforeScreenState();
+}
+
+class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          child: Consumer(builder: (_, ref, child) {
+            bool isDayMood = ref.watch(dayMoodNotifierProvider);
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [btnStart(isDayMood)],
+            );
+          }),
+          value: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Brightness.light
+                      : Brightness.dark),
+        ));
+  }
+
+  Widget btnStart(bool isDayMood) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      child: Container(
+        height: MediaQuery.of(context).size.height / 12,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDayMood ? lightBgColors : darkBgColors),
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => GetStartedScreen()));
+          },
+          style: ElevatedButton.styleFrom(
+              primary: Colors.transparent,
+              shadowColor: Colors.transparent,
+              onPrimary: Theme.of(context).canvasColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              )),
+          child: Text(
+            "Commencer",
+            style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+                fontSize: 15,
+                fontWeight: FontWeight.w700),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class GetStartedScreen extends StatefulWidget {
   @override
   _GetStartedScreenState createState() => _GetStartedScreenState();
 }
 
-class _GetStartedScreenState extends State<GetStartedScreen> {
-  List<Slide> slides = [];
-
-  void onDonePress() {
-    Navigator.pop(context);
-  }
+class _GetStartedScreenState extends State<GetStartedScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  int lengthGetStarted = 3;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: lengthGetStarted, vsync: this);
+    _tabController.animation!.addListener(() {
+      setState(() {
+        _tabController.index = (_tabController.animation!.value).round();
+      });
+    });
+  }
 
-    slides.add(Slide(
-        title: 'COMMUNITY',
-        styleTitle: mystyle(15),
-        pathImage: 'assets/images/signup.png',
-        description: "Create, share, watch and more",
-        styleDescription: mystyle(11),
-        backgroundColor: Colors.transparent));
-    slides.add(Slide(
-        title: 'RECORD',
-        styleTitle: mystyle(15),
-        pathImage: 'assets/images/login.png',
-        description: "Record and save everywhere and everything",
-        styleDescription: mystyle(11),
-        backgroundColor: Colors.transparent));
-    slides.add(Slide(
-        title: 'DISCOVER',
-        styleTitle: mystyle(15),
-        pathImage: 'assets/images/chat.png',
-        description: "Discover new games and communities",
-        styleDescription: mystyle(11),
-        backgroundColor: Colors.transparent));
+  @override
+  void deactivate() {
+    _tabController.animation?.removeListener(() {
+      setState(() {
+        _tabController.index = (_tabController.animation!.value).round();
+      });
+    });
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -55,34 +121,84 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                     Theme.of(context).brightness == Brightness.dark
                         ? Brightness.light
                         : Brightness.dark),
-            child: Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
-                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
-                  ])),
-              child: IntroSlider(
-                colorDot: Theme.of(context).primaryColor.withOpacity(0.5),
-                colorActiveDot: Theme.of(context).primaryColor,
-                sizeDot: 13.0,
+            child: Consumer(builder: (context, ref, child) {
+              bool isDayMood = ref.watch(dayMoodNotifierProvider);
+              return Column(
+                children: [
+                  Expanded(child: bodyGetStarted()),
+                  stepsGetStarted(isDayMood)
+                ],
+              );
+            })));
+  }
 
-                // Skip button
-                colorSkipBtn: Color(0x33000000),
-                highlightColorSkipBtn: Color(0xff000000),
+  Widget bodyGetStarted() {
+    return TabBarView(
+        controller: _tabController,
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [Container(), Container(), Container()]);
+  }
 
-                // Next button
-                showNextBtn: true,
-
-                // Done button
-                colorDoneBtn: Color(0x33000000),
-                highlightColorDoneBtn: Color(0xff000000),
-                onDonePress: this.onDonePress,
-
-                slides: this.slides,
-              ),
-            )));
+  Widget stepsGetStarted(bool isDayMood) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 12,
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: 100,
+            child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    if (_tabController.index != lengthGetStarted - 1) {
+                      setState(() {
+                        _tabController.index = 2;
+                      });
+                    }
+                  });
+                },
+                child: Text(
+                  "Passer",
+                  style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black),
+                )),
+          ),
+          TabPageSelector(
+            controller: _tabController,
+            selectedColor: isDayMood ? cPinkBtn : cPurpleBtn,
+            color: Colors.transparent,
+            indicatorSize: 14,
+          ),
+          Container(
+            width: 100,
+            child: TextButton(
+                onPressed: () {
+                  if (_tabController.index != lengthGetStarted - 1) {
+                    setState(() {
+                      _tabController.index += 1;
+                    });
+                  } else {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                        (route) => false);
+                  }
+                },
+                child: Text(
+                  _tabController.index != lengthGetStarted - 1
+                      ? "Suivant"
+                      : "Terminer",
+                  style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black),
+                )),
+          )
+        ],
+      ),
+    );
   }
 }

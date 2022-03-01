@@ -115,7 +115,6 @@ class Loginviewstate extends State<LoginScreen> {
                       ),
                     ),
                     Expanded(child: Consumer(builder: (_, ref, child) {
-                      ref.read(dayMoodNotifierProvider.notifier).timeMood();
                       bool isDayMood = ref.watch(dayMoodNotifierProvider);
                       return Container(
                         child: loginEmail(isDayMood),
