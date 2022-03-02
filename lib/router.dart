@@ -19,9 +19,9 @@ Route<dynamic> generateRoute(RouteSettings settings, BuildContext context) {
     case Welcome:
       return _getPageRoute(
           routeName: settings.name, viewToShow: WelcomeScreen());
-    case GetStarted:
-      return _getPageRoute(
-          routeName: settings.name, viewToShow: GetStartedScreen());
+    // case GetStarted:
+    //   return _getPageRoute(
+    //       routeName: settings.name, viewToShow: GetStartedScreen());
     case Register:
       return _getPageRoute(
           routeName: settings.name, viewToShow: RegisterScreen());

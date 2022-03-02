@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gemu/providers/theme_provider.dart';
 import 'package:gemu/services/auth_service.dart';
+import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/views/Splash/splash_screen.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:loader/loader.dart';
@@ -21,10 +22,13 @@ class LogController extends StatefulWidget {
 
 class _LogControllerState extends State<LogController> {
   late Color primaryColor, accentColor;
+  bool? seenGetStarted;
 
   Future<bool> loading(WidgetRef ref) async {
     final prefs = await SharedPreferences.getInstance();
     String? theme = prefs.getString(appTheme);
+    seenGetStarted = prefs.getBool("getStarted");
+
     if (theme == null || theme == "ThemeSystem") {
       if (theme == null) theme = "ThemeSystem";
       if (prefs.getInt('color_primary') != null) {
@@ -77,6 +81,9 @@ class _LogControllerState extends State<LogController> {
                 load: () => loading(ref),
                 loadingWidget: SplashScreen(),
                 builder: (_, value) {
+                  if (seenGetStarted == null) {
+                    return GetStartedBeforeScreen();
+                  }
                   return isSignedIn
                       ? NavigationScreen(uid: snapshot.data!.uid)
                       : WelcomeScreen();

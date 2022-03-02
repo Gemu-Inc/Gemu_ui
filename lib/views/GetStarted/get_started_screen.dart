@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/providers/dayMood_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
@@ -12,6 +13,21 @@ class GetStartedBeforeScreen extends StatefulWidget {
 }
 
 class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
+  bool? seenGetStarted;
+
+  Future<void> setSeenGetStarted() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      seenGetStarted = prefs.getBool("getStarted");
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setSeenGetStarted();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,9 +35,15 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           child: Consumer(builder: (_, ref, child) {
             bool isDayMood = ref.watch(dayMoodNotifierProvider);
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [btnStart(isDayMood)],
+            return Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              child: Column(
+                children: [
+                  if (seenGetStarted != null) btnClear(),
+                  Expanded(child: bodyGetStartedBefore()),
+                  btnStart(isDayMood)
+                ],
+              ),
             );
           }),
           value: SystemUiOverlayStyle(
@@ -33,9 +55,45 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
         ));
   }
 
+  Widget btnClear() {
+    return Container(
+      height: 75,
+      alignment: Alignment.topRight,
+      padding: const EdgeInsets.only(right: 15.0),
+      child: IconButton(
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                (route) => false);
+          },
+          icon: Icon(
+            Icons.clear,
+            size: 30,
+          )),
+    );
+  }
+
+  Widget bodyGetStartedBefore() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset("assets/images/get_started.png"),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
+          child: Text(
+            "Quelques explications avant d'entrer dans l'aventure Gemu",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+        )
+      ],
+    );
+  }
+
   Widget btnStart(bool isDayMood) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
       child: Container(
         height: MediaQuery.of(context).size.height / 12,
         width: double.infinity,
@@ -49,7 +107,10 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
         child: ElevatedButton(
           onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (_) => GetStartedScreen()));
+                context,
+                MaterialPageRoute(
+                    builder: (_) =>
+                        GetStartedScreen(seenGetStarted: seenGetStarted)));
           },
           style: ElevatedButton.styleFrom(
               primary: Colors.transparent,
@@ -64,7 +125,7 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white
                     : Colors.black,
-                fontSize: 15,
+                fontSize: 16,
                 fontWeight: FontWeight.w700),
           ),
         ),
@@ -74,6 +135,10 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
 }
 
 class GetStartedScreen extends StatefulWidget {
+  final bool? seenGetStarted;
+
+  const GetStartedScreen({Key? key, required this.seenGetStarted})
+      : super(key: key);
   @override
   _GetStartedScreenState createState() => _GetStartedScreenState();
 }
@@ -81,7 +146,7 @@ class GetStartedScreen extends StatefulWidget {
 class _GetStartedScreenState extends State<GetStartedScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int lengthGetStarted = 3;
+  int lengthGetStarted = 4;
 
   @override
   void initState() {
@@ -123,20 +188,213 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                         : Brightness.dark),
             child: Consumer(builder: (context, ref, child) {
               bool isDayMood = ref.watch(dayMoodNotifierProvider);
-              return Column(
-                children: [
-                  Expanded(child: bodyGetStarted()),
-                  stepsGetStarted(isDayMood)
-                ],
+              return Padding(
+                padding:
+                    EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                child: Column(
+                  children: [
+                    if (widget.seenGetStarted != null) btnClear(),
+                    Expanded(child: bodyGetStarted(isDayMood)),
+                    stepsGetStarted(isDayMood)
+                  ],
+                ),
               );
             })));
   }
 
-  Widget bodyGetStarted() {
+  Widget btnClear() {
+    return Container(
+      height: 75,
+      alignment: Alignment.topRight,
+      padding: const EdgeInsets.only(right: 15.0),
+      child: IconButton(
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                (route) => false);
+          },
+          icon: Icon(
+            Icons.clear,
+            size: 30,
+          )),
+    );
+  }
+
+  Widget bodyGetStarted(bool isDayMood) {
     return TabBarView(
         controller: _tabController,
         physics: AlwaysScrollableScrollPhysics(),
-        children: [Container(), Container(), Container()]);
+        children: [
+          firstPage(isDayMood),
+          secondPage(isDayMood),
+          thirdPage(isDayMood),
+          fourthPage(isDayMood)
+        ]);
+  }
+
+  Widget firstPage(bool isDayMood) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      child: Column(
+        children: [
+          Container(
+              height: MediaQuery.of(context).size.height / 6,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.home,
+                    size: 33,
+                    color: isDayMood ? cPinkBtn : cPurpleBtn,
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                  Text(
+                    "Met toi à jour quand tu le souhaites",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              )),
+          Expanded(
+            child: Image.asset("assets/images/get_started.png"),
+          ),
+          Container(
+              height: MediaQuery.of(context).size.height / 6,
+              alignment: Alignment.center,
+              child: Text(
+                "Regarde, réagit et partage tes émotions à travers le contenu des jeux et utilisateurs que tu suis à chaque instant!",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
+              ))
+        ],
+      ),
+    );
+  }
+
+  Widget secondPage(bool isDayMood) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      child: Column(
+        children: [
+          Container(
+              height: MediaQuery.of(context).size.height / 6,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.highlight,
+                    color: isDayMood ? cPinkBtn : cPurpleBtn,
+                    size: 33,
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                  Text(
+                    "Met la lumière sur les dernières tendances",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              )),
+          Expanded(
+            child: Image.asset("assets/images/get_started.png"),
+          ),
+          Container(
+              height: MediaQuery.of(context).size.height / 6,
+              alignment: Alignment.center,
+              child: Text(
+                "Découvre tous les jours des nouveaux jeux mais aussi des nouveaux talents",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ))
+        ],
+      ),
+    );
+  }
+
+  Widget thirdPage(bool isDayMood) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      child: Column(
+        children: [
+          Container(
+              height: MediaQuery.of(context).size.height / 6,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.videogame_asset,
+                    color: isDayMood ? cPinkBtn : cPurpleBtn,
+                    size: 33,
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                  Text(
+                    "Accède à tous les jeux possibles",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              )),
+          Expanded(
+            child: Image.asset("assets/images/get_started.png"),
+          ),
+          Container(
+              height: MediaQuery.of(context).size.height / 6,
+              alignment: Alignment.center,
+              child: Text(
+                "Découvre et suit des nouveaux jeux afin d'avoir tout l'actualité et le contenu possible",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ))
+        ],
+      ),
+    );
+  }
+
+  Widget fourthPage(bool isDayMood) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      child: Column(
+        children: [
+          Container(
+              height: MediaQuery.of(context).size.height / 6,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.create,
+                    color: isDayMood ? cPinkBtn : cPurpleBtn,
+                    size: 33,
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                  Text(
+                    "A ton tour!",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              )),
+          Expanded(
+            child: Image.asset("assets/images/get_started.png"),
+          ),
+          Container(
+              height: MediaQuery.of(context).size.height / 6,
+              alignment: Alignment.center,
+              child: Text(
+                "Ne sois pas timide et partage toi aussi ton contenu sur tes jeux favoris à la communauté!",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ))
+        ],
+      ),
+    );
   }
 
   Widget stepsGetStarted(bool isDayMood) {
@@ -153,7 +411,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                   setState(() {
                     if (_tabController.index != lengthGetStarted - 1) {
                       setState(() {
-                        _tabController.index = 2;
+                        _tabController.index = lengthGetStarted - 1;
                       });
                     }
                   });
@@ -175,16 +433,25 @@ class _GetStartedScreenState extends State<GetStartedScreen>
           Container(
             width: 100,
             child: TextButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_tabController.index != lengthGetStarted - 1) {
                     setState(() {
                       _tabController.index += 1;
                     });
                   } else {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => WelcomeScreen()),
-                        (route) => false);
+                    if (widget.seenGetStarted == null) {
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setBool("getStarted", true);
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                          (route) => false);
+                    } else {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                          (route) => false);
+                    }
                   }
                 },
                 child: Text(
