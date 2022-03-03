@@ -347,7 +347,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
               height: MediaQuery.of(context).size.height / 6,
               alignment: Alignment.center,
               child: Text(
-                "Découvre et suit des nouveaux jeux afin d'avoir tout l'actualité et le contenu possible",
+                "Découvre et suit des nouveaux jeux afin d'avoir toute l'actualité et le contenu possible",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ))
