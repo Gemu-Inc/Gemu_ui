@@ -8,6 +8,8 @@ import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
 
 class GetStartedBeforeScreen extends StatefulWidget {
+  const GetStartedBeforeScreen({Key? key}) : super(key: key);
+
   @override
   _GetStartedBeforeScreenState createState() => _GetStartedBeforeScreenState();
 }
