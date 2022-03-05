@@ -86,7 +86,9 @@ class _LogControllerState extends State<LogController> {
                   }
                   return isSignedIn
                       ? NavigationScreen(uid: snapshot.data!.uid)
-                      : WelcomeScreen();
+                      : WelcomeScreen(
+                          isFirstCo: false,
+                        );
                 },
               );
             },

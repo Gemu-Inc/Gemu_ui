@@ -122,7 +122,11 @@ class Loginviewstate extends State<LoginScreen> {
                     }))
                   ]),
                 ))),
-        onWillPop: () => Helpers.willPopCallback(context, WelcomeScreen()));
+        onWillPop: () => Helpers.willPopCallback(
+            context,
+            WelcomeScreen(
+              isFirstCo: false,
+            )));
   }
 
   Widget topLoginEmail() {
@@ -137,7 +141,9 @@ class Loginviewstate extends State<LoginScreen> {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => WelcomeScreen()),
+                      builder: (BuildContext context) => WelcomeScreen(
+                            isFirstCo: false,
+                          )),
                   (route) => false);
             },
             icon: Icon(Icons.arrow_back_ios,
@@ -265,7 +271,7 @@ class Loginviewstate extends State<LoginScreen> {
               text: "Mot de passe oublié",
               recognizer: TapGestureRecognizer()
                 ..onTap = () => print("Mot de passe oublié"),
-              style: mystyle(12, cDarkPink),
+              style: mystyle(12, isDayMood ? cPurpleBtn : cPinkBtn),
             )),
         const SizedBox(
           height: 5.0,
@@ -283,7 +289,7 @@ class Loginviewstate extends State<LoginScreen> {
                 children: [
                   TextSpan(
                     text: "Inscription",
-                    style: mystyle(12, cDarkPink),
+                    style: mystyle(12, isDayMood ? cPurpleBtn : cPinkBtn),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () =>
                           Helpers.inscriptionBottomSheet(context, isDayMood),

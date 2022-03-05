@@ -11,6 +11,9 @@ import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/helpers/helpers.dart';
 
 class WelcomeScreen extends StatefulWidget {
+  final bool isFirstCo;
+
+  const WelcomeScreen({Key? key, required this.isFirstCo}) : super(key: key);
   @override
   WelcomeviewState createState() => WelcomeviewState();
 }
@@ -27,7 +30,9 @@ class WelcomeviewState extends State<WelcomeScreen> {
                         ? Brightness.light
                         : Brightness.dark),
             child: Consumer(builder: (_, ref, child) {
-              ref.read(dayMoodNotifierProvider.notifier).timeMood();
+              if (!widget.isFirstCo) {
+                ref.read(dayMoodNotifierProvider.notifier).timeMood();
+              }
               bool isDayMood = ref.watch(dayMoodNotifierProvider);
               return bodyWelcome(lightBgColors, darkBgColors, isDayMood);
             })));

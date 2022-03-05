@@ -16,9 +16,9 @@ import 'package:gemu/views/Navigation/navigation_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings, BuildContext context) {
   switch (settings.name) {
-    case Welcome:
-      return _getPageRoute(
-          routeName: settings.name, viewToShow: WelcomeScreen());
+    // case Welcome:
+    //   return _getPageRoute(
+    //       routeName: settings.name, viewToShow: WelcomeScreen());
     // case GetStarted:
     //   return _getPageRoute(
     //       routeName: settings.name, viewToShow: GetStartedScreen());

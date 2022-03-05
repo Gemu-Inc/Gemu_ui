@@ -370,7 +370,11 @@ class _RegisterScreenState extends State<RegisterScreen>
                     ]),
                   );
                 }))),
-        onWillPop: () => Helpers.willPopCallback(context, WelcomeScreen()));
+        onWillPop: () => Helpers.willPopCallback(
+            context,
+            WelcomeScreen(
+              isFirstCo: false,
+            )));
   }
 
   Widget topRegisterEmail(bool isDayMood) {
@@ -392,7 +396,9 @@ class _RegisterScreenState extends State<RegisterScreen>
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      WelcomeScreen()),
+                                      WelcomeScreen(
+                                        isFirstCo: false,
+                                      )),
                               (route) => false),
                           child: Text(
                             "Oui",

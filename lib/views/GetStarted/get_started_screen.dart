@@ -36,6 +36,9 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           child: Consumer(builder: (_, ref, child) {
+            if (seenGetStarted == null) {
+              ref.read(dayMoodNotifierProvider.notifier).timeMood();
+            }
             bool isDayMood = ref.watch(dayMoodNotifierProvider);
             return Padding(
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
@@ -66,7 +69,10 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
           onPressed: () {
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                MaterialPageRoute(
+                    builder: (_) => WelcomeScreen(
+                          isFirstCo: false,
+                        )),
                 (route) => false);
           },
           icon: Icon(
@@ -155,18 +161,14 @@ class _GetStartedScreenState extends State<GetStartedScreen>
     super.initState();
     _tabController = TabController(length: lengthGetStarted, vsync: this);
     _tabController.animation!.addListener(() {
-      setState(() {
-        _tabController.index = (_tabController.animation!.value).round();
-      });
+      _tabController.index = (_tabController.animation!.value).round();
     });
   }
 
   @override
   void deactivate() {
     _tabController.animation?.removeListener(() {
-      setState(() {
-        _tabController.index = (_tabController.animation!.value).round();
-      });
+      _tabController.index = (_tabController.animation!.value).round();
     });
     super.deactivate();
   }
@@ -213,7 +215,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
           onPressed: () {
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                MaterialPageRoute(
+                    builder: (_) => WelcomeScreen(
+                          isFirstCo: false,
+                        )),
                 (route) => false);
           },
           icon: Icon(
@@ -410,13 +415,11 @@ class _GetStartedScreenState extends State<GetStartedScreen>
             width: 100,
             child: TextButton(
                 onPressed: () {
-                  setState(() {
-                    if (_tabController.index != lengthGetStarted - 1) {
-                      setState(() {
-                        _tabController.index = lengthGetStarted - 1;
-                      });
-                    }
-                  });
+                  if (_tabController.index != lengthGetStarted - 1) {
+                    setState(() {
+                      _tabController.index = lengthGetStarted - 1;
+                    });
+                  }
                 },
                 child: Text(
                   "Passer",
@@ -446,12 +449,18 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                       prefs.setBool("getStarted", true);
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => WelcomeScreen(
+                                    isFirstCo: true,
+                                  )),
                           (route) => false);
                     } else {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => WelcomeScreen(
+                                    isFirstCo: false,
+                                  )),
                           (route) => false);
                     }
                   }
