@@ -49,12 +49,6 @@ class Loginviewstate extends State<LoginScreen> {
     _passwordController = TextEditingController();
     _focusNodePassword = FocusNode();
 
-    _emailController.addListener(() {
-      setState(() {});
-    });
-    _passwordController.addListener(() {
-      setState(() {});
-    });
     _focusNodeEmail.addListener(() {
       setState(() {});
     });
@@ -65,13 +59,7 @@ class Loginviewstate extends State<LoginScreen> {
 
   @override
   void deactivate() {
-    _emailController.removeListener(() {
-      setState(() {});
-    });
     _focusNodeEmail.removeListener(() {
-      setState(() {});
-    });
-    _passwordController.removeListener(() {
       setState(() {});
     });
     _focusNodePassword.removeListener(() {
@@ -106,7 +94,7 @@ class Loginviewstate extends State<LoginScreen> {
                     topLoginEmail(),
                     Container(
                       height: MediaQuery.of(context).size.height / 6,
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 55.0),
                       alignment: Alignment.center,
                       child: Text(
                         "Plus que ton email et ton mot de passe et c'est parti!",
@@ -122,7 +110,7 @@ class Loginviewstate extends State<LoginScreen> {
                     }))
                   ]),
                 ))),
-        onWillPop: () => Helpers.willPopCallback(
+        onWillPop: () => Helpers.willPopCallbackNav(
             context,
             WelcomeScreen(
               isFirstCo: false,

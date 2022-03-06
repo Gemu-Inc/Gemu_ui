@@ -161,14 +161,18 @@ class _GetStartedScreenState extends State<GetStartedScreen>
     super.initState();
     _tabController = TabController(length: lengthGetStarted, vsync: this);
     _tabController.animation!.addListener(() {
-      _tabController.index = (_tabController.animation!.value).round();
+      setState(() {
+        _tabController.index = (_tabController.animation!.value).round();
+      });
     });
   }
 
   @override
   void deactivate() {
     _tabController.animation?.removeListener(() {
-      _tabController.index = (_tabController.animation!.value).round();
+      setState(() {
+        _tabController.index = (_tabController.animation!.value).round();
+      });
     });
     super.deactivate();
   }

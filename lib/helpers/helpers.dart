@@ -1,6 +1,8 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/views/Welcome/welcome_screen.dart';
+import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -11,12 +13,42 @@ import 'package:gemu/views/Register/register_screen.dart';
 import 'package:gemu/views/Login/login_screen.dart';
 
 class Helpers {
-  static Future<bool> willPopCallback(
+  static Future<bool> willPopCallbackNav(
       BuildContext context, Widget navigation) async {
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (BuildContext context) => navigation),
         (route) => false);
+    return true;
+  }
+
+  static Future<bool> willPopCallbackShowDialog(BuildContext context) async {
+    Helpers.hideKeyboard(context);
+    showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialogCustom(context, "Annuler l'inscription",
+              "Êtes-vous sur de vouloir annuler votre inscription?", [
+            TextButton(
+                onPressed: () => Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => WelcomeScreen(
+                              isFirstCo: false,
+                            )),
+                    (route) => false),
+                child: Text(
+                  "Oui",
+                  style: TextStyle(color: Colors.blue[200]),
+                )),
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  "Non",
+                  style: TextStyle(color: Colors.red[200]),
+                ))
+          ]);
+        });
     return true;
   }
 

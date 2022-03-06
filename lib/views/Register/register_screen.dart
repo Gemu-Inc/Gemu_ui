@@ -6,8 +6,8 @@ import 'package:algolia/algolia.dart';
 import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:loader/loader.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/constants/constants.dart';
@@ -45,17 +45,14 @@ class _RegisterScreenState extends State<RegisterScreen>
   late FocusNode _focusNodeUsername;
   late FocusNode _focusNodeSearch;
 
-  String value = "";
-  bool isSearching = false;
   late TextEditingController _searchController;
   Algolia algolia = AlgoliaService.algolia;
   List<AlgoliaObjectSnapshot> gamesAlgolia = [];
 
-  bool dataIsThere = false;
-  bool isLoading = false;
+  bool isSearching = false;
   bool isLoadingMoreData = false;
   bool isResultLoading = false;
-  bool isStickyOnTop = false;
+  bool stopLoad = false;
 
   List<Game> allGames = [];
   List<Game> gamesFollow = [];
@@ -86,7 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     }
   }
 
-  getGames() async {
+  Future<bool> getGames() async {
     await FirebaseFirestore.instance
         .collection('games')
         .doc('verified')
@@ -100,11 +97,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       }
     });
 
-    if (mounted && !dataIsThere) {
-      setState(() {
-        dataIsThere = true;
-      });
-    }
+    return true;
   }
 
   loadMoreData() async {
@@ -119,7 +112,6 @@ class _RegisterScreenState extends State<RegisterScreen>
     });
 
     Game game = allGames.last;
-    bool add;
 
     await FirebaseFirestore.instance
         .collection('games')
@@ -131,28 +123,19 @@ class _RegisterScreenState extends State<RegisterScreen>
         .get()
         .then((value) {
       for (var item in value.docs) {
+        allGames.add(Game.fromMap(item, item.data()));
         newGames.add(Game.fromMap(item, item.data()));
       }
     });
-
-    for (var i = 0; i < newGames.length; i++) {
-      if (allGames.any((element) => element.name == newGames[i].name) ||
-          gamesFollow.any((element) => element.name == newGames[i].name)) {
-        add = false;
-      } else {
-        add = true;
-      }
-
-      if (add) {
-        allGames.add(newGames[i]);
-      }
-    }
 
     await Future.delayed(Duration(seconds: 1));
 
     setState(() {
       isLoadingMoreData = false;
       isResultLoading = true;
+      if (newGames.length == 0) {
+        stopLoad = true;
+      }
     });
   }
 
@@ -170,8 +153,6 @@ class _RegisterScreenState extends State<RegisterScreen>
       query = query.query(value);
 
       gamesAlgolia = (await query.getObjects()).hits;
-
-      print('${gamesAlgolia.length}');
 
       setState(() {
         isSearching = false;
@@ -204,10 +185,9 @@ class _RegisterScreenState extends State<RegisterScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-
     initCountry();
-    getGames();
+
+    _tabController = TabController(length: 3, vsync: this);
 
     _emailController = TextEditingController();
     _focusNodeEmail = FocusNode();
@@ -223,19 +203,6 @@ class _RegisterScreenState extends State<RegisterScreen>
     _searchController = TextEditingController();
     _focusNodeSearch = FocusNode();
 
-    _emailController.addListener(() {
-      setState(() {});
-    });
-    _usernameController.addListener(() {
-      setState(() {});
-    });
-    _passwordController.addListener(() {
-      setState(() {});
-    });
-    _confirmPasswordController.addListener(() {
-      setState(() {});
-    });
-
     _focusNodeEmail.addListener(() {
       setState(() {});
     });
@@ -248,26 +215,17 @@ class _RegisterScreenState extends State<RegisterScreen>
     _focusNodeConfirmPassword.addListener(() {
       setState(() {});
     });
-
-    _focusNodeSearch.addListener(() {
-      if (_focusNodeSearch.hasFocus) {
-        _mainScrollController.animateTo(
-            _mainScrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.easeOut);
-      } else {
-        _mainScrollController.animateTo(
-            _mainScrollController.position.minScrollExtent,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.easeOut);
-      }
+    _searchController.addListener(() {
+      setState(() {});
     });
-
+    _focusNodeSearch.addListener(() {
+      setState(() {});
+    });
     _mainScrollController.addListener(() {
       if (_mainScrollController.offset >=
               _mainScrollController.position.maxScrollExtent &&
-          !_mainScrollController.position.outOfRange) {
-        print('en bas');
+          !_mainScrollController.position.outOfRange &&
+          !stopLoad) {
         loadMoreData();
       }
     });
@@ -275,19 +233,6 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   @override
   void deactivate() {
-    _emailController.removeListener(() {
-      setState(() {});
-    });
-    _usernameController.removeListener(() {
-      setState(() {});
-    });
-    _passwordController.removeListener(() {
-      setState(() {});
-    });
-    _confirmPasswordController.removeListener(() {
-      setState(() {});
-    });
-
     _focusNodeEmail.removeListener(() {
       setState(() {});
     });
@@ -297,28 +242,17 @@ class _RegisterScreenState extends State<RegisterScreen>
     _focusNodePassword.removeListener(() {
       setState(() {});
     });
-    _focusNodeConfirmPassword.addListener(() {
+    _focusNodeConfirmPassword.removeListener(() {
       setState(() {});
     });
     _focusNodeSearch.removeListener(() {
-      if (_focusNodeSearch.hasFocus) {
-        _mainScrollController.animateTo(
-            _mainScrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.easeOut);
-      } else {
-        _mainScrollController.animateTo(
-            _mainScrollController.position.minScrollExtent,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.easeOut);
-      }
+      setState(() {});
     });
 
     _mainScrollController.removeListener(() {
       if (_mainScrollController.offset >=
               _mainScrollController.position.maxScrollExtent &&
           !_mainScrollController.position.outOfRange) {
-        print('en bas');
         loadMoreData();
       }
     });
@@ -362,19 +296,28 @@ class _RegisterScreenState extends State<RegisterScreen>
                             : Brightness.dark),
                 child: Consumer(builder: (_, ref, child) {
                   bool isDayMood = ref.watch(dayMoodNotifierProvider);
-                  return GestureDetector(
-                    onTap: () => Helpers.hideKeyboard(context),
-                    child: Column(children: [
-                      topRegisterEmail(isDayMood),
-                      Expanded(child: bodyRegister(isDayMood)),
-                    ]),
+                  return Loader<bool>(
+                    load: () => getGames(),
+                    loadingWidget: Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.0,
+                        color: isDayMood ? cDarkPink : cLightPurple,
+                      ),
+                    ),
+                    builder: (_, value) {
+                      return GestureDetector(
+                        onTap: () {
+                          Helpers.hideKeyboard(context);
+                        },
+                        child: Column(children: [
+                          topRegisterEmail(isDayMood),
+                          Expanded(child: bodyRegister(isDayMood)),
+                        ]),
+                      );
+                    },
                   );
                 }))),
-        onWillPop: () => Helpers.willPopCallback(
-            context,
-            WelcomeScreen(
-              isFirstCo: false,
-            )));
+        onWillPop: () => Helpers.willPopCallbackShowDialog(context));
   }
 
   Widget topRegisterEmail(bool isDayMood) {
@@ -572,6 +515,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   : Colors.black,
               fontWeight: FontWeight.w500,
               fontSize: 12),
+          textAlign: TextAlign.center,
         ),
         Expanded(
             child: ListView(
@@ -683,6 +627,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   : Colors.black,
               fontWeight: FontWeight.w500,
               fontSize: 12),
+          textAlign: TextAlign.center,
         ),
         Expanded(
             child: ListView(
@@ -836,417 +781,208 @@ class _RegisterScreenState extends State<RegisterScreen>
                     : Colors.black,
                 fontWeight: FontWeight.w500,
                 fontSize: 12),
+            textAlign: TextAlign.center,
           ),
         ),
-        _getStickyWidget(isDayMood),
+        _searchBar(isDayMood),
         Expanded(
-            child: ListView(
-          controller: _mainScrollController,
-          shrinkWrap: true,
-          physics:
-              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          children: [
-            dataIsThere
-                ? searchGames()
-                : Center(
-                    child: CircularProgressIndicator(),
-                  ),
-          ],
-        ))
+            child: _searchController.text.isNotEmpty
+                ? _searchListGames(isDayMood)
+                : _listGames(isDayMood))
       ],
     );
   }
 
-  Widget _getStickyWidget(bool isDayMood) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: Container(
-        height: MediaQuery.of(context).size.height / 14,
-        child: TextFieldCustomRegister(
-          context: context,
-          controller: _searchController,
-          focusNode: _focusNodeSearch,
-          label: 'Chercher un jeu',
-          obscure: false,
-          icon: Icons.search,
-          textInputAction: TextInputAction.search,
-          clear: () {
-            setState(() {
-              _searchController.clear();
-            });
-          },
-          submit: (value) {
-            value = _searchController.text;
-            _searchGames(value);
-          },
-          isDayMood: isDayMood,
-        ),
-      ),
-    );
-  }
-
-  Widget searchGames() {
+  Widget _searchBar(bool isDayMood) {
     return Container(
-      child: isSearching
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 15.0,
-                  width: 15.0,
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                SizedBox(
-                  width: 5.0,
-                ),
-                Text(
-                  _searchController.text.length < 10
-                      ? 'Recherche de "${_searchController.text}.."'
-                      : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
-                  style: mystyle(11),
-                )
-              ],
-            )
-          : _searchController.text.isEmpty
-              ? selectionGames()
-              : gamesAlgolia.length == 0
-                  ? Center(
-                      child: Text(
-                        'No games found',
-                        style: mystyle(12),
-                      ),
-                    )
-                  : GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 1.0,
-                          crossAxisSpacing: 6,
-                          mainAxisSpacing: 6),
-                      shrinkWrap: true,
-                      itemCount: gamesAlgolia.length,
-                      itemBuilder: (_, index) {
-                        Game gameAlgolia = Game.fromMapAlgolia(
-                            gamesAlgolia[index], gamesAlgolia[index].data);
-                        return gamesFollow.any(
-                                (element) => element.name == gameAlgolia.name)
-                            ? Container(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      height: 70,
-                                      width: 70,
-                                      child: Stack(
-                                        children: [
-                                          Align(
-                                            alignment: Alignment.center,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  gamesFollow.removeWhere(
-                                                      (element) =>
-                                                          element.name ==
-                                                          gameAlgolia.name);
-                                                  allGames.add(gameAlgolia);
-                                                });
-
-                                                _focusNodeSearch.unfocus();
-                                                _searchController.clear();
-                                              },
-                                              child: Container(
-                                                height: 60,
-                                                width: 60,
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                        begin: Alignment
-                                                            .topLeft,
-                                                        end: Alignment
-                                                            .bottomRight,
-                                                        colors: [
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .secondary
-                                                        ]),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    border: Border.all(
-                                                        color: Colors.black),
-                                                    image: DecorationImage(
-                                                        fit: BoxFit.cover,
-                                                        image:
-                                                            CachedNetworkImageProvider(
-                                                                gameAlgolia
-                                                                    .imageUrl))),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                              bottom: 0,
-                                              right: 0,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    gamesFollow.removeWhere(
-                                                        (element) =>
-                                                            element.name ==
-                                                            gameAlgolia.name);
-                                                    allGames.add(gameAlgolia);
-                                                  });
-                                                  _focusNodeSearch.unfocus();
-                                                  _searchController.clear();
-                                                },
-                                                child: Container(
-                                                    height: 25,
-                                                    width: 25,
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.red[400],
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                            color:
-                                                                Colors.black)),
-                                                    child: Icon(
-                                                      Icons.remove,
-                                                      size: 20,
-                                                      color: Colors.black,
-                                                    )),
-                                              )),
-                                        ],
-                                      ),
-                                    ),
-                                    Text(
-                                      gameAlgolia.name,
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      height: 70,
-                                      width: 70,
-                                      child: Stack(
-                                        children: [
-                                          Align(
-                                            alignment: Alignment.center,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  allGames.removeWhere(
-                                                      (element) =>
-                                                          element.name ==
-                                                          gameAlgolia.name);
-                                                  gamesFollow.add(gameAlgolia);
-                                                });
-
-                                                _focusNodeSearch.unfocus();
-                                                _searchController.clear();
-                                              },
-                                              child: Container(
-                                                height: 60,
-                                                width: 60,
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                        begin: Alignment
-                                                            .topLeft,
-                                                        end: Alignment
-                                                            .bottomRight,
-                                                        colors: [
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .secondary
-                                                        ]),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    border: Border.all(
-                                                        color: Colors.black),
-                                                    image: DecorationImage(
-                                                        fit: BoxFit.cover,
-                                                        image:
-                                                            CachedNetworkImageProvider(
-                                                                gameAlgolia
-                                                                    .imageUrl))),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                              bottom: 0,
-                                              right: 0,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    allGames.removeWhere(
-                                                        (element) =>
-                                                            element.name ==
-                                                            gameAlgolia.name);
-                                                    gamesFollow
-                                                        .add(gameAlgolia);
-                                                  });
-                                                  _focusNodeSearch.unfocus();
-                                                  _searchController.clear();
-                                                },
-                                                child: Container(
-                                                    height: 25,
-                                                    width: 25,
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.green[400],
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                            color:
-                                                                Colors.black)),
-                                                    child: Icon(
-                                                      Icons.add,
-                                                      size: 20,
-                                                      color: Colors.black,
-                                                    )),
-                                              )),
-                                        ],
-                                      ),
-                                    ),
-                                    Text(
-                                      gameAlgolia.name,
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                ),
-                              );
-                      }),
-    );
+        height: MediaQuery.of(context).size.height / 12,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        alignment: Alignment.center,
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: TextFieldCustomRegister(
+            context: context,
+            controller: _searchController,
+            focusNode: _focusNodeSearch,
+            label: 'Chercher un jeu',
+            obscure: false,
+            icon: Icons.search,
+            textInputAction: TextInputAction.search,
+            clear: () {
+              setState(() {
+                _searchController.clear();
+              });
+              if (gamesAlgolia.length != 0) {
+                gamesAlgolia.clear();
+              }
+            },
+            submit: (value) {
+              value = _searchController.text;
+              _searchGames(value);
+            },
+            isDayMood: isDayMood,
+          ),
+        ));
   }
 
-  Widget selectionGames() {
-    return Column(
+  Widget _listGames(bool isDayMood) {
+    return ListView(
+      controller: _mainScrollController,
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(),
       children: [
         GridView.builder(
             shrinkWrap: true,
-            scrollDirection: Axis.vertical,
             controller: _gamesScrollController,
+            physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
-                childAspectRatio: 1.0,
+                childAspectRatio: 0.6,
                 crossAxisSpacing: 6,
                 mainAxisSpacing: 6),
             itemCount: allGames.length,
-            itemBuilder: (_, int index) {
+            itemBuilder: (_, index) {
               Game game = allGames[index];
-              return Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: Container(
-                        height: 70,
-                        width: 70,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    allGames.remove(game);
-                                    gamesFollow.add(game);
-                                  });
-                                },
-                                child: Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .secondary
-                                          ]),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Colors.black),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: CachedNetworkImageProvider(
-                                              game.imageUrl))),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      allGames.remove(game);
-                                      gamesFollow.add(game);
-                                    });
-                                  },
-                                  child: Container(
-                                      height: 25,
-                                      width: 25,
-                                      decoration: BoxDecoration(
-                                          color: Colors.green[400],
-                                          shape: BoxShape.circle,
-                                          border:
-                                              Border.all(color: Colors.black)),
-                                      child: Icon(
-                                        Icons.add,
-                                        size: 20,
-                                        color: Colors.black,
-                                      )),
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Text(
-                      game.name,
-                      textAlign: TextAlign.center,
-                    )
-                  ],
-                ),
-              );
+              return _itemGame(game, isDayMood);
             }),
-        Padding(
-            padding: const EdgeInsets.only(bottom: 30.0),
-            child: Stack(
-              children: [
-                Container(
-                  height: isLoadingMoreData ? 50.0 : 0.0,
-                  child: Center(
-                    child: SizedBox(
-                      height: 30.0,
-                      width: 30.0,
-                      child: CircularProgressIndicator(
-                        color: Theme.of(context).primaryColor,
-                        strokeWidth: 1.5,
-                      ),
-                    ),
+        Stack(
+          children: [
+            Container(
+              height: isLoadingMoreData
+                  ? MediaQuery.of(context).size.height / 14
+                  : 0.0,
+              child: Center(
+                child: SizedBox(
+                  height: 30.0,
+                  width: 30.0,
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor,
+                    strokeWidth: 1.5,
                   ),
                 ),
-                Container(
-                  height: isResultLoading && newGames.length == 0 ? 50.0 : 0.0,
-                  child: Center(
-                    child: Text("C'est tout pour le moment"),
-                  ),
-                )
-              ],
-            )),
+              ),
+            ),
+            Container(
+              height: isResultLoading && newGames.length == 0
+                  ? MediaQuery.of(context).size.height / 14
+                  : 0.0,
+              child: Center(
+                child: Text("C'est tout pour le moment"),
+              ),
+            )
+          ],
+        )
       ],
+    );
+  }
+
+  Widget _searchListGames(bool isDayMood) {
+    return isSearching
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: 15.0,
+                width: 15.0,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              SizedBox(
+                width: 5.0,
+              ),
+              Text(
+                _searchController.text.length < 10
+                    ? 'Recherche de "${_searchController.text}.."'
+                    : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
+                style: mystyle(11),
+              )
+            ],
+          )
+        : gamesAlgolia.length == 0
+            ? Center(
+                child: Text(
+                  'No games found',
+                  style: mystyle(12),
+                ),
+              )
+            : GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 0.6,
+                    crossAxisSpacing: 6,
+                    mainAxisSpacing: 6),
+                shrinkWrap: true,
+                controller: _gamesScrollController,
+                physics: AlwaysScrollableScrollPhysics(),
+                itemCount: gamesAlgolia.length,
+                itemBuilder: (_, index) {
+                  Game gameAlgolia = Game.fromMapAlgolia(
+                      gamesAlgolia[index], gamesAlgolia[index].data);
+                  return _itemGame(gameAlgolia, isDayMood);
+                });
+  }
+
+  Widget _itemGame(Game game, bool isDayMood) {
+    return InkWell(
+      onTap: () {
+        if (gamesFollow.any((element) => element.name == game.name)) {
+          setState(() {
+            gamesFollow.removeWhere((element) => element.name == game.name);
+          });
+        } else {
+          setState(() {
+            gamesFollow.add(game);
+          });
+        }
+      },
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isDayMood ? lightBgColors : darkBgColors)),
+          ),
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.3),
+                      Colors.black.withOpacity(0.5)
+                    ])),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Container(
+                padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
+                child: Text(
+                  game.name,
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.end,
+                )),
+          ),
+          if (gamesFollow.any((element) => element.name == game.name))
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5.0),
+                  color: Colors.green[200]!.withOpacity(0.7)),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
