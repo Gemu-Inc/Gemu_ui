@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/providers/dayMood_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gemu/providers/getStarted_provider.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
@@ -15,19 +15,9 @@ class GetStartedBeforeScreen extends StatefulWidget {
 }
 
 class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
-  bool? seenGetStarted;
-
-  Future<void> setSeenGetStarted() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      seenGetStarted = prefs.getBool("getStarted");
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    setSeenGetStarted();
   }
 
   @override
@@ -36,7 +26,8 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           child: Consumer(builder: (_, ref, child) {
-            if (seenGetStarted == null) {
+            bool seenGetStarted = ref.watch(getStartedNotifierProvider);
+            if (!seenGetStarted) {
               ref.read(dayMoodNotifierProvider.notifier).timeMood();
             }
             bool isDayMood = ref.watch(dayMoodNotifierProvider);
@@ -44,7 +35,7 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               child: Column(
                 children: [
-                  if (seenGetStarted != null) btnClear(),
+                  if (seenGetStarted) btnClear(),
                   Expanded(child: bodyGetStartedBefore()),
                   btnStart(isDayMood)
                 ],
@@ -69,10 +60,7 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
           onPressed: () {
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => WelcomeScreen(
-                          isFirstCo: false,
-                        )),
+                MaterialPageRoute(builder: (_) => WelcomeScreen()),
                 (route) => false);
           },
           icon: Icon(
@@ -115,10 +103,7 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
         child: ElevatedButton(
           onPressed: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) =>
-                        GetStartedScreen(seenGetStarted: seenGetStarted)));
+                context, MaterialPageRoute(builder: (_) => GetStartedScreen()));
           },
           style: ElevatedButton.styleFrom(
               primary: Colors.transparent,
@@ -143,10 +128,8 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
 }
 
 class GetStartedScreen extends StatefulWidget {
-  final bool? seenGetStarted;
+  const GetStartedScreen({Key? key}) : super(key: key);
 
-  const GetStartedScreen({Key? key, required this.seenGetStarted})
-      : super(key: key);
   @override
   _GetStartedScreenState createState() => _GetStartedScreenState();
 }
@@ -196,14 +179,15 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                         : Brightness.dark),
             child: Consumer(builder: (context, ref, child) {
               bool isDayMood = ref.watch(dayMoodNotifierProvider);
+              bool seenGetStarted = ref.watch(getStartedNotifierProvider);
               return Padding(
                 padding:
                     EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                 child: Column(
                   children: [
-                    if (widget.seenGetStarted != null) btnClear(),
+                    if (seenGetStarted) btnClear(),
                     Expanded(child: bodyGetStarted(isDayMood)),
-                    stepsGetStarted(isDayMood)
+                    stepsGetStarted(isDayMood, seenGetStarted, ref)
                   ],
                 ),
               );
@@ -219,10 +203,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
           onPressed: () {
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => WelcomeScreen(
-                          isFirstCo: false,
-                        )),
+                MaterialPageRoute(builder: (_) => WelcomeScreen()),
                 (route) => false);
           },
           icon: Icon(
@@ -408,7 +389,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
     );
   }
 
-  Widget stepsGetStarted(bool isDayMood) {
+  Widget stepsGetStarted(bool isDayMood, bool seenGetStarted, WidgetRef ref) {
     return Container(
       height: MediaQuery.of(context).size.height / 12,
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -448,23 +429,19 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                       _tabController.index += 1;
                     });
                   } else {
-                    if (widget.seenGetStarted == null) {
-                      final prefs = await SharedPreferences.getInstance();
-                      prefs.setBool("getStarted", true);
+                    if (!seenGetStarted) {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(
-                              builder: (_) => WelcomeScreen(
-                                    isFirstCo: true,
-                                  )),
+                          MaterialPageRoute(builder: (_) => WelcomeScreen()),
                           (route) => false);
+                      await Future.delayed(Duration(milliseconds: 250));
+                      ref
+                          .read(getStartedNotifierProvider.notifier)
+                          .updateSeenGetStarted();
                     } else {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(
-                              builder: (_) => WelcomeScreen(
-                                    isFirstCo: false,
-                                  )),
+                          MaterialPageRoute(builder: (_) => WelcomeScreen()),
                           (route) => false);
                     }
                   }

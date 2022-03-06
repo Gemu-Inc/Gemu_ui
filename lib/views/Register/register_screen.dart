@@ -339,9 +339,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      WelcomeScreen(
-                                        isFirstCo: false,
-                                      )),
+                                      WelcomeScreen()),
                               (route) => false),
                           child: Text(
                             "Oui",

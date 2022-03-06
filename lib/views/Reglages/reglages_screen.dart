@@ -19,10 +19,7 @@ class ReglagesScreen extends StatelessWidget {
     await Future.delayed(Duration(seconds: 1));
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-            builder: (BuildContext context) => WelcomeScreen(
-                  isFirstCo: false,
-                )),
+        MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
         (route) => false);
   }
 

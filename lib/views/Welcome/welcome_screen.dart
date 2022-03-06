@@ -5,15 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/dayMood_provider.dart';
+import 'package:gemu/providers/getStarted_provider.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/widgets/clip_shadow_path.dart';
 import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/helpers/helpers.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  final bool isFirstCo;
-
-  const WelcomeScreen({Key? key, required this.isFirstCo}) : super(key: key);
+  const WelcomeScreen({Key? key}) : super(key: key);
   @override
   WelcomeviewState createState() => WelcomeviewState();
 }
@@ -30,7 +29,8 @@ class WelcomeviewState extends State<WelcomeScreen> {
                         ? Brightness.light
                         : Brightness.dark),
             child: Consumer(builder: (_, ref, child) {
-              if (!widget.isFirstCo) {
+              bool seenGetStarted = ref.watch(getStartedNotifierProvider);
+              if (seenGetStarted) {
                 ref.read(dayMoodNotifierProvider.notifier).timeMood();
               }
               bool isDayMood = ref.watch(dayMoodNotifierProvider);

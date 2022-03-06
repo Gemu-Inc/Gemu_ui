@@ -33,9 +33,7 @@ class Helpers {
                 onPressed: () => Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => WelcomeScreen(
-                              isFirstCo: false,
-                            )),
+                        builder: (BuildContext context) => WelcomeScreen()),
                     (route) => false),
                 child: Text(
                   "Oui",

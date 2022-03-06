@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gemu/providers/getStarted_provider.dart';
 import 'package:gemu/providers/theme_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
@@ -22,12 +23,13 @@ class LogController extends StatefulWidget {
 
 class _LogControllerState extends State<LogController> {
   late Color primaryColor, accentColor;
-  bool? seenGetStarted;
 
   Future<bool> loading(WidgetRef ref) async {
     final prefs = await SharedPreferences.getInstance();
+
+    ref.read(getStartedNotifierProvider.notifier).setSeenGetStarted();
+
     String? theme = prefs.getString(appTheme);
-    seenGetStarted = prefs.getBool("getStarted");
 
     if (theme == null || theme == "ThemeSystem") {
       if (theme == null) theme = "ThemeSystem";
@@ -58,6 +60,7 @@ class _LogControllerState extends State<LogController> {
       final theme = ref.watch(themeProviderNotifier);
       final primaryColor = ref.watch(primaryProviderNotifier);
       final accentColor = ref.watch(accentProviderNotifier);
+      final seenGetStarted = ref.watch(getStartedNotifierProvider);
       return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Gemu',
@@ -81,14 +84,12 @@ class _LogControllerState extends State<LogController> {
                 load: () => loading(ref),
                 loadingWidget: SplashScreen(),
                 builder: (_, value) {
-                  if (seenGetStarted == null) {
+                  if (!seenGetStarted) {
                     return GetStartedBeforeScreen();
                   }
                   return isSignedIn
                       ? NavigationScreen(uid: snapshot.data!.uid)
-                      : WelcomeScreen(
-                          isFirstCo: false,
-                        );
+                      : WelcomeScreen();
                 },
               );
             },

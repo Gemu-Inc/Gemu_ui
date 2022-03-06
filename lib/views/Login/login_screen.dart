@@ -110,11 +110,7 @@ class Loginviewstate extends State<LoginScreen> {
                     }))
                   ]),
                 ))),
-        onWillPop: () => Helpers.willPopCallbackNav(
-            context,
-            WelcomeScreen(
-              isFirstCo: false,
-            )));
+        onWillPop: () => Helpers.willPopCallbackNav(context, WelcomeScreen()));
   }
 
   Widget topLoginEmail() {
@@ -129,9 +125,7 @@ class Loginviewstate extends State<LoginScreen> {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => WelcomeScreen(
-                            isFirstCo: false,
-                          )),
+                      builder: (BuildContext context) => WelcomeScreen()),
                   (route) => false);
             },
             icon: Icon(Icons.arrow_back_ios,
