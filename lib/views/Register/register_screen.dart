@@ -18,7 +18,7 @@ import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:gemu/providers/dayMood_provider.dart';
+import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override

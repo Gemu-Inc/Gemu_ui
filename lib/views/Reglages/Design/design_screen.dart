@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/providers/theme_provider.dart';
+import 'package:gemu/riverpod/Theme/theme_provider.dart';
 
 class DesignScreen extends StatefulWidget {
   @override

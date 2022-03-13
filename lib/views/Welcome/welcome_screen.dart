@@ -4,20 +4,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/providers/dayMood_provider.dart';
-import 'package:gemu/providers/getStarted_provider.dart';
+import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
+import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/widgets/clip_shadow_path.dart';
 import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/helpers/helpers.dart';
 
-class WelcomeScreen extends StatefulWidget {
+class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
   @override
   WelcomeviewState createState() => WelcomeviewState();
 }
 
-class WelcomeviewState extends State<WelcomeScreen> {
+class WelcomeviewState extends ConsumerState<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

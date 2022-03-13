@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemu/providers/dayMood_provider.dart';
-import 'package:gemu/providers/getStarted_provider.dart';
+import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
+import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
 
-class GetStartedBeforeScreen extends StatefulWidget {
+class GetStartedBeforeScreen extends ConsumerStatefulWidget {
   const GetStartedBeforeScreen({Key? key}) : super(key: key);
 
   @override
   _GetStartedBeforeScreenState createState() => _GetStartedBeforeScreenState();
 }
 
-class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
+class _GetStartedBeforeScreenState
+    extends ConsumerState<GetStartedBeforeScreen> {
   @override
   void initState() {
     super.initState();
@@ -127,14 +128,14 @@ class _GetStartedBeforeScreenState extends State<GetStartedBeforeScreen> {
   }
 }
 
-class GetStartedScreen extends StatefulWidget {
+class GetStartedScreen extends ConsumerStatefulWidget {
   const GetStartedScreen({Key? key}) : super(key: key);
 
   @override
   _GetStartedScreenState createState() => _GetStartedScreenState();
 }
 
-class _GetStartedScreenState extends State<GetStartedScreen>
+class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int lengthGetStarted = 4;

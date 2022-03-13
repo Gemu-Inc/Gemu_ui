@@ -6,6 +6,10 @@ import 'package:gemu/models/user.dart';
 //User global
 UserModel? me;
 
+//Navigator global keys
+final GlobalKey<NavigatorState> navNonAuth = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navAuth = GlobalKey<NavigatorState>();
+
 //Style texte
 mystyle(double size, [Color? color, FontWeight fw = FontWeight.w700]) {
   return GoogleFonts.montserrat(fontSize: size, color: color, fontWeight: fw);

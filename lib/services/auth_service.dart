@@ -20,14 +20,14 @@ class AuthService {
       required String password}) async {
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
-        await _auth.signInWithEmailAndPassword(
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
             email: email, password: password);
         await Future.delayed(Duration(seconds: 1));
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
                 builder: (BuildContext context) =>
-                    NavigationScreen(uid: _auth.currentUser!.uid)),
+                    NavigationScreen(uid: userCredential.user!.uid)),
             (route) => false);
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-email') {

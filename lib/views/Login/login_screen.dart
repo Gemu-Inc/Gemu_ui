@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:gemu/providers/dayMood_provider.dart';
+import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
