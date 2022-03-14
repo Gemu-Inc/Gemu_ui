@@ -8,7 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Navigation/navigation_screen.dart';
+import 'package:gemu/views/Navigation/bottom_navigation_screen.dart';
 
 class AddGameScreen extends StatefulWidget {
   @override
@@ -94,10 +94,7 @@ class AddGameviewstate extends State<AddGameScreen> {
 
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-            builder: (_) => NavigationScreen(
-                  uid: me!.uid,
-                )),
+        MaterialPageRoute(builder: (_) => BottomNavigationScreen()),
         (route) => false);
   }
 

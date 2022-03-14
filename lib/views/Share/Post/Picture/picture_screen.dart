@@ -8,7 +8,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Navigation/navigation_screen.dart';
+import 'package:gemu/views/Navigation/bottom_navigation_screen.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
@@ -249,8 +249,7 @@ class Pictureviewstate extends State<PictureScreen>
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  NavigationScreen(uid: me!.uid)),
+              builder: (BuildContext context) => BottomNavigationScreen()),
           (route) => false);
     } catch (e) {
       print(e);
@@ -314,8 +313,7 @@ class Pictureviewstate extends State<PictureScreen>
                                                 MaterialPageRoute(
                                                     builder: (BuildContext
                                                             context) =>
-                                                        NavigationScreen(
-                                                            uid: me!.uid)),
+                                                        BottomNavigationScreen()),
                                                 (route) => false);
                                           },
                                           child: Text(
@@ -554,9 +552,9 @@ class Pictureviewstate extends State<PictureScreen>
             onTap: () {
               if (gameName == 'No game') {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-                    context: context,
-                    error: 'Choississez un jeu pour votre post',
-                   ));
+                  context: context,
+                  error: 'Choississez un jeu pour votre post',
+                ));
               } else {
                 uploadPicture(widget.file.path, gameName);
               }

@@ -284,40 +284,38 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: AnnotatedRegion<SystemUiOverlayStyle>(
-                value: SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    statusBarIconBrightness:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Brightness.light
-                            : Brightness.dark),
-                child: Consumer(builder: (_, ref, child) {
-                  bool isDayMood = ref.watch(dayMoodNotifierProvider);
-                  return Loader<bool>(
-                    load: () => getGames(),
-                    loadingWidget: Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1.0,
-                        color: isDayMood ? cDarkPink : cLightPurple,
-                      ),
-                    ),
-                    builder: (_, value) {
-                      return GestureDetector(
-                        onTap: () {
-                          Helpers.hideKeyboard(context);
-                        },
-                        child: Column(children: [
-                          topRegisterEmail(isDayMood),
-                          Expanded(child: bodyRegister(isDayMood)),
-                        ]),
-                      );
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark),
+            child: Consumer(builder: (_, ref, child) {
+              bool isDayMood = ref.watch(dayMoodNotifierProvider);
+              return Loader<bool>(
+                load: () => getGames(),
+                loadingWidget: Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.0,
+                    color: isDayMood ? cDarkPink : cLightPurple,
+                  ),
+                ),
+                builder: (_, value) {
+                  return GestureDetector(
+                    onTap: () {
+                      Helpers.hideKeyboard(context);
                     },
+                    child: Column(children: [
+                      topRegisterEmail(isDayMood),
+                      Expanded(child: bodyRegister(isDayMood)),
+                    ]),
                   );
-                }))),
-        onWillPop: () => Helpers.willPopCallbackShowDialog(context));
+                },
+              );
+            })));
   }
 
   Widget topRegisterEmail(bool isDayMood) {
@@ -330,23 +328,23 @@ class _RegisterScreenState extends State<RegisterScreen>
             onPressed: () {
               Helpers.hideKeyboard(context);
               showDialog(
-                  context: context,
+                  context: navNonAuthKey.currentContext!,
                   builder: (_) {
-                    return AlertDialogCustom(context, "Annuler l'inscription",
+                    return AlertDialogCustom(_, "Annuler l'inscription",
                         "Êtes-vous sur de vouloir annuler votre inscription?", [
                       TextButton(
-                          onPressed: () => Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      WelcomeScreen()),
-                              (route) => false),
+                          onPressed: () {
+                            Navigator.pop(mainKey.currentContext!);
+                            navNonAuthKey.currentState!.pushNamedAndRemoveUntil(
+                                Welcome, (route) => false);
+                          },
                           child: Text(
                             "Oui",
                             style: TextStyle(color: Colors.blue[200]),
                           )),
                       TextButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () =>
+                              Navigator.pop(mainKey.currentContext!),
                           child: Text(
                             "Non",
                             style: TextStyle(color: Colors.red[200]),

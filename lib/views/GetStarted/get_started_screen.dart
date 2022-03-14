@@ -59,10 +59,8 @@ class _GetStartedBeforeScreenState
       padding: const EdgeInsets.only(right: 15.0),
       child: IconButton(
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => WelcomeScreen()),
-                (route) => false);
+            navNonAuthKey.currentState!
+                .pushNamedAndRemoveUntil(Welcome, (route) => false);
           },
           icon: Icon(
             Icons.clear,
@@ -103,8 +101,7 @@ class _GetStartedBeforeScreenState
         ),
         child: ElevatedButton(
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (_) => GetStartedScreen()));
+            navNonAuthKey.currentState!.pushNamed(GetStarted);
           },
           style: ElevatedButton.styleFrom(
               primary: Colors.transparent,
@@ -202,10 +199,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
       padding: const EdgeInsets.only(right: 15.0),
       child: IconButton(
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => WelcomeScreen()),
-                (route) => false);
+            navNonAuthKey.currentState!
+                .pushNamedAndRemoveUntil(Welcome, (route) => false);
           },
           icon: Icon(
             Icons.clear,
@@ -431,19 +426,15 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                     });
                   } else {
                     if (!seenGetStarted) {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (_) => WelcomeScreen()),
-                          (route) => false);
+                      navNonAuthKey.currentState!
+                          .pushNamedAndRemoveUntil(Welcome, (route) => false);
                       await Future.delayed(Duration(milliseconds: 250));
                       ref
                           .read(getStartedNotifierProvider.notifier)
                           .updateSeenGetStarted();
                     } else {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (_) => WelcomeScreen()),
-                          (route) => false);
+                      navNonAuthKey.currentState!
+                          .pushNamedAndRemoveUntil(Welcome, (route) => false);
                     }
                   }
                 },

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:loader/loader.dart';
 
 import 'package:gemu/models/user.dart';
@@ -18,16 +19,15 @@ import '../Games/games_screen.dart';
 import '../Highlights/highlights_screen.dart';
 import '../Profil/profil_screen.dart';
 
-class NavigationScreen extends StatefulWidget {
-  final String uid;
-
-  NavigationScreen({Key? key, required this.uid}) : super(key: key);
+class BottomNavigationScreen extends ConsumerStatefulWidget {
+  BottomNavigationScreen({Key? key}) : super(key: key);
 
   @override
-  _NavigationScreenState createState() => _NavigationScreenState();
+  _BottomNavigationScreenState createState() => _BottomNavigationScreenState();
 }
 
-class _NavigationScreenState extends State<NavigationScreen> {
+class _BottomNavigationScreenState
+    extends ConsumerState<BottomNavigationScreen> {
   //late StreamSubscription _userListener, _gamesListener, _followingsListener;
 
   List<Game> gamesList = [];
@@ -49,20 +49,17 @@ class _NavigationScreenState extends State<NavigationScreen> {
     _navPageController.jumpToPage(selectedPage);
   }
 
-  Future<bool> loadingData() async {
+  Future<bool> loadingData(String uid) async {
     print('dans le loader de la nav');
 
-    await DatabaseService.usersCollectionReference
-        .doc(widget.uid)
-        .get()
-        .then((value) {
+    await DatabaseService.usersCollectionReference.doc(uid).get().then((value) {
       me = UserModel.fromMap(value, value.data() as Map<String, dynamic>);
       print('current user: ${me!.uid}');
     });
 
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(widget.uid)
+        .doc(uid)
         .collection('games')
         .get()
         .then((value) {
@@ -75,7 +72,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(widget.uid)
+        .doc(uid)
         .collection('following')
         .get()
         .then((value) {
@@ -154,6 +151,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final activeUser = ref.watch(authNotifierProvider);
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -177,7 +176,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         child: Stack(
           children: [
             Loader<void>(
-              load: loadingData,
+              load: () => loadingData(activeUser!.uid),
               loadingWidget: Center(
                 child: CircularProgressIndicator(
                   color: Theme.of(context).primaryColor,

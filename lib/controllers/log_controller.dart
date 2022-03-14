@@ -6,10 +6,8 @@ import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 import 'package:gemu/riverpod/Connectivity/connectivity_provider.dart';
 import 'package:gemu/riverpod/Theme/theme_provider.dart';
 import 'package:gemu/services/auth_service.dart';
-import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/views/NoConnectivity/noconnectivity_screen.dart';
 import 'package:gemu/views/Splash/splash_screen.dart';
-import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:loader/loader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +16,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:gemu/router.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gemu/views/Navigation/navigation_screen.dart';
 
 class LogController extends ConsumerStatefulWidget {
   const LogController({Key? key}) : super(key: key);
@@ -62,42 +59,63 @@ class _LogControllerState extends ConsumerState<LogController> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (_, ref, child) {
-      final theme = ref.watch(themeProviderNotifier);
-      final primaryColor = ref.watch(primaryProviderNotifier);
-      final accentColor = ref.watch(accentProviderNotifier);
-      final seenGetStarted = ref.watch(getStartedNotifierProvider);
-      final connectivityStatus = ref.watch(connectivityNotifierProvider);
-      final activeUser = ref.watch(authNotifierProvider);
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Gemu',
-          themeMode: ThemeMode.system,
-          theme: theme == ThemeData()
-              ? (primaryColor == cDarkPink && accentColor == cLightPurple)
-                  ? lightThemeSystemOrange
-                  : lightThemeSystemPurple
-              : theme,
-          darkTheme: theme == ThemeData()
-              ? (primaryColor == cDarkPink && accentColor == cLightPurple)
-                  ? darkThemeSystemOrange
-                  : darkThemeSystemPurple
-              : theme,
-          onGenerateRoute: (settings) => generateRoute(settings, context),
-          home: Loader<bool>(
-            load: () => loading(ref),
-            loadingWidget: SplashScreen(),
-            builder: (_, value) {
-              return connectivityStatus == ConnectivityResult.none
+    final theme = ref.watch(themeProviderNotifier);
+    final primaryColor = ref.watch(primaryProviderNotifier);
+    final accentColor = ref.watch(accentProviderNotifier);
+    final seenGetStarted = ref.watch(getStartedNotifierProvider);
+    final connectivityStatus = ref.watch(connectivityNotifierProvider);
+    final activeUser = ref.watch(authNotifierProvider);
+
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Gemu',
+        themeMode: ThemeMode.system,
+        theme: theme == ThemeData()
+            ? (primaryColor == cDarkPink && accentColor == cLightPurple)
+                ? lightThemeSystemOrange
+                : lightThemeSystemPurple
+            : theme,
+        darkTheme: theme == ThemeData()
+            ? (primaryColor == cDarkPink && accentColor == cLightPurple)
+                ? darkThemeSystemOrange
+                : darkThemeSystemPurple
+            : theme,
+        home: Loader<bool>(
+          load: () => loading(ref),
+          loadingWidget: SplashScreen(),
+          builder: (_, value) {
+            return Scaffold(
+              key: mainKey,
+              body: connectivityStatus == ConnectivityResult.none
                   ? NoConnectivityScreen()
-                  : !seenGetStarted
-                      ? GetStartedBeforeScreen()
-                      : activeUser != null
-                          ? NavigationScreen(uid: activeUser.uid)
-                          : WelcomeScreen();
-            },
-          ));
-    });
+                  : activeUser == null
+                      ? WillPopScope(
+                          onWillPop: () async {
+                            return !(await navNonAuthKey.currentState!
+                                .maybePop());
+                          },
+                          child: Navigator(
+                            key: navNonAuthKey,
+                            initialRoute:
+                                !seenGetStarted ? GetStartedBefore : Welcome,
+                            onGenerateRoute: (settings) =>
+                                generateRouteNonAuth(settings, context),
+                          ),
+                        )
+                      : WillPopScope(
+                          onWillPop: () async {
+                            return !(await navAuthKey.currentState!.maybePop());
+                          },
+                          child: Navigator(
+                            key: navAuthKey,
+                            initialRoute: Navigation,
+                            onGenerateRoute: (settings) =>
+                                generateRouteAuth(settings, context),
+                          ),
+                        ),
+            );
+          },
+        ));
   }
 
   Future<bool> loading(WidgetRef ref) async {

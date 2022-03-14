@@ -15,12 +15,13 @@ class ReglagesScreen extends StatelessWidget {
   const ReglagesScreen({Key? key, required this.user}) : super(key: key);
 
   _signOut(BuildContext context) async {
+    Navigator.pop(context);
+    await Future.delayed(Duration(milliseconds: 250));
     await AuthService.signOut();
-    await Future.delayed(Duration(seconds: 1));
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
-        (route) => false);
+    // Navigator.pushAndRemoveUntil(
+    //     context,
+    //     MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
+    //     (route) => false);
   }
 
   Future confirmDisconnect(BuildContext context) {

@@ -34,11 +34,12 @@ class Loginviewstate extends State<LoginScreen> {
 
     await Future.delayed(Duration(seconds: 2));
 
-    AuthService.signIn(context: context, email: email, password: password);
-
     setState(() {
       isLoading = false;
     });
+
+    await AuthService.signIn(
+        context: context, email: email, password: password);
   }
 
   @override
@@ -79,38 +80,36 @@ class Loginviewstate extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        child: Scaffold(
-            body: AnnotatedRegion<SystemUiOverlayStyle>(
-                value: SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    statusBarIconBrightness:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Brightness.light
-                            : Brightness.dark),
-                child: GestureDetector(
-                  onTap: () => Helpers.hideKeyboard(context),
-                  child: Column(children: [
-                    topLoginEmail(),
-                    Container(
-                      height: MediaQuery.of(context).size.height / 6,
-                      padding: const EdgeInsets.symmetric(horizontal: 55.0),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Plus que ton email et ton mot de passe et c'est parti!",
-                        style: mystyle(12),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Expanded(child: Consumer(builder: (_, ref, child) {
-                      bool isDayMood = ref.watch(dayMoodNotifierProvider);
-                      return Container(
-                        child: loginEmail(isDayMood),
-                      );
-                    }))
-                  ]),
-                ))),
-        onWillPop: () => Helpers.willPopCallbackNav(context, WelcomeScreen()));
+    return Scaffold(
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark),
+            child: GestureDetector(
+              onTap: () => Helpers.hideKeyboard(context),
+              child: Column(children: [
+                topLoginEmail(),
+                Container(
+                  height: MediaQuery.of(context).size.height / 6,
+                  padding: const EdgeInsets.symmetric(horizontal: 55.0),
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Plus que ton email et ton mot de passe et c'est parti!",
+                    style: mystyle(12),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Expanded(child: Consumer(builder: (_, ref, child) {
+                  bool isDayMood = ref.watch(dayMoodNotifierProvider);
+                  return Container(
+                    child: loginEmail(isDayMood),
+                  );
+                }))
+              ]),
+            )));
   }
 
   Widget topLoginEmail() {
@@ -122,11 +121,8 @@ class Loginviewstate extends State<LoginScreen> {
         leading: IconButton(
             onPressed: () {
               Helpers.hideKeyboard(context);
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => WelcomeScreen()),
-                  (route) => false);
+              navNonAuthKey.currentState!
+                  .pushNamedAndRemoveUntil(Welcome, (route) => false);
             },
             icon: Icon(Icons.arrow_back_ios,
                 color: Theme.of(context).brightness == Brightness.dark

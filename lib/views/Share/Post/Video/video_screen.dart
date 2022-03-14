@@ -11,7 +11,7 @@ import 'package:video_player/video_player.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Navigation/navigation_screen.dart';
+import 'package:gemu/views/Navigation/bottom_navigation_screen.dart';
 import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 
@@ -220,8 +220,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  NavigationScreen(uid: me!.uid)),
+              builder: (BuildContext context) => BottomNavigationScreen()),
           (route) => false);
     } catch (e) {
       print(e);
@@ -390,9 +389,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                                                           MaterialPageRoute(
                                                               builder: (BuildContext
                                                                       context) =>
-                                                                  NavigationScreen(
-                                                                      uid: me!
-                                                                          .uid)),
+                                                                  BottomNavigationScreen()),
                                                           (route) => false);
                                                     },
                                                     child: Text(
@@ -437,9 +434,9 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
             onTap: () {
               if (gameName == 'No game') {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-                    context: context,
-                    error: 'Choississez un jeu pour votre post',
-                   ));
+                  context: context,
+                  error: 'Choississez un jeu pour votre post',
+                ));
               } else {
                 File file = widget.file;
                 uploadVideo(file.path, gameName);

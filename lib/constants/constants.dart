@@ -7,8 +7,24 @@ import 'package:gemu/models/user.dart';
 UserModel? me;
 
 //Navigator global keys
-final GlobalKey<NavigatorState> navNonAuth = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> navAuth = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> mainKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navNonAuthKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navAuthKey = GlobalKey<NavigatorState>();
+
+//route names for generated routes non auth
+const String GetStartedBefore = "GetStartedBefore";
+const String GetStarted = "GetStarted";
+const String Welcome = "Welcome";
+const String Register = "Register";
+const String Login = "Login";
+
+//route names for generated routes auth
+const String Navigation = "Nav";
+const String Home = "Home";
+const String Highlights = "Highlights";
+const String Games = "Games";
+const String MyProfil = "Profil";
+const String AddPost = "AddPost";
 
 //Style texte
 mystyle(double size, [Color? color, FontWeight fw = FontWeight.w700]) {
@@ -285,15 +301,3 @@ final lightThemePurple = ThemeData(
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.black45));
-
-//routes names for generated routes
-const String Welcome = "WelcomeScreen";
-const String GetStarted = "GetStartedScreen";
-const String Register = "RegisterScreen";
-const String Login = "LoginScreen";
-const String Navigation = "NavScreen";
-const String Home = "HomeScreen";
-const String Highlights = "HighlightsScreen";
-const String Games = "GamesScreen";
-const String MyProfil = "ProfilScreen";
-const String AddPost = "AddPostScreen";

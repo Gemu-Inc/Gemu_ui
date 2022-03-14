@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/views/Navigation/navigation_screen.dart';
+import 'package:gemu/views/Navigation/bottom_navigation_screen.dart';
 import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';
 
@@ -20,15 +20,17 @@ class AuthService {
       required String password}) async {
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
-        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        // UserCredential userCredential =
+        await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-        await Future.delayed(Duration(seconds: 1));
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    NavigationScreen(uid: userCredential.user!.uid)),
-            (route) => false);
+        // await Future.delayed(Duration(seconds: 1));
+        // Navigator.pushAndRemoveUntil(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (BuildContext context) =>
+        //             BottomNavigationScreen(uid: userCredential.user!.uid)),
+        //     (route) => false);
+
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-email') {
           print('Invalid email');
@@ -95,7 +97,7 @@ class AuthService {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => NavigationScreen(uid: uid)),
+              builder: (BuildContext context) => BottomNavigationScreen()),
           (route) => false);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

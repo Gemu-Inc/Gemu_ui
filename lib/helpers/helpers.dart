@@ -14,12 +14,9 @@ import 'package:gemu/views/Login/login_screen.dart';
 
 class Helpers {
   static Future<bool> willPopCallbackNav(
-      BuildContext context, Widget navigation) async {
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (BuildContext context) => navigation),
-        (route) => false);
-    return true;
+      BuildContext context, String navigation) async {
+    await navNonAuthKey.currentState!.maybePop();
+    return false;
   }
 
   static Future<bool> willPopCallbackShowDialog(BuildContext context) async {
@@ -30,17 +27,17 @@ class Helpers {
           return AlertDialogCustom(context, "Annuler l'inscription",
               "Êtes-vous sur de vouloir annuler votre inscription?", [
             TextButton(
-                onPressed: () => Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => WelcomeScreen()),
-                    (route) => false),
+                onPressed: () {
+                  Navigator.pop(mainKey.currentContext!);
+                  navNonAuthKey.currentState!
+                      .pushNamedAndRemoveUntil(Welcome, (route) => false);
+                },
                 child: Text(
                   "Oui",
                   style: TextStyle(color: Colors.blue[200]),
                 )),
             TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(mainKey.currentContext!),
                 child: Text(
                   "Non",
                   style: TextStyle(color: Colors.red[200]),
@@ -128,11 +125,9 @@ class Helpers {
                                   height: 50,
                                   width: MediaQuery.of(context).size.width,
                                   child: ElevatedButton(
-                                      onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) =>
-                                                  RegisterScreen())),
+                                      onPressed: () => navNonAuthKey
+                                          .currentState!
+                                          .pushNamed(Register),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
                                           primary:
@@ -312,11 +307,9 @@ class Helpers {
                                   height: 50,
                                   width: MediaQuery.of(context).size.width,
                                   child: ElevatedButton(
-                                      onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) =>
-                                                  RegisterScreen())),
+                                      onPressed: () => navNonAuthKey
+                                          .currentState!
+                                          .pushNamed(Register),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
                                           primary:
@@ -451,10 +444,9 @@ class Helpers {
                                   height: 50,
                                   width: MediaQuery.of(context).size.width,
                                   child: ElevatedButton(
-                                      onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) => LoginScreen())),
+                                      onPressed: () => navNonAuthKey
+                                          .currentState!
+                                          .pushNamed(Login),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
                                           primary:
@@ -635,10 +627,9 @@ class Helpers {
                                   height: 50,
                                   width: MediaQuery.of(context).size.width,
                                   child: ElevatedButton(
-                                      onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) => LoginScreen())),
+                                      onPressed: () => navNonAuthKey
+                                          .currentState!
+                                          .pushNamed(Login),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
                                           primary:

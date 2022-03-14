@@ -76,10 +76,8 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
             child: Padding(
               padding: const EdgeInsets.only(right: 15.0),
               child: IconButton(
-                  onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => GetStartedBeforeScreen())),
+                  onPressed: () =>
+                      navNonAuthKey.currentState!.pushNamed(GetStartedBefore),
                   icon: Icon(
                     Icons.info_outline,
                     size: 28,
