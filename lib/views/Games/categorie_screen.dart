@@ -190,7 +190,7 @@ class _Categorieviewstate extends State<CategorieScreen>
                         padding: EdgeInsets.all(10.0),
                         child: TabBar(
                           controller: _tabController,
-                          labelColor: Theme.of(context).primaryColor,
+                          labelColor: Theme.of(context).colorScheme.primary,
                           unselectedLabelColor: Colors.grey,
                           indicatorSize: TabBarIndicatorSize.tab,
                           indicator: BoxDecoration(
@@ -219,14 +219,14 @@ class _Categorieviewstate extends State<CategorieScreen>
                               height: 15.0,
                               width: 15.0,
                               child: CircularProgressIndicator(
-                                color: Theme.of(context).primaryColor,
+                                color: Theme.of(context).colorScheme.primary,
                               )),
                           SizedBox(
                             width: 5.0,
                           ),
                           Text(
                             'Recherche un jeu',
-                            style: mystyle(11),
+                            style: Theme.of(context).textTheme.bodySmall,
                           )
                         ],
                       )
@@ -236,7 +236,7 @@ class _Categorieviewstate extends State<CategorieScreen>
                                 child: Text(
                                   'Plus d\'autres jeux à découvrir dans cette catégorie pour le moment',
                                   textAlign: TextAlign.center,
-                                  style: mystyle(12),
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               )
                             : gamesNoDiscover()
@@ -244,7 +244,7 @@ class _Categorieviewstate extends State<CategorieScreen>
                             ? Center(
                                 child: Text(
                                   'No results found',
-                                  style: mystyle(12),
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               )
                             : gamesSearch(_games),
@@ -256,14 +256,14 @@ class _Categorieviewstate extends State<CategorieScreen>
                               height: 15.0,
                               width: 15.0,
                               child: CircularProgressIndicator(
-                                color: Theme.of(context).primaryColor,
+                                color: Theme.of(context).colorScheme.primary,
                               )),
                           SizedBox(
                             width: 5.0,
                           ),
                           Text(
                             'Recherche un jeu',
-                            style: mystyle(11),
+                            style: Theme.of(context).textTheme.bodySmall,
                           )
                         ],
                       )
@@ -273,7 +273,7 @@ class _Categorieviewstate extends State<CategorieScreen>
                                 child: Text(
                                   'Pas encore de jeux suivis dans cette catégorie',
                                   textAlign: TextAlign.center,
-                                  style: mystyle(12),
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               )
                             : gamesFollow()
@@ -281,7 +281,7 @@ class _Categorieviewstate extends State<CategorieScreen>
                             ? Center(
                                 child: Text(
                                   'No results found',
-                                  style: mystyle(12),
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               )
                             : gamesSearch(_games),
@@ -289,7 +289,7 @@ class _Categorieviewstate extends State<CategorieScreen>
             )
           : Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
     );
@@ -304,7 +304,7 @@ class _Categorieviewstate extends State<CategorieScreen>
         child: TextField(
             controller: _searchController,
             focusNode: _keyboardFocusNode,
-            cursorColor: Theme.of(context).primaryColor,
+            cursorColor: Theme.of(context).colorScheme.primary,
             textInputAction: TextInputAction.search,
             onTap: () {
               setState(() {
@@ -318,17 +318,17 @@ class _Categorieviewstate extends State<CategorieScreen>
                 filled: true,
                 fillColor: Theme.of(context).canvasColor,
                 hintText: 'Recherche un jeu "${widget.categorie.name}"',
-                hintStyle: mystyle(12),
+                hintStyle: Theme.of(context).textTheme.bodySmall,
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor, width: 1.5),
+                      color: Theme.of(context).colorScheme.primary, width: 1.5),
                 ),
                 prefixIcon: Icon(
                   Icons.search,
                   size: 20,
                   color: _keyboardFocusNode.hasFocus
-                      ? Theme.of(context).primaryColor
+                      ? Theme.of(context).colorScheme.primary
                       : Colors.grey,
                 ),
                 suffixIcon: _searchController.text.isEmpty
@@ -337,7 +337,7 @@ class _Categorieviewstate extends State<CategorieScreen>
                         icon: Icon(
                           Icons.clear,
                           size: 20,
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         onPressed: () {
                           _searchController.clear();

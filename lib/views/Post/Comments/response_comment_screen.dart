@@ -97,7 +97,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
             icon: Icon(Icons.arrow_back_ios)),
         title: Text(
           'Réponse',
-          style: mystyle(16),
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
       body: Column(
@@ -160,7 +160,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                       child: TextFormField(
                         scrollPhysics: AlwaysScrollableScrollPhysics(),
                         controller: _responseController,
-                        cursorColor: Theme.of(context).primaryColor,
+                        cursorColor: Theme.of(context).colorScheme.primary,
                         autofocus: true,
                         focusNode: _focusNodeResponse,
                         textInputAction: TextInputAction.go,
@@ -171,7 +171,6 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                 .showSnackBar(SnackBarCustom(
                               context: context,
                               error: 'Response should not be empty',
-                      
                             ));
                           } else {
                             publishResponse();
@@ -190,7 +189,6 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                 .showSnackBar(SnackBarCustom(
                               context: context,
                               error: 'Response should not be empty',
-                          
                             ));
                           } else {
                             publishResponse();
@@ -198,7 +196,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                         },
                         icon: Icon(
                           Icons.send_outlined,
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ))
                   ],
                 )),
@@ -275,7 +273,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                           userPostID: userComment.uid))),
                               child: Text(
                                 userComment.username,
-                                style: mystyle(12),
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ),
                             SizedBox(
@@ -287,7 +285,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                             ),
                             Text(
                               Helpers.datePostView(widget.comment.date),
-                              style: mystyle(9),
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],
                         ),
@@ -326,7 +324,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                 Text(
                                   (widget.upper.length - widget.downer.length)
                                       .toString(),
-                                  style: mystyle(10),
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 )
                               ],
                             ),
@@ -403,7 +401,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                           userPostID: userComment.uid))),
                               child: Text(
                                 userComment.username,
-                                style: mystyle(12),
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ),
                             SizedBox(
@@ -415,7 +413,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                             ),
                             Text(
                               Helpers.datePostView(widget.response!.date),
-                              style: mystyle(9),
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],
                         ),
@@ -454,7 +452,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                 Text(
                                   (widget.upper.length - widget.downer.length)
                                       .toString(),
-                                  style: mystyle(10),
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 )
                               ],
                             ),
@@ -623,7 +621,7 @@ class ResponseTileState extends State<ResponseTile> {
                                       ProfilUser(userPostID: userComment.uid))),
                           child: Text(
                             userComment.username,
-                            style: mystyle(12),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
                         SizedBox(
@@ -635,7 +633,7 @@ class ResponseTileState extends State<ResponseTile> {
                         ),
                         Text(
                           Helpers.datePostView(widget.response.date),
-                          style: mystyle(9),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
                     ),
@@ -679,7 +677,7 @@ class ResponseTileState extends State<ResponseTile> {
                             ),
                             Text(
                               (upper.length - downer.length).toString(),
-                              style: mystyle(10),
+                              style: Theme.of(context).textTheme.bodySmall,
                             )
                           ],
                         ),
@@ -694,7 +692,7 @@ class ResponseTileState extends State<ResponseTile> {
                           onTap: () => upResponse(widget.response),
                           child: Text(
                             'Up',
-                            style: mystyle(9),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
                         SizedBox(
@@ -708,7 +706,7 @@ class ResponseTileState extends State<ResponseTile> {
                           onTap: () => downResponse(widget.response),
                           child: Text(
                             'Down',
-                            style: mystyle(9),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
                         SizedBox(
@@ -729,7 +727,7 @@ class ResponseTileState extends State<ResponseTile> {
                                       downer: downer))),
                           child: Text(
                             'Répondre',
-                            style: mystyle(9),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         )
                       ],

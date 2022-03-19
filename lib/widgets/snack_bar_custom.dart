@@ -15,15 +15,10 @@ class SnackBarCustom extends SnackBar {
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(15.0)),
               child: Text(
                 error,
-                style: mystyle(
-                    12,
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black),
               ),
             ));
 }

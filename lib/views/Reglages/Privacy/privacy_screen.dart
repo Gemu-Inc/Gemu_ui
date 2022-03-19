@@ -93,7 +93,6 @@ class Privacyviewstate extends State<PrivacyScreen> {
             children: [
               Text(
                 'Private account',
-                style: mystyle(14),
               ),
               Switch(
                   value: isAccountPrivate,

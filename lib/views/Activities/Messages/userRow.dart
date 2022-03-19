@@ -39,7 +39,7 @@ class UserRow extends StatelessWidget {
                   ),
             title: Text(
               contact.username,
-              style: mystyle(12),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             trailing: Icon(Icons.message)));
   }

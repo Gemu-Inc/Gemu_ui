@@ -98,7 +98,7 @@ class Loginviewstate extends State<LoginScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     "Plus que ton email et ton mot de passe et c'est parti!",
-                    style: mystyle(12),
+                    style: Theme.of(context).textTheme.bodySmall,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -212,7 +212,7 @@ class Loginviewstate extends State<LoginScreen> {
               style: ElevatedButton.styleFrom(
                   elevation: 6,
                   shadowColor: Theme.of(context).shadowColor,
-                  primary: isDayMood ? cPurpleBtn : cPinkBtn,
+                  primary: isDayMood ? cPrimaryPurple : cPrimaryPink,
                   onPrimary: Theme.of(context).canvasColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
@@ -249,7 +249,8 @@ class Loginviewstate extends State<LoginScreen> {
               text: "Mot de passe oublié",
               recognizer: TapGestureRecognizer()
                 ..onTap = () => print("Mot de passe oublié"),
-              style: mystyle(12, isDayMood ? cPurpleBtn : cPinkBtn),
+              // style:
+              //     mystyle(12, isDayMood ? cPrimaryPurple : cPrimaryPink),
             )),
         const SizedBox(
           height: 5.0,
@@ -258,16 +259,12 @@ class Loginviewstate extends State<LoginScreen> {
             textAlign: TextAlign.center,
             text: TextSpan(
                 text: "Vous n'avez pas encore un compte? ",
-                style: mystyle(
-                  12,
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black,
-                ),
+                style: Theme.of(context).textTheme.bodySmall,
                 children: [
                   TextSpan(
                     text: "Inscription",
-                    style: mystyle(12, isDayMood ? cPurpleBtn : cPinkBtn),
+                    // style:
+                    //     style(12, isDayMood ? cPrimaryPurple : cPrimaryPink),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () =>
                           Helpers.inscriptionBottomSheet(context, isDayMood),

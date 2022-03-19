@@ -16,14 +16,14 @@ class ThemeProvider extends StateNotifier<ThemeData> {
   ThemeProvider() : super(ThemeData());
 
   createTheme(String theme, BuildContext context) {
-    if (theme == 'DarkPurple') {
+    if (theme == themeDarkPurple) {
       state = darkThemePurple;
-    } else if (theme == 'DarkOrange') {
-      state = darkThemeOrange;
-    } else if (theme == 'LightPurple') {
+    } else if (theme == themeDarkPink) {
+      state = darkThemePink;
+    } else if (theme == themeLightPurple) {
       state = lightThemePurple;
-    } else if (theme == 'LightOrange') {
-      state = lightThemeOrange;
+    } else if (theme == themeLightPink) {
+      state = lightThemePink;
     } else {
       state = ThemeData();
     }
@@ -35,7 +35,7 @@ class ThemeProvider extends StateNotifier<ThemeData> {
 }
 
 class PrimaryColorProvider extends StateNotifier<Color> {
-  PrimaryColorProvider() : super(cDarkPink);
+  PrimaryColorProvider() : super(cPrimaryPink);
 
   createPrimaryColor(Color color) {
     state = color;
@@ -47,7 +47,7 @@ class PrimaryColorProvider extends StateNotifier<Color> {
 }
 
 class AccentColorProvider extends StateNotifier<Color> {
-  AccentColorProvider() : super(cLightPurple);
+  AccentColorProvider() : super(cPrimaryPurple);
 
   createAccentColor(Color color) {
     state = color;

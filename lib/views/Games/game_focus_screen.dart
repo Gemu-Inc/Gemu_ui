@@ -54,7 +54,7 @@ class _GameFocusviewstate extends State<GameFocusScreen> {
               )),
           title: Text(
             widget.game.name,
-            style: mystyle(16, Colors.white),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
         body: PageView.builder(

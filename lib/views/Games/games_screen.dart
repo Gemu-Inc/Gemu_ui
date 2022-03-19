@@ -137,7 +137,7 @@ class _Gamesviewstate extends State<GamesScreen>
                         : Brightness.dark),
             title: Text(
               'Games',
-              style: mystyle(20),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             bottom: PreferredSize(
                 child: Padding(
@@ -275,13 +275,13 @@ class _Gamesviewstate extends State<GamesScreen>
             color: Theme.of(context).canvasColor,
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 offset: Offset(1.0, 1.0),
               ),
             ]),
         child: Text(
           'Categories',
-          style: TextStyle(color: Theme.of(context).primaryColor),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
       ),
     );
@@ -311,13 +311,13 @@ class _Gamesviewstate extends State<GamesScreen>
                               borderRadius: BorderRadius.circular(5.0),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Theme.of(context).primaryColor,
+                                  color: Theme.of(context).colorScheme.primary,
                                   offset: Offset(1.0, 1.0),
                                 )
                               ]),
                           child: InkWell(
                             borderRadius: BorderRadius.circular(5.0),
-                            splashColor: Theme.of(context).primaryColor,
+                            splashColor: Theme.of(context).colorScheme.primary,
                             onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -362,7 +362,9 @@ class _Gamesviewstate extends State<GamesScreen>
                                       children: [
                                         Text(
                                           categorie.name,
-                                          style: mystyle(18),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
                                         ),
                                         SizedBox(
                                           height: 2.0,
@@ -397,7 +399,7 @@ class _Gamesviewstate extends State<GamesScreen>
             width: MediaQuery.of(context).size.width,
             child: Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 strokeWidth: 1.5,
               ),
             ),

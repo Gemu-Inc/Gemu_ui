@@ -130,14 +130,14 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 color: Colors.transparent,
                 width: MediaQuery.of(context).size.width - 130,
                 child: TextFormField(
-                  cursorColor: Theme.of(context).primaryColor,
+                  cursorColor: Theme.of(context).colorScheme.primary,
                   decoration: InputDecoration(
                       labelText: "Current Password",
-                      labelStyle:
-                          TextStyle(color: Theme.of(context).primaryColor),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor))),
+                              color: Theme.of(context).colorScheme.primary))),
                   obscureText: true,
                   validator: (value) =>
                       value!.isEmpty ? 'Please enter a password' : null,
@@ -153,14 +153,14 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 color: Colors.transparent,
                 width: MediaQuery.of(context).size.width - 130,
                 child: TextFormField(
-                  cursorColor: Theme.of(context).primaryColor,
+                  cursorColor: Theme.of(context).colorScheme.primary,
                   decoration: InputDecoration(
                       labelText: "New Password",
-                      labelStyle:
-                          TextStyle(color: Theme.of(context).primaryColor),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor))),
+                              color: Theme.of(context).colorScheme.primary))),
                   obscureText: true,
                   validator: (value) =>
                       value!.isEmpty ? 'Please enter a password' : null,

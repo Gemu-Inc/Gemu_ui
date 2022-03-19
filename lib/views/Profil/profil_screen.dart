@@ -307,14 +307,15 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                             controller: _tabController,
                             isScrollable: true,
                             indicatorSize: TabBarIndicatorSize.tab,
-                            labelColor: Theme.of(context).primaryColor,
+                            labelColor: Theme.of(context).colorScheme.primary,
                             unselectedLabelColor: Colors.grey,
                             indicator: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: Theme.of(context).canvasColor,
                                 boxShadow: [
                                   BoxShadow(
-                                      color: Theme.of(context).primaryColor,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                       offset: Offset(1.0, 1.0))
                                 ]),
                             tabs: [
@@ -341,7 +342,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                 ))
             : Center(
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ));
   }
@@ -879,14 +880,15 @@ class ProfilUserState extends State<ProfilUser>
                           controller: _tabController,
                           isScrollable: true,
                           indicatorSize: TabBarIndicatorSize.tab,
-                          labelColor: Theme.of(context).primaryColor,
+                          labelColor: Theme.of(context).colorScheme.primary,
                           unselectedLabelColor: Colors.grey,
                           indicator: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: Theme.of(context).canvasColor,
                               boxShadow: [
                                 BoxShadow(
-                                    color: Theme.of(context).primaryColor,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                     offset: Offset(1.0, 1.0))
                               ]),
                           tabs: [
@@ -907,7 +909,7 @@ class ProfilUserState extends State<ProfilUser>
             )
           : Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 strokeWidth: 1.5,
               ),
             ),
@@ -929,7 +931,7 @@ class ProfilUserState extends State<ProfilUser>
                         height: 10.0,
                       ),
                       Text('Visible seulement par les followers',
-                          style: mystyle(12))
+                          style: Theme.of(context).textTheme.bodySmall)
                     ],
                   ),
           ];
@@ -946,7 +948,8 @@ class ProfilUserState extends State<ProfilUser>
                 SizedBox(
                   height: 10.0,
                 ),
-                Text('Visible seulement par les followers', style: mystyle(12))
+                Text('Visible seulement par les followers',
+                    style: Theme.of(context).textTheme.bodySmall)
               ],
             ),
             Column(
@@ -956,7 +959,8 @@ class ProfilUserState extends State<ProfilUser>
                 SizedBox(
                   height: 10.0,
                 ),
-                Text('Visible seulement par les followers', style: mystyle(12))
+                Text('Visible seulement par les followers',
+                    style: Theme.of(context).textTheme.bodySmall)
               ],
             )
           ];

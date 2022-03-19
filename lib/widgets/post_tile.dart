@@ -56,7 +56,7 @@ class PostTileState extends State<PostTile> with TickerProviderStateMixin {
             if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               );
               /*(widget.post.type == 'picture')
@@ -333,7 +333,6 @@ class PictureItemState extends State<PictureItem>
                             icon: Icon(Icons.arrow_back_ios)),
                         Text(
                           'More',
-                          style: mystyle(16),
                         )
                       ],
                     ),
@@ -353,7 +352,6 @@ class PictureItemState extends State<PictureItem>
                           leading: Icon(Icons.flag),
                           title: Text(
                             'Signaler',
-                            style: mystyle(12),
                           ),
                         ),
                         ListTile(
@@ -361,7 +359,6 @@ class PictureItemState extends State<PictureItem>
                           leading: Icon(Icons.not_interested_rounded),
                           title: Text(
                             'Pas interessé',
-                            style: mystyle(12),
                           ),
                         ),
                         ListTile(
@@ -369,7 +366,6 @@ class PictureItemState extends State<PictureItem>
                           leading: Icon(Icons.copy),
                           title: Text(
                             'Copier le lien',
-                            style: mystyle(12),
                           ),
                         ),
                         ListTile(
@@ -377,7 +373,6 @@ class PictureItemState extends State<PictureItem>
                           leading: Icon(Icons.add),
                           title: Text(
                             'Follow',
-                            style: mystyle(12),
                           ),
                         ),
                         ListTile(
@@ -385,7 +380,6 @@ class PictureItemState extends State<PictureItem>
                           leading: Icon(Icons.account_box),
                           title: Text(
                             'A propos du compte',
-                            style: mystyle(12),
                           ),
                         ),
                       ],
@@ -691,7 +685,6 @@ class PictureItemState extends State<PictureItem>
                                 Expanded(
                                     child: Marquee(
                                   text: post.gameName,
-                                  style: mystyle(12, Colors.white),
                                   blankSpace: 50.0,
                                   velocity: 30.0,
                                 )),
@@ -733,13 +726,14 @@ class PictureItemState extends State<PictureItem>
                                                 userPostID: post.uid,
                                               )));
                                 },
-                                child: Text(post.username,
-                                    style: mystyle(14, Colors.white))),
+                                child: Text(
+                                  post.username,
+                                )),
                           ),
                           SizedBox(
                             width: 2.5,
                           ),
-                          Text('.', style: mystyle(11, Colors.white)),
+                          Text('.'),
                           SizedBox(
                             width: 2.5,
                           ),
@@ -753,30 +747,30 @@ class PictureItemState extends State<PictureItem>
                         height: 2.5,
                       ),
                       Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.0),
-                          child: ExpandableText(
-                            descriptionFinal,
-                            style: TextStyle(color: Colors.white),
-                            expandText: 'Plus',
-                            collapseText: 'Moins',
-                            maxLines: 2,
-                            onHashtagTap: (hashtag) async {
-                              late Hashtag tag;
-                              await FirebaseFirestore.instance
-                                  .collection('hashtags')
-                                  .doc(hashtag)
-                                  .get()
-                                  .then((hashtagData) => tag = Hashtag.fromMap(
-                                      hashtagData, hashtagData.data()!));
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) =>
-                                          HashtagsScreen(hashtag: tag)));
-                            },
-                            hashtagStyle:
-                                mystyle(12, Theme.of(context).primaryColor),
-                          )),
+                        padding: EdgeInsets.symmetric(horizontal: 5.0),
+                        child: ExpandableText(
+                          descriptionFinal,
+                          style: TextStyle(color: Colors.white),
+                          expandText: 'Plus',
+                          collapseText: 'Moins',
+                          maxLines: 2,
+                          onHashtagTap: (hashtag) async {
+                            late Hashtag tag;
+                            await FirebaseFirestore.instance
+                                .collection('hashtags')
+                                .doc(hashtag)
+                                .get()
+                                .then((hashtagData) => tag = Hashtag.fromMap(
+                                    hashtagData, hashtagData.data()!));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        HashtagsScreen(hashtag: tag)));
+                          },
+                          // hashtagStyle:  mystyle(12, Theme.of(context).primaryColor),
+                        ),
+                      ),
                     ],
                   ),
                 )),
@@ -867,7 +861,7 @@ class PictureItemState extends State<PictureItem>
             child: Card(
               color: Colors.transparent,
               shadowColor: Colors.transparent,
-              child: Text(title, style: mystyle(13, Colors.white)),
+              child: Text(title),
             ))
       ],
     );
@@ -897,7 +891,7 @@ class PictureItemState extends State<PictureItem>
           child: Card(
               color: Colors.transparent,
               shadowColor: Colors.transparent,
-              child: Text(title, style: mystyle(13, Colors.white))))
+              child: Text(title)))
     ]);
   }
 
@@ -919,8 +913,9 @@ class PictureItemState extends State<PictureItem>
         Card(
           color: Colors.transparent,
           shadowColor: Colors.transparent,
-          child:
-              Text(post.viewcount.toString(), style: mystyle(13, Colors.white)),
+          child: Text(
+            post.viewcount.toString(),
+          ),
         ),
       ],
     );
@@ -1044,7 +1039,6 @@ class PictureItemState extends State<PictureItem>
                   width: MediaQuery.of(context).size.width / 4,
                   child: Marquee(
                     text: post.gameName,
-                    style: mystyle(13, Colors.white),
                     textDirection: TextDirection.ltr,
                     blankSpace: 50,
                     velocity: 30,
@@ -1308,7 +1302,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                             icon: Icon(Icons.arrow_back_ios)),
                         Text(
                           'More',
-                          style: mystyle(16),
                         )
                       ],
                     ),
@@ -1328,7 +1321,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                           leading: Icon(Icons.flag),
                           title: Text(
                             'Signaler',
-                            style: mystyle(12),
                           ),
                         ),
                         ListTile(
@@ -1336,7 +1328,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                           leading: Icon(Icons.not_interested_rounded),
                           title: Text(
                             'Pas interessé',
-                            style: mystyle(12),
                           ),
                         ),
                         ListTile(
@@ -1344,7 +1335,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                           leading: Icon(Icons.copy),
                           title: Text(
                             'Copier le lien',
-                            style: mystyle(12),
                           ),
                         ),
                         ListTile(
@@ -1352,7 +1342,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                           leading: Icon(Icons.add),
                           title: Text(
                             'Follow',
-                            style: mystyle(12),
                           ),
                         ),
                         ListTile(
@@ -1360,7 +1349,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                           leading: Icon(Icons.account_box),
                           title: Text(
                             'A propos du compte',
-                            style: mystyle(12),
                           ),
                         ),
                       ],
@@ -1767,7 +1755,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
           videoPlayerController,
           allowScrubbing: true,
           colors: VideoProgressColors(
-              playedColor: Theme.of(context).primaryColor,
+              playedColor: Theme.of(context).colorScheme.primary,
               backgroundColor: Colors.white),
         ),
       ),
@@ -1805,13 +1793,14 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                                                 userPostID: post.uid,
                                               )));
                                 },
-                                child: Text(post.username,
-                                    style: mystyle(14, Colors.white))),
+                                child: Text(
+                                  post.username,
+                                )),
                           ),
                           SizedBox(
                             width: 2.5,
                           ),
-                          Text('.', style: mystyle(11, Colors.white)),
+                          Text('.'),
                           SizedBox(
                             width: 2.5,
                           ),
@@ -1846,8 +1835,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                                       builder: (_) =>
                                           HashtagsScreen(hashtag: tag)));
                             },
-                            hashtagStyle:
-                                mystyle(12, Theme.of(context).primaryColor),
+                            // hashtagStyle:
+                            //     mystyle(12, Theme.of(context).colorScheme.primary),
                           )),
                     ],
                   ),
@@ -1939,7 +1928,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
             child: Card(
               color: Colors.transparent,
               shadowColor: Colors.transparent,
-              child: Text(title, style: mystyle(13, Colors.white)),
+              child: Text(title),
             ))
       ],
     );
@@ -1974,7 +1963,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
           child: Card(
               color: Colors.transparent,
               shadowColor: Colors.transparent,
-              child: Text(title, style: mystyle(13, Colors.white))))
+              child: Text(title)))
     ]);
   }
 
@@ -1996,8 +1985,9 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
         Card(
           color: Colors.transparent,
           shadowColor: Colors.transparent,
-          child:
-              Text(post.viewcount.toString(), style: mystyle(13, Colors.white)),
+          child: Text(
+            post.viewcount.toString(),
+          ),
         ),
       ],
     );
@@ -2119,7 +2109,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                   width: MediaQuery.of(context).size.width / 4,
                   child: Marquee(
                     text: post.gameName,
-                    style: mystyle(13, Colors.white),
                     textDirection: TextDirection.ltr,
                     blankSpace: 50,
                     velocity: 30,

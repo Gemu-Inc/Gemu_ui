@@ -106,7 +106,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                             width: 45,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
-                                color: Theme.of(context).primaryColor),
+                                color: Theme.of(context).colorScheme.primary),
                             child: Icon(
                               Icons.add,
                               size: 25,

@@ -56,14 +56,14 @@ class PostsPublicState extends State<PostsPublic>
             if (!snapshot.hasData) {
               return Center(
                   child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
               ));
             }
             if (snapshot.data!.docs.length == 0) {
               return Center(
                 child: Text(
                   'Pas encore de publications publiques',
-                  style: mystyle(11),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               );
             }
@@ -119,7 +119,7 @@ class PostsPublicState extends State<PostsPublic>
                             posts: posts,
                           ))),
               borderRadius: BorderRadius.circular(5.0),
-              splashColor: Theme.of(context).primaryColor,
+              splashColor: Theme.of(context).colorScheme.primary,
             ),
             Positioned(
                 bottom: 5.0,
@@ -128,7 +128,7 @@ class PostsPublicState extends State<PostsPublic>
                   children: [
                     Icon(Icons.remove_red_eye, color: Colors.white),
                     Text(post.viewcount.toString(),
-                        style: mystyle(12, Colors.white))
+                        style: Theme.of(context).textTheme.bodySmall)
                   ],
                 ))
           ],
@@ -163,7 +163,7 @@ class PostsPublicState extends State<PostsPublic>
                             posts: posts,
                           ))),
               borderRadius: BorderRadius.circular(5.0),
-              splashColor: Theme.of(context).primaryColor,
+              splashColor: Theme.of(context).colorScheme.primary,
             ),
             Positioned(
                 top: 5.0,
@@ -179,7 +179,7 @@ class PostsPublicState extends State<PostsPublic>
                   children: [
                     Icon(Icons.remove_red_eye, color: Colors.white),
                     Text(post.viewcount.toString(),
-                        style: mystyle(12, Colors.white))
+                        style: Theme.of(context).textTheme.bodySmall)
                   ],
                 ))
           ],
@@ -237,7 +237,7 @@ class PostsPrivateState extends State<PostsPrivate>
             if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               );
             }
@@ -245,7 +245,7 @@ class PostsPrivateState extends State<PostsPrivate>
               return Center(
                 child: Text(
                   'Pas encore de publications privées',
-                  style: mystyle(11),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               );
             }
@@ -301,7 +301,7 @@ class PostsPrivateState extends State<PostsPrivate>
                             posts: posts,
                           ))),
               borderRadius: BorderRadius.circular(5.0),
-              splashColor: Theme.of(context).primaryColor,
+              splashColor: Theme.of(context).colorScheme.primary,
             ),
             Positioned(
                 bottom: 5.0,
@@ -310,7 +310,7 @@ class PostsPrivateState extends State<PostsPrivate>
                   children: [
                     Icon(Icons.remove_red_eye, color: Colors.white),
                     Text(post.viewcount.toString(),
-                        style: mystyle(12, Colors.white))
+                        style: Theme.of(context).textTheme.bodySmall)
                   ],
                 ))
           ],
@@ -345,7 +345,7 @@ class PostsPrivateState extends State<PostsPrivate>
                             posts: posts,
                           ))),
               borderRadius: BorderRadius.circular(5.0),
-              splashColor: Theme.of(context).primaryColor,
+              splashColor: Theme.of(context).colorScheme.primary,
             ),
             Positioned(
                 top: 5.0,
@@ -361,7 +361,7 @@ class PostsPrivateState extends State<PostsPrivate>
                   children: [
                     Icon(Icons.remove_red_eye, color: Colors.white),
                     Text(post.viewcount.toString(),
-                        style: mystyle(12, Colors.white))
+                        style: Theme.of(context).textTheme.bodySmall)
                   ],
                 ))
           ],
@@ -421,7 +421,7 @@ class PostsViewState extends State<PostsView> {
               widget.actualUser.uid == me!.uid
                   ? 'Mes posts'
                   : '${widget.actualUser.username}\'s posts',
-              style: mystyle(16, Colors.white),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           body: PageView.builder(

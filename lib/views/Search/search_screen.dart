@@ -290,14 +290,14 @@ class Searchviewstate extends State<SearchScreen>
             controller: _searchController,
             autofocus: false,
             focusNode: _keyboardFocusNode,
-            cursorColor: Theme.of(context).primaryColor,
+            cursorColor: Theme.of(context).colorScheme.primary,
             textInputAction: TextInputAction.search,
             maxLines: 1,
             decoration: InputDecoration(
                 labelText: 'Search',
                 labelStyle: TextStyle(
                     color: _keyboardFocusNode.hasFocus
-                        ? Theme.of(context).primaryColor
+                        ? Theme.of(context).colorScheme.primary
                         : Colors.grey),
                 focusedBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
@@ -398,7 +398,7 @@ class Searchviewstate extends State<SearchScreen>
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Text(
               'Recherches récentes',
-              style: mystyle(13),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           SizedBox(
@@ -416,7 +416,7 @@ class Searchviewstate extends State<SearchScreen>
                     if (!snapshot.hasData) {
                       return Center(
                         child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       );
                     }
@@ -424,7 +424,7 @@ class Searchviewstate extends State<SearchScreen>
                       return Center(
                         child: Text(
                           'Pas encore de recherches récentes',
-                          style: mystyle(11),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       );
                     }
@@ -473,11 +473,13 @@ class Searchviewstate extends State<SearchScreen>
                                     ),
                                     title: Text(
                                       recentSearch.data()!['name'],
-                                      style: mystyle(12),
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
                                     ),
                                     subtitle: Text(
                                       '${recentSearch.data()!['postsCount'].toString()} publications',
-                                      style: mystyle(11),
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
                                     ),
                                     trailing: IconButton(
                                         onPressed: () {
@@ -534,7 +536,9 @@ class Searchviewstate extends State<SearchScreen>
                                               ),
                                         title: Text(
                                           recentSearch.data()!['username'],
-                                          style: mystyle(12),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
                                         ),
                                         trailing: IconButton(
                                             onPressed: () {
@@ -574,7 +578,9 @@ class Searchviewstate extends State<SearchScreen>
                                         ),
                                         title: Text(
                                           recentSearch.data()!['name'],
-                                          style: mystyle(12),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
                                         ),
                                         trailing: IconButton(
                                             onPressed: () {
@@ -605,7 +611,7 @@ class Searchviewstate extends State<SearchScreen>
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Text(
               'Recherches récentes',
-              style: mystyle(13),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           SizedBox(
@@ -624,7 +630,7 @@ class Searchviewstate extends State<SearchScreen>
                     if (!snapshot.hasData) {
                       return Center(
                         child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       );
                     }
@@ -632,7 +638,7 @@ class Searchviewstate extends State<SearchScreen>
                       return Center(
                         child: Text(
                           'Pas encore de recherches récentes',
-                          style: mystyle(11),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       );
                     }
@@ -687,7 +693,7 @@ class Searchviewstate extends State<SearchScreen>
                                       ),
                                 title: Text(
                                   recentSearch.data()!['username'],
-                                  style: mystyle(12),
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                                 trailing: IconButton(
                                     onPressed: () {
@@ -716,7 +722,7 @@ class Searchviewstate extends State<SearchScreen>
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Text(
               'Recherches récentes',
-              style: mystyle(13),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           SizedBox(
@@ -735,7 +741,7 @@ class Searchviewstate extends State<SearchScreen>
                     if (!snapshot.hasData) {
                       return Center(
                         child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       );
                     }
@@ -743,7 +749,6 @@ class Searchviewstate extends State<SearchScreen>
                       return Center(
                         child: Text(
                           'Pas encore de recherches récentes',
-                          style: mystyle(11),
                         ),
                       );
                     }
@@ -779,7 +784,6 @@ class Searchviewstate extends State<SearchScreen>
                               ),
                               title: Text(
                                 recentSearch.data()!['name'],
-                                style: mystyle(12),
                               ),
                               trailing: IconButton(
                                   onPressed: () {
@@ -809,7 +813,6 @@ class Searchviewstate extends State<SearchScreen>
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Text(
               'Recherches récentes',
-              style: mystyle(13),
             ),
           ),
           SizedBox(
@@ -828,7 +831,7 @@ class Searchviewstate extends State<SearchScreen>
                     if (!snapshot.hasData) {
                       return Center(
                         child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       );
                     }
@@ -836,7 +839,6 @@ class Searchviewstate extends State<SearchScreen>
                       return Center(
                         child: Text(
                           'Pas encore de recherches récentes',
-                          style: mystyle(11),
                         ),
                       );
                     }
@@ -883,11 +885,9 @@ class Searchviewstate extends State<SearchScreen>
                                 ),
                                 title: Text(
                                   recentSearch.data()!['name'],
-                                  style: mystyle(12),
                                 ),
                                 subtitle: Text(
                                   '${recentSearch.data()!['postsCount'].toString()} publications',
-                                  style: mystyle(11),
                                 ),
                                 trailing: IconButton(
                                     onPressed: () {
@@ -914,7 +914,7 @@ class Searchviewstate extends State<SearchScreen>
                   height: 15.0,
                   width: 15.0,
                   child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 SizedBox(
@@ -924,7 +924,6 @@ class Searchviewstate extends State<SearchScreen>
                   _searchController.text.length < 10
                       ? 'Recherche de "${_searchController.text}.."'
                       : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
-                  style: mystyle(11),
                 )
               ],
             ),
@@ -935,7 +934,6 @@ class Searchviewstate extends State<SearchScreen>
                 ? Center(
                     child: Text(
                       'No results found',
-                      style: mystyle(12),
                     ),
                   )
                 : ListView.builder(
@@ -980,11 +978,9 @@ class Searchviewstate extends State<SearchScreen>
                                 ),
                                 title: Text(
                                   snap.data["name"],
-                                  style: mystyle(12),
                                 ),
                                 subtitle: Text(
                                   '${snap.data["postsCount"]} publications',
-                                  style: mystyle(11),
                                 ),
                               ),
                             )
@@ -1032,7 +1028,6 @@ class Searchviewstate extends State<SearchScreen>
                                           ),
                                     title: Text(
                                       snap.data["username"],
-                                      style: mystyle(12),
                                     ),
                                   ))
                               : Padding(
@@ -1078,7 +1073,6 @@ class Searchviewstate extends State<SearchScreen>
                                           ),
                                     title: Text(
                                       snap.data["name"],
-                                      style: mystyle(12),
                                     ),
                                   ),
                                 );
@@ -1095,7 +1089,7 @@ class Searchviewstate extends State<SearchScreen>
                   height: 15.0,
                   width: 15.0,
                   child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 SizedBox(
@@ -1105,7 +1099,6 @@ class Searchviewstate extends State<SearchScreen>
                   _searchController.text.length < 10
                       ? 'Recherche de "${_searchController.text}.."'
                       : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
-                  style: mystyle(11),
                 )
               ],
             ),
@@ -1116,7 +1109,6 @@ class Searchviewstate extends State<SearchScreen>
                 ? Center(
                     child: Text(
                       'No users found',
-                      style: mystyle(12),
                     ),
                   )
                 : ListView.builder(
@@ -1163,7 +1155,6 @@ class Searchviewstate extends State<SearchScreen>
                                 ),
                           title: Text(
                             snap.data["username"],
-                            style: mystyle(12),
                           ),
                         ),
                       );
@@ -1180,7 +1171,7 @@ class Searchviewstate extends State<SearchScreen>
                   height: 15.0,
                   width: 15.0,
                   child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 SizedBox(
@@ -1190,7 +1181,6 @@ class Searchviewstate extends State<SearchScreen>
                   _searchController.text.length < 10
                       ? 'Recherche de "${_searchController.text}.."'
                       : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
-                  style: mystyle(11),
                 )
               ],
             ),
@@ -1201,7 +1191,6 @@ class Searchviewstate extends State<SearchScreen>
                 ? Center(
                     child: Text(
                       'No games found',
-                      style: mystyle(12),
                     ),
                   )
                 : ListView.builder(
@@ -1238,7 +1227,6 @@ class Searchviewstate extends State<SearchScreen>
                             ),
                             title: Text(
                               snap.data["name"],
-                              style: mystyle(12),
                             ),
                           ));
                     });
@@ -1254,7 +1242,7 @@ class Searchviewstate extends State<SearchScreen>
                   height: 15.0,
                   width: 15.0,
                   child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 SizedBox(
@@ -1264,7 +1252,6 @@ class Searchviewstate extends State<SearchScreen>
                   _searchController.text.length < 10
                       ? 'Recherche de "${_searchController.text}.."'
                       : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
-                  style: mystyle(11),
                 )
               ],
             ),
@@ -1275,7 +1262,6 @@ class Searchviewstate extends State<SearchScreen>
                 ? Center(
                     child: Text(
                       'No hashtags found',
-                      style: mystyle(12),
                     ),
                   )
                 : ListView.builder(
@@ -1315,11 +1301,9 @@ class Searchviewstate extends State<SearchScreen>
                           ),
                           title: Text(
                             snap.data["name"],
-                            style: mystyle(12),
                           ),
                           subtitle: Text(
                             '${snap.data["postsCount"]} publications',
-                            style: mystyle(11),
                           ),
                         ),
                       );

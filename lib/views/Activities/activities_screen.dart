@@ -54,8 +54,8 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
       setState(() {});
     });
 
-    notifScrollController.addListener(() { 
-        positionScroll = notifScrollController.position.pixels;
+    notifScrollController.addListener(() {
+      positionScroll = notifScrollController.position.pixels;
     });
   }
 
@@ -138,7 +138,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                 children: [
                   Text(
                     activities[whatActivity],
-                    style: mystyle(12, Theme.of(context).primaryColor),
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Transform(
                       transform: Matrix4.rotationZ(
@@ -146,7 +146,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                       alignment: Alignment.center,
                       child: Icon(
                         Icons.expand_more,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                       ))
                 ],
               ),
@@ -188,7 +188,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                         },
                         title: Text(
                           activities[0],
-                          style: mystyle(12, Colors.white60),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                         trailing:
                             whatActivity == 0 ? Icon(Icons.check) : SizedBox(),
@@ -207,7 +207,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                           });
                         },
                         title: Text(activities[1],
-                            style: mystyle(12, Colors.white60)),
+                            style: Theme.of(context).textTheme.bodySmall),
                         trailing:
                             whatActivity == 1 ? Icon(Icons.check) : SizedBox(),
                       ),
@@ -225,7 +225,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                           });
                         },
                         title: Text(activities[2],
-                            style: mystyle(12, Colors.white60)),
+                            style: Theme.of(context).textTheme.bodySmall),
                         trailing:
                             whatActivity == 2 ? Icon(Icons.check) : SizedBox(),
                       ),
@@ -242,7 +242,7 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
                           });
                         },
                         title: Text(activities[3],
-                            style: mystyle(12, Colors.white60)),
+                            style: Theme.of(context).textTheme.bodySmall),
                         trailing:
                             whatActivity == 3 ? Icon(Icons.check) : SizedBox(),
                       ),

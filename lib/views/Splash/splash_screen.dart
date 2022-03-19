@@ -27,10 +27,10 @@ class SplashScreen extends StatelessWidget {
               child: LoadingIndicator(
             indicatorType: Indicator.pacman,
             colors: [
-              Theme.of(context).primaryColor,
+              Theme.of(context).colorScheme.primary,
               Theme.of(context).colorScheme.secondary,
               Theme.of(context).colorScheme.secondary,
-              Theme.of(context).primaryColor,
+              Theme.of(context).colorScheme.primary,
             ],
             strokeWidth: 6,
           )),

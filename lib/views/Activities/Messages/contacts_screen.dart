@@ -37,7 +37,7 @@ class Contactsviewstate extends State<ContactsScreen> {
                     onPressed: () => Navigator.pop(context)),
                 title: Text(
                   'Contacts',
-                  style: mystyle(15),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
             ),

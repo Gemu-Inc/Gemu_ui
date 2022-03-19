@@ -16,7 +16,7 @@ class TextMessage extends StatelessWidget {
       ),
       decoration: BoxDecoration(
           color: message!.isSender
-              ? Theme.of(context).primaryColor
+              ? Theme.of(context).colorScheme.primary
               : Theme.of(context).canvasColor,
           borderRadius: BorderRadius.circular(30)),
       child: Text(

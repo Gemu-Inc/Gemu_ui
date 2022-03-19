@@ -74,7 +74,7 @@ class FollowsState extends State<Follows> {
               ? Center(
                   child: Text(
                     'Pas encore de follows',
-                    style: mystyle(13),
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 )
               : ListView.builder(
@@ -123,7 +123,7 @@ class FollowsState extends State<Follows> {
                 )
           : Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
     );

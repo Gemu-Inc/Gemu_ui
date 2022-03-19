@@ -127,7 +127,6 @@ class AddPostviewstate extends State<AddPostScreen> {
             icon: Icon(Icons.clear), onPressed: () => Navigator.pop(context)),
         title: Text(
           'Create post',
-          style: mystyle(18),
         ),
       ),
       body: Column(
@@ -140,12 +139,11 @@ class AddPostviewstate extends State<AddPostScreen> {
                 child: Container(
                   width: MediaQuery.of(context).size.width / 2,
                   height: 50,
-                  decoration:
-                      BoxDecoration(color: Theme.of(context).primaryColor),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary),
                   child: Center(
                     child: Text(
                       'Add Picture',
-                      style: mystyle(23),
                     ),
                   ),
                 ),
@@ -160,12 +158,11 @@ class AddPostviewstate extends State<AddPostScreen> {
                 child: Container(
                   width: MediaQuery.of(context).size.width / 2,
                   height: 50,
-                  decoration:
-                      BoxDecoration(color: Theme.of(context).primaryColor),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary),
                   child: Center(
                     child: Text(
                       'Add Video',
-                      style: mystyle(23),
                     ),
                   ),
                 ),

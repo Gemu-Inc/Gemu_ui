@@ -139,7 +139,7 @@ class Trimmerviewstate extends State<TrimmerScreen> {
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).colorScheme.primary,
                                     Theme.of(context).accentColor
                                   ]),
                               shape: BoxShape.circle,

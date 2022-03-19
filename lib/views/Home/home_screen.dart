@@ -230,7 +230,7 @@ class _Homeviewstate extends State<HomeScreen>
             alignment: Alignment.center,
             color: Colors.grey,
             child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).colorScheme.primary,
               strokeWidth: 1.5,
             ),
           );
@@ -248,19 +248,20 @@ class _Homeviewstate extends State<HomeScreen>
           child: TabBar(
               controller: _tabMenuController,
               overlayColor: MaterialStateProperty.all(Colors.transparent),
-              indicatorColor: Theme.of(context).primaryColor,
+              indicatorColor: Theme.of(context).colorScheme.primary,
               indicatorSize: TabBarIndicatorSize.tab,
               indicatorWeight: 1.0,
-              labelColor: Theme.of(context).primaryColor,
+              labelColor: Theme.of(context).colorScheme.primary,
               unselectedLabelColor: Colors.grey,
               isScrollable: true,
               tabs: [
                 Tab(
                   child: currentTabMenuIndex == 0
-                      ? Text('Followings', style: mystyle(15))
+                      ? Text('Followings',
+                          style: Theme.of(context).textTheme.bodySmall)
                       : Text(
                           'Followings',
-                          style: mystyle(13, Colors.grey),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                 ),
                 Tab(
@@ -291,7 +292,8 @@ class _Homeviewstate extends State<HomeScreen>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Games', style: mystyle(15)),
+                              Text('Games',
+                                  style: Theme.of(context).textTheme.bodySmall),
                               Padding(
                                   padding: EdgeInsets.only(top: 1.0),
                                   child: Transform(
@@ -307,7 +309,7 @@ class _Homeviewstate extends State<HomeScreen>
                         )
                       : Text(
                           'Games',
-                          style: mystyle(13, Colors.grey),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                 ),
               ]),
@@ -345,7 +347,7 @@ class _Homeviewstate extends State<HomeScreen>
                               .updateIndex(index);
                         },
                         indicatorColor: Colors.transparent,
-                        labelColor: Theme.of(context).primaryColor,
+                        labelColor: Theme.of(context).colorScheme.primary,
                         unselectedLabelColor: Colors.grey,
                         isScrollable: true,
                         tabs: games.map((game) {
@@ -370,7 +372,9 @@ class _Homeviewstate extends State<HomeScreen>
                                         width: 1.5,
                                         color:
                                             widget.indexGamesHome == indexGame
-                                                ? Theme.of(context).primaryColor
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
                                                 : Colors.grey),
                                     image: DecorationImage(
                                         fit: BoxFit.cover,

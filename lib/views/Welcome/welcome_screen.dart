@@ -164,7 +164,6 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                               ),
                               Text(
                                 "Commencer l'aventure",
-                                style: mystyle(12),
                               ),
                               Container(
                                 height: 2,
@@ -185,8 +184,10 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                 style: ElevatedButton.styleFrom(
                                     elevation: 6,
                                     shadowColor: Theme.of(context).shadowColor,
-                                    primary: isDayMood ? cPinkBtn : cPurpleBtn,
-                                    // cLightPurple,
+                                    primary: isDayMood
+                                        ? cPrimaryPink
+                                        : cPrimaryPurple,
+                                    // cSecondaryPurple,
                                     onPrimary: Theme.of(context).canvasColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15.0),
@@ -220,7 +221,6 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                               ),
                               Text(
                                 "Déjà un compte?",
-                                style: mystyle(12),
                               ),
                               Container(
                                 height: 2,
@@ -241,7 +241,9 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                 style: ElevatedButton.styleFrom(
                                     elevation: 6,
                                     shadowColor: Theme.of(context).shadowColor,
-                                    primary: isDayMood ? cPurpleBtn : cPinkBtn,
+                                    primary: isDayMood
+                                        ? cPrimaryPurple
+                                        : cPrimaryPink,
                                     onPrimary: Theme.of(context).canvasColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15.0),
@@ -280,8 +282,9 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                         ..onTap =
                                             () => print("terms and conditions"),
                                       style: TextStyle(
-                                          color:
-                                              isDayMood ? cPinkBtn : cPurpleBtn,
+                                          color: isDayMood
+                                              ? cPrimaryPink
+                                              : cPrimaryPurple,
                                           fontSize: 12)),
                                   TextSpan(
                                       text: " et les ",
@@ -296,8 +299,9 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () => print("privacy policy"),
                                       style: TextStyle(
-                                          color:
-                                              isDayMood ? cPinkBtn : cPurpleBtn,
+                                          color: isDayMood
+                                              ? cPrimaryPink
+                                              : cPrimaryPurple,
                                           fontSize: 12))
                                 ]),
                             textAlign: TextAlign.center)),

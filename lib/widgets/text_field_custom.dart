@@ -52,7 +52,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
         obscureText: pwdVisible,
         controller: widget.controller,
         focusNode: widget.focusNode,
-        cursorColor: Theme.of(context).primaryColor,
+        cursorColor: Theme.of(context).colorScheme.primary,
         keyboardType: widget.textInputType,
         textInputAction: widget.textInputAction,
         onSubmitted: widget.submit,
@@ -60,17 +60,19 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
             fillColor: Theme.of(context).canvasColor,
             filled: true,
             labelText: widget.label,
-            labelStyle: mystyle(
-                13,
-                widget.focusNode.hasFocus
-                    ? Theme.of(context).primaryColor
-                    : Colors.grey),
+            // labelStyle:
+            //    style( 13,
+            //     widget.focusNode.hasFocus
+            //         ? Theme.of(context).colorScheme.primary
+            //         : Colors.grey
+            //         ),
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Theme.of(context).primaryColor)),
+                borderSide:
+                    BorderSide(color: Theme.of(context).colorScheme.primary)),
             prefixIcon: Icon(widget.icon,
                 color: widget.focusNode.hasFocus
-                    ? Theme.of(context).primaryColor
+                    ? Theme.of(context).colorScheme.primary
                     : Colors.grey),
             suffixIcon: widget.controller.text.isEmpty
                 ? SizedBox()
@@ -79,7 +81,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
                         icon: Icon(
                           Icons.remove_red_eye_sharp,
                           color: widget.focusNode.hasFocus
-                              ? Theme.of(context).primaryColor
+                              ? Theme.of(context).colorScheme.primary
                               : Colors.grey,
                         ),
                         onPressed: () {
@@ -91,7 +93,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
                         icon: Icon(
                           Icons.clear,
                           color: widget.focusNode.hasFocus
-                              ? Theme.of(context).primaryColor
+                              ? Theme.of(context).colorScheme.primary
                               : Colors.grey,
                         ),
                         onPressed: widget.clear)));
@@ -150,7 +152,7 @@ class _TextFieldCustomLoginState extends State<TextFieldCustomLogin> {
         obscureText: pwdVisible,
         controller: widget.controller,
         focusNode: widget.focusNode,
-        cursorColor: widget.isDayMood ? cPurpleBtn : cPinkBtn,
+        cursorColor: widget.isDayMood ? cPrimaryPurple : cPrimaryPink,
         keyboardType: widget.textInputType,
         textInputAction: widget.textInputAction,
         onSubmitted: widget.submit,
@@ -158,23 +160,23 @@ class _TextFieldCustomLoginState extends State<TextFieldCustomLogin> {
             fillColor: Theme.of(context).canvasColor,
             filled: true,
             labelText: widget.label,
-            labelStyle: mystyle(
-                13,
-                widget.focusNode.hasFocus
-                    ? widget.isDayMood
-                        ? cLightPurple
-                        : cDarkPink
-                    : Colors.grey),
+            // labelStyle:
+            //    style( 13,
+            //     widget.focusNode.hasFocus
+            //         ? widget.isDayMood
+            //             ? cSecondaryPurple
+            //             : cPrimaryPink
+            //         : Colors.grey),
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-              color: widget.isDayMood ? cPurpleBtn : cPinkBtn,
+              color: widget.isDayMood ? cPrimaryPurple : cPrimaryPink,
             )),
             prefixIcon: Icon(widget.icon,
                 color: widget.focusNode.hasFocus
                     ? widget.isDayMood
-                        ? cLightPurple
-                        : cDarkPink
+                        ? cSecondaryPurple
+                        : cPrimaryPink
                     : Colors.grey),
             suffixIcon: widget.controller.text.isEmpty
                 ? SizedBox()
@@ -184,8 +186,8 @@ class _TextFieldCustomLoginState extends State<TextFieldCustomLogin> {
                           Icons.remove_red_eye_sharp,
                           color: widget.focusNode.hasFocus
                               ? widget.isDayMood
-                                  ? cLightPurple
-                                  : cDarkPink
+                                  ? cSecondaryPurple
+                                  : cPrimaryPink
                               : Colors.grey,
                         ),
                         onPressed: () {
@@ -198,8 +200,8 @@ class _TextFieldCustomLoginState extends State<TextFieldCustomLogin> {
                           Icons.clear,
                           color: widget.focusNode.hasFocus
                               ? widget.isDayMood
-                                  ? cLightPurple
-                                  : cDarkPink
+                                  ? cSecondaryPurple
+                                  : cPrimaryPink
                               : Colors.grey,
                         ),
                         onPressed: widget.clear)));
@@ -259,7 +261,7 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
         obscureText: pwdVisible,
         controller: widget.controller,
         focusNode: widget.focusNode,
-        cursorColor: widget.isDayMood ? cPinkBtn : cPurpleBtn,
+        cursorColor: widget.isDayMood ? cPrimaryPink : cPrimaryPurple,
         keyboardType: widget.textInputType,
         textInputAction: widget.textInputAction,
         onSubmitted: widget.submit,
@@ -267,23 +269,25 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
             fillColor: Theme.of(context).canvasColor,
             filled: true,
             labelText: widget.label,
-            labelStyle: mystyle(
-                13,
-                widget.focusNode.hasFocus
-                    ? widget.isDayMood
-                        ? cDarkPink
-                        : cLightPurple
-                    : Colors.grey),
+            // labelStyle:
+            //   style(size: 13,
+            //     widget.focusNode.hasFocus
+            //         ? widget.isDayMood
+            //             ? cPrimaryPink
+            //             : cSecondaryPurple
+            //         : Colors.grey
+            // ),
+
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-              color: widget.isDayMood ? cPinkBtn : cPurpleBtn,
+              color: widget.isDayMood ? cPrimaryPink : cPrimaryPurple,
             )),
             prefixIcon: Icon(widget.icon,
                 color: widget.focusNode.hasFocus
                     ? widget.isDayMood
-                        ? cDarkPink
-                        : cLightPurple
+                        ? cPrimaryPink
+                        : cSecondaryPurple
                     : Colors.grey),
             suffixIcon: widget.controller.text.isEmpty
                 ? SizedBox()
@@ -293,8 +297,8 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
                           Icons.remove_red_eye_sharp,
                           color: widget.focusNode.hasFocus
                               ? widget.isDayMood
-                                  ? cDarkPink
-                                  : cLightPurple
+                                  ? cPrimaryPink
+                                  : cSecondaryPurple
                               : Colors.grey,
                         ),
                         onPressed: () {
@@ -307,8 +311,8 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
                           Icons.clear,
                           color: widget.focusNode.hasFocus
                               ? widget.isDayMood
-                                  ? cDarkPink
-                                  : cLightPurple
+                                  ? cPrimaryPink
+                                  : cSecondaryPurple
                               : Colors.grey,
                         ),
                         onPressed: widget.clear)));

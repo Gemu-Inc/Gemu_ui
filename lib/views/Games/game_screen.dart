@@ -89,7 +89,7 @@ class Gameviewstate extends State<GameScreen> {
         : Scaffold(
             body: Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 strokeWidth: 1.5,
               ),
             ),
@@ -140,16 +140,17 @@ class Gameviewstate extends State<GameScreen> {
                             onPressed: () => unfollowGame(),
                             child: Text(
                               'Unfollow',
-                              style: mystyle(13, Colors.black),
+                              style: Theme.of(context).textTheme.bodySmall,
                             ))
                         : ElevatedButton(
                             style: TextButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
                                 side: BorderSide(color: Colors.black)),
                             onPressed: () => followGame(),
                             child: Text(
                               'Follow',
-                              style: mystyle(13, Colors.black),
+                              style: Theme.of(context).textTheme.bodySmall,
                             )),
                   ),
                 ),
@@ -189,7 +190,7 @@ class Gameviewstate extends State<GameScreen> {
         : Center(
             child: Text(
               'No posts for ${widget.game.name} at this moment',
-              style: mystyle(12),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           );
   }
@@ -218,7 +219,7 @@ class Gameviewstate extends State<GameScreen> {
                     ),
                     Text(
                       post.viewcount.toString(),
-                      style: mystyle(11, Colors.white),
+                      style: Theme.of(context).textTheme.bodySmall,
                     )
                   ],
                 )),
@@ -227,7 +228,8 @@ class Gameviewstate extends State<GameScreen> {
             ),
             InkWell(
               borderRadius: BorderRadius.circular(5.0),
-              splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+              splashColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.5),
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -274,7 +276,7 @@ class Gameviewstate extends State<GameScreen> {
                     ),
                     Text(
                       post.viewcount.toString(),
-                      style: mystyle(11, Colors.white),
+                      style: Theme.of(context).textTheme.bodySmall,
                     )
                   ],
                 )),
@@ -283,7 +285,8 @@ class Gameviewstate extends State<GameScreen> {
             ),
             InkWell(
               borderRadius: BorderRadius.circular(5.0),
-              splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+              splashColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.5),
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(

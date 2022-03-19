@@ -141,7 +141,6 @@ class PictureEditorviewstate extends State<PictureEditorScreen> {
             child: Center(
               child: Text(
                 'Edit picture',
-                style: mystyle(15),
               ),
             ),
           ),
@@ -186,7 +185,6 @@ class PictureEditorviewstate extends State<PictureEditorScreen> {
                         children: [
                           Text(
                             'Game',
-                            style: mystyle(12),
                           ),
                           SizedBox(
                             height: 10.0,
@@ -211,7 +209,6 @@ class PictureEditorviewstate extends State<PictureEditorScreen> {
                         children: [
                           Text(
                             'Game',
-                            style: mystyle(12),
                           ),
                           SizedBox(
                             height: 10.0,
@@ -238,7 +235,6 @@ class PictureEditorviewstate extends State<PictureEditorScreen> {
                   children: [
                     Text(
                       'Privacy',
-                      style: mystyle(12),
                     ),
                     SizedBox(
                       height: 10.0,
@@ -402,10 +398,13 @@ class PictureEditorviewstate extends State<PictureEditorScreen> {
                             runSpacing: 5,
                             children: hashtagsSelected.map((hashtag) {
                               return Chip(
-                                backgroundColor: Theme.of(context).primaryColor,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
-                                label: Text('#$hashtag', style: mystyle(11)),
+                                label: Text(
+                                  '#$hashtag',
+                                ),
                                 onDeleted: () {
                                   setState(() {
                                     hashtagsSelected.remove(hashtag);
@@ -438,11 +437,9 @@ class PictureEditorviewstate extends State<PictureEditorScreen> {
                             child: Icon(Icons.tag, size: 15)),
                         title: Text(
                           _resultList[index].data()['name'],
-                          style: mystyle(12),
                         ),
                         trailing: Text(
                           '${_resultList[index].data()['postsCount']} publications',
-                          style: mystyle(11, Colors.white.withOpacity(0.6)),
                         ),
                         onTap: () {
                           setState(() {
@@ -494,8 +491,9 @@ class PictureEditorviewstate extends State<PictureEditorScreen> {
                       height: 30,
                       width: 60,
                       child: Center(
-                        child: Text('Prev', style: mystyle(16, Colors.black38)),
-                      ),
+                          child: Text(
+                        'Prev',
+                      )),
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(15),
@@ -541,7 +539,9 @@ class PictureEditorviewstate extends State<PictureEditorScreen> {
                                 Theme.of(context).colorScheme.secondary
                               ])),
                       child: Center(
-                        child: Text('Next', style: mystyle(16, Colors.black38)),
+                        child: Text(
+                          'Next',
+                        ),
                       ),
                     ),
                   ),

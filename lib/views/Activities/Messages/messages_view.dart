@@ -245,7 +245,7 @@ class Chatviewstate extends State<ChatScreen> {
                     : GestureDetector(
                         onTap: () => onSendMessage(_messageController.text),
                         child: Text('Envoyer',
-                            style: mystyle(15, Theme.of(context).primaryColor)))
+                            style: Theme.of(context).textTheme.bodySmall))
               ],
             ),
           ))
@@ -311,7 +311,7 @@ class MessageStatusDot extends StatelessWidget {
       case MessageStatus.not_view:
         return Colors.transparent;
       case MessageStatus.viewed:
-        return Theme.of(context).primaryColor;
+        return Theme.of(context).colorScheme.primary;
       default:
         return Colors.transparent;
     }

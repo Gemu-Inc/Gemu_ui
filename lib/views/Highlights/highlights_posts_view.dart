@@ -44,7 +44,7 @@ class HashtagPostsViewState extends State<HashtagPostsView> {
                   onPressed: () => Navigator.pop(context)),
               title: Text(
                 '#${widget.hashtag.name}',
-                style: mystyle(16, Colors.white),
+                style: Theme.of(context).textTheme.bodySmall,
               )),
           body: PageView.builder(
               physics: AlwaysScrollableScrollPhysics(
@@ -113,7 +113,7 @@ class DiscoverPostsViewState extends State<DiscoverPostsView> {
                 )),
             title: Text(
               'Discover',
-              style: mystyle(16, Colors.white),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           body: PageView.builder(

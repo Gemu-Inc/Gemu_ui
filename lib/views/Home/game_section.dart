@@ -108,7 +108,7 @@ class GameSectionState extends State<GameSection>
                 ? Center(
                     child: Text(
                       'No posts at the moment',
-                      style: mystyle(11, Colors.white),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   )
                 : PageView.builder(
@@ -130,7 +130,7 @@ class GameSectionState extends State<GameSection>
                     })
             : Center(
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
       ],

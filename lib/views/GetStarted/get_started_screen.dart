@@ -234,7 +234,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   Icon(
                     Icons.home,
                     size: 33,
-                    color: isDayMood ? cPinkBtn : cPurpleBtn,
+                    color: isDayMood ? cPrimaryPink : cPrimaryPurple,
                   ),
                   const SizedBox(
                     height: 15.0,
@@ -274,7 +274,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 children: [
                   Icon(
                     Icons.highlight,
-                    color: isDayMood ? cPinkBtn : cPurpleBtn,
+                    color: isDayMood ? cPrimaryPink : cPrimaryPurple,
                     size: 33,
                   ),
                   const SizedBox(
@@ -315,7 +315,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 children: [
                   Icon(
                     Icons.videogame_asset,
-                    color: isDayMood ? cPinkBtn : cPurpleBtn,
+                    color: isDayMood ? cPrimaryPink : cPrimaryPurple,
                     size: 33,
                   ),
                   const SizedBox(
@@ -356,7 +356,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 children: [
                   Icon(
                     Icons.create,
-                    color: isDayMood ? cPinkBtn : cPurpleBtn,
+                    color: isDayMood ? cPrimaryPink : cPrimaryPurple,
                     size: 33,
                   ),
                   const SizedBox(
@@ -412,7 +412,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
           ),
           TabPageSelector(
             controller: _tabController,
-            selectedColor: isDayMood ? cPinkBtn : cPurpleBtn,
+            selectedColor: isDayMood ? cPrimaryPink : cPrimaryPurple,
             color: Colors.transparent,
             indicatorSize: 14,
           ),

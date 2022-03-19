@@ -246,7 +246,9 @@ class CommentsViewState extends State<CommentsView>
                                           horizontal: 10.0),
                                       child: Text(
                                           'Delete comment : ${commentsWillDelete.length}',
-                                          style: mystyle(15, Colors.white)),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall),
                                     ),
                                     Row(
                                       children: [
@@ -295,7 +297,9 @@ class CommentsViewState extends State<CommentsView>
                                           horizontal: 10.0),
                                       child: Text(
                                           'Delete response : ${responsesWillDelete.length}',
-                                          style: mystyle(15, Colors.white)),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall),
                                     ),
                                     Row(
                                       children: [
@@ -393,7 +397,7 @@ class CommentsViewState extends State<CommentsView>
                   icon: Icon(Icons.arrow_back_ios)),
               Text(
                 'Commentaires',
-                style: mystyle(16),
+                style: Theme.of(context).textTheme.bodySmall,
               )
             ],
           ),
@@ -416,7 +420,7 @@ class CommentsViewState extends State<CommentsView>
                       }
                       return Center(
                         child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                           strokeWidth: 1.5,
                         ),
                       );
@@ -426,7 +430,7 @@ class CommentsViewState extends State<CommentsView>
                       return Center(
                         child: Text(
                           'No comments',
-                          style: mystyle(12),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       );
                     }
@@ -463,7 +467,9 @@ class CommentsViewState extends State<CommentsView>
                                     decoration: BoxDecoration(
                                         color: commentsWillDelete
                                                 .contains(comment.id)
-                                            ? Theme.of(context).primaryColor
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
                                             : Colors.transparent),
                                     child: Column(
                                       children: [
@@ -502,7 +508,10 @@ class CommentsViewState extends State<CommentsView>
                                                             showResponses[index]
                                                                 ? 'Cacher ${comment.responsescount} réponses'
                                                                 : 'Voir ${comment.responsescount} réponses',
-                                                            style: mystyle(11),
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodySmall,
                                                           ),
                                                           Container(
                                                             height: 1,
@@ -667,7 +676,7 @@ class CommentsViewState extends State<CommentsView>
                       child: TextFormField(
                         scrollPhysics: AlwaysScrollableScrollPhysics(),
                         controller: _commentController,
-                        cursorColor: Theme.of(context).primaryColor,
+                        cursorColor: Theme.of(context).colorScheme.primary,
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) {
                           value = _commentController.text;
@@ -676,7 +685,6 @@ class CommentsViewState extends State<CommentsView>
                                 .showSnackBar(SnackBarCustom(
                               context: context,
                               error: 'Comment should not be empty',
-                        
                             ));
                           } else {
                             publishComment();
@@ -695,7 +703,6 @@ class CommentsViewState extends State<CommentsView>
                                 .showSnackBar(SnackBarCustom(
                               context: context,
                               error: 'Comment should not be empty',
-                            
                             ));
                           } else {
                             publishComment();
@@ -703,7 +710,7 @@ class CommentsViewState extends State<CommentsView>
                         },
                         icon: Icon(
                           Icons.send_outlined,
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ))
                   ],
                 )),
@@ -872,7 +879,7 @@ class CommentTileState extends State<CommentTile> {
                                       ProfilUser(userPostID: userComment.uid))),
                           child: Text(
                             userComment.username,
-                            style: mystyle(12),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
                         SizedBox(
@@ -884,7 +891,7 @@ class CommentTileState extends State<CommentTile> {
                         ),
                         Text(
                           Helpers.datePostView(widget.comment.date),
-                          style: mystyle(9),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
                     ),
@@ -928,7 +935,7 @@ class CommentTileState extends State<CommentTile> {
                             ),
                             Text(
                               (upper.length - downer.length).toString(),
-                              style: mystyle(10),
+                              style: Theme.of(context).textTheme.bodySmall,
                             )
                           ],
                         ),
@@ -943,7 +950,7 @@ class CommentTileState extends State<CommentTile> {
                           onTap: () => upComment(widget.comment),
                           child: Text(
                             'Up',
-                            style: mystyle(9),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
                         SizedBox(
@@ -957,7 +964,7 @@ class CommentTileState extends State<CommentTile> {
                           onTap: () => downComment(widget.comment),
                           child: Text(
                             'Down',
-                            style: mystyle(9),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
                         SizedBox(
@@ -977,7 +984,7 @@ class CommentTileState extends State<CommentTile> {
                                       downer: downer))),
                           child: Text(
                             'Répondre',
-                            style: mystyle(9),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         )
                       ],

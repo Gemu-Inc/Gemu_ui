@@ -98,7 +98,7 @@ class FollowingSectionState extends State<FollowingSection>
         ? posts.length == 0
             ? Center(
                 child: Text('No following/posts at the moment',
-                    style: mystyle(11, Colors.white)),
+                    style: Theme.of(context).textTheme.bodySmall),
               )
             : PageView.builder(
                 controller: widget.pageController,
@@ -119,7 +119,7 @@ class FollowingSectionState extends State<FollowingSection>
                 })
         : Center(
             child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
           );
   }

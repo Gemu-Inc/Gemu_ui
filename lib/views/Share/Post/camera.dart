@@ -182,7 +182,7 @@
 //             IconButton(
 //               icon:
 //                   activateFlash ? Icon(Icons.flash_on) : Icon(Icons.flash_off),
-//               color: Theme.of(context).primaryColor,
+//               color: Theme.of(context).colorScheme.primary,
 //               onPressed: controller != null ? onFlashModeButtonPressed : null,
 //             ),
 //             IconButton(

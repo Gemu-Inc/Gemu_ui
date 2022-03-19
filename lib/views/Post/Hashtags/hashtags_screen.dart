@@ -82,7 +82,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 strokeWidth: 1.5,
               ),
             ),
@@ -156,7 +156,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
         : Center(
             child: Text(
               'No posts for ${widget.hashtag.name} at this moment',
-              style: mystyle(13),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           );
   }
@@ -187,7 +187,8 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                               index: index,
                               posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),
-                  splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                  splashColor:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.5),
                 ),
                 Positioned(
                     bottom: 5,
@@ -200,7 +201,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                         ),
                         Text(
                           post.viewcount.toString(),
-                          style: mystyle(11, Colors.white),
+                          style: Theme.of(context).textTheme.bodySmall,
                         )
                       ],
                     )),
@@ -234,7 +235,8 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                               index: index,
                               posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),
-                  splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                  splashColor:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.5),
                 ),
                 Positioned(
                     top: 5,
@@ -254,7 +256,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                         ),
                         Text(
                           post.viewcount.toString(),
-                          style: mystyle(11, Colors.white),
+                          style: Theme.of(context).textTheme.bodySmall,
                         )
                       ],
                     )),

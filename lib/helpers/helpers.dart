@@ -130,8 +130,9 @@ class Helpers {
                                           .pushNamed(Register),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary:
-                                              isDayMood ? cPinkBtn : cPurpleBtn,
+                                          primary: isDayMood
+                                              ? cPrimaryPink
+                                              : cPrimaryPurple,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -312,8 +313,9 @@ class Helpers {
                                           .pushNamed(Register),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary:
-                                              isDayMood ? cPinkBtn : cPurpleBtn,
+                                          primary: isDayMood
+                                              ? cPrimaryPink
+                                              : cPrimaryPurple,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -449,8 +451,9 @@ class Helpers {
                                           .pushNamed(Login),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary:
-                                              isDayMood ? cPurpleBtn : cPinkBtn,
+                                          primary: isDayMood
+                                              ? cPrimaryPurple
+                                              : cPrimaryPink,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(
@@ -632,8 +635,9 @@ class Helpers {
                                           .pushNamed(Login),
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
-                                          primary:
-                                              isDayMood ? cPurpleBtn : cPinkBtn,
+                                          primary: isDayMood
+                                              ? cPrimaryPurple
+                                              : cPrimaryPink,
                                           onPrimary:
                                               Theme.of(context).canvasColor,
                                           shape: RoundedRectangleBorder(

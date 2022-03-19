@@ -456,7 +456,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
                         : Brightness.dark),
             title: Text(
               'Highlights',
-              style: mystyle(20),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             bottom: PreferredSize(
                 child: Padding(
@@ -484,7 +484,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
                         height: 30.0,
                         width: 30.0,
                         child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                           strokeWidth: 1.5,
                         ),
                       ),
@@ -500,7 +500,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
                         height: 30.0,
                         width: 30.0,
                         child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                           strokeWidth: 1.5,
                         ),
                       ),
@@ -533,7 +533,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
               ),
               Text(
                 'Recherche user, game, hashtag',
-                style: mystyle(15),
+                style: Theme.of(context).textTheme.bodySmall,
               )
             ],
           ),
@@ -561,14 +561,14 @@ class Highlightsviewstate extends State<HighlightsScreen>
           controller: _tabController,
           isScrollable: true,
           indicatorSize: TabBarIndicatorSize.tab,
-          labelColor: Theme.of(context).primaryColor,
+          labelColor: Theme.of(context).colorScheme.primary,
           unselectedLabelColor: Colors.grey,
           indicator: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Theme.of(context).canvasColor,
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   offset: Offset(1.0, 1.0),
                 ),
               ]),
@@ -656,10 +656,15 @@ class Highlightsviewstate extends State<HighlightsScreen>
                                       SizedBox(
                                         height: 2.0,
                                       ),
-                                      Text(hashtag.name, style: mystyle(12)),
+                                      Text(hashtag.name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall),
                                       Text(
                                           '${hashtag.postsCount.toString()} publications',
-                                          style: mystyle(12))
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall)
                                     ],
                                   ),
                                 ),
@@ -682,7 +687,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
                                 height: 30.0,
                                 width: 30.0,
                                 child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor,
+                                  color: Theme.of(context).colorScheme.primary,
                                   strokeWidth: 1.5,
                                 ),
                               ),
@@ -706,7 +711,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
                 child: Center(
                     child: Text(
                   'Pas encore d\'hashtags',
-                  style: mystyle(12),
+                  style: Theme.of(context).textTheme.bodySmall,
                 )),
               )
         : Container(
@@ -714,7 +719,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
             width: MediaQuery.of(context).size.width,
             child: Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 strokeWidth: 1.5,
               ),
             ),
@@ -754,7 +759,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
                               height: 30.0,
                               width: 30.0,
                               child: CircularProgressIndicator(
-                                color: Theme.of(context).primaryColor,
+                                color: Theme.of(context).colorScheme.primary,
                                 strokeWidth: 1.5,
                               ),
                             ),
@@ -777,7 +782,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
                 child: Center(
                   child: Text(
                     'Pas encore de posts pour cette section',
-                    style: mystyle(12),
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
               )
@@ -786,7 +791,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
             width: MediaQuery.of(context).size.width,
             child: Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 strokeWidth: 1.5,
               ),
             ),
@@ -814,7 +819,8 @@ class Highlightsviewstate extends State<HighlightsScreen>
                         builder: (_) =>
                             DiscoverPostsView(indexPost: index, posts: posts))),
                 borderRadius: BorderRadius.circular(5.0),
-                splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                splashColor:
+                    Theme.of(context).colorScheme.primary.withOpacity(0.5),
               ),
               Positioned(
                 bottom: 5.0,
@@ -823,7 +829,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
                   children: [
                     Icon(Icons.remove_red_eye, color: Colors.white),
                     Text(post.viewcount.toString(),
-                        style: mystyle(12, Colors.white))
+                        style: Theme.of(context).textTheme.bodySmall)
                   ],
                 ),
               )
@@ -853,7 +859,8 @@ class Highlightsviewstate extends State<HighlightsScreen>
                         builder: (_) =>
                             DiscoverPostsView(indexPost: index, posts: posts))),
                 borderRadius: BorderRadius.circular(5.0),
-                splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                splashColor:
+                    Theme.of(context).colorScheme.primary.withOpacity(0.5),
               ),
               Positioned(
                 top: 5.0,
@@ -870,7 +877,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
                   children: [
                     Icon(Icons.remove_red_eye, color: Colors.white),
                     Text(post.viewcount.toString(),
-                        style: mystyle(12, Colors.white))
+                        style: Theme.of(context).textTheme.bodySmall)
                   ],
                 ),
               )
@@ -1052,7 +1059,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                           height: 30.0,
                           width: 30.0,
                           child: CircularProgressIndicator(
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).colorScheme.primary,
                             strokeWidth: 1.5,
                           ),
                         ),
@@ -1064,7 +1071,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
             )
           : Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 strokeWidth: 1.5,
               ),
             ),
@@ -1096,7 +1103,8 @@ class PostsByHashtagsState extends State<PostsByHashtags>
               Container(color: Colors.black.withOpacity(0.2)),
               InkWell(
                 borderRadius: BorderRadius.circular(5.0),
-                splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                splashColor:
+                    Theme.of(context).colorScheme.primary.withOpacity(0.5),
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -1114,7 +1122,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                       Icon(Icons.remove_red_eye, color: Colors.white),
                       Text(
                         post.viewcount.toString(),
-                        style: mystyle(12, Colors.white),
+                        style: Theme.of(context).textTheme.bodySmall,
                       )
                     ],
                   ))
@@ -1146,7 +1154,8 @@ class PostsByHashtagsState extends State<PostsByHashtags>
               ),
               InkWell(
                 borderRadius: BorderRadius.circular(5.0),
-                splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                splashColor:
+                    Theme.of(context).colorScheme.primary.withOpacity(0.5),
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -1169,7 +1178,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                       Icon(Icons.remove_red_eye, color: Colors.white),
                       Text(
                         post.viewcount.toString(),
-                        style: mystyle(12, Colors.white),
+                        style: Theme.of(context).textTheme.bodySmall,
                       )
                     ],
                   ))

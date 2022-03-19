@@ -127,7 +127,6 @@ class PanelSupportviewstate extends State<PanelSupportScreen> {
                 ? Center(
                     child: Text(
                     'Pas encore de demandes',
-                    style: mystyle(14),
                   ))
                 : Container(
                     height: MediaQuery.of(context).size.height,
@@ -147,7 +146,7 @@ class PanelSupportviewstate extends State<PanelSupportScreen> {
                   )
             : Center(
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   strokeWidth: 1.5,
                 ),
               ));
@@ -163,7 +162,7 @@ class PanelSupportviewstate extends State<PanelSupportScreen> {
             border: Border.all(color: Colors.black),
             boxShadow: [
               BoxShadow(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   blurRadius: 3,
                   spreadRadius: 3)
             ]),
@@ -189,7 +188,6 @@ class PanelSupportviewstate extends State<PanelSupportScreen> {
                     title: Text(user.username),
                     subtitle: Text(
                       'a fait une demande pour ajouter un jeu',
-                      style: mystyle(12),
                     ),
                   ),
                 ),
@@ -214,18 +212,20 @@ class PanelSupportviewstate extends State<PanelSupportScreen> {
                         Expanded(
                           child: Column(
                             children: [
-                              Text('Name', style: mystyle(14)),
+                              Text('Name'),
                               const SizedBox(
                                 height: 5,
                               ),
-                              Text(gameNoVerified.name, style: mystyle(12))
+                              Text(
+                                gameNoVerified.name,
+                              )
                             ],
                           ),
                         ),
                         Expanded(
                             child: Column(
                           children: [
-                            Text('Categories', style: mystyle(14)),
+                            Text('Categories'),
                             const SizedBox(
                               height: 5.0,
                             ),
@@ -240,7 +240,6 @@ class PanelSupportviewstate extends State<PanelSupportScreen> {
                                     alignment: Alignment.center,
                                     child: Text(
                                       category,
-                                      style: mystyle(12),
                                     ),
                                   );
                                 })
@@ -278,7 +277,6 @@ class PanelSupportviewstate extends State<PanelSupportScreen> {
                             ),
                             Text(
                               'Accepter',
-                              style: mystyle(12),
                             )
                           ],
                         ),
@@ -301,7 +299,6 @@ class PanelSupportviewstate extends State<PanelSupportScreen> {
                                 )),
                             Text(
                               'Refuser',
-                              style: mystyle(12),
                             )
                           ],
                         )

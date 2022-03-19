@@ -71,13 +71,13 @@ class _LogControllerState extends ConsumerState<LogController> {
         title: 'Gemu',
         themeMode: ThemeMode.system,
         theme: theme == ThemeData()
-            ? (primaryColor == cDarkPink && accentColor == cLightPurple)
-                ? lightThemeSystemOrange
+            ? (primaryColor == cPrimaryPink && accentColor == cPrimaryPurple)
+                ? lightThemeSystemPink
                 : lightThemeSystemPurple
             : theme,
         darkTheme: theme == ThemeData()
-            ? (primaryColor == cDarkPink && accentColor == cLightPurple)
-                ? darkThemeSystemOrange
+            ? (primaryColor == cPrimaryPink && accentColor == cPrimaryPurple)
+                ? darkThemeSystemPink
                 : darkThemeSystemPurple
             : theme,
         home: Loader<bool>(
@@ -125,17 +125,17 @@ class _LogControllerState extends ConsumerState<LogController> {
 
     String? theme = prefs.getString(appTheme);
 
-    if (theme == null || theme == "ThemeSystem") {
-      if (theme == null) theme = "ThemeSystem";
+    if (theme == null || theme == themeSystem) {
+      if (theme == null) theme = themeSystem;
       if (prefs.getInt('color_primary') != null) {
         primaryColor = Color(prefs.getInt('color_primary')!);
       } else {
-        primaryColor = cDarkPink;
+        primaryColor = cPrimaryPink;
       }
       if (prefs.getInt('color_accent') != null) {
         accentColor = Color(prefs.getInt('color_accent')!);
       } else {
-        accentColor = cLightPurple;
+        accentColor = cPrimaryPurple;
       }
 
       ref

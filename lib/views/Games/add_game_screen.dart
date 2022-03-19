@@ -145,7 +145,7 @@ class AddGameviewstate extends State<AddGameScreen> {
               )),
           title: Text(
             'Add new game',
-            style: mystyle(15, Colors.white),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
         body: dataIsThere
@@ -210,7 +210,9 @@ class AddGameviewstate extends State<AddGameScreen> {
                                                 ])),
                                         child: Text(
                                           'Save',
-                                          style: mystyle(13),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
                                         ),
                                       ),
                                     )))
@@ -228,13 +230,13 @@ class AddGameviewstate extends State<AddGameScreen> {
                             children: [
                               Text(
                                 'Add Game..',
-                                style: mystyle(18),
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                               SizedBox(
                                 height: 20.0,
                               ),
                               CircularProgressIndicator(
-                                color: Theme.of(context).primaryColor,
+                                color: Theme.of(context).colorScheme.primary,
                                 strokeWidth: 1.5,
                               )
                             ],
@@ -295,7 +297,7 @@ class AddGameviewstate extends State<AddGameScreen> {
                                   style: TextButton.styleFrom(
                                       elevation: 6,
                                       backgroundColor:
-                                          Theme.of(context).primaryColor,
+                                          Theme.of(context).colorScheme.primary,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0))),
@@ -307,7 +309,9 @@ class AddGameviewstate extends State<AddGameScreen> {
                                       ),
                                       Text(
                                         'Add',
-                                        style: mystyle(15.0),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
                                       )
                                     ],
                                   ))),
@@ -316,7 +320,7 @@ class AddGameviewstate extends State<AddGameScreen> {
                   )
             : Center(
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   strokeWidth: 1.5,
                 ),
               ));
@@ -330,7 +334,7 @@ class AddGameviewstate extends State<AddGameScreen> {
         children: [
           Text(
             'Enter game name',
-            style: mystyle(12),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           SizedBox(
             height: 25.0,
@@ -339,7 +343,7 @@ class AddGameviewstate extends State<AddGameScreen> {
             controller: _nameGameController,
             focusNode: _nameGameFocusNode,
             maxLines: 1,
-            cursorColor: Theme.of(context).primaryColor,
+            cursorColor: Theme.of(context).colorScheme.primary,
             style: TextStyle(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white
@@ -349,7 +353,7 @@ class AddGameviewstate extends State<AddGameScreen> {
                 labelText: 'Game name',
                 labelStyle: TextStyle(
                     color: _nameGameFocusNode.hasFocus
-                        ? Theme.of(context).primaryColor
+                        ? Theme.of(context).colorScheme.primary
                         : Colors.grey),
                 suffixIcon: _nameGameController.text.isEmpty
                     ? SizedBox()
@@ -369,8 +373,8 @@ class AddGameviewstate extends State<AddGameScreen> {
                     borderRadius: BorderRadius.circular(10.0)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
-                    borderSide:
-                        BorderSide(color: Theme.of(context).primaryColor))),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary))),
             onChanged: (val) {
               setState(() {
                 val = _nameGameController.text;
@@ -390,7 +394,7 @@ class AddGameviewstate extends State<AddGameScreen> {
         children: [
           Text(
             'Add logo game',
-            style: mystyle(12),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           SizedBox(
             height: 25.0,
@@ -448,7 +452,7 @@ class AddGameviewstate extends State<AddGameScreen> {
         children: [
           Text(
             'Choose game category',
-            style: mystyle(12),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           SizedBox(
             height: 25.0,

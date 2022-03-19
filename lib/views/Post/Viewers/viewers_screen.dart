@@ -79,7 +79,7 @@ class Viewersviewstate extends State<ViewersScreen> {
                       icon: Icon(Icons.arrow_back_ios)),
                   Text(
                     'Viewers',
-                    style: mystyle(16),
+                    style: Theme.of(context).textTheme.bodySmall,
                   )
                 ],
               ),
@@ -134,13 +134,14 @@ class Viewersviewstate extends State<ViewersScreen> {
                                         color: Colors.black,
                                       ),
                                     ),
-                              title: Text(viewer.username, style: mystyle(14)),
+                              title: Text(viewer.username,
+                                  style: Theme.of(context).textTheme.bodySmall),
                             ),
                           );
                         }))
                 : Center(
                     child: CircularProgressIndicator(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                       strokeWidth: 1.5,
                     ),
                   ))

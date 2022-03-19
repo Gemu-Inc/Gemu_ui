@@ -300,7 +300,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 loadingWidget: Center(
                   child: CircularProgressIndicator(
                     strokeWidth: 1.0,
-                    color: isDayMood ? cDarkPink : cLightPurple,
+                    color: isDayMood ? cPrimaryPink : cSecondaryPurple,
                   ),
                 ),
                 builder: (_, value) {
@@ -375,7 +375,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   Widget stepsRegister(bool isDayMood) {
     return TabPageSelector(
       controller: _tabController,
-      selectedColor: isDayMood ? cPinkBtn : cPurpleBtn,
+      selectedColor: isDayMood ? cPrimaryPink : cPrimaryPurple,
       color: Colors.transparent,
       indicatorSize: 14,
     );
@@ -428,7 +428,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         },
         style: ElevatedButton.styleFrom(
             elevation: 6,
-            primary: isDayMood ? cPinkBtn : cPurpleBtn,
+            primary: isDayMood ? cPrimaryPink : cPrimaryPurple,
             onPrimary: Theme.of(context).canvasColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
@@ -482,7 +482,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         },
         style: ElevatedButton.styleFrom(
             elevation: 6,
-            primary: isDayMood ? cPinkBtn : cPurpleBtn,
+            primary: isDayMood ? cPrimaryPink : cPrimaryPurple,
             onPrimary: Theme.of(context).canvasColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
@@ -525,7 +525,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
                 'Renseigne ton email',
-                style: mystyle(12),
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             Container(
@@ -556,7 +556,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
                 'Renseigne ton mot de passe',
-                style: mystyle(12),
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             Container(
@@ -637,7 +637,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
                 'Entre ton pseudonyme',
-                style: mystyle(12),
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             Container(
@@ -666,7 +666,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
                 "Sélectionne ta date d'anniversaire",
-                style: mystyle(12),
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             Row(
@@ -677,7 +677,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       ? "01 Janvier 1997"
                       : Helpers.dateBirthday(_dateBirthday!),
                   textAlign: TextAlign.center,
-                  style: mystyle(12),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(
                   width: 5.0,
@@ -720,7 +720,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
                 'Sélectionne ta nationnalité',
-                style: mystyle(12),
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             Container(
@@ -745,7 +745,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                             Text(
                               '${country.name}',
                               textAlign: TextAlign.center,
-                              style: mystyle(12),
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],
                         ),
@@ -852,7 +852,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   height: 30.0,
                   width: 30.0,
                   child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                     strokeWidth: 1.5,
                   ),
                 ),
@@ -882,7 +882,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 height: 15.0,
                 width: 15.0,
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               SizedBox(
@@ -892,7 +892,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 _searchController.text.length < 10
                     ? 'Recherche de "${_searchController.text}.."'
                     : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
-                style: mystyle(11),
+                style: Theme.of(context).textTheme.bodySmall,
               )
             ],
           )
@@ -900,7 +900,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             ? Center(
                 child: Text(
                   'No games found',
-                  style: mystyle(12),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               )
             : GridView.builder(

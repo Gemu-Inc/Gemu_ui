@@ -179,7 +179,7 @@ class _BottomNavigationScreenState
               load: () => loadingData(activeUser!.uid),
               loadingWidget: Center(
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   strokeWidth: 1.5,
                 ),
               ),
@@ -236,7 +236,8 @@ class _BottomNavigationScreenState
                             : Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white60
                                 : Colors.black45,
-                        selectedItemColor: Theme.of(context).primaryColor,
+                        selectedItemColor:
+                            Theme.of(context).colorScheme.primary,
                         items: [
                           BottomNavigationBarItem(
                               activeIcon: Icon(Icons.home),

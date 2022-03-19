@@ -30,7 +30,6 @@ class LoaderDataCustom extends StatelessWidget {
           return Center(
             child: Text(
               error,
-              style: mystyle(15, Colors.red),
             ),
           );
         });

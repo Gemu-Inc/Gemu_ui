@@ -153,7 +153,6 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
             child: Center(
               child: Text(
                 'Edit vidéo',
-                style: mystyle(15),
               ),
             ),
           ),
@@ -205,7 +204,6 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
                         children: [
                           Text(
                             'Game',
-                            style: mystyle(12),
                           ),
                           SizedBox(
                             height: 10.0,
@@ -230,7 +228,6 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
                         children: [
                           Text(
                             'Game',
-                            style: mystyle(12),
                           ),
                           SizedBox(
                             height: 10.0,
@@ -257,7 +254,6 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
                   children: [
                     Text(
                       'Privacy',
-                      style: mystyle(12),
                     ),
                     SizedBox(
                       height: 10.0,
@@ -425,7 +421,9 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
                                     Theme.of(context).colorScheme.primary,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
-                                label: Text('#$hashtag', style: mystyle(11)),
+                                label: Text(
+                                  '#$hashtag',
+                                ),
                                 onDeleted: () {
                                   setState(() {
                                     hashtagsSelected.remove(hashtag);
@@ -458,11 +456,9 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
                             child: Icon(Icons.tag, size: 15)),
                         title: Text(
                           _resultList[index].data()['name'],
-                          style: mystyle(12),
                         ),
                         trailing: Text(
                           '${_resultList[index].data()['postsCount']} publications',
-                          style: mystyle(11, Colors.white.withOpacity(0.6)),
                         ),
                         onTap: () {
                           setState(() {
@@ -526,7 +522,6 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
                       child: Center(
                         child: Text(
                           'Prev',
-                          style: mystyle(15, Colors.black38),
                         ),
                       ),
                     ),
@@ -566,7 +561,6 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
                       child: Center(
                         child: Text(
                           'Next',
-                          style: mystyle(15, Colors.black38),
                         ),
                       ),
                     ),

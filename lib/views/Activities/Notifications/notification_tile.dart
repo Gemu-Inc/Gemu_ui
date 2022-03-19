@@ -108,7 +108,7 @@ class NotifTileState extends State<NotifTile> {
                       right: 1,
                       child: CircleAvatar(
                         radius: 6,
-                        backgroundColor: Theme.of(context).primaryColor,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                       ))
               ],
             ),
@@ -166,7 +166,7 @@ class NotifTileState extends State<NotifTile> {
                                     child: CircleAvatar(
                                       radius: 6,
                                       backgroundColor:
-                                          Theme.of(context).primaryColor,
+                                          Theme.of(context).colorScheme.primary,
                                     ))
                             ],
                           )),
@@ -251,7 +251,8 @@ class NotifTileState extends State<NotifTile> {
                         right: 1,
                         child: CircleAvatar(
                           radius: 6,
-                          backgroundColor: Theme.of(context).primaryColor,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                         ))
                 ],
               ),
@@ -294,7 +295,7 @@ class NotifTileState extends State<NotifTile> {
                     right: 1,
                     child: CircleAvatar(
                       radius: 6,
-                      backgroundColor: Theme.of(context).primaryColor,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                     ))
             ],
           ),
