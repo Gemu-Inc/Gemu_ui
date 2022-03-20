@@ -36,7 +36,7 @@ const themeLightPurple = "ThemeLightPurple";
 
 //Theme text
 textStyleBold(Color color, double fontSize) {
-  return GoogleFonts.montserrat(
+  return GoogleFonts.fredokaOne(
       fontSize: fontSize,
       color: color,
       fontWeight: FontWeight.bold,
@@ -44,7 +44,7 @@ textStyleBold(Color color, double fontSize) {
 }
 
 textStyleRegular(Color color, double fontSize) {
-  return GoogleFonts.montserrat(
+  return GoogleFonts.fredokaOne(
       fontSize: fontSize,
       color: color,
       fontWeight: FontWeight.w500,
@@ -56,7 +56,7 @@ textStyleCustom(
     double? fontSize,
     FontWeight? fontWeight,
     FontStyle? fontStyle]) {
-  return GoogleFonts.montserrat(
+  return GoogleFonts.fredokaOne(
       fontSize: fontSize ?? 12,
       color: color ?? Colors.white,
       fontWeight: fontWeight ?? FontWeight.normal,
@@ -69,14 +69,14 @@ const cSecondaryPurple = Color(0xFF593C98);
 const cPrimaryPink = Color(0xFFAD4B81);
 const cSecondaryPink = Color(0xFFAF4259);
 const cBGDarkTheme = Color(0xFF22213C);
-const cBGLightTheme = Color(0xFFEFF2F3);
+const cBGLightTheme = Color(0xFFE0EFFF);
 const cShadowDarkTheme = Color(0xFF1C1E2B);
-const cShadowLightTheme = Color(0xFFDEE4E7);
+const cShadowLightTheme = Color(0xFFD0E7FF);
 const cCanvasDarkTheme = Color(0xFF1E1F31);
-const cCanvasLightTheme = Color(0xFF1DEE4E7);
-const cIconDarkTheme = Color(0xFF1DEE4E7);
+const cCanvasLightTheme = Color(0xFFF0F7FF);
+const cIconDarkTheme = Color(0xFFE0EFFF);
 const cIconLightTheme = Color(0xFF1C1E2B);
-const cTextDarkTheme = Color(0xFF1DEE4E7);
+const cTextDarkTheme = Color(0xFFE0EFFF);
 const cTextLightTheme = Color(0xFF1C1E2B);
 
 //Lists colors dayMood
