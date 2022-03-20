@@ -91,6 +91,10 @@ class _Designviewstate extends State<DesignScreen> {
                                 theme, primaryColor, accentColor)),
                         shape: CircleBorder(),
                         elevation: 6.0,
+                        fillColor: MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? cBGDarkTheme
+                            : cBGLightTheme,
                         padding: EdgeInsets.all(5.0),
                       ),
                       SizedBox(
@@ -118,6 +122,10 @@ class _Designviewstate extends State<DesignScreen> {
                                 theme, primaryColor, accentColor)),
                         shape: CircleBorder(),
                         elevation: 6.0,
+                        fillColor: MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? cBGDarkTheme
+                            : cBGLightTheme,
                         padding: EdgeInsets.all(5.0),
                       ),
                       SizedBox(

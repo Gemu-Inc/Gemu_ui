@@ -160,13 +160,13 @@ class _TextFieldCustomLoginState extends State<TextFieldCustomLogin> {
             fillColor: Theme.of(context).canvasColor,
             filled: true,
             labelText: widget.label,
-            // labelStyle:
-            //    style( 13,
-            //     widget.focusNode.hasFocus
-            //         ? widget.isDayMood
-            //             ? cSecondaryPurple
-            //             : cPrimaryPink
-            //         : Colors.grey),
+            labelStyle: textStyleCustom(
+                widget.focusNode.hasFocus
+                    ? widget.isDayMood
+                        ? cSecondaryPurple
+                        : cPrimaryPink
+                    : Colors.grey,
+                13),
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -269,15 +269,13 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
             fillColor: Theme.of(context).canvasColor,
             filled: true,
             labelText: widget.label,
-            // labelStyle:
-            //   style(size: 13,
-            //     widget.focusNode.hasFocus
-            //         ? widget.isDayMood
-            //             ? cPrimaryPink
-            //             : cSecondaryPurple
-            //         : Colors.grey
-            // ),
-
+            labelStyle: textStyleCustom(
+                widget.focusNode.hasFocus
+                    ? widget.isDayMood
+                        ? cSecondaryPurple
+                        : cPrimaryPink
+                    : Colors.grey,
+                13),
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(

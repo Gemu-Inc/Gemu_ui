@@ -85,6 +85,7 @@ class _LogControllerState extends ConsumerState<LogController> {
           loadingWidget: SplashScreen(),
           builder: (_, value) {
             return Scaffold(
+              backgroundColor: Colors.transparent,
               key: mainKey,
               body: connectivityStatus == ConnectivityResult.none
                   ? NoConnectivityScreen()

@@ -45,7 +45,13 @@ class _GetStartedBeforeScreenState
           }),
           value: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
+              systemNavigationBarColor:
+                  Theme.of(context).scaffoldBackgroundColor,
               statusBarIconBrightness:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Brightness.light
+                      : Brightness.dark,
+              systemNavigationBarIconBrightness:
                   Theme.of(context).brightness == Brightness.dark
                       ? Brightness.light
                       : Brightness.dark),
@@ -65,6 +71,7 @@ class _GetStartedBeforeScreenState
           icon: Icon(
             Icons.clear,
             size: 30,
+            color: Theme.of(context).iconTheme.color,
           )),
     );
   }
@@ -78,7 +85,7 @@ class _GetStartedBeforeScreenState
           padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
           child: Text(
             "Quelques explications avant d'entrer dans l'aventure Gemu",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: Theme.of(context).textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),
         )
@@ -110,15 +117,8 @@ class _GetStartedBeforeScreenState
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               )),
-          child: Text(
-            "Commencer",
-            style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700),
-          ),
+          child:
+              Text("Commencer", style: Theme.of(context).textTheme.bodyLarge),
         ),
       ),
     );

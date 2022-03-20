@@ -44,7 +44,7 @@ class NoConnectivityScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Text(
                 "Problème de connexion, vérifie au plus vite ton réseau!",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleSmall!,
                 textAlign: TextAlign.center,
               ),
             )

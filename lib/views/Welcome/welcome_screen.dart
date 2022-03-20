@@ -6,10 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
-import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/widgets/clip_shadow_path.dart';
 import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/helpers/helpers.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -24,7 +24,13 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
         body: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
+                systemNavigationBarColor:
+                    Theme.of(context).scaffoldBackgroundColor,
                 statusBarIconBrightness:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark,
+                systemNavigationBarIconBrightness:
                     Theme.of(context).brightness == Brightness.dark
                         ? Brightness.light
                         : Brightness.dark),
@@ -72,22 +78,6 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
             ),
           ),
           Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 15.0),
-              child: IconButton(
-                  onPressed: () =>
-                      navNonAuthKey.currentState!.pushNamed(GetStartedBefore),
-                  icon: Icon(
-                    Icons.info_outline,
-                    size: 28,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black,
-                  )),
-            ),
-          ),
-          Align(
             alignment: Alignment.topCenter,
             child: Padding(
                 padding: const EdgeInsets.only(left: 50),
@@ -109,6 +99,17 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
             ),
           ),
           Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: IconButton(
+                  onPressed: () =>
+                      navNonAuthKey.currentState!.pushNamed(GetStartedBefore),
+                  icon: Icon(Icons.info_outline,
+                      size: 28, color: Theme.of(context).iconTheme.color)),
+            ),
+          ),
+          Align(
             alignment: Alignment.bottomCenter,
             child: Container(
                 height: MediaQuery.of(context).size.height / 1.75,
@@ -123,13 +124,11 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                         children: [
                           Text(
                             "Bienvenue",
-                            style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 36),
+                            style: GoogleFonts.fredokaOne(
+                              fontSize: 25,
+                              color: cTextDarkTheme,
+                              fontWeight: FontWeight.bold,
+                            ),
                             textAlign: TextAlign.center,
                             maxLines: 2,
                           ),
@@ -138,12 +137,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                           ),
                           Text(
                             "Rejoins-nous et vient découvrir l'univers de Gemu et de ses joueurs",
-                            style: TextStyle(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
+                            style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.center,
                           )
                         ],
@@ -164,6 +158,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                               ),
                               Text(
                                 "Commencer l'aventure",
+                                style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               Container(
                                 height: 2,
@@ -187,20 +182,13 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                     primary: isDayMood
                                         ? cPrimaryPink
                                         : cPrimaryPurple,
-                                    // cSecondaryPurple,
                                     onPrimary: Theme.of(context).canvasColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15.0),
                                     )),
                                 child: Text(
                                   'Inscription',
-                                  style: TextStyle(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 )),
                           ),
                         ],
@@ -221,6 +209,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                               ),
                               Text(
                                 "Déjà un compte?",
+                                style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               Container(
                                 height: 2,
@@ -250,13 +239,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                     )),
                                 child: Text(
                                   'Connexion',
-                                  style: TextStyle(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 )),
                           ),
                         ],
@@ -269,12 +252,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             text: TextSpan(
                                 text:
                                     "En te connectant ou en t'inscrivant, tu dois être en accord avec les ",
-                                style: TextStyle(
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontSize: 12),
+                                style: Theme.of(context).textTheme.bodySmall,
                                 children: [
                                   TextSpan(
                                       text: "Terms and Conditions",
@@ -288,26 +266,23 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                           fontSize: 12)),
                                   TextSpan(
                                       text: " et les ",
-                                      style: TextStyle(
-                                          color: Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 12)),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall),
                                   TextSpan(
                                       text: "Privacy Policy",
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () => print("privacy policy"),
-                                      style: TextStyle(
-                                          color: isDayMood
+                                      style: textStyleCustom(
+                                          isDayMood
                                               ? cPrimaryPink
                                               : cPrimaryPurple,
-                                          fontSize: 12))
+                                          12))
                                 ]),
                             textAlign: TextAlign.center)),
                   ],
                 )),
-          )
+          ),
         ],
       ),
     );
