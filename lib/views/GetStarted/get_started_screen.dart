@@ -171,7 +171,13 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
         body: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
+                systemNavigationBarColor:
+                    Theme.of(context).scaffoldBackgroundColor,
                 statusBarIconBrightness:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark,
+                systemNavigationBarIconBrightness:
                     Theme.of(context).brightness == Brightness.dark
                         ? Brightness.light
                         : Brightness.dark),
@@ -205,6 +211,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
           icon: Icon(
             Icons.clear,
             size: 30,
+            color: Theme.of(context).iconTheme.color,
           )),
     );
   }
@@ -241,7 +248,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   ),
                   Text(
                     "Met toi à jour quand tu le souhaites",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -254,7 +261,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
               alignment: Alignment.center,
               child: Text(
                 "Regarde, réagit et partage tes émotions à travers le contenu des jeux et utilisateurs que tu suis à chaque instant!",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ))
         ],
@@ -283,7 +290,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   Text(
                     "Met la lumière sur les dernières tendances",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ],
               )),
@@ -296,7 +303,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
               child: Text(
                 "Découvre tous les jours des nouveaux jeux mais aussi des nouveaux talents",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: Theme.of(context).textTheme.bodyLarge,
               ))
         ],
       ),
@@ -324,7 +331,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   Text(
                     "Accède à tous les jeux possibles",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ],
               )),
@@ -337,7 +344,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
               child: Text(
                 "Découvre et suit des nouveaux jeux afin d'avoir toute l'actualité et le contenu possible",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: Theme.of(context).textTheme.bodyLarge,
               ))
         ],
       ),
@@ -365,7 +372,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   Text(
                     "A ton tour!",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ],
               )),
@@ -378,7 +385,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
               child: Text(
                 "Ne sois pas timide et partage toi aussi ton contenu sur tes jeux favoris à la communauté!",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: Theme.of(context).textTheme.bodyLarge,
               ))
         ],
       ),
@@ -404,10 +411,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 },
                 child: Text(
                   "Passer",
-                  style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black),
+                  style: Theme.of(context).textTheme.bodySmall,
                 )),
           ),
           TabPageSelector(
@@ -442,10 +446,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   _tabController.index != lengthGetStarted - 1
                       ? "Suivant"
                       : "Terminer",
-                  style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black),
+                  style: Theme.of(context).textTheme.bodySmall,
                 )),
           )
         ],

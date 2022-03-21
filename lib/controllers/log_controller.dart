@@ -86,6 +86,7 @@ class _LogControllerState extends ConsumerState<LogController> {
           builder: (_, value) {
             return Scaffold(
               backgroundColor: Colors.transparent,
+              resizeToAvoidBottomInset: false,
               key: mainKey,
               body: connectivityStatus == ConnectivityResult.none
                   ? NoConnectivityScreen()

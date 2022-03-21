@@ -39,7 +39,7 @@ textStyleBold(Color color, double fontSize) {
   return GoogleFonts.fredokaOne(
       fontSize: fontSize,
       color: color,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal);
 }
 
@@ -47,7 +47,7 @@ textStyleRegular(Color color, double fontSize) {
   return GoogleFonts.fredokaOne(
       fontSize: fontSize,
       color: color,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal);
 }
 
@@ -56,7 +56,7 @@ textStyleCustom(Color color, double fontSize,
   return GoogleFonts.fredokaOne(
       fontSize: fontSize,
       color: color,
-      fontWeight: fontWeight ?? FontWeight.w500,
+      fontWeight: fontWeight ?? FontWeight.normal,
       fontStyle: fontStyle ?? FontStyle.normal);
 }
 

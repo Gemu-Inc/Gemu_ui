@@ -101,11 +101,11 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
           Align(
             alignment: Alignment.topRight,
             child: Padding(
-              padding: const EdgeInsets.only(right: 15.0),
-              child: IconButton(
-                  onPressed: () =>
+              padding: const EdgeInsets.only(right: 25.0, top: 15.0),
+              child: GestureDetector(
+                  onTap: () =>
                       navNonAuthKey.currentState!.pushNamed(GetStartedBefore),
-                  icon: Icon(Icons.info_outline,
+                  child: Icon(Icons.info_outline,
                       size: 28, color: Theme.of(context).iconTheme.color)),
             ),
           ),

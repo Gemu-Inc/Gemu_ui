@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:gemu/constants/constants.dart';
-
 class SnackBarCustom extends SnackBar {
   SnackBarCustom({
     required BuildContext context,
@@ -19,6 +17,7 @@ class SnackBarCustom extends SnackBar {
                   borderRadius: BorderRadius.circular(15.0)),
               child: Text(
                 error,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
             ));
 }

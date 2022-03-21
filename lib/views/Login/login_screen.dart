@@ -84,7 +84,13 @@ class Loginviewstate extends State<LoginScreen> {
         body: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
+                systemNavigationBarColor:
+                    Theme.of(context).scaffoldBackgroundColor,
                 statusBarIconBrightness:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark,
+                systemNavigationBarIconBrightness:
                     Theme.of(context).brightness == Brightness.dark
                         ? Brightness.light
                         : Brightness.dark),
@@ -92,14 +98,11 @@ class Loginviewstate extends State<LoginScreen> {
               onTap: () => Helpers.hideKeyboard(context),
               child: Column(children: [
                 topLoginEmail(),
-                Container(
-                  height: MediaQuery.of(context).size.height / 6,
-                  padding: const EdgeInsets.symmetric(horizontal: 55.0),
-                  alignment: Alignment.center,
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
                   child: Text(
                     "Plus que ton email et ton mot de passe et c'est parti!",
                     style: Theme.of(context).textTheme.bodySmall,
-                    textAlign: TextAlign.center,
                   ),
                 ),
                 Expanded(child: Consumer(builder: (_, ref, child) {
@@ -131,12 +134,7 @@ class Loginviewstate extends State<LoginScreen> {
                 size: 25)),
         title: Text(
           "Connexion",
-          style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 23),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: false,
       ),
@@ -202,10 +200,9 @@ class Loginviewstate extends State<LoginScreen> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 25.0),
+          padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 15.0),
           child: Container(
-            height: MediaQuery.of(context).size.height / 12,
-            width: double.infinity,
+            height: MediaQuery.of(context).size.height / 14,
             child: ElevatedButton(
               onPressed: () =>
                   _signIn(_emailController.text, _passwordController.text),
@@ -222,20 +219,12 @@ class Loginviewstate extends State<LoginScreen> {
                       height: 15,
                       width: 15,
                       child: CircularProgressIndicator(
-                        strokeWidth: 1.0,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                      ),
+                          strokeWidth: 1.0,
+                          color: Theme.of(context).iconTheme.color),
                     )
                   : Text(
                       'Se connecter',
-                      style: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700),
+                      style: Theme.of(context).textTheme.titleSmall,
                     ),
             ),
           ),
@@ -246,12 +235,11 @@ class Loginviewstate extends State<LoginScreen> {
         RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              text: "Mot de passe oublié",
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => print("Mot de passe oublié"),
-              // style:
-              //     mystyle(12, isDayMood ? cPrimaryPurple : cPrimaryPink),
-            )),
+                text: "Mot de passe oublié",
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => print("Mot de passe oublié"),
+                style: textStyleCustom(
+                    isDayMood ? cPrimaryPurple : cPrimaryPink, 13))),
         const SizedBox(
           height: 5.0,
         ),
@@ -263,8 +251,8 @@ class Loginviewstate extends State<LoginScreen> {
                 children: [
                   TextSpan(
                     text: "Inscription",
-                    // style:
-                    //     style(12, isDayMood ? cPrimaryPurple : cPrimaryPink),
+                    style: textStyleCustom(
+                        isDayMood ? cPrimaryPurple : cPrimaryPink, 13),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () =>
                           Helpers.inscriptionBottomSheet(context, isDayMood),

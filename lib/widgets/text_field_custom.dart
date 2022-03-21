@@ -272,8 +272,8 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
             labelStyle: textStyleCustom(
                 widget.focusNode.hasFocus
                     ? widget.isDayMood
-                        ? cSecondaryPurple
-                        : cPrimaryPink
+                        ? cPrimaryPink
+                        : cPrimaryPurple
                     : Colors.grey,
                 13),
             border: OutlineInputBorder(),

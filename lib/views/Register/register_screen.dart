@@ -7,6 +7,7 @@ import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:loader/loader.dart';
 
 import 'package:gemu/services/auth_service.dart';
@@ -72,7 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     final country = await showCountryPickerSheet(context,
         title: Text(
           'Sélectionne ta nationnalité',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
         heightFactor: 0.79,
         cornerRadius: 15.0);
@@ -289,7 +290,13 @@ class _RegisterScreenState extends State<RegisterScreen>
         body: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
+                systemNavigationBarColor:
+                    Theme.of(context).scaffoldBackgroundColor,
                 statusBarIconBrightness:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark,
+                systemNavigationBarIconBrightness:
                     Theme.of(context).brightness == Brightness.dark
                         ? Brightness.light
                         : Brightness.dark),
@@ -340,14 +347,14 @@ class _RegisterScreenState extends State<RegisterScreen>
                           },
                           child: Text(
                             "Oui",
-                            style: TextStyle(color: Colors.blue[200]),
+                            style: textStyleCustom(Colors.blue[200]!, 12),
                           )),
                       TextButton(
                           onPressed: () =>
                               Navigator.pop(mainKey.currentContext!),
                           child: Text(
                             "Non",
-                            style: TextStyle(color: Colors.red[200]),
+                            style: textStyleCustom(Colors.red[200]!, 12),
                           ))
                     ]);
                   });
@@ -359,12 +366,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 size: 25)),
         title: Text(
           "Inscription",
-          style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 23),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: false,
         actions: [stepsRegister(isDayMood)],
@@ -435,12 +437,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             )),
         child: Text(
           "Suivant",
-          style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
-              fontSize: 15,
-              fontWeight: FontWeight.w700),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
       ),
     );
@@ -462,7 +459,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   });
                 }
               },
-            style: TextStyle(
+            style: GoogleFonts.fredokaOne(
                 color: Colors.grey,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline),
@@ -489,12 +486,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             )),
         child: Text(
           "Terminer",
-          style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
-              fontSize: 15,
-              fontWeight: FontWeight.w700),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
       ),
     );
@@ -504,15 +496,8 @@ class _RegisterScreenState extends State<RegisterScreen>
     return Column(
       children: [
         Text(
-          "Allez c'est parti pour ton inscription, la première étape étant de renseigner les informations personnelles pour te connecter à ton compte!",
-          style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
-              fontWeight: FontWeight.w500,
-              fontSize: 12),
-          textAlign: TextAlign.center,
-        ),
+            "Allez c'est parti pour ton inscription, la première étape étant de renseigner les informations personnelles pour te connecter à ton compte!",
+            style: Theme.of(context).textTheme.bodySmall),
         Expanded(
             child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -617,13 +602,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       children: [
         Text(
           "La seconde étape est pour te reconnaître et te retrouver au sein de la communauté, renseigne ton pseudonyme, ta date d'anniversaire et ta nationnalité",
-          style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
-              fontWeight: FontWeight.w500,
-              fontSize: 12),
-          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall,
         ),
         Expanded(
             child: ListView(
@@ -674,7 +653,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               children: [
                 Text(
                   _dateBirthday == null
-                      ? "01 Janvier 1997"
+                      ? Helpers.dateBirthday(DateTime.now())
                       : Helpers.dateBirthday(_dateBirthday!),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall,
@@ -683,23 +662,20 @@ class _RegisterScreenState extends State<RegisterScreen>
                   width: 5.0,
                 ),
                 MaterialButton(
-                  child: Text('Sélectionner'),
+                  child: Text(
+                    'Sélectionner',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                   color: Theme.of(context).canvasColor,
                   onPressed: () {
                     DatePicker.showDatePicker(context,
                         showTitleActions: true,
                         theme: DatePickerTheme(
                           backgroundColor: Theme.of(context).canvasColor,
-                          cancelStyle:
-                              TextStyle(color: Colors.red[200], fontSize: 16),
-                          doneStyle:
-                              TextStyle(color: Colors.blue[200], fontSize: 16),
-                          itemStyle: TextStyle(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 18),
+                          cancelStyle: textStyleCustom(Colors.red[200]!, 14),
+                          doneStyle: textStyleCustom(Colors.blue[200]!, 14),
+                          itemStyle: textStyleCustom(
+                              Theme.of(context).iconTheme.color!, 15),
                         ),
                         minTime: DateTime(1900, 1, 1),
                         maxTime: DateTime.now(), onChanged: (date) {
@@ -750,7 +726,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                           ],
                         ),
                   MaterialButton(
-                    child: Text('Sélectionner'),
+                    child: Text(
+                      'Sélectionner',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                     color: Theme.of(context).canvasColor,
                     onPressed: _onPressedShowBottomSheet,
                     elevation: 6,
@@ -770,15 +749,8 @@ class _RegisterScreenState extends State<RegisterScreen>
         Padding(
           padding: const EdgeInsets.only(bottom: 10.0),
           child: Text(
-            "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu",
-            style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
-                fontWeight: FontWeight.w500,
-                fontSize: 12),
-            textAlign: TextAlign.center,
-          ),
+              "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu",
+              style: Theme.of(context).textTheme.bodySmall),
         ),
         _searchBar(isDayMood),
         Expanded(
@@ -863,7 +835,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                   ? MediaQuery.of(context).size.height / 14
                   : 0.0,
               child: Center(
-                child: Text("C'est tout pour le moment"),
+                child: Text(
+                  "C'est tout pour le moment",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ),
             )
           ],
@@ -897,7 +872,8 @@ class _RegisterScreenState extends State<RegisterScreen>
             ],
           )
         : gamesAlgolia.length == 0
-            ? Center(
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 25.0),
                 child: Text(
                   'No games found',
                   style: Theme.of(context).textTheme.bodySmall,
@@ -961,8 +937,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
                 child: Text(
                   game.name,
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleSmall,
                   textAlign: TextAlign.end,
                 )),
           ),

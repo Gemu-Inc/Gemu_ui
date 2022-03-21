@@ -1,16 +1,12 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:timeago/timeago.dart' as time;
-
-import 'package:gemu/views/Register/register_screen.dart';
-import 'package:gemu/views/Login/login_screen.dart';
 
 class Helpers {
   static Future<bool> willPopCallbackNav(
@@ -34,13 +30,13 @@ class Helpers {
                 },
                 child: Text(
                   "Oui",
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: textStyleCustom(Colors.blue[200]!, 12),
                 )),
             TextButton(
                 onPressed: () => Navigator.pop(mainKey.currentContext!),
                 child: Text(
                   "Non",
-                  style: TextStyle(color: Colors.red[200]),
+                  style: textStyleCustom(Colors.red[200]!, 12),
                 ))
           ]);
         });
@@ -103,14 +99,7 @@ class Helpers {
                             alignment: Alignment.center,
                             child: Text(
                               "Choisis ton moyen d'inscription",
-                              style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleSmall,
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -157,12 +146,9 @@ class Helpers {
                                           Text(
                                             "S'inscrire avec une adresse mail",
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
                                           )
                                         ],
                                       ))),
@@ -199,8 +185,8 @@ class Helpers {
                                           Text(
                                             "S'inscrire' avec Google",
                                             textAlign: TextAlign.center,
-                                            style:
-                                                TextStyle(color: Colors.black),
+                                            style: textStyleCustom(
+                                                Colors.black, 12),
                                           )
                                         ],
                                       ))),
@@ -245,12 +231,12 @@ class Helpers {
                                           Text(
                                             "S'inscrire avec Apple",
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                            .brightness ==
+                                            style: textStyleCustom(
+                                                Theme.of(context).brightness ==
                                                         Brightness.dark
                                                     ? Colors.black
-                                                    : Colors.white),
+                                                    : Colors.white,
+                                                12),
                                           )
                                         ],
                                       ))),
@@ -287,14 +273,7 @@ class Helpers {
                               alignment: Alignment.center,
                               child: Text(
                                 "Choisis ton moyen d'inscription",
-                                style: TextStyle(
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context).textTheme.titleSmall,
                                 textAlign: TextAlign.center,
                               ),
                             )),
@@ -338,15 +317,11 @@ class Helpers {
                                             width: 15.0,
                                           ),
                                           Text(
-                                            "S'inscrire avec une adresse mail",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black),
-                                          )
+                                              "S'inscrire avec une adresse mail",
+                                              textAlign: TextAlign.center,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall)
                                         ],
                                       ))),
                               const SizedBox(
@@ -379,12 +354,10 @@ class Helpers {
                                           const SizedBox(
                                             width: 15.0,
                                           ),
-                                          Text(
-                                            "S'inscrire avec Google",
-                                            textAlign: TextAlign.center,
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )
+                                          Text("S'inscrire avec Google",
+                                              textAlign: TextAlign.center,
+                                              style: textStyleCustom(
+                                                  Colors.black, 12))
                                         ],
                                       ))),
                             ],
@@ -424,14 +397,7 @@ class Helpers {
                             alignment: Alignment.center,
                             child: Text(
                               "Choisis ton moyen de connexion",
-                              style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleSmall,
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -478,12 +444,9 @@ class Helpers {
                                           Text(
                                             "Se connecter avec une adresse mail",
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
                                           )
                                         ],
                                       ))),
@@ -520,8 +483,8 @@ class Helpers {
                                           Text(
                                             "Se connecter avec Google",
                                             textAlign: TextAlign.center,
-                                            style:
-                                                TextStyle(color: Colors.black),
+                                            style: textStyleCustom(
+                                                Colors.black, 12),
                                           )
                                         ],
                                       ))),
@@ -566,12 +529,12 @@ class Helpers {
                                           Text(
                                             "Se connecter avec Apple",
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                            .brightness ==
+                                            style: textStyleCustom(
+                                                Theme.of(context).brightness ==
                                                         Brightness.dark
                                                     ? Colors.black
-                                                    : Colors.white),
+                                                    : Colors.white,
+                                                12),
                                           )
                                         ],
                                       ))),
@@ -608,14 +571,7 @@ class Helpers {
                             alignment: Alignment.center,
                             child: Text(
                               "Choisis ton moyen de connexion",
-                              style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleSmall,
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -662,12 +618,9 @@ class Helpers {
                                           Text(
                                             "Se connecter avec une adresse mail",
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
                                           )
                                         ],
                                       ))),
@@ -704,8 +657,8 @@ class Helpers {
                                           Text(
                                             "Se connecter avec Google",
                                             textAlign: TextAlign.center,
-                                            style:
-                                                TextStyle(color: Colors.black),
+                                            style: textStyleCustom(
+                                                Colors.black, 12),
                                           )
                                         ],
                                       ))),
