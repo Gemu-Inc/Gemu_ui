@@ -13,24 +13,15 @@ class AuthService {
   //Voir les changements au niveau de la connexion de l'utilisateur sur le device
   static Stream<User?> authStateChange() => _auth.authStateChanges();
 
-  //Se connecter
+  //Check pour la connexion d'un compte
   static Future<void> signIn(
       {required BuildContext context,
       required String email,
       required String password}) async {
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
-        // UserCredential userCredential =
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-        // await Future.delayed(Duration(seconds: 1));
-        // Navigator.pushAndRemoveUntil(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (BuildContext context) =>
-        //             BottomNavigationScreen(uid: userCredential.user!.uid)),
-        //     (route) => false);
-
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-email') {
           print('Invalid email');

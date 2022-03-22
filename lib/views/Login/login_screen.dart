@@ -1,23 +1,22 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
-import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
+import 'package:gemu/riverpod/Login/login_provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   @override
   Loginviewstate createState() => Loginviewstate();
 }
 
-class Loginviewstate extends State<LoginScreen> {
-  bool isLoading = false;
+class Loginviewstate extends ConsumerState<LoginScreen> {
+  late bool isLoading;
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -25,30 +24,21 @@ class Loginviewstate extends State<LoginScreen> {
   late FocusNode _focusNodeEmail;
   late FocusNode _focusNodePassword;
 
-  UserCredential? result;
-
-  _signIn(String email, String password) async {
-    setState(() {
-      isLoading = true;
-    });
-
-    await Future.delayed(Duration(seconds: 2));
-
-    setState(() {
-      isLoading = false;
-    });
-
-    await AuthService.signIn(
-        context: context, email: email, password: password);
-  }
-
   @override
   void initState() {
     super.initState();
+
     _emailController = TextEditingController();
     _focusNodeEmail = FocusNode();
     _passwordController = TextEditingController();
     _focusNodePassword = FocusNode();
+
+    _emailController.addListener(() {
+      setState(() {});
+    });
+    _passwordController.addListener(() {
+      setState(() {});
+    });
 
     _focusNodeEmail.addListener(() {
       setState(() {});
@@ -60,6 +50,12 @@ class Loginviewstate extends State<LoginScreen> {
 
   @override
   void deactivate() {
+    _emailController.removeListener(() {
+      setState(() {});
+    });
+    _passwordController.removeListener(() {
+      setState(() {});
+    });
     _focusNodeEmail.removeListener(() {
       setState(() {});
     });
@@ -80,6 +76,7 @@ class Loginviewstate extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isLoading = ref.watch(loadingLoginNotifierProvider);
     return Scaffold(
         body: GestureDetector(
       onTap: () => Helpers.hideKeyboard(context),
@@ -188,10 +185,19 @@ class Loginviewstate extends State<LoginScreen> {
                   _passwordController.clear();
                 });
               },
-              submit: (value) {
+              submit: (value) async {
                 value = _passwordController.text;
                 _focusNodePassword.unfocus();
-                _signIn(_emailController.text, value);
+                ref.read(loadingLoginNotifierProvider.notifier).updateLoader();
+                await AuthService.signIn(
+                    context: context,
+                    email: _emailController.text,
+                    password: _passwordController.text);
+                if (mounted) {
+                  ref
+                      .read(loadingLoginNotifierProvider.notifier)
+                      .updateLoader();
+                }
               },
               isDayMood: isDayMood,
             ),
@@ -202,8 +208,18 @@ class Loginviewstate extends State<LoginScreen> {
           child: Container(
             height: MediaQuery.of(context).size.height / 14,
             child: ElevatedButton(
-              onPressed: () =>
-                  _signIn(_emailController.text, _passwordController.text),
+              onPressed: () async {
+                ref.read(loadingLoginNotifierProvider.notifier).updateLoader();
+                await AuthService.signIn(
+                    context: context,
+                    email: _emailController.text,
+                    password: _passwordController.text);
+                if (mounted) {
+                  ref
+                      .read(loadingLoginNotifierProvider.notifier)
+                      .updateLoader();
+                }
+              },
               style: ElevatedButton.styleFrom(
                   elevation: 6,
                   shadowColor: Theme.of(context).shadowColor,

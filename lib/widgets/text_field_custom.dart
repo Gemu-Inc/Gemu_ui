@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/riverpod/Login/login_provider.dart';
 
 class TextFieldCustom extends StatefulWidget {
   final BuildContext context;
@@ -100,7 +102,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
   }
 }
 
-class TextFieldCustomLogin extends StatefulWidget {
+class TextFieldCustomLogin extends ConsumerStatefulWidget {
   final BuildContext context;
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -132,24 +134,27 @@ class TextFieldCustomLogin extends StatefulWidget {
   _TextFieldCustomLoginState createState() => _TextFieldCustomLoginState();
 }
 
-class _TextFieldCustomLoginState extends State<TextFieldCustomLogin> {
-  bool pwdVisible = false;
+class _TextFieldCustomLoginState extends ConsumerState<TextFieldCustomLogin> {
+  late bool pwdVisible;
 
   @override
   void initState() {
-    if (widget.obscure) {
-      setState(() {
-        pwdVisible = !pwdVisible;
-      });
-    }
     super.initState();
+    if (widget.obscure) {
+      Future.delayed(
+          Duration.zero,
+          () => ref
+              .read(passwordVisibilityNotifierProvider.notifier)
+              .updateVisibilityPassword(true));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    pwdVisible = ref.watch(passwordVisibilityNotifierProvider);
     return TextField(
         maxLines: 1,
-        obscureText: pwdVisible,
+        obscureText: widget.obscure ? pwdVisible : false,
         controller: widget.controller,
         focusNode: widget.focusNode,
         cursorColor: widget.isDayMood ? cPrimaryPurple : cPrimaryPink,
@@ -191,9 +196,9 @@ class _TextFieldCustomLoginState extends State<TextFieldCustomLogin> {
                               : Colors.grey,
                         ),
                         onPressed: () {
-                          setState(() {
-                            pwdVisible = !pwdVisible;
-                          });
+                          ref
+                              .read(passwordVisibilityNotifierProvider.notifier)
+                              .updateVisibilityPassword(!pwdVisible);
                         })
                     : IconButton(
                         icon: Icon(

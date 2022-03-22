@@ -9,7 +9,6 @@ import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 import 'package:gemu/widgets/clip_shadow_path.dart';
 import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
