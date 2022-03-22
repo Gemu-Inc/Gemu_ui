@@ -81,38 +81,25 @@ class Loginviewstate extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                systemNavigationBarColor:
-                    Theme.of(context).scaffoldBackgroundColor,
-                statusBarIconBrightness:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Brightness.light
-                        : Brightness.dark,
-                systemNavigationBarIconBrightness:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Brightness.light
-                        : Brightness.dark),
-            child: GestureDetector(
-              onTap: () => Helpers.hideKeyboard(context),
-              child: Column(children: [
-                topLoginEmail(),
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Text(
-                    "Plus que ton email et ton mot de passe et c'est parti!",
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-                Expanded(child: Consumer(builder: (_, ref, child) {
-                  bool isDayMood = ref.watch(dayMoodNotifierProvider);
-                  return Container(
-                    child: loginEmail(isDayMood),
-                  );
-                }))
-              ]),
-            )));
+        body: GestureDetector(
+      onTap: () => Helpers.hideKeyboard(context),
+      child: Column(children: [
+        topLoginEmail(),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Text(
+            "Plus que ton email et ton mot de passe et c'est parti!",
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+        Expanded(child: Consumer(builder: (_, ref, child) {
+          bool isDayMood = ref.watch(dayMoodNotifierProvider);
+          return Container(
+            child: loginEmail(isDayMood),
+          );
+        }))
+      ]),
+    ));
   }
 
   Widget topLoginEmail() {
@@ -121,6 +108,17 @@ class Loginviewstate extends State<LoginScreen> {
       child: AppBar(
         elevation: 0,
         shadowColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
+            statusBarIconBrightness:
+                Theme.of(context).brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark,
+            systemNavigationBarIconBrightness:
+                Theme.of(context).brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark),
         leading: IconButton(
             onPressed: () {
               Helpers.hideKeyboard(context);

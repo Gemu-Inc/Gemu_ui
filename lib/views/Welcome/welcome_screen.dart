@@ -124,11 +124,12 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                         children: [
                           Text(
                             "Bienvenue",
-                            style: GoogleFonts.fredokaOne(
-                              fontSize: 25,
-                              color: cTextDarkTheme,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: textStyleCustom(
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? cTextDarkTheme
+                                    : cTextLightTheme,
+                                30,
+                                FontWeight.w500),
                             textAlign: TextAlign.center,
                             maxLines: 2,
                           ),
