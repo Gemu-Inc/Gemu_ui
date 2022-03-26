@@ -16,8 +16,6 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class Loginviewstate extends ConsumerState<LoginScreen> {
-  late bool isLoading;
-
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
 
@@ -76,7 +74,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    isLoading = ref.watch(loadingLoginNotifierProvider);
+    bool isLoading = ref.watch(loadingLoginNotifierProvider);
+    bool isDayMood = ref.watch(dayMoodNotifierProvider);
     return Scaffold(
         body: GestureDetector(
       onTap: () => Helpers.hideKeyboard(context),
@@ -89,12 +88,10 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Expanded(child: Consumer(builder: (_, ref, child) {
-          bool isDayMood = ref.watch(dayMoodNotifierProvider);
-          return Container(
-            child: loginEmail(isDayMood),
-          );
-        }))
+        Expanded(
+            child: Container(
+          child: loginEmail(isDayMood, isLoading),
+        ))
       ]),
     ));
   }
@@ -136,7 +133,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
     );
   }
 
-  Widget loginEmail(bool isDayMood) {
+  Widget loginEmail(bool isDayMood, bool isLoading) {
     return ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
