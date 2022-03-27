@@ -21,12 +21,12 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen>
+class _RegisterScreenState extends ConsumerState<RegisterScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -34,6 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   ScrollController _secondPageScrollController = ScrollController();
   ScrollController _mainScrollController = ScrollController();
   ScrollController _gamesScrollController = ScrollController();
+  ScrollController _fourthPageScrollController = ScrollController();
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -61,6 +62,9 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   Country? _selectedCountry;
   DateTime? _dateBirthday;
+
+  bool cgu = false;
+  bool privacyPolicy = false;
 
   void initCountry() async {
     final country = await getCountryByCountryCode(context, 'FR');
@@ -188,7 +192,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     super.initState();
     initCountry();
 
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
 
     _emailController = TextEditingController();
     _focusNodeEmail = FocusNode();
@@ -204,6 +208,22 @@ class _RegisterScreenState extends State<RegisterScreen>
     _searchController = TextEditingController();
     _focusNodeSearch = FocusNode();
 
+    _emailController.addListener(() {
+      setState(() {});
+    });
+    _passwordController.addListener(() {
+      setState(() {});
+    });
+    _confirmPasswordController.addListener(() {
+      setState(() {});
+    });
+    _usernameController.addListener(() {
+      setState(() {});
+    });
+    _searchController.addListener(() {
+      setState(() {});
+    });
+
     _focusNodeEmail.addListener(() {
       setState(() {});
     });
@@ -216,12 +236,10 @@ class _RegisterScreenState extends State<RegisterScreen>
     _focusNodeConfirmPassword.addListener(() {
       setState(() {});
     });
-    _searchController.addListener(() {
-      setState(() {});
-    });
     _focusNodeSearch.addListener(() {
       setState(() {});
     });
+
     _mainScrollController.addListener(() {
       if (_mainScrollController.offset >=
               _mainScrollController.position.maxScrollExtent &&
@@ -234,6 +252,22 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   @override
   void deactivate() {
+    _emailController.removeListener(() {
+      setState(() {});
+    });
+    _passwordController.removeListener(() {
+      setState(() {});
+    });
+    _confirmPasswordController.removeListener(() {
+      setState(() {});
+    });
+    _usernameController.removeListener(() {
+      setState(() {});
+    });
+    _searchController.removeListener(() {
+      setState(() {});
+    });
+
     _focusNodeEmail.removeListener(() {
       setState(() {});
     });
@@ -267,49 +301,51 @@ class _RegisterScreenState extends State<RegisterScreen>
 
     _focusNodeEmail.dispose();
     _focusNodePassword.dispose();
+    _focusNodeConfirmPassword.dispose();
     _focusNodeUsername.dispose();
+    _focusNodeSearch.dispose();
+
     _emailController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
-
+    _confirmPasswordController.dispose();
     _searchController.dispose();
-    _focusNodeSearch.dispose();
 
     _firstPageScrollController.dispose();
     _secondPageScrollController.dispose();
     _mainScrollController.dispose();
     _gamesScrollController.dispose();
+    _fourthPageScrollController.dispose();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isDayMood = ref.watch(dayMoodNotifierProvider);
+
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Consumer(builder: (_, ref, child) {
-          bool isDayMood = ref.watch(dayMoodNotifierProvider);
-          return Loader<bool>(
-            load: () => getGames(),
-            loadingWidget: Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 1.0,
-                color: isDayMood ? cPrimaryPink : cSecondaryPurple,
-              ),
+        body: Loader<bool>(
+          load: () => getGames(),
+          loadingWidget: Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 1.0,
+              color: isDayMood ? cPrimaryPink : cSecondaryPurple,
             ),
-            builder: (_, value) {
-              return GestureDetector(
-                onTap: () {
-                  Helpers.hideKeyboard(context);
-                },
-                child: Column(children: [
-                  topRegisterEmail(isDayMood),
-                  Expanded(child: bodyRegister(isDayMood)),
-                ]),
-              );
-            },
-          );
-        }));
+          ),
+          builder: (_, value) {
+            return GestureDetector(
+              onTap: () {
+                Helpers.hideKeyboard(context);
+              },
+              child: Column(children: [
+                topRegisterEmail(isDayMood),
+                Expanded(child: bodyRegister(isDayMood)),
+              ]),
+            );
+          },
+        ));
   }
 
   Widget topRegisterEmail(bool isDayMood) {
@@ -405,6 +441,13 @@ class _RegisterScreenState extends State<RegisterScreen>
               Column(
                 children: [
                   Expanded(child: thirdPage(isDayMood)),
+                  btnPrevious(),
+                  btnNext(isDayMood),
+                ],
+              ),
+              Column(
+                children: [
+                  Expanded(child: fourthPage(isDayMood, country)),
                   btnPrevious(),
                   btnFinish(isDayMood),
                 ],
@@ -507,7 +550,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             Padding(
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
-                'Renseigne ton email',
+                'Renseigne ton email*',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
@@ -538,7 +581,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             Padding(
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
-                'Renseigne ton mot de passe',
+                'Renseigne ton mot de passe*',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
@@ -574,7 +617,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   context: context,
                   controller: _confirmPasswordController,
                   focusNode: _focusNodeConfirmPassword,
-                  label: 'Confirme ton mot de passe',
+                  label: 'Confirme ton mot de passe*',
                   obscure: true,
                   icon: Icons.lock,
                   textInputAction: TextInputAction.go,
@@ -613,7 +656,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             Padding(
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
-                'Entre ton pseudonyme',
+                'Entre ton pseudonyme*',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
@@ -642,7 +685,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             Padding(
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
-                "Sélectionne ta date d'anniversaire",
+                "Sélectionne ta date d'anniversaire*",
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
@@ -693,47 +736,45 @@ class _RegisterScreenState extends State<RegisterScreen>
             Padding(
               padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
               child: Text(
-                'Sélectionne ta nationnalité',
+                'Sélectionne ta nationnalité*',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  country == null
-                      ? Container()
-                      : Row(
-                          children: [
-                            Container(
-                              height: 50,
-                              width: 50,
-                              child: Image.asset(
-                                country.flag,
-                                package: countryCodePackageName,
-                              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                country == null
+                    ? Container()
+                    : Row(
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 50,
+                            child: Image.asset(
+                              country.flag,
+                              package: countryCodePackageName,
                             ),
-                            SizedBox(
-                              width: 10.0,
-                            ),
-                            Text(
-                              '${country.name}',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                  MaterialButton(
-                    child: Text(
-                      'Sélectionner',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    color: Theme.of(context).canvasColor,
-                    onPressed: _onPressedShowBottomSheet,
-                    elevation: 6,
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            '${country.name}',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                MaterialButton(
+                  child: Text(
+                    'Sélectionner',
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                ],
-              ),
+                  color: Theme.of(context).canvasColor,
+                  onPressed: _onPressedShowBottomSheet,
+                  elevation: 6,
+                ),
+              ],
             ),
           ],
         ))
@@ -952,6 +993,322 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
         ],
       ),
+    );
+  }
+
+  Widget fourthPage(bool isDayMood, Country? country) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 5.0),
+          child: Text(
+            "Nous voici dans le récapitulatif d'inscription, vérifie bien que tu as tout saisi correctement pour ton compte et n'hésite pas à vérifier être en accord avec les cgu et la politique de confidentialité de Gemu.",
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+        Expanded(
+            child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+          shrinkWrap: true,
+          controller: _fourthPageScrollController,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                "Ton email*",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            Container(
+                height: MediaQuery.of(context).size.height / 12,
+                child: TextFieldCustomRegister(
+                  context: context,
+                  controller: _emailController,
+                  focusNode: _focusNodeEmail,
+                  label: 'Email',
+                  obscure: false,
+                  icon: Icons.mail,
+                  textInputAction: TextInputAction.next,
+                  clear: () {
+                    setState(() {
+                      _emailController.clear();
+                    });
+                  },
+                  submit: (value) {
+                    value = _emailController.text;
+                    _focusNodeEmail.unfocus();
+                    FocusScope.of(context).requestFocus(_focusNodePassword);
+                  },
+                  isDayMood: isDayMood,
+                )),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                "Ton mot de passe*",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            Container(
+                height: MediaQuery.of(context).size.height / 12,
+                child: TextFieldCustomRegister(
+                  context: context,
+                  controller: _passwordController,
+                  focusNode: _focusNodePassword,
+                  label: 'Mot de passe',
+                  obscure: true,
+                  icon: Icons.lock,
+                  textInputAction: TextInputAction.next,
+                  clear: () {
+                    setState(() {
+                      _passwordController.clear();
+                    });
+                  },
+                  submit: (value) {
+                    value = _passwordController.text;
+                    _focusNodePassword.unfocus();
+                    FocusScope.of(context).requestFocus(_focusNodeUsername);
+                  },
+                  isDayMood: isDayMood,
+                )),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                "Ton pseudonyme*",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            Container(
+                height: MediaQuery.of(context).size.height / 12,
+                child: TextFieldCustomRegister(
+                  context: context,
+                  controller: _usernameController,
+                  focusNode: _focusNodeUsername,
+                  label: 'Pseudonyme',
+                  obscure: false,
+                  icon: Icons.person,
+                  textInputAction: TextInputAction.go,
+                  clear: () {
+                    setState(() {
+                      _usernameController.clear();
+                    });
+                  },
+                  submit: (value) {
+                    value = _usernameController.text;
+                    _focusNodeUsername.unfocus();
+                  },
+                  isDayMood: isDayMood,
+                )),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                "Ta date de naissance*",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  _dateBirthday == null
+                      ? Helpers.dateBirthday(DateTime.now())
+                      : Helpers.dateBirthday(_dateBirthday!),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(
+                  width: 5.0,
+                ),
+                MaterialButton(
+                  child: Text(
+                    'Sélectionner',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  color: Theme.of(context).canvasColor,
+                  onPressed: () {
+                    DatePicker.showDatePicker(context,
+                        showTitleActions: true,
+                        theme: DatePickerTheme(
+                          backgroundColor: Theme.of(context).canvasColor,
+                          cancelStyle: textStyleCustom(Colors.red[200]!, 14),
+                          doneStyle: textStyleCustom(Colors.blue[200]!, 14),
+                          itemStyle: textStyleCustom(
+                              Theme.of(context).iconTheme.color!, 15),
+                        ),
+                        minTime: DateTime(1900, 1, 1),
+                        maxTime: DateTime.now(), onChanged: (date) {
+                      setState(() {
+                        _dateBirthday = date;
+                      });
+                    }, onConfirm: (date) {
+                      setState(() {
+                        _dateBirthday = date;
+                      });
+                    }, currentTime: DateTime.now(), locale: LocaleType.fr);
+                  },
+                  elevation: 6,
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                "Ta nationnalité*",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                country == null
+                    ? Container()
+                    : Row(
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 50,
+                            child: Image.asset(
+                              country.flag,
+                              package: countryCodePackageName,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            '${country.name}',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                MaterialButton(
+                  child: Text(
+                    'Sélectionner',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  color: Theme.of(context).canvasColor,
+                  onPressed: _onPressedShowBottomSheet,
+                  elevation: 6,
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+              child: Text(
+                "Les jeux que tu veux suivre (minimum 2 jeux)",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            gamesFollow.length == 0
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+                    child: Text(
+                      "Pas de jeux suivis actuellement",
+                      style: textStyleRegular(Colors.red[200]!, 12),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 0.6,
+                        crossAxisSpacing: 6,
+                        mainAxisSpacing: 6),
+                    itemCount: gamesFollow.length,
+                    itemBuilder: (_, index) {
+                      Game game = gamesFollow[index];
+                      return _itemGameFollow(game, isDayMood);
+                    }),
+            CheckboxListTile(
+              dense: false,
+              value: cgu,
+              title: RichText(
+                  text: TextSpan(
+                      text: "Accepter les ",
+                      style: Theme.of(context).textTheme.bodySmall,
+                      children: [
+                    TextSpan(
+                      text: "cgu",
+                      style: textStyleRegular(
+                          isDayMood ? cPrimaryPink : cPrimaryPurple, 12),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => print("voir les cgu"),
+                    ),
+                    TextSpan(text: "*")
+                  ])),
+              onChanged: (value) {
+                setState(() {
+                  cgu = !cgu;
+                });
+              },
+              activeColor: isDayMood ? cPrimaryPink : cPrimaryPurple,
+            ),
+            CheckboxListTile(
+              dense: false,
+              value: privacyPolicy,
+              title: RichText(
+                  text: TextSpan(
+                      text: "Accepter la ",
+                      style: Theme.of(context).textTheme.bodySmall,
+                      children: [
+                    TextSpan(
+                        text: "politique de confidentialité",
+                        style: textStyleRegular(
+                            isDayMood ? cPrimaryPink : cPrimaryPurple, 12),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () =>
+                              print("voir la politique de confidentialité")),
+                    TextSpan(text: "*")
+                  ])),
+              onChanged: (value) {
+                setState(() {
+                  privacyPolicy = !privacyPolicy;
+                });
+              },
+              activeColor: isDayMood ? cPrimaryPink : cPrimaryPurple,
+            )
+          ],
+        ))
+      ],
+    );
+  }
+
+  Widget _itemGameFollow(Game game, bool isDayMood) {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5.0),
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDayMood ? lightBgColors : darkBgColors)),
+        ),
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5.0),
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.3),
+                    Colors.black.withOpacity(0.5)
+                  ])),
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Container(
+              padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
+              child: Text(
+                game.name,
+                style: Theme.of(context).textTheme.titleSmall,
+                textAlign: TextAlign.end,
+              )),
+        ),
+      ],
     );
   }
 }
