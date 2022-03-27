@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
-import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 import 'package:gemu/widgets/clip_shadow_path.dart';
 import 'package:gemu/widgets/custom_clipper.dart';
 import 'package:gemu/helpers/helpers.dart';
@@ -19,6 +18,7 @@ class WelcomeScreen extends ConsumerStatefulWidget {
 class WelcomeviewState extends ConsumerState<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
+    bool isDayMood = ref.watch(dayMoodNotifierProvider);
     return Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
@@ -33,14 +33,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                     Theme.of(context).brightness == Brightness.dark
                         ? Brightness.light
                         : Brightness.dark),
-            child: Consumer(builder: (_, ref, child) {
-              bool seenGetStarted = ref.watch(getStartedNotifierProvider);
-              if (seenGetStarted) {
-                ref.read(dayMoodNotifierProvider.notifier).timeMood();
-              }
-              bool isDayMood = ref.watch(dayMoodNotifierProvider);
-              return bodyWelcome(lightBgColors, darkBgColors, isDayMood);
-            })));
+            child: bodyWelcome(lightBgColors, darkBgColors, isDayMood)));
   }
 
   Widget bodyWelcome(

@@ -5,7 +5,6 @@ import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Welcome/welcome_screen.dart';
 
 class GetStartedBeforeScreen extends ConsumerStatefulWidget {
   const GetStartedBeforeScreen({Key? key}) : super(key: key);
@@ -23,26 +22,11 @@ class _GetStartedBeforeScreenState
 
   @override
   Widget build(BuildContext context) {
+    bool seenGetStarted = ref.watch(getStartedNotifierProvider);
+    bool isDayMood = ref.watch(dayMoodNotifierProvider);
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: AnnotatedRegion<SystemUiOverlayStyle>(
-          child: Consumer(builder: (_, ref, child) {
-            bool seenGetStarted = ref.watch(getStartedNotifierProvider);
-            if (!seenGetStarted) {
-              ref.read(dayMoodNotifierProvider.notifier).timeMood();
-            }
-            bool isDayMood = ref.watch(dayMoodNotifierProvider);
-            return Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: Column(
-                children: [
-                  if (seenGetStarted) btnClear(),
-                  Expanded(child: bodyGetStartedBefore()),
-                  btnStart(isDayMood)
-                ],
-              ),
-            );
-          }),
           value: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               systemNavigationBarColor:
@@ -55,6 +39,16 @@ class _GetStartedBeforeScreenState
                   Theme.of(context).brightness == Brightness.dark
                       ? Brightness.light
                       : Brightness.dark),
+          child: Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: Column(
+              children: [
+                if (seenGetStarted) btnClear(),
+                Expanded(child: bodyGetStartedBefore()),
+                btnStart(isDayMood)
+              ],
+            ),
+          ),
         ));
   }
 
@@ -166,6 +160,9 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
 
   @override
   Widget build(BuildContext context) {
+    bool isDayMood = ref.watch(dayMoodNotifierProvider);
+    bool seenGetStarted = ref.watch(getStartedNotifierProvider);
+
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -181,21 +178,16 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                     Theme.of(context).brightness == Brightness.dark
                         ? Brightness.light
                         : Brightness.dark),
-            child: Consumer(builder: (context, ref, child) {
-              bool isDayMood = ref.watch(dayMoodNotifierProvider);
-              bool seenGetStarted = ref.watch(getStartedNotifierProvider);
-              return Padding(
-                padding:
-                    EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                child: Column(
-                  children: [
-                    if (seenGetStarted) btnClear(),
-                    Expanded(child: bodyGetStarted(isDayMood)),
-                    stepsGetStarted(isDayMood, seenGetStarted, ref)
-                  ],
-                ),
-              );
-            })));
+            child: Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              child: Column(
+                children: [
+                  if (seenGetStarted) btnClear(),
+                  Expanded(child: bodyGetStarted(isDayMood)),
+                  stepsGetStarted(isDayMood, seenGetStarted, ref)
+                ],
+              ),
+            )));
   }
 
   Widget btnClear() {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 import 'package:gemu/riverpod/Connectivity/connectivity_provider.dart';
+import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 import 'package:gemu/riverpod/Theme/theme_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/NoConnectivity/noconnectivity_screen.dart';
@@ -36,6 +37,7 @@ class _LogControllerState extends ConsumerState<LogController> {
   void initState() {
     super.initState();
 
+    ref.read(dayMoodNotifierProvider.notifier).timeMood();
     ref.read(connectivityNotifierProvider.notifier).initConnectivity();
 
     _connectivitySubscription =
