@@ -19,6 +19,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
 
+  late FocusNode currentFocus;
   late FocusNode _focusNodeEmail;
   late FocusNode _focusNodePassword;
 
@@ -37,13 +38,6 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
     _passwordController.addListener(() {
       setState(() {});
     });
-
-    _focusNodeEmail.addListener(() {
-      setState(() {});
-    });
-    _focusNodePassword.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
@@ -52,12 +46,6 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
       setState(() {});
     });
     _passwordController.removeListener(() {
-      setState(() {});
-    });
-    _focusNodeEmail.removeListener(() {
-      setState(() {});
-    });
-    _focusNodePassword.removeListener(() {
       setState(() {});
     });
     super.deactivate();
@@ -74,26 +62,20 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    currentFocus = FocusScope.of(context);
     bool isLoading = ref.watch(loadingLoginNotifierProvider);
     bool isDayMood = ref.watch(dayMoodNotifierProvider);
     return Scaffold(
+        resizeToAvoidBottomInset: true,
         body: GestureDetector(
-      onTap: () => Helpers.hideKeyboard(context),
-      child: Column(children: [
-        topLoginEmail(),
-        Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Text(
-            "Plus que ton email et ton mot de passe et c'est parti!",
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ),
-        Expanded(
-            child: Container(
-          child: loginEmail(isDayMood, isLoading),
-        ))
-      ]),
-    ));
+          onTap: () => Helpers.hideKeyboard(context),
+          child: Column(children: [
+            topLoginEmail(),
+            Expanded(
+              child: loginEmail(isDayMood, isLoading),
+            )
+          ]),
+        ));
   }
 
   Widget topLoginEmail() {
@@ -136,7 +118,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   Widget loginEmail(bool isDayMood, bool isLoading) {
     return ListView(
       shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 25.0),
+      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -158,8 +141,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
               },
               submit: (value) {
                 value = _emailController.text;
-                _focusNodeEmail.unfocus();
-                FocusScope.of(context).requestFocus(_focusNodePassword);
+                currentFocus.unfocus();
+                currentFocus.requestFocus(_focusNodePassword);
               },
               isDayMood: isDayMood,
             ),
