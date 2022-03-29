@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:algolia/algolia.dart';
 import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +11,6 @@ import 'package:loader/loader.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
@@ -20,6 +18,7 @@ import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   @override
@@ -751,7 +750,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   Widget thirdPage(bool isDayMood) {
-    return Column(
+    return ListView(
+      controller: _mainScrollController,
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 10.0),
@@ -759,9 +761,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu",
               style: Theme.of(context).textTheme.bodySmall),
         ),
-        _searchBar(isDayMood),
-        Expanded(
-            child: _searchController.text.isNotEmpty
+        StickyHeader(
+            controller: _mainScrollController,
+            header: _searchBar(isDayMood),
+            content: _searchController.text.isNotEmpty
                 ? _searchListGames(isDayMood)
                 : _listGames(isDayMood))
       ],
@@ -801,14 +804,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   Widget _listGames(bool isDayMood) {
-    return ListView(
-      controller: _mainScrollController,
-      shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(),
+    return Column(
       children: [
         GridView.builder(
             shrinkWrap: true,
             controller: _gamesScrollController,
+            padding: const EdgeInsets.symmetric(vertical: 15.0),
             physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
@@ -856,34 +857,40 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   Widget _searchListGames(bool isDayMood) {
     return isSearching
-        ? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                height: 15.0,
-                width: 15.0,
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primary,
+        ? Padding(
+            padding: const EdgeInsets.symmetric(vertical: 25.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 15.0,
+                  width: 15.0,
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: 5.0,
-              ),
-              Text(
-                _searchController.text.length < 10
-                    ? 'Recherche de "${_searchController.text}.."'
-                    : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
-                style: Theme.of(context).textTheme.bodySmall,
-              )
-            ],
+                SizedBox(
+                  width: 5.0,
+                ),
+                Text(
+                  _searchController.text.length < 10
+                      ? 'Recherche de "${_searchController.text}.."'
+                      : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
+                  style: Theme.of(context).textTheme.bodySmall,
+                )
+              ],
+            ),
           )
         : gamesAlgolia.length == 0
             ? Padding(
                 padding: const EdgeInsets.symmetric(vertical: 25.0),
-                child: Text(
-                  'No games found',
-                  style: Theme.of(context).textTheme.bodySmall,
+                child: Center(
+                  child: Text(
+                    'No games found',
+                    style: Theme.of(context).textTheme.bodySmall,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               )
             : GridView.builder(
@@ -894,7 +901,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     mainAxisSpacing: 6),
                 shrinkWrap: true,
                 controller: _gamesScrollController,
-                physics: AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
+                physics: NeverScrollableScrollPhysics(),
                 itemCount: gamesAlgolia.length,
                 itemBuilder: (_, index) {
                   Game gameAlgolia = Game.fromMapAlgolia(
