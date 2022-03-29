@@ -403,7 +403,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
         child: TabBarView(
             controller: _tabController,
-            physics: NeverScrollableScrollPhysics(),
+            physics: AlwaysScrollableScrollPhysics(),
             children: [
               Column(
                 children: [
@@ -750,24 +750,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   Widget thirdPage(bool isDayMood) {
-    return ListView(
-      controller: _mainScrollController,
-      shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: Text(
-              "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu",
-              style: Theme.of(context).textTheme.bodySmall),
-        ),
-        StickyHeader(
-            controller: _mainScrollController,
-            header: _searchBar(isDayMood),
-            content: _searchController.text.isNotEmpty
-                ? _searchListGames(isDayMood)
-                : _listGames(isDayMood))
-      ],
+    return Container(
+      color: Colors.red,
+      child: ListView(
+        controller: _mainScrollController,
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        children: [
+          Text(
+            "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu",
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          StickyHeader(
+              controller: _mainScrollController,
+              header: _searchBar(isDayMood),
+              content: _searchController.text.isNotEmpty
+                  ? _searchListGames(isDayMood)
+                  : _listGames(isDayMood))
+        ],
+      ),
     );
   }
 
