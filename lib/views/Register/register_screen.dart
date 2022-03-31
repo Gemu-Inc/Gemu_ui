@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -225,9 +227,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     _usernameController.addListener(() {
       setState(() {});
     });
-    _searchController.addListener(() {
-      setState(() {});
-    });
 
     _mainScrollController.addListener(() {
       if (_mainScrollController.offset >=
@@ -236,6 +235,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           !stopLoad) {
         loadMoreData();
       }
+    });
+
+    _searchController.addListener(() {
+      Timer(Duration(milliseconds: 500), () {
+        if (_searchController.text != "") {
+          _searchGames(_searchController.text);
+        }
+      });
     });
   }
 
@@ -259,9 +266,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     _usernameController.removeListener(() {
       setState(() {});
     });
-    _searchController.removeListener(() {
-      setState(() {});
-    });
 
     _mainScrollController.removeListener(() {
       if (_mainScrollController.offset >=
@@ -269,6 +273,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           !_mainScrollController.position.outOfRange) {
         loadMoreData();
       }
+    });
+
+    _searchController.removeListener(() {
+      Timer(Duration(milliseconds: 500), () {
+        if (_searchController.text != "") {
+          _searchGames(_searchController.text);
+        }
+      });
     });
 
     super.deactivate();
@@ -750,25 +762,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   Widget thirdPage(bool isDayMood) {
-    return Container(
-      color: Colors.red,
-      child: ListView(
-        controller: _mainScrollController,
-        shrinkWrap: true,
-        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-        children: [
-          Text(
-            "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu",
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          StickyHeader(
+    return ListView(
+      controller: _mainScrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+      children: [
+        Text(
+          "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu.",
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
+          child: StickyHeader(
               controller: _mainScrollController,
               header: _searchBar(isDayMood),
               content: _searchController.text.isNotEmpty
                   ? _searchListGames(isDayMood)
-                  : _listGames(isDayMood))
-        ],
-      ),
+                  : _listGames(isDayMood)),
+        )
+      ],
     );
   }
 
@@ -825,19 +838,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Stack(
           children: [
             Container(
-              height: isLoadingMoreData
-                  ? MediaQuery.of(context).size.height / 14
-                  : 0.0,
-              child: Center(
-                child: SizedBox(
-                  height: 30.0,
-                  width: 30.0,
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.primary,
-                    strokeWidth: 1.5,
-                  ),
-                ),
-              ),
+              height: MediaQuery.of(context).size.height / 14,
+              child: isLoadingMoreData
+                  ? Center(
+                      child: SizedBox(
+                        height: 30.0,
+                        width: 30.0,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.primary,
+                          strokeWidth: 1.5,
+                        ),
+                      ),
+                    )
+                  : SizedBox(),
             ),
             Container(
               height: isResultLoading && newGames.length == 0
@@ -1167,17 +1180,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            "Les jeux que tu veux suivre (minimum 2 jeux)",
+            "Les jeux que tu veux suivre (minimum 2 jeux)*",
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
         gamesFollow.length == 0
             ? Padding(
-                padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
-                child: Text(
-                  "Pas de jeux suivis actuellement",
-                  style: textStyleRegular(Colors.red[200]!, 12),
-                  textAlign: TextAlign.center,
+                padding: const EdgeInsets.only(top: 5.0, bottom: 15.0),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _tabController.index -= 1;
+                    });
+                  },
+                  child: Text(
+                    "Pas de jeux suivis actuellement",
+                    style: textStyleRegular(Colors.red[200]!, 12),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               )
             : GridView.builder(
