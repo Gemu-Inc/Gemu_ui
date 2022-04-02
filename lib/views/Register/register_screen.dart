@@ -215,19 +215,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       }
     });
 
-    _emailController.addListener(() {
-      setState(() {});
-    });
-    _passwordController.addListener(() {
-      setState(() {});
-    });
-    _confirmPasswordController.addListener(() {
-      setState(() {});
-    });
-    _usernameController.addListener(() {
-      setState(() {});
-    });
-
     _mainScrollController.addListener(() {
       if (_mainScrollController.offset >=
               _mainScrollController.position.maxScrollExtent &&
@@ -244,6 +231,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         }
       });
     });
+
+    _emailController.addListener(() {});
+    _passwordController.addListener(() {});
+    _confirmPasswordController.addListener(() {});
+    _usernameController.addListener(() {});
   }
 
   @override
@@ -252,19 +244,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       if (!_tabController.indexIsChanging) {
         currentIndex = _tabController.index;
       }
-    });
-
-    _emailController.removeListener(() {
-      setState(() {});
-    });
-    _passwordController.removeListener(() {
-      setState(() {});
-    });
-    _confirmPasswordController.removeListener(() {
-      setState(() {});
-    });
-    _usernameController.removeListener(() {
-      setState(() {});
     });
 
     _mainScrollController.removeListener(() {
@@ -282,6 +261,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         }
       });
     });
+
+    _emailController.removeListener(() {});
+    _passwordController.removeListener(() {});
+    _confirmPasswordController.removeListener(() {});
+    _usernameController.removeListener(() {});
 
     super.deactivate();
   }
@@ -558,6 +542,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 _emailController.clear();
               });
             },
+            changed: (value) {
+              setState(() {
+                value = _emailController.text;
+              });
+            },
             submit: (value) {
               value = _emailController.text;
               currentFocus.unfocus();
@@ -588,6 +577,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   _passwordController.clear();
                 });
               },
+              changed: (value) {
+                setState(() {
+                  value = _passwordController.text;
+                });
+              },
               submit: (value) {
                 value = _passwordController.text;
                 currentFocus.unfocus();
@@ -611,6 +605,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               clear: () {
                 setState(() {
                   _confirmPasswordController.clear();
+                });
+              },
+              changed: (value) {
+                setState(() {
+                  value = _confirmPasswordController.text;
                 });
               },
               submit: (value) {
@@ -654,6 +653,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             clear: () {
               setState(() {
                 _usernameController.clear();
+              });
+            },
+            changed: (value) {
+              setState(() {
+                value = _usernameController.text;
               });
             },
             submit: (value) {
@@ -807,6 +811,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               if (gamesAlgolia.length != 0) {
                 gamesAlgolia.clear();
               }
+            },
+            changed: (value) {
+              setState(() {
+                value = _searchController.text;
+              });
             },
             submit: (value) {
               value = _searchController.text;
@@ -1021,6 +1030,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   _emailController.clear();
                 });
               },
+              changed: (value) {
+                setState(() {
+                  value = _emailController.text;
+                });
+              },
               submit: (value) {
                 value = _emailController.text;
                 currentFocus.unfocus();
@@ -1049,6 +1063,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   _passwordController.clear();
                 });
               },
+              changed: (value) {
+                setState(() {
+                  value = _passwordController.text;
+                });
+              },
               submit: (value) {
                 value = _passwordController.text;
                 currentFocus.unfocus();
@@ -1075,6 +1094,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               clear: () {
                 setState(() {
                   _usernameController.clear();
+                });
+              },
+              changed: (value) {
+                setState(() {
+                  value = _usernameController.text;
                 });
               },
               submit: (value) {
