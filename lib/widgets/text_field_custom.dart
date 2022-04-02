@@ -113,6 +113,7 @@ class TextFieldCustomLogin extends ConsumerStatefulWidget {
   final TextInputType? textInputType;
   final Function() clear;
   final Function(String)? submit;
+  final Function(String)? changed;
   final bool isDayMood;
 
   const TextFieldCustomLogin(
@@ -127,6 +128,7 @@ class TextFieldCustomLogin extends ConsumerStatefulWidget {
       this.textInputType,
       required this.clear,
       this.submit,
+      required this.changed,
       required this.isDayMood})
       : super(key: key);
 
@@ -160,6 +162,7 @@ class _TextFieldCustomLoginState extends ConsumerState<TextFieldCustomLogin> {
         cursorColor: widget.isDayMood ? cPrimaryPurple : cPrimaryPink,
         keyboardType: widget.textInputType,
         textInputAction: widget.textInputAction,
+        onChanged: widget.changed,
         onSubmitted: widget.submit,
         decoration: InputDecoration(
             fillColor: Theme.of(context).canvasColor,

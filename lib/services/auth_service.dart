@@ -118,7 +118,7 @@ class AuthService {
   //Fonction de déconnexion de l'application
   static Future signOut() => _auth.signOut();
 
-  //Update
+  //Update email utilisateur
   static Future updateEmail(
       {required String password, required String newEmail}) async {
     try {
@@ -133,6 +133,7 @@ class AuthService {
     }
   }
 
+  //Update password utilisateur
   static Future updatePassword(
       {required String currentPassword, required String newPassword}) async {
     var user = _auth.currentUser!;

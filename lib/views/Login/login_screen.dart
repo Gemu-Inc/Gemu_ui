@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:email_validator/email_validator.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
@@ -23,6 +24,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   late FocusNode _focusNodeEmail;
   late FocusNode _focusNodePassword;
 
+  bool isCompleted = false;
+
   @override
   void initState() {
     super.initState();
@@ -33,20 +36,38 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
     _focusNodePassword = FocusNode();
 
     _emailController.addListener(() {
-      setState(() {});
+      if (_emailController.text.trim().isNotEmpty &&
+          EmailValidator.validate(_emailController.text)) {
+        ref.read(emailValidyNotifierProvider.notifier).updateValidity(true);
+      } else {
+        ref.read(emailValidyNotifierProvider.notifier).updateValidity(false);
+      }
     });
     _passwordController.addListener(() {
-      setState(() {});
+      if (_passwordController.text.trim().isNotEmpty) {
+        ref.read(passwordValidNotifierProvider.notifier).updateValidity(true);
+      } else {
+        ref.read(passwordValidNotifierProvider.notifier).updateValidity(false);
+      }
     });
   }
 
   @override
   void deactivate() {
     _emailController.removeListener(() {
-      setState(() {});
+      if (_emailController.text.trim().isNotEmpty &&
+          EmailValidator.validate(_emailController.text)) {
+        ref.read(emailValidyNotifierProvider.notifier).updateValidity(true);
+      } else {
+        ref.read(emailValidyNotifierProvider.notifier).updateValidity(false);
+      }
     });
     _passwordController.removeListener(() {
-      setState(() {});
+      if (_passwordController.text.trim().isNotEmpty) {
+        ref.read(passwordValidNotifierProvider.notifier).updateValidity(true);
+      } else {
+        ref.read(passwordValidNotifierProvider.notifier).updateValidity(false);
+      }
     });
     super.deactivate();
   }
@@ -63,8 +84,12 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     currentFocus = FocusScope.of(context);
-    bool isLoading = ref.watch(loadingLoginNotifierProvider);
-    bool isDayMood = ref.watch(dayMoodNotifierProvider);
+    final isLoading = ref.watch(loadingLoginNotifierProvider);
+    final isDayMood = ref.watch(dayMoodNotifierProvider);
+    final creationComplete = ref.watch(loginCompleteProvider);
+    if (creationComplete.asData != null) {
+      isCompleted = creationComplete.asData!.value;
+    }
     return Scaffold(
         resizeToAvoidBottomInset: true,
         body: GestureDetector(
@@ -139,6 +164,11 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                   _emailController.clear();
                 });
               },
+              changed: (value) {
+                setState(() {
+                  value = _emailController.text;
+                });
+              },
               submit: (value) {
                 value = _emailController.text;
                 currentFocus.unfocus();
@@ -165,18 +195,27 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                   _passwordController.clear();
                 });
               },
+              changed: (value) {
+                setState(() {
+                  value = _passwordController.text;
+                });
+              },
               submit: (value) async {
                 value = _passwordController.text;
                 _focusNodePassword.unfocus();
-                ref.read(loadingLoginNotifierProvider.notifier).updateLoader();
-                await AuthService.signIn(
-                    context: context,
-                    email: _emailController.text,
-                    password: _passwordController.text);
-                if (mounted) {
+                if (isCompleted) {
                   ref
                       .read(loadingLoginNotifierProvider.notifier)
                       .updateLoader();
+                  await AuthService.signIn(
+                      context: context,
+                      email: _emailController.text,
+                      password: _passwordController.text);
+                  if (mounted) {
+                    ref
+                        .read(loadingLoginNotifierProvider.notifier)
+                        .updateLoader();
+                  }
                 }
               },
               isDayMood: isDayMood,
@@ -189,15 +228,19 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
             height: MediaQuery.of(context).size.height / 14,
             child: ElevatedButton(
               onPressed: () async {
-                ref.read(loadingLoginNotifierProvider.notifier).updateLoader();
-                await AuthService.signIn(
-                    context: context,
-                    email: _emailController.text,
-                    password: _passwordController.text);
-                if (mounted) {
+                if (isCompleted) {
                   ref
                       .read(loadingLoginNotifierProvider.notifier)
                       .updateLoader();
+                  await AuthService.signIn(
+                      context: context,
+                      email: _emailController.text,
+                      password: _passwordController.text);
+                  if (mounted) {
+                    ref
+                        .read(loadingLoginNotifierProvider.notifier)
+                        .updateLoader();
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
