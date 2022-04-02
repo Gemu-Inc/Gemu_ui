@@ -140,20 +140,11 @@ class _TextFieldCustomLoginState extends ConsumerState<TextFieldCustomLogin> {
   late bool pwdVisible;
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.obscure) {
-      Future.delayed(
-          Duration.zero,
-          () => ref
-              .read(passwordVisibilityNotifierProvider.notifier)
-              .updateVisibilityPassword(true));
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    pwdVisible = ref.watch(passwordVisibilityNotifierProvider);
+    if (widget.obscure) {
+      pwdVisible = ref.watch(passwordVisibilityLoginNotifierProvider);
+      print(pwdVisible);
+    }
     return TextField(
         maxLines: 1,
         obscureText: widget.obscure ? pwdVisible : false,
@@ -191,7 +182,7 @@ class _TextFieldCustomLoginState extends ConsumerState<TextFieldCustomLogin> {
                 : widget.obscure
                     ? IconButton(
                         icon: Icon(
-                          Icons.remove_red_eye_sharp,
+                          pwdVisible ? Icons.visibility : Icons.visibility_off,
                           color: widget.focusNode.hasFocus
                               ? widget.isDayMood
                                   ? cSecondaryPurple
@@ -200,7 +191,8 @@ class _TextFieldCustomLoginState extends ConsumerState<TextFieldCustomLogin> {
                         ),
                         onPressed: () {
                           ref
-                              .read(passwordVisibilityNotifierProvider.notifier)
+                              .read(passwordVisibilityLoginNotifierProvider
+                                  .notifier)
                               .updateVisibilityPassword(!pwdVisible);
                         })
                     : IconButton(
@@ -227,6 +219,7 @@ class TextFieldCustomRegister extends StatefulWidget {
   final TextInputType? textInputType;
   final Function() clear;
   final Function(String)? submit;
+  final Function(String)? changed;
   final bool isDayMood;
 
   const TextFieldCustomRegister(
@@ -241,6 +234,7 @@ class TextFieldCustomRegister extends StatefulWidget {
       this.textInputType,
       required this.clear,
       this.submit,
+      required this.changed,
       required this.isDayMood})
       : super(key: key);
 
@@ -250,28 +244,24 @@ class TextFieldCustomRegister extends StatefulWidget {
 }
 
 class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
-  bool pwdVisible = false;
-
-  @override
-  void initState() {
-    if (widget.obscure) {
-      setState(() {
-        pwdVisible = !pwdVisible;
-      });
-    }
-    super.initState();
-  }
+  late bool pwdVisible;
 
   @override
   Widget build(BuildContext context) {
+    if (widget.obscure) {
+      pwdVisible = true;
+    } else {
+      pwdVisible = false;
+    }
     return TextField(
         maxLines: 1,
-        obscureText: pwdVisible,
+        obscureText: widget.obscure ? pwdVisible : false,
         controller: widget.controller,
         focusNode: widget.focusNode,
         cursorColor: widget.isDayMood ? cPrimaryPink : cPrimaryPurple,
         keyboardType: widget.textInputType,
         textInputAction: widget.textInputAction,
+        onChanged: widget.changed,
         onSubmitted: widget.submit,
         decoration: InputDecoration(
             fillColor: Theme.of(context).canvasColor,
@@ -300,7 +290,7 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
                 : widget.obscure
                     ? IconButton(
                         icon: Icon(
-                          Icons.remove_red_eye_sharp,
+                          pwdVisible ? Icons.visibility : Icons.visibility_off,
                           color: widget.focusNode.hasFocus
                               ? widget.isDayMood
                                   ? cPrimaryPink

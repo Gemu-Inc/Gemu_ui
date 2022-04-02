@@ -38,16 +38,22 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
     _emailController.addListener(() {
       if (_emailController.text.trim().isNotEmpty &&
           EmailValidator.validate(_emailController.text)) {
-        ref.read(emailValidyNotifierProvider.notifier).updateValidity(true);
+        ref.read(emailValidLoginNotifierProvider.notifier).updateValidity(true);
       } else {
-        ref.read(emailValidyNotifierProvider.notifier).updateValidity(false);
+        ref
+            .read(emailValidLoginNotifierProvider.notifier)
+            .updateValidity(false);
       }
     });
     _passwordController.addListener(() {
       if (_passwordController.text.trim().isNotEmpty) {
-        ref.read(passwordValidNotifierProvider.notifier).updateValidity(true);
+        ref
+            .read(passwordValidLoginNotifierProvider.notifier)
+            .updateValidity(true);
       } else {
-        ref.read(passwordValidNotifierProvider.notifier).updateValidity(false);
+        ref
+            .read(passwordValidLoginNotifierProvider.notifier)
+            .updateValidity(false);
       }
     });
   }
@@ -57,16 +63,22 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
     _emailController.removeListener(() {
       if (_emailController.text.trim().isNotEmpty &&
           EmailValidator.validate(_emailController.text)) {
-        ref.read(emailValidyNotifierProvider.notifier).updateValidity(true);
+        ref.read(emailValidLoginNotifierProvider.notifier).updateValidity(true);
       } else {
-        ref.read(emailValidyNotifierProvider.notifier).updateValidity(false);
+        ref
+            .read(emailValidLoginNotifierProvider.notifier)
+            .updateValidity(false);
       }
     });
     _passwordController.removeListener(() {
       if (_passwordController.text.trim().isNotEmpty) {
-        ref.read(passwordValidNotifierProvider.notifier).updateValidity(true);
+        ref
+            .read(passwordValidLoginNotifierProvider.notifier)
+            .updateValidity(true);
       } else {
-        ref.read(passwordValidNotifierProvider.notifier).updateValidity(false);
+        ref
+            .read(passwordValidLoginNotifierProvider.notifier)
+            .updateValidity(false);
       }
     });
     super.deactivate();

@@ -1,20 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final passwordVisibilityNotifierProvider =
-    StateNotifierProvider<PasswordVisibleProvider, bool>(
-        (ref) => PasswordVisibleProvider());
-final emailValidyNotifierProvider =
-    StateNotifierProvider<EmailValidLoginProvider, bool>(
+final passwordVisibilityLoginNotifierProvider =
+    StateNotifierProvider.autoDispose<PasswordVisibleLoginProvider, bool>(
+        (ref) => PasswordVisibleLoginProvider());
+final emailValidLoginNotifierProvider =
+    StateNotifierProvider.autoDispose<EmailValidLoginProvider, bool>(
         (ref) => EmailValidLoginProvider());
-final passwordValidNotifierProvider =
-    StateNotifierProvider<PasswordValidLoginProvider, bool>(
+final passwordValidLoginNotifierProvider =
+    StateNotifierProvider.autoDispose<PasswordValidLoginProvider, bool>(
         (ref) => PasswordValidLoginProvider());
 final loadingLoginNotifierProvider =
-    StateNotifierProvider<LoadingLoginProvider, bool>(
+    StateNotifierProvider.autoDispose<LoadingLoginProvider, bool>(
         (ref) => LoadingLoginProvider());
-final loginCompleteProvider = FutureProvider<bool>((ref) async {
-  final email = ref.watch(emailValidyNotifierProvider);
-  final password = ref.watch(passwordValidNotifierProvider);
+final loginCompleteProvider = FutureProvider.autoDispose<bool>((ref) async {
+  final email = ref.watch(emailValidLoginNotifierProvider);
+  final password = ref.watch(passwordValidLoginNotifierProvider);
 
   if (email && password) {
     return true;
@@ -27,7 +27,6 @@ class EmailValidLoginProvider extends StateNotifier<bool> {
 
   updateValidity(bool newState) {
     state = newState;
-    print("email $state");
   }
 }
 
@@ -36,12 +35,11 @@ class PasswordValidLoginProvider extends StateNotifier<bool> {
 
   updateValidity(bool newState) {
     state = newState;
-    print("password $state");
   }
 }
 
-class PasswordVisibleProvider extends StateNotifier<bool> {
-  PasswordVisibleProvider() : super(true);
+class PasswordVisibleLoginProvider extends StateNotifier<bool> {
+  PasswordVisibleLoginProvider() : super(true);
 
   updateVisibilityPassword(bool newState) {
     state = newState;
