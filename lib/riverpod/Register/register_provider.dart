@@ -1,25 +1,40 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
 
+final loadingRegisterNotifierProvider =
+    StateNotifierProvider.autoDispose<LoadingRegisterProvider, bool>(
+        (ref) => LoadingRegisterProvider());
+final passwordVisibleRegisterNotifierProvider =
+    StateNotifierProvider<PasswordVisibleRegisterProvider, bool>(
+        (ref) => PasswordVisibleRegisterProvider());
+final successRegisterNotifierProvider =
+    StateNotifierProvider.autoDispose<SuccessRegisterProvider, bool>(
+        (ref) => SuccessRegisterProvider());
 final emailValidRegisterNotifierProvider =
-    StateNotifierProvider<EmailValidRegisterProvider, bool>(
+    StateNotifierProvider.autoDispose<EmailValidRegisterProvider, bool>(
         (ref) => EmailValidRegisterProvider());
 final passwordValidRegisterNotifierProvider =
-    StateNotifierProvider<PasswordValidRegisterProvider, bool>(
+    StateNotifierProvider.autoDispose<PasswordValidRegisterProvider, bool>(
         (ref) => PasswordValidRegisterProvider());
 final confirmPasswordValidRegisterNotifierProvider =
-    StateNotifierProvider<ConfirmPasswordValidRegisterProvider, bool>(
-        (ref) => ConfirmPasswordValidRegisterProvider());
+    StateNotifierProvider.autoDispose<ConfirmPasswordValidRegisterProvider,
+        bool>((ref) => ConfirmPasswordValidRegisterProvider());
 final pseudonymeValidRegisterNotifierProvider =
-    StateNotifierProvider<PseudonymeValidRegisterProvider, bool>(
+    StateNotifierProvider.autoDispose<PseudonymeValidRegisterProvider, bool>(
         (ref) => PseudonymeValidRegisterProvider());
 final anniversaryValidRegisterNotifierProvider =
-    StateNotifierProvider<AnnniversaryValidRegisterProvider, bool>(
+    StateNotifierProvider.autoDispose<AnnniversaryValidRegisterProvider, bool>(
         (ref) => AnnniversaryValidRegisterProvider());
 final gamesValidRegisterNotifierProvider =
-    StateNotifierProvider<FollowGamesValidRegisterProvider, bool>(
+    StateNotifierProvider.autoDispose<FollowGamesValidRegisterProvider, bool>(
         (ref) => FollowGamesValidRegisterProvider());
-final registerCompleteProvider = FutureProvider<bool>((ref) async {
+final cguValidRegisterNotifierProvider =
+    StateNotifierProvider.autoDispose<CGUValidRegisterProvider, bool>(
+        (ref) => CGUValidRegisterProvider());
+final policyPrivacyRegisterNotifierProvider =
+    StateNotifierProvider.autoDispose<PolicyPrivacyRegisterProvider, bool>(
+        (ref) => PolicyPrivacyRegisterProvider());
+final registerCompleteProvider = FutureProvider.autoDispose<bool>((ref) async {
   final email = ref.watch(emailValidRegisterNotifierProvider);
   final password = ref.watch(passwordValidRegisterNotifierProvider);
   final confirmPassword =
@@ -27,13 +42,17 @@ final registerCompleteProvider = FutureProvider<bool>((ref) async {
   final pseudonyme = ref.watch(pseudonymeValidRegisterNotifierProvider);
   final anniversary = ref.watch(anniversaryValidRegisterNotifierProvider);
   final games = ref.watch(gamesValidRegisterNotifierProvider);
+  final cgu = ref.watch(cguValidRegisterNotifierProvider);
+  final policyPrivacy = ref.watch(policyPrivacyRegisterNotifierProvider);
 
   if (email &&
       password &&
       confirmPassword &&
       pseudonyme &&
       anniversary &&
-      games) {
+      games &&
+      cgu &&
+      policyPrivacy) {
     return true;
   }
   return false;
@@ -84,5 +103,46 @@ class FollowGamesValidRegisterProvider extends StateNotifier<bool> {
 
   updateValidity(bool newState) {
     state = newState;
+    print("games: $state");
+  }
+}
+
+class CGUValidRegisterProvider extends StateNotifier<bool> {
+  CGUValidRegisterProvider() : super(false);
+
+  updateValidity() {
+    state = !state;
+  }
+}
+
+class PolicyPrivacyRegisterProvider extends StateNotifier<bool> {
+  PolicyPrivacyRegisterProvider() : super(false);
+
+  updateValidity() {
+    state = !state;
+  }
+}
+
+class PasswordVisibleRegisterProvider extends StateNotifier<bool> {
+  PasswordVisibleRegisterProvider() : super(true);
+
+  updateVisibilityPassword(bool newState) {
+    state = newState;
+  }
+}
+
+class LoadingRegisterProvider extends StateNotifier<bool> {
+  LoadingRegisterProvider() : super(false);
+
+  updateLoader() {
+    state = !state;
+  }
+}
+
+class SuccessRegisterProvider extends StateNotifier<bool> {
+  SuccessRegisterProvider() : super(false);
+
+  updateSuccess() {
+    state = !state;
   }
 }

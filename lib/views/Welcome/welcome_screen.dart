@@ -248,7 +248,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                 style: Theme.of(context).textTheme.bodySmall,
                                 children: [
                                   TextSpan(
-                                      text: "Terms and Conditions",
+                                      text: "termes et conditions",
                                       recognizer: TapGestureRecognizer()
                                         ..onTap =
                                             () => print("terms and conditions"),
@@ -258,12 +258,12 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                               : cPrimaryPurple,
                                           fontSize: 12)),
                                   TextSpan(
-                                      text: " et les ",
+                                      text: " et la ",
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall),
                                   TextSpan(
-                                      text: "Privacy Policy",
+                                      text: "politique de confidentialité",
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () => print("privacy policy"),
                                       style: textStyleCustom(

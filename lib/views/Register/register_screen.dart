@@ -8,8 +8,12 @@ import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
+import 'package:gemu/riverpod/Register/register_provider.dart';
+import 'package:gemu/services/database_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loader/loader.dart';
+import "package:email_validator/email_validator.dart";
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/constants/constants.dart';
@@ -66,14 +70,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   Country? _selectedCountry;
   DateTime? _dateBirthday;
 
-  bool cgu = false;
-  bool privacyPolicy = false;
+  bool isComplete = false;
 
   void initCountry() async {
     final country = await getCountryByCountryCode(context, 'FR');
-    setState(() {
-      _selectedCountry = country;
-    });
+    _selectedCountry = country;
   }
 
   void _onPressedShowBottomSheet() async {
@@ -168,28 +169,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     }
   }
 
-  _registerAccount(String email, String password, String confirmPassword,
-      String username, List<Game> gamesFollow, String country) async {
-    if (email.isEmpty ||
-        username.isEmpty ||
-        password.isEmpty ||
-        confirmPassword.isEmpty ||
-        password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-        context: context,
-        error: 'Write user information',
-      ));
-    } else if (gamesFollow.length == 0 || gamesFollow.length == 1) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-        context: context,
-        error: 'Selects at least two games',
-      ));
-    } else {
-      AuthService.registerUser(context, gamesFollow, username, email, password,
-          confirmPassword, country);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -232,10 +211,65 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       });
     });
 
-    _emailController.addListener(() {});
-    _passwordController.addListener(() {});
-    _confirmPasswordController.addListener(() {});
-    _usernameController.addListener(() {});
+    _emailController.addListener(() {
+      if (_emailController.text.trim().isNotEmpty &&
+          EmailValidator.validate(_emailController.text)) {
+        ref
+            .read(emailValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+      } else {
+        ref
+            .read(emailValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+      }
+    });
+    _passwordController.addListener(() {
+      if (_passwordController.text.trim().isNotEmpty &&
+          _passwordController.text == _confirmPasswordController.text) {
+        ref
+            .read(passwordValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+        ref
+            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+      } else {
+        ref
+            .read(passwordValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+        ref
+            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+      }
+    });
+    _confirmPasswordController.addListener(() {
+      if (_confirmPasswordController.text.trim().isNotEmpty &&
+          _confirmPasswordController.text == _passwordController.text) {
+        ref
+            .read(passwordValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+        ref
+            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+      } else {
+        ref
+            .read(passwordValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+        ref
+            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+      }
+    });
+    _usernameController.addListener(() {
+      if (_usernameController.text.trim().isNotEmpty) {
+        ref
+            .read(pseudonymeValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+      } else {
+        ref
+            .read(pseudonymeValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+      }
+    });
   }
 
   @override
@@ -262,10 +296,65 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       });
     });
 
-    _emailController.removeListener(() {});
-    _passwordController.removeListener(() {});
-    _confirmPasswordController.removeListener(() {});
-    _usernameController.removeListener(() {});
+    _emailController.removeListener(() {
+      if (_emailController.text.trim().isNotEmpty &&
+          EmailValidator.validate(_emailController.text)) {
+        ref
+            .read(emailValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+      } else {
+        ref
+            .read(emailValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+      }
+    });
+    _passwordController.removeListener(() {
+      if (_passwordController.text.trim().isNotEmpty &&
+          _passwordController.text == _confirmPasswordController.text) {
+        ref
+            .read(passwordValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+        ref
+            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+      } else {
+        ref
+            .read(passwordValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+        ref
+            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+      }
+    });
+    _confirmPasswordController.removeListener(() {
+      if (_confirmPasswordController.text.trim().isNotEmpty &&
+          _confirmPasswordController.text == _passwordController.text) {
+        ref
+            .read(passwordValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+        ref
+            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+      } else {
+        ref
+            .read(passwordValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+        ref
+            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+      }
+    });
+    _usernameController.removeListener(() {
+      if (_usernameController.text.trim().isNotEmpty) {
+        ref
+            .read(pseudonymeValidRegisterNotifierProvider.notifier)
+            .updateValidity(true);
+      } else {
+        ref
+            .read(pseudonymeValidRegisterNotifierProvider.notifier)
+            .updateValidity(false);
+      }
+    });
 
     super.deactivate();
   }
@@ -298,7 +387,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   @override
   Widget build(BuildContext context) {
     currentFocus = FocusScope.of(context);
-    bool isDayMood = ref.watch(dayMoodNotifierProvider);
+    final isDayMood = ref.watch(dayMoodNotifierProvider);
+    final isLoading = ref.watch(loadingRegisterNotifierProvider);
+    final isSuccess = ref.watch(successRegisterNotifierProvider);
+    final emailValid = ref.watch(emailValidRegisterNotifierProvider);
+    final passwordValid = ref.watch(passwordValidRegisterNotifierProvider);
+    final usernameValid = ref.watch(pseudonymeValidRegisterNotifierProvider);
+    final anniversaryValid =
+        ref.watch(anniversaryValidRegisterNotifierProvider);
+    final gamesValid = ref.watch(gamesValidRegisterNotifierProvider);
+    final cgu = ref.watch(cguValidRegisterNotifierProvider);
+    final policyPrivacy = ref.watch(policyPrivacyRegisterNotifierProvider);
+    final creationComplete = ref.watch(registerCompleteProvider);
+    if (creationComplete.asData != null) {
+      isComplete = creationComplete.asData!.value;
+    }
 
     return Scaffold(
         resizeToAvoidBottomInset: currentIndex == 2 ? false : true,
@@ -317,7 +420,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               },
               child: Column(children: [
                 topRegisterEmail(isDayMood),
-                Expanded(child: bodyRegister(isDayMood)),
+                Expanded(
+                    child: bodyRegister(
+                        isDayMood,
+                        isLoading,
+                        isSuccess,
+                        emailValid,
+                        passwordValid,
+                        usernameValid,
+                        anniversaryValid,
+                        gamesValid,
+                        cgu,
+                        policyPrivacy)),
               ]),
             );
           },
@@ -393,7 +507,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     );
   }
 
-  Widget bodyRegister(bool isDayMood) {
+  Widget bodyRegister(
+      final isDayMood,
+      final isLoading,
+      final isSuccess,
+      final emailValid,
+      final passwordValid,
+      final usernameValid,
+      final anniversaryValid,
+      final gamesValid,
+      final cgu,
+      final policyPrivacy) {
     final country = _selectedCountry;
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
@@ -423,9 +547,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               ),
               Column(
                 children: [
-                  Expanded(child: fourthPage(isDayMood, country)),
+                  Expanded(
+                      child: fourthPage(
+                          isDayMood,
+                          country,
+                          emailValid,
+                          passwordValid,
+                          usernameValid,
+                          anniversaryValid,
+                          gamesValid,
+                          cgu,
+                          policyPrivacy)),
                   btnPrevious(),
-                  btnFinish(isDayMood),
+                  btnFinish(isDayMood, isLoading, isSuccess),
                 ],
               )
             ]));
@@ -484,15 +618,41 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     );
   }
 
-  Widget btnFinish(bool isDayMood) {
+  Widget btnFinish(final isDayMood, final isLoading, final isSuccess) {
     return Container(
       height: MediaQuery.of(context).size.height / 12,
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       child: ElevatedButton(
-        onPressed: () {
+        onPressed: () async {
           Helpers.hideKeyboard(context);
-          print("s'inscrire");
+          if (isComplete && !isSuccess) {
+            ref.read(loadingRegisterNotifierProvider.notifier).updateLoader();
+            final verif =
+                await DatabaseService.verifPseudo(_usernameController.text);
+            if (verif.docs != null && verif.docs.isNotEmpty) {
+              messageUser(context, "Ce pseudonyme existe déjà");
+            } else {
+              ref
+                  .read(waitingAuthNotifierProvider.notifier)
+                  .updateWaiting(true);
+              await AuthService.registerUser(
+                  context,
+                  _emailController.text,
+                  _passwordController.text,
+                  _usernameController.text,
+                  _dateBirthday!,
+                  _selectedCountry!.countryCode,
+                  gamesFollow,
+                  ref);
+              ref
+                  .read(waitingAuthNotifierProvider.notifier)
+                  .updateWaiting(false);
+            }
+            if (mounted) {
+              ref.read(loadingRegisterNotifierProvider.notifier).updateLoader();
+            }
+          }
         },
         style: ElevatedButton.styleFrom(
             elevation: 6,
@@ -501,10 +661,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             )),
-        child: Text(
-          "Terminer",
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
+        child: isLoading
+            ? SizedBox(
+                height: 15,
+                width: 15,
+                child: CircularProgressIndicator(
+                    strokeWidth: 1.0, color: Theme.of(context).iconTheme.color),
+              )
+            : Text(
+                "Terminer",
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
       ),
     );
   }
@@ -678,9 +845,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              _dateBirthday == null
-                  ? Helpers.dateBirthday(DateTime.now())
-                  : Helpers.dateBirthday(_dateBirthday!),
+              Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall,
             ),
@@ -704,15 +869,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                           Theme.of(context).iconTheme.color!, 15),
                     ),
                     minTime: DateTime(1900, 1, 1),
-                    maxTime: DateTime.now(), onChanged: (date) {
-                  setState(() {
-                    _dateBirthday = date;
-                  });
-                }, onConfirm: (date) {
-                  setState(() {
-                    _dateBirthday = date;
-                  });
-                }, currentTime: DateTime.now(), locale: LocaleType.fr);
+                    maxTime: DateTime.now(), onConfirm: (date) {
+                  _dateBirthday = date;
+                  final verif =
+                      DateTime.now().subtract(const Duration(days: 4745));
+                  if (_dateBirthday!.isBefore(verif)) {
+                    ref
+                        .read(anniversaryValidRegisterNotifierProvider.notifier)
+                        .updateValidity(true);
+                  } else {
+                    ref
+                        .read(anniversaryValidRegisterNotifierProvider.notifier)
+                        .updateValidity(false);
+                  }
+                },
+                    currentTime: _dateBirthday ?? DateTime.now(),
+                    locale: LocaleType.fr);
               },
               elevation: 6,
             ),
@@ -941,10 +1113,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           setState(() {
             gamesFollow.removeWhere((element) => element.name == game.name);
           });
+          if (gamesFollow.length < 2) {
+            ref
+                .read(gamesValidRegisterNotifierProvider.notifier)
+                .updateValidity(false);
+          }
         } else {
           setState(() {
             gamesFollow.add(game);
           });
+          if (gamesFollow.length >= 2) {
+            ref
+                .read(gamesValidRegisterNotifierProvider.notifier)
+                .updateValidity(true);
+          }
         }
       },
       child: Stack(
@@ -969,6 +1151,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       Colors.black.withOpacity(0.5)
                     ])),
           ),
+          Center(
+            child: Icon(
+              Icons.videogame_asset,
+              size: 35,
+              color: Colors.white,
+            ),
+          ),
           Align(
             alignment: Alignment.bottomRight,
             child: Container(
@@ -984,7 +1173,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   color: Colors.green[200]!.withOpacity(0.7)),
-              alignment: Alignment.center,
+              alignment: Alignment.topRight,
               child: Icon(
                 Icons.check,
                 color: Colors.white,
@@ -995,7 +1184,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     );
   }
 
-  Widget fourthPage(bool isDayMood, Country? country) {
+  Widget fourthPage(
+      bool isDayMood,
+      Country? country,
+      final emailValid,
+      final passwordValid,
+      final usernameValid,
+      final anniversaryValid,
+      final gamesValid,
+      final cgu,
+      final policyPrivacy) {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
       shrinkWrap: true,
@@ -1042,6 +1240,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               isDayMood: isDayMood,
             )),
         Padding(
+          padding: const EdgeInsets.only(left: 5.0, top: 1.0),
+          child: Visibility(
+              visible: !emailValid ? true : false,
+              child: Text(
+                "Ton email n'est pas valide",
+                style: textStyleCustom(Colors.red[200]!, 11),
+              )),
+        ),
+        Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
             "Ton mot de passe*",
@@ -1074,6 +1281,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               },
               isDayMood: isDayMood,
             )),
+        Padding(
+          padding: const EdgeInsets.only(left: 5.0, top: 1.0),
+          child: Visibility(
+              visible: !passwordValid ? true : false,
+              child: Text(
+                "Ton mot de passe n'est pas valide",
+                style: textStyleCustom(Colors.red[200]!, 11),
+              )),
+        ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
@@ -1108,6 +1324,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               isDayMood: isDayMood,
             )),
         Padding(
+          padding: const EdgeInsets.only(left: 5.0, top: 1.0),
+          child: Visibility(
+              visible: !usernameValid ? true : false,
+              child: Text(
+                "Ton pseudonyme n'est pas valide",
+                style: textStyleCustom(Colors.red[200]!, 11),
+              )),
+        ),
+        Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
             "Ta date de naissance*",
@@ -1118,9 +1343,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              _dateBirthday == null
-                  ? Helpers.dateBirthday(DateTime.now())
-                  : Helpers.dateBirthday(_dateBirthday!),
+              Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall,
             ),
@@ -1144,20 +1367,35 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                           Theme.of(context).iconTheme.color!, 15),
                     ),
                     minTime: DateTime(1900, 1, 1),
-                    maxTime: DateTime.now(), onChanged: (date) {
-                  setState(() {
-                    _dateBirthday = date;
-                  });
-                }, onConfirm: (date) {
-                  setState(() {
-                    _dateBirthday = date;
-                  });
-                }, currentTime: DateTime.now(), locale: LocaleType.fr);
+                    maxTime: DateTime.now(), onConfirm: (date) {
+                  _dateBirthday = date;
+                  final verif =
+                      DateTime.now().subtract(const Duration(days: 4745));
+                  if (_dateBirthday!.isBefore(verif)) {
+                    ref
+                        .read(anniversaryValidRegisterNotifierProvider.notifier)
+                        .updateValidity(true);
+                  } else {
+                    ref
+                        .read(anniversaryValidRegisterNotifierProvider.notifier)
+                        .updateValidity(false);
+                  }
+                },
+                    currentTime: _dateBirthday ?? DateTime.now(),
+                    locale: LocaleType.fr);
               },
               elevation: 6,
             ),
           ],
         ),
+        Padding(
+            padding: const EdgeInsets.only(left: 5.0, top: 1.0),
+            child: Visibility(
+                visible: !anniversaryValid ? true : false,
+                child: Text(
+                  "Il faut impérativement avoir minimum 13 ans",
+                  style: textStyleCustom(Colors.red[200]!, 11),
+                ))),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
@@ -1204,26 +1442,35 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            "Les jeux que tu veux suivre (minimum 2 jeux)*",
+            "Les jeux que tu veux suivre*",
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
         gamesFollow.length == 0
             ? Padding(
-                padding: const EdgeInsets.only(top: 5.0, bottom: 15.0),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _tabController.index -= 1;
-                    });
-                  },
-                  child: Text(
-                    "Pas de jeux suivis actuellement",
-                    style: textStyleRegular(Colors.red[200]!, 12),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
+                padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                child: Column(
+                  children: [
+                    Text(
+                      "Pas de jeux suivis actuellement",
+                      style: textStyleRegular(Colors.red[200]!, 12),
+                      textAlign: TextAlign.center,
+                    ),
+                    MaterialButton(
+                      child: Text(
+                        'Vers les jeux',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      color: Theme.of(context).canvasColor,
+                      onPressed: () => {
+                        setState(() {
+                          _tabController.index -= 1;
+                        })
+                      },
+                      elevation: 6,
+                    ),
+                  ],
+                ))
             : GridView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
@@ -1246,7 +1493,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   style: Theme.of(context).textTheme.bodySmall,
                   children: [
                 TextSpan(
-                  text: "cgu",
+                  text: "termes et conditions",
                   style: textStyleRegular(
                       isDayMood ? cPrimaryPink : cPrimaryPurple, 12),
                   recognizer: TapGestureRecognizer()
@@ -1255,15 +1502,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 TextSpan(text: "*")
               ])),
           onChanged: (value) {
-            setState(() {
-              cgu = !cgu;
-            });
+            ref
+                .read(cguValidRegisterNotifierProvider.notifier)
+                .updateValidity();
           },
           activeColor: isDayMood ? cPrimaryPink : cPrimaryPurple,
         ),
         CheckboxListTile(
           dense: false,
-          value: privacyPolicy,
+          value: policyPrivacy,
           title: RichText(
               text: TextSpan(
                   text: "Accepter la ",
@@ -1279,9 +1526,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 TextSpan(text: "*")
               ])),
           onChanged: (value) {
-            setState(() {
-              privacyPolicy = !privacyPolicy;
-            });
+            ref
+                .read(policyPrivacyRegisterNotifierProvider.notifier)
+                .updateValidity();
           },
           activeColor: isDayMood ? cPrimaryPink : cPrimaryPurple,
         )
@@ -1311,6 +1558,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     Colors.black.withOpacity(0.3),
                     Colors.black.withOpacity(0.5)
                   ])),
+        ),
+        Center(
+          child: Icon(
+            Icons.videogame_asset,
+            size: 35,
+            color: Colors.white,
+          ),
         ),
         Align(
           alignment: Alignment.bottomRight,

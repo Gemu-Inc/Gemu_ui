@@ -11,7 +11,17 @@ class DatabaseService {
   static final CollectionReference usersCollectionReference =
       FirebaseFirestore.instance.collection('users');
 
-  //add user dans la bdd
+//Partie register
+
+  //Vérification du pseudo pour éviter les doublons dans la base
+  static Future verifPseudo(String username) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .where("username", isEqualTo: username)
+        .get();
+  }
+
+  //Ajout d'un nouvel utilisateur dans la base
   static Future<void> addUser(
       String uid, List<Game> gamesFollow, Map<String, dynamic> map) async {
     await usersCollectionReference.doc(uid).set(map);

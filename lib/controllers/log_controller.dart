@@ -33,6 +33,8 @@ class _LogControllerState extends ConsumerState<LogController> {
 
   final Connectivity _connectivity = Connectivity();
 
+  bool isWaiting = false;
+
   @override
   void initState() {
     super.initState();
@@ -47,8 +49,16 @@ class _LogControllerState extends ConsumerState<LogController> {
           .updateConnectivity(result);
     });
 
-    _userSubscription = AuthService.authStateChange().listen((User? user) {
-      ref.read(authNotifierProvider.notifier).updateAuth(user);
+    _userSubscription =
+        AuthService.authStateChange().listen((User? user) async {
+      if (!isWaiting) {
+        ref.read(authNotifierProvider.notifier).updateAuth(user);
+      } else {
+        await Future.delayed(Duration(seconds: 4));
+        if (!isWaiting) {
+          ref.read(authNotifierProvider.notifier).updateAuth(user);
+        }
+      }
     });
   }
 
@@ -67,6 +77,7 @@ class _LogControllerState extends ConsumerState<LogController> {
     final seenGetStarted = ref.watch(getStartedNotifierProvider);
     final connectivityStatus = ref.watch(connectivityNotifierProvider);
     final activeUser = ref.watch(authNotifierProvider);
+    isWaiting = ref.watch(waitingAuthNotifierProvider);
 
     return MaterialApp(
         debugShowCheckedModeBanner: false,

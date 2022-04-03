@@ -65,6 +65,7 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   connectivity_plus: ^2.2.1
   email_validator: ^2.0.1
+  top_snackbar_flutter: ^1.0.2
   # video_compress: ^3.1.0
   ## TODO attendre une nouvelle version du package video_compress afin d'enlever le git ##
   video_compress:

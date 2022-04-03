@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/riverpod/Login/login_provider.dart';
+import 'package:gemu/riverpod/Register/register_provider.dart';
 
 class TextFieldCustom extends StatefulWidget {
   final BuildContext context;
@@ -143,7 +144,6 @@ class _TextFieldCustomLoginState extends ConsumerState<TextFieldCustomLogin> {
   Widget build(BuildContext context) {
     if (widget.obscure) {
       pwdVisible = ref.watch(passwordVisibilityLoginNotifierProvider);
-      print(pwdVisible);
     }
     return TextField(
         maxLines: 1,
@@ -208,7 +208,7 @@ class _TextFieldCustomLoginState extends ConsumerState<TextFieldCustomLogin> {
   }
 }
 
-class TextFieldCustomRegister extends StatefulWidget {
+class TextFieldCustomRegister extends ConsumerStatefulWidget {
   final BuildContext context;
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -243,15 +243,14 @@ class TextFieldCustomRegister extends StatefulWidget {
       _TextFieldCustomRegisterState();
 }
 
-class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
+class _TextFieldCustomRegisterState
+    extends ConsumerState<TextFieldCustomRegister> {
   late bool pwdVisible;
 
   @override
   Widget build(BuildContext context) {
     if (widget.obscure) {
-      pwdVisible = true;
-    } else {
-      pwdVisible = false;
+      pwdVisible = ref.watch(passwordVisibleRegisterNotifierProvider);
     }
     return TextField(
         maxLines: 1,
@@ -298,9 +297,10 @@ class _TextFieldCustomRegisterState extends State<TextFieldCustomRegister> {
                               : Colors.grey,
                         ),
                         onPressed: () {
-                          setState(() {
-                            pwdVisible = !pwdVisible;
-                          });
+                          ref
+                              .read(passwordVisibleRegisterNotifierProvider
+                                  .notifier)
+                              .updateVisibilityPassword(!pwdVisible);
                         })
                     : IconButton(
                         icon: Icon(

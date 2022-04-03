@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:country_calling_code_picker/country.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/riverpod/Register/register_provider.dart';
 
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/views/Navigation/bottom_navigation_screen.dart';
 import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';
 
@@ -24,35 +26,15 @@ class AuthService {
             email: email, password: password);
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-email') {
-          print('Invalid email');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again, invalid email',
-          ));
+          messageUser(context, 'Try again, invalid email');
         } else if (e.code == 'user-disabled') {
-          print('user disabled');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again, user disabled',
-          ));
+          messageUser(context, "Try again, user disabled");
         } else if (e.code == 'user-not-found') {
-          print('No user found for that email.');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again, user not found for that email',
-          ));
+          messageUser(context, 'Try again, user not found for that email');
         } else if (e.code == 'wrong-password') {
-          print('Wrong password provided for that user.');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again, wrong password for that user',
-          ));
+          messageUser(context, 'Try again, wrong password for that user');
         } else {
-          print('Try again');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again',
-          ));
+          messageUser(context, 'Try again');
         }
       }
     } else {
@@ -66,51 +48,49 @@ class AuthService {
   //Créer un utilisateur
   static Future<void> registerUser(
       BuildContext context,
-      List<Game> gamesFollow,
-      String username,
       String email,
       String password,
-      String confirmPassword,
-      String country) async {
+      String username,
+      DateTime dateBirthday,
+      String country,
+      List<Game> gamesFollow,
+      WidgetRef ref) async {
     try {
-      final UserCredential user = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      String uid = user.user!.uid;
-      Map<String, dynamic> map = {
-        'id': uid,
-        'email': email,
-        'username': username,
-        'imageUrl': null,
-        'country': country,
-        'privacy': 'public'
-      };
-      await DatabaseService.addUser(uid, gamesFollow, map);
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => BottomNavigationScreen()),
-          (route) => false);
+      await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) async {
+        String uid = value.user!.uid;
+        Map<String, dynamic> map = {
+          'id': uid,
+          'imageUrl': null,
+          'privacy': 'public',
+          'email': email,
+          'username': username,
+          'dateBirthday': dateBirthday,
+          'country': country,
+        };
+        try {
+          await DatabaseService.addUser(uid, gamesFollow, map);
+          ref.read(successRegisterNotifierProvider.notifier).updateSuccess();
+          messageUser(context,
+              "Compte créé avec succès, vous allez être redirigé dans quelques instants");
+        } catch (e) {
+          messageUser(context,
+              "Un problème est survenu, veuillez réessayer ultérieurement");
+        }
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Email already use, try again',
-        ));
+        messageUser(context, "Email already use, try again");
       } else if (e.code == 'invalid-email') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Invalid email, try again',
-        ));
+        messageUser(context, "Invalid email, try again");
       } else if (e.code == 'operation-not-allowed') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Operation not allowed',
-        ));
+        messageUser(context, "Operation not allowed");
       } else if (e.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Weak password, try again',
-        ));
+        messageUser(context, "Weak password, try again");
+      } else {
+        messageUser(context,
+            "Un problème est survenu, veuillez réessayer ultérieurement");
       }
     }
   }
