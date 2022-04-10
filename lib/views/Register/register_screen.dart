@@ -938,7 +938,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(
             width: MediaQuery.of(context).size.width / 1.5,
-            padding: const EdgeInsets.only(right: 1.0),
+            padding: const EdgeInsets.only(right: 4.0),
             child: TextFieldCustomRegister(
               context: context,
               controller: _searchController,
