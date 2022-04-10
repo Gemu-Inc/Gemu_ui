@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
 import 'package:gemu/models/game.dart';
+import 'package:gemu/riverpod/Register/searching_game.dart';
 
 class DatabaseService {
   //references des collections de la bdd
@@ -12,6 +14,49 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('users');
 
 //Partie register
+
+  //Récupérer les 12 premiers jeux de la bdd pour la partie inscription
+  static Future<bool> getGamesRegister(WidgetRef ref) async {
+    List<Game> allGames = [];
+
+    await FirebaseFirestore.instance
+        .collection('games')
+        .doc('verified')
+        .collection('games_verified')
+        .orderBy('name')
+        .limit(12)
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        allGames.add(Game.fromMap(item, item.data()));
+      }
+    });
+    ref.read(allGamesRegisterNotifierProvider.notifier).initGames(allGames);
+
+    return true;
+  }
+
+  //Récupère 12 nouveaux jeux dans la bdd pour la partie inscription
+  static Future<void> loadMoreGamesRegister(WidgetRef ref, Game game) async {
+    List<Game> newGames = [];
+
+    await FirebaseFirestore.instance
+        .collection('games')
+        .doc('verified')
+        .collection('games_verified')
+        .orderBy('name')
+        .startAfterDocument(game.snapshot!)
+        .limit(12)
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        newGames.add(Game.fromMap(item, item.data()));
+      }
+    });
+
+    ref.read(allGamesRegisterNotifierProvider.notifier).loadMoreGame(newGames);
+    ref.read(newGamesRegisterNotifierProvider.notifier).seeNewGames(newGames);
+  }
 
   //Vérification du pseudo pour éviter les doublons dans la base
   static Future verifPseudo(String username) async {
@@ -36,6 +81,8 @@ class DatabaseService {
       });
     }
   }
+
+//Others parties
 
   //partie réglages "Mon compte"
   static Future updateUserImgProfile(String? image, String uid) async {

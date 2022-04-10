@@ -103,7 +103,7 @@ class FollowGamesValidRegisterProvider extends StateNotifier<bool> {
 
   updateValidity(bool newState) {
     state = newState;
-    print("games: $state");
+    print(state);
   }
 }
 

@@ -20,7 +20,6 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
 
-  late FocusNode currentFocus;
   late FocusNode _focusNodeEmail;
   late FocusNode _focusNodePassword;
 
@@ -95,7 +94,6 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    currentFocus = FocusScope.of(context);
     final isLoading = ref.watch(loadingLoginNotifierProvider);
     final isDayMood = ref.watch(dayMoodNotifierProvider);
     final creationComplete = ref.watch(loginCompleteProvider);
@@ -155,9 +153,15 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   Widget loginEmail(bool isDayMood, bool isLoading) {
     return ListView(
       shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 25.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
       physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0, left: 5.0, right: 5.0),
+          child: Text(
+              "Ne te fais pas plus attendre!\nJuste à rentrer ton email et ton mot de passe et c'est parti pour l'aventure Gemu!",
+              style: Theme.of(context).textTheme.bodySmall),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
           child: Container(
@@ -176,15 +180,16 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                   _emailController.clear();
                 });
               },
+              tap: () {
+                FocusScope.of(context).requestFocus(_focusNodeEmail);
+              },
               changed: (value) {
                 setState(() {
                   value = _emailController.text;
                 });
               },
-              submit: (value) {
-                value = _emailController.text;
-                currentFocus.unfocus();
-                currentFocus.requestFocus(_focusNodePassword);
+              editingComplete: () {
+                FocusScope.of(context).requestFocus(_focusNodePassword);
               },
               isDayMood: isDayMood,
             ),
@@ -207,6 +212,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                   _passwordController.clear();
                 });
               },
+              tap: () {},
               changed: (value) {
                 setState(() {
                   value = _passwordController.text;

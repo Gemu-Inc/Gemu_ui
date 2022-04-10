@@ -113,6 +113,8 @@ class TextFieldCustomLogin extends ConsumerStatefulWidget {
   final TextInputAction textInputAction;
   final TextInputType? textInputType;
   final Function() clear;
+  final Function()? tap;
+  final Function()? editingComplete;
   final Function(String)? submit;
   final Function(String)? changed;
   final bool isDayMood;
@@ -128,6 +130,8 @@ class TextFieldCustomLogin extends ConsumerStatefulWidget {
       required this.textInputAction,
       this.textInputType,
       required this.clear,
+      this.tap,
+      this.editingComplete,
       this.submit,
       required this.changed,
       required this.isDayMood})
@@ -153,9 +157,12 @@ class _TextFieldCustomLoginState extends ConsumerState<TextFieldCustomLogin> {
         cursorColor: widget.isDayMood ? cPrimaryPurple : cPrimaryPink,
         keyboardType: widget.textInputType,
         textInputAction: widget.textInputAction,
+        onTap: widget.tap,
         onChanged: widget.changed,
+        onEditingComplete: widget.editingComplete,
         onSubmitted: widget.submit,
         decoration: InputDecoration(
+            contentPadding: EdgeInsets.zero,
             fillColor: Theme.of(context).canvasColor,
             filled: true,
             labelText: widget.label,
@@ -218,9 +225,11 @@ class TextFieldCustomRegister extends ConsumerStatefulWidget {
   final TextInputAction textInputAction;
   final TextInputType? textInputType;
   final Function() clear;
+  final Function()? editingComplete;
   final Function(String)? submit;
   final Function(String)? changed;
   final bool isDayMood;
+  final Function()? tap;
 
   const TextFieldCustomRegister(
       {Key? key,
@@ -233,7 +242,9 @@ class TextFieldCustomRegister extends ConsumerStatefulWidget {
       required this.textInputAction,
       this.textInputType,
       required this.clear,
+      this.editingComplete,
       this.submit,
+      this.tap,
       required this.changed,
       required this.isDayMood})
       : super(key: key);
@@ -260,9 +271,12 @@ class _TextFieldCustomRegisterState
         cursorColor: widget.isDayMood ? cPrimaryPink : cPrimaryPurple,
         keyboardType: widget.textInputType,
         textInputAction: widget.textInputAction,
+        onTap: widget.tap,
         onChanged: widget.changed,
+        onEditingComplete: widget.editingComplete,
         onSubmitted: widget.submit,
         decoration: InputDecoration(
+            contentPadding: EdgeInsets.zero,
             fillColor: Theme.of(context).canvasColor,
             filled: true,
             labelText: widget.label,

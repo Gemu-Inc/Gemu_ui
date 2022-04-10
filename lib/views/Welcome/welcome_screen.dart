@@ -71,23 +71,10 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
           ),
           Align(
             alignment: Alignment.topCenter,
-            child: Padding(
-                padding: const EdgeInsets.only(left: 50),
-                child: Container(
-                  height: 175,
-                  width: 175,
-                  child: Image.asset("assets/images/gameuse.png"),
-                )),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 5, right: 50),
-              child: Container(
-                height: 175,
-                width: 175,
-                child: Image.asset("assets/images/gamer.png"),
-              ),
+            child: Container(
+              // height: 250,
+              // width: 250,
+              child: Image.asset("assets/images/get_started.png"),
             ),
           ),
           Align(

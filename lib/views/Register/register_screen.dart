@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/riverpod/Register/register_provider.dart';
+import 'package:gemu/riverpod/Register/searching_game.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loader/loader.dart';
@@ -47,7 +48,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   late TextEditingController _confirmPasswordController;
   late TextEditingController _usernameController;
 
-  late FocusNode currentFocus;
   late FocusNode _focusNodeEmail;
   late FocusNode _focusNodePassword;
   late FocusNode _focusNodeConfirmPassword;
@@ -56,16 +56,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   late TextEditingController _searchController;
   Algolia algolia = AlgoliaService.algolia;
-  List<AlgoliaObjectSnapshot> gamesAlgolia = [];
+  List<AlgoliaObjectSnapshot> gamesSearch = [];
 
-  bool isSearching = false;
-  bool isLoadingMoreData = false;
-  bool isResultLoading = false;
-  bool stopLoad = false;
+  late bool isSearching;
+  late bool isLoadingMoreData;
+  late bool stopReached;
 
-  List<Game> allGames = [];
-  List<Game> gamesFollow = [];
-  List<Game> newGames = [];
+  late List<Game> allGames;
+  late List<Game> newGames;
+  late List<Game> gamesFollow;
+
+  late bool gamesValid;
 
   Country? _selectedCountry;
   DateTime? _dateBirthday;
@@ -92,80 +93,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     }
   }
 
-  Future<bool> getGames() async {
-    await FirebaseFirestore.instance
-        .collection('games')
-        .doc('verified')
-        .collection('games_verified')
-        .orderBy('name')
-        .limit(12)
-        .get()
-        .then((value) {
-      for (var item in value.docs) {
-        allGames.add(Game.fromMap(item, item.data()));
-      }
-    });
-
-    return true;
-  }
-
   loadMoreData() async {
-    setState(() {
-      if (newGames.length != 0) {
-        newGames.clear();
-      }
-      if (isResultLoading) {
-        isResultLoading = false;
-      }
-      isLoadingMoreData = true;
-    });
-
     Game game = allGames.last;
 
-    await FirebaseFirestore.instance
-        .collection('games')
-        .doc('verified')
-        .collection('games_verified')
-        .orderBy('name')
-        .startAfterDocument(game.snapshot!)
-        .limit(12)
-        .get()
-        .then((value) {
-      for (var item in value.docs) {
-        allGames.add(Game.fromMap(item, item.data()));
-        newGames.add(Game.fromMap(item, item.data()));
-      }
-    });
+    ref.read(loadingMoreGamesRegisterNotifierProvider.notifier).update(true);
+
+    DatabaseService.loadMoreGamesRegister(ref, game);
 
     await Future.delayed(Duration(seconds: 1));
 
-    setState(() {
-      isLoadingMoreData = false;
-      isResultLoading = true;
-      if (newGames.length == 0) {
-        stopLoad = true;
-      }
-    });
+    ref.read(loadingMoreGamesRegisterNotifierProvider.notifier).update(false);
+    if (newGames.length == 0) {
+      ref.read(stopReachedRegisterNotifierProvider.notifier).update();
+    }
   }
 
   _searchGames(String value) async {
-    if (gamesAlgolia.length != 0) {
-      gamesAlgolia.clear();
-    }
-
     if (value.isNotEmpty) {
-      setState(() {
-        isSearching = true;
-      });
+      ref.read(searchingRegisterNotifierProvider.notifier).update(true);
 
       AlgoliaQuery query = algolia.instance.index('games');
       query = query.query(value);
 
-      gamesAlgolia = (await query.getObjects()).hits;
+      gamesSearch = (await query.getObjects()).hits;
 
-      setState(() {
-        isSearching = false;
-      });
+      ref.read(searchingRegisterNotifierProvider.notifier).update(false);
     }
   }
 
@@ -198,18 +150,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       if (_mainScrollController.offset >=
               _mainScrollController.position.maxScrollExtent &&
           !_mainScrollController.position.outOfRange &&
-          !stopLoad) {
+          !stopReached) {
         loadMoreData();
       }
     });
 
-    _searchController.addListener(() {
-      Timer(Duration(milliseconds: 500), () {
-        if (_searchController.text != "") {
-          _searchGames(_searchController.text);
-        }
-      });
-    });
+    // _searchController.addListener(() {
+    //   Timer(Duration(milliseconds: 750), () {
+    //     if (_searchController.text != "") {
+    //       _searchGames(_searchController.text);
+    //     }
+    //   });
+    // });
 
     _emailController.addListener(() {
       if (_emailController.text.trim().isNotEmpty &&
@@ -283,18 +235,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     _mainScrollController.removeListener(() {
       if (_mainScrollController.offset >=
               _mainScrollController.position.maxScrollExtent &&
-          !_mainScrollController.position.outOfRange) {
+          !_mainScrollController.position.outOfRange &&
+          !stopReached) {
         loadMoreData();
       }
     });
 
-    _searchController.removeListener(() {
-      Timer(Duration(milliseconds: 500), () {
-        if (_searchController.text != "") {
-          _searchGames(_searchController.text);
-        }
-      });
-    });
+    // _searchController.removeListener(() {
+    //   Timer(Duration(milliseconds: 500), () {
+    //     if (_searchController.text != "") {
+    //       _searchGames(_searchController.text);
+    //     }
+    //   });
+    // });
 
     _emailController.removeListener(() {
       if (_emailController.text.trim().isNotEmpty &&
@@ -386,7 +339,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   @override
   Widget build(BuildContext context) {
-    currentFocus = FocusScope.of(context);
     final isDayMood = ref.watch(dayMoodNotifierProvider);
     final isLoading = ref.watch(loadingRegisterNotifierProvider);
     final isSuccess = ref.watch(successRegisterNotifierProvider);
@@ -395,7 +347,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     final usernameValid = ref.watch(pseudonymeValidRegisterNotifierProvider);
     final anniversaryValid =
         ref.watch(anniversaryValidRegisterNotifierProvider);
-    final gamesValid = ref.watch(gamesValidRegisterNotifierProvider);
+    gamesValid = ref.watch(gamesValidRegisterNotifierProvider);
     final cgu = ref.watch(cguValidRegisterNotifierProvider);
     final policyPrivacy = ref.watch(policyPrivacyRegisterNotifierProvider);
     final creationComplete = ref.watch(registerCompleteProvider);
@@ -403,10 +355,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       isComplete = creationComplete.asData!.value;
     }
 
+    allGames = ref.watch(allGamesRegisterNotifierProvider);
+    newGames = ref.watch(newGamesRegisterNotifierProvider);
+    gamesFollow = ref.watch(gamesFollowRegisterNotifierProvider);
+    isLoadingMoreData = ref.watch(loadingMoreGamesRegisterNotifierProvider);
+    stopReached = ref.watch(stopReachedRegisterNotifierProvider);
+    isSearching = ref.watch(searchingRegisterNotifierProvider);
+
     return Scaffold(
         resizeToAvoidBottomInset: currentIndex == 2 ? false : true,
         body: Loader<bool>(
-          load: () => getGames(),
+          load: () => DatabaseService.getGamesRegister(ref),
           loadingWidget: Center(
             child: CircularProgressIndicator(
               strokeWidth: 1.0,
@@ -416,6 +375,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           builder: (_, value) {
             return GestureDetector(
               onTap: () {
+                FocusScope.of(context).unfocus();
                 Helpers.hideKeyboard(context);
               },
               child: Column(children: [
@@ -457,6 +417,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     : Brightness.dark),
         leading: IconButton(
             onPressed: () {
+              FocusScope.of(context).unfocus();
               Helpers.hideKeyboard(context);
               showDialog(
                   context: navNonAuthKey.currentContext!,
@@ -573,6 +534,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       child: ElevatedButton(
         onPressed: () {
           if (_tabController.index != _tabController.length - 1) {
+            FocusScope.of(context).unfocus();
+
             Helpers.hideKeyboard(context);
             setState(() {
               _tabController.index += 1;
@@ -595,27 +558,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   btnPrevious() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text: "Précédent",
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                if (_tabController.index != 0) {
-                  Helpers.hideKeyboard(context);
-                  setState(() {
-                    _tabController.index -= 1;
-                  });
-                }
-              },
+    return TextButton(
+        onPressed: () {
+          if (_tabController.index != 0) {
+            FocusScope.of(context).unfocus();
+
+            Helpers.hideKeyboard(context);
+            setState(() {
+              _tabController.index -= 1;
+            });
+          }
+        },
+        style: TextButton.styleFrom(
+          minimumSize: Size.zero,
+          padding: EdgeInsets.only(top: 6.0, bottom: 2.0),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        child: Text("Précédent",
             style: GoogleFonts.fredokaOne(
                 color: Colors.grey,
                 fontWeight: FontWeight.w500,
-                decoration: TextDecoration.underline),
-          )),
-    );
+                decoration: TextDecoration.underline)));
   }
 
   Widget btnFinish(final isDayMood, final isLoading, final isSuccess) {
@@ -625,6 +588,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       child: ElevatedButton(
         onPressed: () async {
+          FocusScope.of(context).unfocus();
           Helpers.hideKeyboard(context);
           if (isComplete && !isSuccess) {
             ref.read(loadingRegisterNotifierProvider.notifier).updateLoader();
@@ -709,15 +673,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 _emailController.clear();
               });
             },
+            tap: () {
+              FocusScope.of(context).requestFocus(_focusNodeEmail);
+            },
             changed: (value) {
               setState(() {
                 value = _emailController.text;
               });
             },
-            submit: (value) {
-              value = _emailController.text;
-              currentFocus.unfocus();
-              currentFocus.requestFocus(_focusNodePassword);
+            editingComplete: () {
+              FocusScope.of(context).requestFocus(_focusNodePassword);
             },
             isDayMood: isDayMood,
           ),
@@ -744,15 +709,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   _passwordController.clear();
                 });
               },
+              tap: () {
+                FocusScope.of(context).requestFocus(_focusNodePassword);
+              },
               changed: (value) {
                 setState(() {
                   value = _passwordController.text;
                 });
               },
-              submit: (value) {
-                value = _passwordController.text;
-                currentFocus.unfocus();
-                currentFocus.requestFocus(_focusNodeConfirmPassword);
+              editingComplete: () {
+                FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
               },
               isDayMood: isDayMood,
             )),
@@ -774,14 +740,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   _confirmPasswordController.clear();
                 });
               },
+              tap: () {
+                FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
+              },
               changed: (value) {
                 setState(() {
                   value = _confirmPasswordController.text;
                 });
               },
-              submit: (value) {
-                value = _confirmPasswordController.text;
-                currentFocus.unfocus();
+              editingComplete: () {
+                FocusScope.of(context).unfocus();
               },
               isDayMood: isDayMood,
             )),
@@ -822,14 +790,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 _usernameController.clear();
               });
             },
+            tap: () {
+              FocusScope.of(context).requestFocus(_focusNodeUsername);
+            },
             changed: (value) {
               setState(() {
                 value = _usernameController.text;
               });
             },
-            submit: (value) {
-              value = _usernameController.text;
-              currentFocus.unfocus();
+            editingComplete: () {
+              FocusScope.of(context).unfocus();
             },
             isDayMood: isDayMood,
           ),
@@ -949,7 +919,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
+          padding: const EdgeInsets.symmetric(vertical: 15.0),
           child: StickyHeader(
               controller: _mainScrollController,
               header: _searchBar(isDayMood),
@@ -963,39 +933,66 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   Widget _searchBar(bool isDayMood) {
     return Container(
-        height: MediaQuery.of(context).size.height / 12,
+        height: MediaQuery.of(context).size.height / 15,
         color: Theme.of(context).scaffoldBackgroundColor,
-        alignment: Alignment.center,
-        child: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: TextFieldCustomRegister(
-            context: context,
-            controller: _searchController,
-            focusNode: _focusNodeSearch,
-            label: 'Chercher un jeu',
-            obscure: false,
-            icon: Icons.search,
-            textInputAction: TextInputAction.search,
-            clear: () {
-              setState(() {
-                _searchController.clear();
-              });
-              if (gamesAlgolia.length != 0) {
-                gamesAlgolia.clear();
-              }
-            },
-            changed: (value) {
-              setState(() {
-                value = _searchController.text;
-              });
-            },
-            submit: (value) {
-              value = _searchController.text;
-              _searchGames(value);
-            },
-            isDayMood: isDayMood,
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(
+            width: MediaQuery.of(context).size.width / 1.5,
+            padding: const EdgeInsets.only(right: 1.0),
+            child: TextFieldCustomRegister(
+              context: context,
+              controller: _searchController,
+              focusNode: _focusNodeSearch,
+              label: 'Chercher un jeu',
+              obscure: false,
+              icon: Icons.search,
+              textInputAction: TextInputAction.search,
+              clear: () {
+                setState(() {
+                  _searchController.clear();
+                  _focusNodeSearch.unfocus();
+                });
+                if (gamesSearch.length != 0) {
+                  gamesSearch.clear();
+                }
+              },
+              tap: () {
+                FocusScope.of(context).requestFocus(_focusNodeSearch);
+              },
+              changed: (value) {
+                setState(() {
+                  value = _searchController.text;
+                });
+              },
+              editingComplete: () {
+                Helpers.hideKeyboard(context);
+                _searchGames(_searchController.text);
+              },
+              isDayMood: isDayMood,
+            ),
           ),
-        ));
+          Expanded(
+            child: TextButton(
+                onPressed: () {
+                  if (_searchController.text.isNotEmpty) {
+                    setState(() {
+                      _searchController.clear();
+                    });
+                  }
+                },
+                child: Text(
+                  "Annuler",
+                  textAlign: TextAlign.center,
+                  style: textStyleCustom(
+                      _searchController.text.isNotEmpty
+                          ? isDayMood
+                              ? cPrimaryPink
+                              : cPrimaryPurple
+                          : Colors.grey,
+                      11),
+                )),
+          )
+        ]));
   }
 
   Widget _listGames(bool isDayMood) {
@@ -1019,31 +1016,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Stack(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height / 14,
-              child: isLoadingMoreData
-                  ? Center(
-                      child: SizedBox(
-                        height: 30.0,
-                        width: 30.0,
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.primary,
-                          strokeWidth: 1.5,
+                height: MediaQuery.of(context).size.height / 14,
+                child: stopReached
+                    ? Center(
+                        child: Text(
+                          "C'est tout pour le moment",
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
-                      ),
-                    )
-                  : SizedBox(),
-            ),
-            Container(
-              height: isResultLoading && newGames.length == 0
-                  ? MediaQuery.of(context).size.height / 14
-                  : 0.0,
-              child: Center(
-                child: Text(
-                  "C'est tout pour le moment",
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
-            )
+                      )
+                    : isLoadingMoreData
+                        ? Center(
+                            child: SizedBox(
+                              height: 30.0,
+                              width: 30.0,
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                                strokeWidth: 1.5,
+                              ),
+                            ),
+                          )
+                        : SizedBox()),
           ],
         )
       ],
@@ -1062,7 +1054,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   height: 15.0,
                   width: 15.0,
                   child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: isDayMood ? cPrimaryPink : cPrimaryPurple,
                   ),
                 ),
                 SizedBox(
@@ -1077,7 +1069,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               ],
             ),
           )
-        : gamesAlgolia.length == 0
+        : gamesSearch.length == 0
             ? Padding(
                 padding: const EdgeInsets.symmetric(vertical: 25.0),
                 child: Center(
@@ -1098,10 +1090,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 controller: _gamesScrollController,
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: gamesAlgolia.length,
+                itemCount: gamesSearch.length,
                 itemBuilder: (_, index) {
                   Game gameAlgolia = Game.fromMapAlgolia(
-                      gamesAlgolia[index], gamesAlgolia[index].data);
+                      gamesSearch[index], gamesSearch[index].data);
                   return _itemGame(gameAlgolia, isDayMood);
                 });
   }
@@ -1111,18 +1103,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       onTap: () {
         if (gamesFollow.any((element) => element.name == game.name)) {
           setState(() {
-            gamesFollow.removeWhere((element) => element.name == game.name);
+            ref
+                .read(gamesFollowRegisterNotifierProvider.notifier)
+                .removeGame(game);
           });
-          if (gamesFollow.length < 2) {
+          if (gamesFollow.length < 2 && gamesValid) {
             ref
                 .read(gamesValidRegisterNotifierProvider.notifier)
                 .updateValidity(false);
           }
         } else {
           setState(() {
-            gamesFollow.add(game);
+            ref
+                .read(gamesFollowRegisterNotifierProvider.notifier)
+                .addGame(game);
           });
-          if (gamesFollow.length >= 2) {
+          if (gamesFollow.length >= 2 && !gamesValid) {
             ref
                 .read(gamesValidRegisterNotifierProvider.notifier)
                 .updateValidity(true);
@@ -1235,7 +1231,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               },
               submit: (value) {
                 value = _emailController.text;
-                currentFocus.unfocus();
+                _focusNodeEmail.unfocus();
               },
               isDayMood: isDayMood,
             )),
@@ -1277,7 +1273,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               },
               submit: (value) {
                 value = _passwordController.text;
-                currentFocus.unfocus();
+                _focusNodePassword.unfocus();
               },
               isDayMood: isDayMood,
             )),
@@ -1319,7 +1315,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               },
               submit: (value) {
                 value = _usernameController.text;
-                currentFocus.unfocus();
+                _focusNodeUsername.unfocus();
               },
               isDayMood: isDayMood,
             )),
