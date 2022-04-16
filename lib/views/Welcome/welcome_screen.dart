@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 import 'package:gemu/widgets/clip_shadow_path.dart';
 import 'package:gemu/widgets/custom_clipper.dart';
@@ -82,8 +83,12 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
             child: Padding(
               padding: const EdgeInsets.only(right: 25.0, top: 15.0),
               child: GestureDetector(
-                  onTap: () =>
-                      navNonAuthKey.currentState!.pushNamed(GetStartedBefore),
+                  onTap: () {
+                    ref
+                        .read(currentRouteNonAuthNotifierProvider.notifier)
+                        .updateCurrentRoute("GetStarted");
+                    navNonAuthKey.currentState!.pushNamed(GetStartedBefore);
+                  },
                   child: Icon(Icons.info_outline,
                       size: 28, color: Theme.of(context).iconTheme.color)),
             ),
@@ -155,7 +160,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             height: MediaQuery.of(context).size.height / 14,
                             child: ElevatedButton(
                                 onPressed: () => Helpers.inscriptionBottomSheet(
-                                    context, isDayMood),
+                                    context, isDayMood, ref),
                                 style: ElevatedButton.styleFrom(
                                     elevation: 6,
                                     shadowColor: Theme.of(context).shadowColor,
@@ -206,7 +211,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             height: MediaQuery.of(context).size.height / 14,
                             child: ElevatedButton(
                                 onPressed: () => Helpers.connexionBottomSheet(
-                                    context, isDayMood),
+                                    context, isDayMood, ref),
                                 style: ElevatedButton.styleFrom(
                                     elevation: 6,
                                     shadowColor: Theme.of(context).shadowColor,

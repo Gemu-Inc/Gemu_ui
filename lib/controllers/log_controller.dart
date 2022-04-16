@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 import 'package:gemu/riverpod/Connectivity/connectivity_provider.dart';
+import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 import 'package:gemu/riverpod/Theme/theme_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/NoConnectivity/noconnectivity_screen.dart';
 import 'package:gemu/views/Splash/splash_screen.dart';
+import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:loader/loader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,6 +79,7 @@ class _LogControllerState extends ConsumerState<LogController> {
     final seenGetStarted = ref.watch(getStartedNotifierProvider);
     final connectivityStatus = ref.watch(connectivityNotifierProvider);
     final activeUser = ref.watch(authNotifierProvider);
+    final currentRouteNonAuth = ref.watch(currentRouteNonAuthNotifierProvider);
     isWaiting = ref.watch(waitingAuthNotifierProvider);
 
     return MaterialApp(
@@ -106,8 +109,50 @@ class _LogControllerState extends ConsumerState<LogController> {
                   : activeUser == null
                       ? WillPopScope(
                           onWillPop: () async {
-                            return !(await navNonAuthKey.currentState!
-                                .maybePop());
+                            if (currentRouteNonAuth == "Register") {
+                              showDialog(
+                                  context: navNonAuthKey.currentContext!,
+                                  builder: (_) {
+                                    return AlertDialogCustom(
+                                        _,
+                                        "Annuler l'inscription",
+                                        "Êtes-vous sur de vouloir annuler votre inscription?",
+                                        [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(
+                                                    mainKey.currentContext!);
+                                                ref
+                                                    .read(
+                                                        currentRouteNonAuthNotifierProvider
+                                                            .notifier)
+                                                    .updateCurrentRoute(
+                                                        "Welcome");
+                                                navNonAuthKey.currentState!
+                                                    .pushNamedAndRemoveUntil(
+                                                        Welcome,
+                                                        (route) => false);
+                                              },
+                                              child: Text(
+                                                "Oui",
+                                                style: textStyleCustom(
+                                                    Colors.blue[200]!, 12),
+                                              )),
+                                          TextButton(
+                                              onPressed: () => Navigator.pop(
+                                                  mainKey.currentContext!),
+                                              child: Text(
+                                                "Non",
+                                                style: textStyleCustom(
+                                                    Colors.red[200]!, 12),
+                                              ))
+                                        ]);
+                                  });
+                              return false;
+                            } else {
+                              return !(await navNonAuthKey.currentState!
+                                  .maybePop());
+                            }
                           },
                           child: Navigator(
                             key: navNonAuthKey,

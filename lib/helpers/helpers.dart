@@ -1,6 +1,8 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -71,7 +73,8 @@ class Helpers {
     return format.format(date).toString();
   }
 
-  static Future inscriptionBottomSheet(BuildContext context, bool isDayMood) {
+  static Future inscriptionBottomSheet(
+      BuildContext context, bool isDayMood, WidgetRef ref) {
     return Platform.isIOS
         ? showCupertinoModalBottomSheet(
             context: context,
@@ -114,9 +117,15 @@ class Helpers {
                                   height: 50,
                                   width: MediaQuery.of(context).size.width,
                                   child: ElevatedButton(
-                                      onPressed: () => navNonAuthKey
-                                          .currentState!
-                                          .pushNamed(Register),
+                                      onPressed: () {
+                                        ref
+                                            .read(
+                                                currentRouteNonAuthNotifierProvider
+                                                    .notifier)
+                                            .updateCurrentRoute("Register");
+                                        navNonAuthKey.currentState!
+                                            .pushNamed(Register);
+                                      },
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
                                           primary: isDayMood
@@ -287,9 +296,15 @@ class Helpers {
                                   height: 50,
                                   width: MediaQuery.of(context).size.width,
                                   child: ElevatedButton(
-                                      onPressed: () => navNonAuthKey
-                                          .currentState!
-                                          .pushNamed(Register),
+                                      onPressed: () {
+                                        ref
+                                            .read(
+                                                currentRouteNonAuthNotifierProvider
+                                                    .notifier)
+                                            .updateCurrentRoute("Register");
+                                        navNonAuthKey.currentState!
+                                            .pushNamed(Register);
+                                      },
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
                                           primary: isDayMood
@@ -369,7 +384,8 @@ class Helpers {
             });
   }
 
-  static Future connexionBottomSheet(BuildContext context, bool isDayMood) {
+  static Future connexionBottomSheet(
+      BuildContext context, bool isDayMood, WidgetRef ref) {
     return Platform.isIOS
         ? showCupertinoModalBottomSheet(
             context: context,
@@ -412,9 +428,15 @@ class Helpers {
                                   height: 50,
                                   width: MediaQuery.of(context).size.width,
                                   child: ElevatedButton(
-                                      onPressed: () => navNonAuthKey
-                                          .currentState!
-                                          .pushNamed(Login),
+                                      onPressed: () {
+                                        ref
+                                            .read(
+                                                currentRouteNonAuthNotifierProvider
+                                                    .notifier)
+                                            .updateCurrentRoute("Login");
+                                        navNonAuthKey.currentState!
+                                            .pushNamed(Login);
+                                      },
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
                                           primary: isDayMood
@@ -586,9 +608,15 @@ class Helpers {
                                   height: 50,
                                   width: MediaQuery.of(context).size.width,
                                   child: ElevatedButton(
-                                      onPressed: () => navNonAuthKey
-                                          .currentState!
-                                          .pushNamed(Login),
+                                      onPressed: () {
+                                        ref
+                                            .read(
+                                                currentRouteNonAuthNotifierProvider
+                                                    .notifier)
+                                            .updateCurrentRoute("Login");
+                                        navNonAuthKey.currentState!
+                                            .pushNamed(Login);
+                                      },
                                       style: ElevatedButton.styleFrom(
                                           elevation: 6,
                                           primary: isDayMood

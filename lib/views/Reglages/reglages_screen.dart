@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/Reglages/Design/design_screen.dart';
 import 'package:gemu/views/Reglages/Compte/edit_profile_screen.dart';
 import 'package:gemu/views/Reglages/Privacy/privacy_screen.dart';
-import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/widgets/app_bar_custom.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:gemu/models/user.dart';
 
-class ReglagesScreen extends StatelessWidget {
+class ReglagesScreen extends ConsumerStatefulWidget {
   final UserModel user;
 
   const ReglagesScreen({Key? key, required this.user}) : super(key: key);
 
-  _signOut(BuildContext context) async {
+  @override
+  _ReglagesScreenState createState() => _ReglagesScreenState();
+}
+
+class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
+  _signOut(BuildContext context, WidgetRef ref) async {
     Navigator.pop(context);
-    await Future.delayed(Duration(milliseconds: 250));
+    ref
+        .read(currentRouteNonAuthNotifierProvider.notifier)
+        .updateCurrentRoute("Welcome");
     await AuthService.signOut();
-    // Navigator.pushAndRemoveUntil(
-    //     context,
-    //     MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
-    //     (route) => false);
   }
 
   Future confirmDisconnect(BuildContext context) {
@@ -38,7 +42,7 @@ class ReglagesScreen extends StatelessWidget {
 
   TextButton disconnectBtn(BuildContext context) {
     return TextButton(
-        onPressed: () => _signOut(context),
+        onPressed: () => _signOut(context, ref),
         child: Text(
           'Oui',
           style: TextStyle(color: Colors.blue[200]),
@@ -80,7 +84,7 @@ class ReglagesScreen extends StatelessWidget {
                 MaterialPageRoute(
                     settings: RouteSettings(name: ('/EditProfile')),
                     builder: (BuildContext context) =>
-                        EditProfileScreen(user: user))),
+                        EditProfileScreen(user: widget.user))),
           ),
           ListTile(
             leading: Icon(Icons.lock),

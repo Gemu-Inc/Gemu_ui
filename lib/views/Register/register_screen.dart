@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
+import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/riverpod/Register/register_provider.dart';
 import 'package:gemu/riverpod/Register/searching_game.dart';
 import 'package:gemu/services/database_service.dart';
@@ -427,6 +428,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       TextButton(
                           onPressed: () {
                             Navigator.pop(mainKey.currentContext!);
+                            ref
+                                .read(currentRouteNonAuthNotifierProvider
+                                    .notifier)
+                                .updateCurrentRoute("Welcome");
                             navNonAuthKey.currentState!.pushNamedAndRemoveUntil(
                                 Welcome, (route) => false);
                           },
