@@ -25,6 +25,7 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
     ref
         .read(currentRouteNonAuthNotifierProvider.notifier)
         .updateCurrentRoute("Welcome");
+    ScaffoldMessenger.of(context).clearMaterialBanners();
     await AuthService.signOut();
   }
 
@@ -42,7 +43,9 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
 
   TextButton disconnectBtn(BuildContext context) {
     return TextButton(
-        onPressed: () => _signOut(context, ref),
+        onPressed: () {
+          _signOut(context, ref);
+        },
         child: Text(
           'Oui',
           style: TextStyle(color: Colors.blue[200]),

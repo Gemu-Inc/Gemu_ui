@@ -14,6 +14,12 @@ class AuthService {
   //Voir les changements au niveau de la connexion de l'utilisateur sur le device
   static Stream<User?> authStateChange() => _auth.authStateChanges();
 
+  //get current user
+  static Future<User?> getUser() async {
+    User? user = _auth.currentUser;
+    return user;
+  }
+
   //Check pour la connexion d'un compte
   static Future<void> signIn(
       {required BuildContext context,
@@ -102,6 +108,15 @@ class AuthService {
     } catch (e) {
       print(e);
       print("failed to send email");
+    }
+  }
+
+  //Send mail verify email
+  static Future<void> sendMailVerifyEmail() async {
+    try {
+      await _auth.currentUser!.sendEmailVerification();
+    } catch (e) {
+      print(e);
     }
   }
 

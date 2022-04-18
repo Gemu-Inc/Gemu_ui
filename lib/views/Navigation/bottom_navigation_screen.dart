@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
+import 'package:gemu/services/auth_service.dart';
+import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:loader/loader.dart';
 
 import 'package:gemu/models/user.dart';
@@ -51,9 +54,14 @@ class _BottomNavigationScreenState
 
   Future<bool> loadingData(String uid) async {
     print('dans le loader de la nav');
+    User? user;
 
-    await DatabaseService.usersCollectionReference.doc(uid).get().then((value) {
+    await DatabaseService.usersCollectionReference
+        .doc(uid)
+        .get()
+        .then((value) async {
       me = UserModel.fromMap(value, value.data() as Map<String, dynamic>);
+      user = await AuthService.getUser();
       print('current user: ${me!.uid}');
     });
 
@@ -81,6 +89,14 @@ class _BottomNavigationScreenState
         followings.add(item.id);
       }
     });
+
+    if (!user!.emailVerified) {
+      verifyAccount(context);
+    } else {
+      if (!me!.verifiedAccount!) {
+        DatabaseService.updateVerifyAccount(me!.uid);
+      }
+    }
 
     //listeningData();
     if (mounted) {

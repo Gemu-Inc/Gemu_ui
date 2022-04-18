@@ -96,6 +96,11 @@ class DatabaseService {
     return userData;
   }
 
+  //Update verify account
+  static Future<void> updateVerifyAccount(String uid) async {
+    await usersCollectionReference.doc(uid).update({"verify_account": true});
+  }
+
 //Others parties
 
   //partie réglages "Mon compte"
