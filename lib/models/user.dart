@@ -11,6 +11,9 @@ class UserModel {
   String? imageUrl;
   String? type;
   String privacy;
+  String? country;
+  Timestamp? dateBirthday;
+  bool? verifiedAccount;
 
   UserModel(
       {this.ref,
@@ -21,6 +24,9 @@ class UserModel {
       this.email,
       this.imageUrl,
       this.type,
+      this.verifiedAccount,
+      this.country,
+      this.dateBirthday,
       required this.privacy});
 
   factory UserModel.fromMap(
@@ -32,7 +38,10 @@ class UserModel {
         username: data['username'],
         email: data['email'],
         imageUrl: data['imageUrl'],
-        privacy: data['privacy']);
+        privacy: data['privacy'],
+        dateBirthday: data["dateBirthday"],
+        country: data["country"],
+        verifiedAccount: data["verified_account"]);
   }
 
   factory UserModel.fromMapAlgolia(

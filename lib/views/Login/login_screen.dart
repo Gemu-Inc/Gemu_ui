@@ -6,11 +6,16 @@ import 'package:email_validator/email_validator.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
+import 'package:gemu/models/user.dart';
 import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
+import 'package:gemu/services/database_service.dart';
+import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/riverpod/Login/login_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   @override
@@ -20,9 +25,11 @@ class LoginScreen extends ConsumerStatefulWidget {
 class Loginviewstate extends ConsumerState<LoginScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  late TextEditingController _emailResetPasswordController;
 
   late FocusNode _focusNodeEmail;
   late FocusNode _focusNodePassword;
+  late FocusNode _focusNodeResetPassword;
 
   bool isCompleted = false;
 
@@ -34,6 +41,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
     _focusNodeEmail = FocusNode();
     _passwordController = TextEditingController();
     _focusNodePassword = FocusNode();
+    _emailResetPasswordController = TextEditingController();
+    _focusNodeResetPassword = FocusNode();
 
     _emailController.addListener(() {
       if (_emailController.text.trim().isNotEmpty &&
@@ -88,8 +97,10 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   void dispose() {
     _focusNodeEmail.dispose();
     _focusNodePassword.dispose();
+    _focusNodeResetPassword.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _emailResetPasswordController.dispose();
     super.dispose();
   }
 
@@ -296,7 +307,155 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
             text: TextSpan(
                 text: "Mot de passe oublié",
                 recognizer: TapGestureRecognizer()
-                  ..onTap = () => print("Mot de passe oublié"),
+                  ..onTap = () {
+                    showDialog(
+                        context: context,
+                        builder: (_) => Container(
+                              child: GestureDetector(
+                                onTap: () {
+                                  _focusNodeResetPassword.unfocus();
+                                },
+                                child: AlertDialogResetPassword(
+                                    context,
+                                    "Mot de passe oublié?",
+                                    Container(
+                                      height: 100,
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            "Saisit ton email afin de réinitialiser ton mot de passe:",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                          Expanded(
+                                            child: Center(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10.0),
+                                                child: Container(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                      12,
+                                                  child: TextField(
+                                                    controller:
+                                                        _emailResetPasswordController,
+                                                    focusNode:
+                                                        _focusNodeResetPassword,
+                                                    obscureText: false,
+                                                    autofocus: true,
+                                                    textInputAction:
+                                                        TextInputAction.go,
+                                                    keyboardType: TextInputType
+                                                        .emailAddress,
+                                                    decoration: InputDecoration(
+                                                      labelText: "Email",
+                                                      contentPadding:
+                                                          EdgeInsets.zero,
+                                                      fillColor:
+                                                          Theme.of(context)
+                                                              .canvasColor,
+                                                      filled: true,
+                                                      prefixIcon:
+                                                          Icon(Icons.mail),
+                                                      labelStyle: GoogleFonts
+                                                          .fredokaOne(
+                                                              fontSize: 13),
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                        color: cPrimaryPink,
+                                                      )),
+                                                    ),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        value =
+                                                            _emailResetPasswordController
+                                                                .text;
+                                                      });
+                                                    },
+                                                    onSubmitted: (value) async {
+                                                      value =
+                                                          _emailResetPasswordController
+                                                              .text;
+                                                      _focusNodeResetPassword
+                                                          .unfocus();
+                                                      UserModel? userData =
+                                                          await DatabaseService
+                                                              .searchVerifiedAccount(
+                                                                  _emailResetPasswordController
+                                                                      .text);
+
+                                                      if (userData != null &&
+                                                          userData
+                                                              .verifiedAccount!) {
+                                                        await AuthService
+                                                            .sendMailResetPassword(
+                                                                _emailResetPasswordController
+                                                                    .text);
+                                                        messageUser(context,
+                                                            'Un email pour changer ton mot de passe a été envoyé!');
+                                                      } else {
+                                                        messageUser(context,
+                                                            'Compte inexistant ou non vérifié');
+                                                      }
+                                                      Navigator.pop(mainKey
+                                                          .currentContext!);
+                                                      _emailResetPasswordController
+                                                          .clear();
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    [
+                                      TextButton(
+                                          onPressed: () async {
+                                            _focusNodeResetPassword.unfocus();
+                                            UserModel? userData =
+                                                await DatabaseService
+                                                    .searchVerifiedAccount(
+                                                        _emailResetPasswordController
+                                                            .text);
+
+                                            if (userData != null &&
+                                                userData.verifiedAccount!) {
+                                              await AuthService
+                                                  .sendMailResetPassword(
+                                                      _emailResetPasswordController
+                                                          .text);
+                                              messageUser(context,
+                                                  'Un email pour changer ton mot de passe a été envoyé!');
+                                            } else {
+                                              messageUser(context,
+                                                  'Compte inexistant ou non vérifié');
+                                            }
+                                            Navigator.pop(
+                                                mainKey.currentContext!);
+                                            _emailResetPasswordController
+                                                .clear();
+                                          },
+                                          child: Text("Envoyer",
+                                              style: textStyleCustom(
+                                                  Colors.blue[200]!, 12))),
+                                      TextButton(
+                                          onPressed: () => Navigator.pop(
+                                              mainKey.currentContext!),
+                                          child: Text("Annuler",
+                                              style: textStyleCustom(
+                                                  Colors.red[200]!, 12)))
+                                    ]),
+                              ),
+                            ));
+                  },
                 style: textStyleCustom(
                     isDayMood ? cPrimaryPurple : cPrimaryPink, 13))),
         const SizedBox(

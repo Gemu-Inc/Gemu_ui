@@ -82,6 +82,20 @@ class DatabaseService {
     }
   }
 
+  //recherche d'un compte vérifié ou non dans la base
+  static Future<UserModel?> searchVerifiedAccount(String email) async {
+    UserModel? userData;
+    await usersCollectionReference
+        .where("email", isEqualTo: email)
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        userData = UserModel.fromMap(item, item.data() as Map<String, dynamic>);
+      }
+    });
+    return userData;
+  }
+
 //Others parties
 
   //partie réglages "Mon compte"

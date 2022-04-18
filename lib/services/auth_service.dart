@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:country_calling_code_picker/country.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,6 +63,7 @@ class AuthService {
           'id': uid,
           'imageUrl': null,
           'privacy': 'public',
+          'verified_account': false,
           'email': email,
           'username': username,
           'dateBirthday': dateBirthday,
@@ -92,6 +92,16 @@ class AuthService {
         messageUser(context,
             "Un problème est survenu, veuillez réessayer ultérieurement");
       }
+    }
+  }
+
+  //Send mail reset password
+  static Future<void> sendMailResetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print(e);
+      print("failed to send email");
     }
   }
 

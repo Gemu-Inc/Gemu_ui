@@ -15,3 +15,18 @@ class AlertDialogCustom extends AlertDialog {
                 Text(content, style: Theme.of(context).textTheme.bodyLarge),
             actions: actions);
 }
+
+class AlertDialogResetPassword extends AlertDialog {
+  AlertDialogResetPassword(
+      BuildContext context, String title, Widget content, List<Widget> actions)
+      : super(
+            backgroundColor: Theme.of(context).canvasColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0)),
+            title: Text(
+              title,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            content: content,
+            actions: actions);
+}
