@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/services/auth_service.dart';
-import 'package:gemu/services/database_service.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
@@ -25,26 +24,26 @@ void verifyAccount(BuildContext context) {
   ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
     content: Text(
       "Afin de sécuriser ton compte, tu peux dès maintenant vérifier ton email",
-      style: Theme.of(context).textTheme.bodyLarge,
+      style: textStyleCustom(Colors.white, 10),
       textAlign: TextAlign.center,
     ),
     leading: const Icon(
-      Icons.info,
-      size: 33,
+      Icons.warning,
+      size: 30,
+      color: Colors.white,
     ),
     backgroundColor: Theme.of(context).colorScheme.primary,
     actions: [
       TextButton(
           onPressed: () async {
             ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-            await AuthService.sendMailVerifyEmail();
-            messageUser(
-                context, "Vous allez être déconnecter dans quelques instants");
+            await AuthService.sendMailVerifyEmail(context);
+            await Future.delayed(Duration(seconds: 5));
             await AuthService.signOut();
           },
           child: Text(
             'Vérifier',
-            style: Theme.of(context).textTheme.bodySmall,
+            style: textStyleCustom(Colors.white, 10),
           )),
       TextButton(
           onPressed: () {
@@ -52,7 +51,7 @@ void verifyAccount(BuildContext context) {
           },
           child: Text(
             'Plus tard',
-            style: Theme.of(context).textTheme.bodySmall,
+            style: textStyleCustom(Colors.white, 10),
           )),
     ],
   ));
