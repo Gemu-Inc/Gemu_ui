@@ -359,8 +359,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                                       filled: true,
                                                       prefixIcon:
                                                           Icon(Icons.mail),
-                                                      labelStyle: GoogleFonts
-                                                          .fredokaOne(
+                                                      labelStyle:
+                                                          GoogleFonts.ubuntu(
                                                               fontSize: 13),
                                                       border:
                                                           OutlineInputBorder(),

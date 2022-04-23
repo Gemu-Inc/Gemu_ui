@@ -580,7 +580,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: Text("Précédent",
-            style: GoogleFonts.fredokaOne(
+            style: GoogleFonts.ubuntu(
                 color: Colors.grey,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline)));

@@ -36,24 +36,24 @@ const themeLightPurple = "ThemeLightPurple";
 
 //Theme text
 textStyleBold(Color color, double fontSize) {
-  return GoogleFonts.fredokaOne(
+  return GoogleFonts.ubuntu(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal);
+}
+
+textStyleRegular(Color color, double fontSize) {
+  return GoogleFonts.ubuntu(
       fontSize: fontSize,
       color: color,
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal);
 }
 
-textStyleRegular(Color color, double fontSize) {
-  return GoogleFonts.fredokaOne(
-      fontSize: fontSize,
-      color: color,
-      fontWeight: FontWeight.normal,
-      fontStyle: FontStyle.normal);
-}
-
 textStyleCustom(Color color, double fontSize,
     [FontWeight? fontWeight, FontStyle? fontStyle]) {
-  return GoogleFonts.fredokaOne(
+  return GoogleFonts.ubuntu(
       fontSize: fontSize,
       color: color,
       fontWeight: fontWeight ?? FontWeight.normal,
