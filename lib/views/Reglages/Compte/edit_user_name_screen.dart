@@ -53,7 +53,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 ))
           ]);
         });
@@ -72,7 +72,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 )),
             TextButton(
                 onPressed: () {
@@ -81,7 +81,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: Colors.red),
                 ))
           ]);
         });

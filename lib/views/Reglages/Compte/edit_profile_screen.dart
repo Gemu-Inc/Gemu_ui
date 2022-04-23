@@ -109,7 +109,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 )),
             TextButton(
                 onPressed: () {
@@ -117,7 +117,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: Colors.red),
                 ))
           ]);
         });
@@ -134,7 +134,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 ))
           ]);
         });
@@ -151,7 +151,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 ))
           ]);
         });
@@ -169,7 +169,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Message reçu',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 )),
             TextButton(
                 onPressed: () {
@@ -177,7 +177,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Chut d\'abord',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: Colors.red),
                 ))
           ]);
         });
@@ -249,7 +249,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 children: [
                   Text(
                     'Nom d\'utilisateur',
-                    style: TextStyle(color: Colors.blue[200]),
+                    style: TextStyle(color: Colors.green),
                   ),
                   Text(
                     widget.user.username,
@@ -259,7 +259,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 12,
-                    color: Colors.blue[200],
+                    color: Colors.green,
                   ),
                 ],
               )),
@@ -273,7 +273,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('E-mail', style: TextStyle(color: Colors.blue[200])),
+                  Text('E-mail', style: TextStyle(color: Colors.green)),
                   Text(
                     widget.user.email!,
                     style: TextStyle(
@@ -282,7 +282,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 12,
-                    color: Colors.blue[200],
+                    color: Colors.green,
                   )
                 ],
               )),
@@ -294,7 +294,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Password', style: TextStyle(color: Colors.blue[200])),
+                  Text('Password', style: TextStyle(color: Colors.green)),
                   Text(
                     '**********',
                     style: TextStyle(
@@ -303,7 +303,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 12,
-                    color: Colors.blue[200],
+                    color: Colors.green,
                   ),
                 ],
               )),
@@ -317,7 +317,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Supprimer le compte',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: Colors.red),
                 ),
               )),
         ],
@@ -388,7 +388,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                       onPressed: () => selectImage(),
                       child: Text(
                         'Modifier l\'icône',
-                        style: TextStyle(color: Colors.blue[200]),
+                        style: TextStyle(color: Colors.green),
                       )),
                   TextButton(
                       onPressed: () {
@@ -407,7 +407,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                       },
                       child: Text(
                         'Supprimer l\'icône',
-                        style: TextStyle(color: Colors.red[200]),
+                        style: TextStyle(color: Colors.red),
                       ))
                 ],
               )

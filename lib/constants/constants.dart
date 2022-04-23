@@ -35,28 +35,21 @@ const themeLightPink = "ThemeLightPink";
 const themeLightPurple = "ThemeLightPurple";
 
 //Theme text
-textStyleBold(Color color, double fontSize) {
-  return GoogleFonts.ubuntu(
-      fontSize: fontSize,
-      color: color,
-      fontWeight: FontWeight.bold,
-      fontStyle: FontStyle.normal);
-}
-
-textStyleRegular(Color color, double fontSize) {
-  return GoogleFonts.ubuntu(
-      fontSize: fontSize,
-      color: color,
-      fontWeight: FontWeight.w500,
-      fontStyle: FontStyle.normal);
-}
-
-textStyleCustom(Color color, double fontSize,
+textStyleCustomBold(Color color, double fontSize,
     [FontWeight? fontWeight, FontStyle? fontStyle]) {
-  return GoogleFonts.ubuntu(
+  return GoogleFonts.fredokaOne(
       fontSize: fontSize,
       color: color,
-      fontWeight: fontWeight ?? FontWeight.normal,
+      fontWeight: fontWeight ?? FontWeight.bold,
+      fontStyle: fontStyle ?? FontStyle.normal);
+}
+
+textStyleCustomRegular(Color color, double fontSize,
+    [FontWeight? fontWeight, FontStyle? fontStyle]) {
+  return GoogleFonts.nunito(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight ?? FontWeight.w500,
       fontStyle: fontStyle ?? FontStyle.normal);
 }
 
@@ -69,12 +62,12 @@ const cBGDarkTheme = Color(0xFF22213C);
 const cBGLightTheme = Color(0xFFE0EFFF);
 const cShadowDarkTheme = Color(0xFF1C1E2B);
 const cShadowLightTheme = Color(0xFFD0E7FF);
-const cCanvasDarkTheme = Color(0xFF1E1F31);
-const cCanvasLightTheme = Color(0xFFD0E7FF);
-const cIconDarkTheme = Color(0xFFE0EFFF);
-const cIconLightTheme = Color(0xFF1C1E2B);
-const cTextDarkTheme = Color(0xFFE0EFFF);
-const cTextLightTheme = Color(0xFF1C1E2B);
+const cContainerDarkTheme = Color(0xFF1E1F31);
+const cContainerLightTheme = Color(0xFFD0E7FF);
+const cIconDarkTheme = Colors.white;
+const cIconLightTheme = Colors.black;
+const cTextDarkTheme = Colors.white;
+const cTextLightTheme = Colors.black;
 
 //Lists colors dayMood
 List<Color> lightBgColors = [
@@ -98,16 +91,16 @@ final darkThemeSystemPink = ThemeData(
     ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: cBGDarkTheme,
-    canvasColor: cCanvasDarkTheme,
+    canvasColor: cContainerDarkTheme,
     shadowColor: cShadowDarkTheme,
     iconTheme: IconThemeData(
       color: cIconDarkTheme,
     ),
     textTheme: TextTheme(
-        titleLarge: textStyleBold(cTextDarkTheme, 20),
-        titleSmall: textStyleBold(cTextDarkTheme, 15),
-        bodyLarge: textStyleRegular(cTextDarkTheme, 14),
-        bodySmall: textStyleRegular(cTextDarkTheme, 12)),
+        titleLarge: textStyleCustomBold(cTextDarkTheme, 20),
+        titleSmall: textStyleCustomBold(cTextDarkTheme, 15),
+        bodyLarge: textStyleCustomRegular(cTextDarkTheme, 15),
+        bodySmall: textStyleCustomRegular(cTextDarkTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
     ),
@@ -129,16 +122,16 @@ final darkThemeSystemPurple = ThemeData(
     ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: cBGDarkTheme,
-    canvasColor: cCanvasDarkTheme,
+    canvasColor: cContainerDarkTheme,
     shadowColor: cShadowDarkTheme,
     iconTheme: IconThemeData(
       color: cIconDarkTheme,
     ),
     textTheme: TextTheme(
-        titleLarge: textStyleBold(cTextDarkTheme, 20),
-        titleSmall: textStyleBold(cTextDarkTheme, 15),
-        bodyLarge: textStyleRegular(cTextDarkTheme, 14),
-        bodySmall: textStyleRegular(cTextDarkTheme, 12)),
+        titleLarge: textStyleCustomBold(cTextDarkTheme, 20),
+        titleSmall: textStyleCustomBold(cTextDarkTheme, 15),
+        bodyLarge: textStyleCustomRegular(cTextDarkTheme, 15),
+        bodySmall: textStyleCustomRegular(cTextDarkTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
     ),
@@ -160,16 +153,16 @@ final darkThemePink = ThemeData(
     ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: cBGDarkTheme,
-    canvasColor: cCanvasDarkTheme,
+    canvasColor: cContainerDarkTheme,
     shadowColor: cShadowDarkTheme,
     iconTheme: IconThemeData(
       color: cIconDarkTheme,
     ),
     textTheme: TextTheme(
-        titleLarge: textStyleBold(cTextDarkTheme, 20),
-        titleSmall: textStyleBold(cTextDarkTheme, 15),
-        bodyLarge: textStyleRegular(cTextDarkTheme, 14),
-        bodySmall: textStyleRegular(cTextDarkTheme, 12)),
+        titleLarge: textStyleCustomBold(cTextDarkTheme, 20),
+        titleSmall: textStyleCustomBold(cTextDarkTheme, 15),
+        bodyLarge: textStyleCustomRegular(cTextDarkTheme, 15),
+        bodySmall: textStyleCustomRegular(cTextDarkTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
     ),
@@ -191,16 +184,16 @@ final darkThemePurple = ThemeData(
     ),
     brightness: Brightness.dark,
     scaffoldBackgroundColor: cBGDarkTheme,
-    canvasColor: cCanvasDarkTheme,
+    canvasColor: cContainerDarkTheme,
     shadowColor: cShadowDarkTheme,
     iconTheme: IconThemeData(
       color: cIconDarkTheme,
     ),
     textTheme: TextTheme(
-        titleLarge: textStyleBold(cTextDarkTheme, 20),
-        titleSmall: textStyleBold(cTextDarkTheme, 15),
-        bodyLarge: textStyleRegular(cTextDarkTheme, 14),
-        bodySmall: textStyleRegular(cTextDarkTheme, 12)),
+        titleLarge: textStyleCustomBold(cTextDarkTheme, 20),
+        titleSmall: textStyleCustomBold(cTextDarkTheme, 15),
+        bodyLarge: textStyleCustomRegular(cTextDarkTheme, 15),
+        bodySmall: textStyleCustomRegular(cTextDarkTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
     ),
@@ -222,16 +215,16 @@ final lightThemeSystemPink = ThemeData(
     ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: cBGLightTheme,
-    canvasColor: cCanvasLightTheme,
+    canvasColor: cContainerLightTheme,
     shadowColor: cShadowLightTheme,
     iconTheme: IconThemeData(
       color: cIconLightTheme,
     ),
     textTheme: TextTheme(
-        titleLarge: textStyleBold(cTextLightTheme, 20),
-        titleSmall: textStyleBold(cTextLightTheme, 15),
-        bodyLarge: textStyleRegular(cTextLightTheme, 14),
-        bodySmall: textStyleRegular(cTextLightTheme, 12)),
+        titleLarge: textStyleCustomBold(cTextLightTheme, 20),
+        titleSmall: textStyleCustomBold(cTextLightTheme, 15),
+        bodyLarge: textStyleCustomRegular(cTextLightTheme, 15),
+        bodySmall: textStyleCustomRegular(cTextLightTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
     ),
@@ -253,16 +246,16 @@ final lightThemeSystemPurple = ThemeData(
     ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: cBGLightTheme,
-    canvasColor: cCanvasLightTheme,
+    canvasColor: cContainerLightTheme,
     shadowColor: cShadowLightTheme,
     iconTheme: IconThemeData(
       color: cIconLightTheme,
     ),
     textTheme: TextTheme(
-        titleLarge: textStyleBold(cTextLightTheme, 20),
-        titleSmall: textStyleBold(cTextLightTheme, 15),
-        bodyLarge: textStyleRegular(cTextLightTheme, 14),
-        bodySmall: textStyleRegular(cTextLightTheme, 12)),
+        titleLarge: textStyleCustomBold(cTextLightTheme, 20),
+        titleSmall: textStyleCustomBold(cTextLightTheme, 15),
+        bodyLarge: textStyleCustomRegular(cTextLightTheme, 15),
+        bodySmall: textStyleCustomRegular(cTextLightTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
     ),
@@ -284,16 +277,16 @@ final lightThemePink = ThemeData(
     ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: cBGLightTheme,
-    canvasColor: cCanvasLightTheme,
+    canvasColor: cContainerLightTheme,
     shadowColor: cShadowLightTheme,
     iconTheme: IconThemeData(
       color: cIconLightTheme,
     ),
     textTheme: TextTheme(
-        titleLarge: textStyleBold(cTextLightTheme, 20),
-        titleSmall: textStyleBold(cTextLightTheme, 15),
-        bodyLarge: textStyleRegular(cTextLightTheme, 14),
-        bodySmall: textStyleRegular(cTextLightTheme, 12)),
+        titleLarge: textStyleCustomBold(cTextLightTheme, 20),
+        titleSmall: textStyleCustomBold(cTextLightTheme, 15),
+        bodyLarge: textStyleCustomRegular(cTextLightTheme, 15),
+        bodySmall: textStyleCustomRegular(cTextLightTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
     ),
@@ -315,16 +308,16 @@ final lightThemePurple = ThemeData(
     ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: cBGLightTheme,
-    canvasColor: cCanvasLightTheme,
+    canvasColor: cContainerLightTheme,
     shadowColor: cShadowLightTheme,
     iconTheme: IconThemeData(
       color: cIconLightTheme,
     ),
     textTheme: TextTheme(
-        titleLarge: textStyleBold(cTextLightTheme, 20),
-        titleSmall: textStyleBold(cTextLightTheme, 15),
-        bodyLarge: textStyleRegular(cTextLightTheme, 14),
-        bodySmall: textStyleRegular(cTextLightTheme, 12)),
+        titleLarge: textStyleCustomBold(cTextLightTheme, 20),
+        titleSmall: textStyleCustomBold(cTextLightTheme, 15),
+        bodyLarge: textStyleCustomRegular(cTextLightTheme, 15),
+        bodySmall: textStyleCustomRegular(cTextLightTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
     ),

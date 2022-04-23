@@ -927,7 +927,7 @@ class CommentTileState extends State<CommentTile> {
                                   onTap: () => downComment(widget.comment),
                                   child: Icon(Icons.arrow_downward,
                                       color: downer.contains(me!.uid)
-                                          ? Colors.red[200]
+                                          ? Colors.red
                                           : Colors.grey,
                                       size: 17),
                                 )

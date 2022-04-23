@@ -48,7 +48,7 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
         },
         child: Text(
           'Oui',
-          style: TextStyle(color: Colors.blue[200]),
+          style: TextStyle(color: Colors.green),
         ));
   }
 
@@ -59,7 +59,7 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
         },
         child: Text(
           'Non',
-          style: TextStyle(color: Colors.red[200]),
+          style: TextStyle(color: Colors.red),
         ));
   }
 

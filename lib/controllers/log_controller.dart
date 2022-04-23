@@ -135,16 +135,16 @@ class _LogControllerState extends ConsumerState<LogController> {
                                               },
                                               child: Text(
                                                 "Oui",
-                                                style: textStyleCustom(
-                                                    Colors.blue[200]!, 12),
+                                                style: textStyleCustomBold(
+                                                    Colors.green, 12),
                                               )),
                                           TextButton(
                                               onPressed: () => Navigator.pop(
                                                   mainKey.currentContext!),
                                               child: Text(
                                                 "Non",
-                                                style: textStyleCustom(
-                                                    Colors.red[200]!, 12),
+                                                style: textStyleCustomBold(
+                                                    Colors.red, 12),
                                               ))
                                         ]);
                                   });

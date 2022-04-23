@@ -437,14 +437,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                           },
                           child: Text(
                             "Oui",
-                            style: textStyleCustom(Colors.blue[200]!, 12),
+                            style: textStyleCustomBold(Colors.green, 12),
                           )),
                       TextButton(
                           onPressed: () =>
                               Navigator.pop(mainKey.currentContext!),
                           child: Text(
                             "Non",
-                            style: textStyleCustom(Colors.red[200]!, 12),
+                            style: textStyleCustomBold(Colors.red, 12),
                           ))
                     ]);
                   });
@@ -838,9 +838,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     showTitleActions: true,
                     theme: DatePickerTheme(
                       backgroundColor: Theme.of(context).canvasColor,
-                      cancelStyle: textStyleCustom(Colors.red[200]!, 14),
-                      doneStyle: textStyleCustom(Colors.blue[200]!, 14),
-                      itemStyle: textStyleCustom(
+                      cancelStyle: textStyleCustomBold(Colors.red, 14),
+                      doneStyle: textStyleCustomBold(Colors.green, 14),
+                      itemStyle: textStyleCustomBold(
                           Theme.of(context).iconTheme.color!, 15),
                     ),
                     minTime: DateTime(1900, 1, 1),
@@ -988,7 +988,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 child: Text(
                   "Annuler",
                   textAlign: TextAlign.center,
-                  style: textStyleCustom(
+                  style: textStyleCustomBold(
                       _searchController.text.isNotEmpty
                           ? isDayMood
                               ? cPrimaryPink
@@ -1246,7 +1246,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               visible: !emailValid ? true : false,
               child: Text(
                 "Ton email n'est pas valide",
-                style: textStyleCustom(Colors.red[200]!, 11),
+                style: textStyleCustomBold(Colors.red, 11),
               )),
         ),
         Padding(
@@ -1288,7 +1288,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               visible: !passwordValid ? true : false,
               child: Text(
                 "Ton mot de passe n'est pas valide",
-                style: textStyleCustom(Colors.red[200]!, 11),
+                style: textStyleCustomBold(Colors.red, 11),
               )),
         ),
         Padding(
@@ -1330,7 +1330,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               visible: !usernameValid ? true : false,
               child: Text(
                 "Ton pseudonyme n'est pas valide",
-                style: textStyleCustom(Colors.red[200]!, 11),
+                style: textStyleCustomBold(Colors.red, 11),
               )),
         ),
         Padding(
@@ -1362,9 +1362,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     showTitleActions: true,
                     theme: DatePickerTheme(
                       backgroundColor: Theme.of(context).canvasColor,
-                      cancelStyle: textStyleCustom(Colors.red[200]!, 14),
-                      doneStyle: textStyleCustom(Colors.blue[200]!, 14),
-                      itemStyle: textStyleCustom(
+                      cancelStyle: textStyleCustomBold(Colors.red, 14),
+                      doneStyle: textStyleCustomBold(Colors.green, 14),
+                      itemStyle: textStyleCustomBold(
                           Theme.of(context).iconTheme.color!, 15),
                     ),
                     minTime: DateTime(1900, 1, 1),
@@ -1395,7 +1395,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 visible: !anniversaryValid ? true : false,
                 child: Text(
                   "Il faut impérativement avoir minimum 13 ans",
-                  style: textStyleCustom(Colors.red[200]!, 11),
+                  style: textStyleCustomBold(Colors.red, 11),
                 ))),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -1454,7 +1454,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   children: [
                     Text(
                       "Pas de jeux suivis actuellement",
-                      style: textStyleRegular(Colors.red[200]!, 12),
+                      style: textStyleCustomRegular(Colors.red, 12),
                       textAlign: TextAlign.center,
                     ),
                     MaterialButton(
@@ -1495,7 +1495,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   children: [
                 TextSpan(
                   text: "termes et conditions",
-                  style: textStyleRegular(
+                  style: textStyleCustomRegular(
                       isDayMood ? cPrimaryPink : cPrimaryPurple, 12),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () => print("voir les cgu"),
@@ -1519,7 +1519,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   children: [
                 TextSpan(
                     text: "politique de confidentialité",
-                    style: textStyleRegular(
+                    style: textStyleCustomRegular(
                         isDayMood ? cPrimaryPink : cPrimaryPurple, 12),
                     recognizer: TapGestureRecognizer()
                       ..onTap =

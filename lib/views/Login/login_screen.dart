@@ -444,19 +444,19 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                                 .clear();
                                           },
                                           child: Text("Envoyer",
-                                              style: textStyleCustom(
-                                                  Colors.blue[200]!, 12))),
+                                              style: textStyleCustomBold(
+                                                  Colors.green, 12))),
                                       TextButton(
                                           onPressed: () => Navigator.pop(
                                               mainKey.currentContext!),
                                           child: Text("Annuler",
-                                              style: textStyleCustom(
-                                                  Colors.red[200]!, 12)))
+                                              style: textStyleCustomBold(
+                                                  Colors.red, 12)))
                                     ]),
                               ),
                             ));
                   },
-                style: textStyleCustom(
+                style: textStyleCustomBold(
                     isDayMood ? cPrimaryPurple : cPrimaryPink, 13))),
         const SizedBox(
           height: 5.0,
@@ -469,7 +469,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                 children: [
                   TextSpan(
                     text: "Inscription",
-                    style: textStyleCustom(
+                    style: textStyleCustomBold(
                         isDayMood ? cPrimaryPurple : cPrimaryPink, 13),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () => Helpers.inscriptionBottomSheet(

@@ -44,7 +44,7 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 ))
           ]);
         });
@@ -65,7 +65,7 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 )),
             TextButton(
                 onPressed: () {
@@ -74,7 +74,7 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: Colors.red),
                 ))
           ]);
         });

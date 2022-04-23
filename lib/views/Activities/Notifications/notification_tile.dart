@@ -201,7 +201,7 @@ class NotifTileState extends State<NotifTile> {
                                     },
                                     child: Text(
                                       'Confirmer',
-                                      style: TextStyle(color: Colors.blue[200]),
+                                      style: TextStyle(color: Colors.green),
                                     )),
                                 TextButton(
                                     onPressed: () {
@@ -209,7 +209,7 @@ class NotifTileState extends State<NotifTile> {
                                     },
                                     child: Text(
                                       'Supprimer',
-                                      style: TextStyle(color: Colors.red[200]),
+                                      style: TextStyle(color: Colors.red),
                                     ))
                               ],
                             ),

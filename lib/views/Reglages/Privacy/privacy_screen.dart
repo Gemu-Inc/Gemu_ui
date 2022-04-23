@@ -36,13 +36,13 @@ class Privacyviewstate extends State<PrivacyScreen> {
                 },
                 child: Text(
                   'Oui',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 )),
             TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'Non',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: Colors.red),
                 ))
           ]);
         });

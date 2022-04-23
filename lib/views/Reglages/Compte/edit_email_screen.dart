@@ -68,7 +68,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                       },
                       child: Text(
                         'OK',
-                        style: TextStyle(color: Colors.blue[200]),
+                        style: TextStyle(color: Colors.green),
                       )),
                   TextButton(
                       onPressed: () {
@@ -77,7 +77,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                       },
                       child: Text(
                         'Cancel',
-                        style: TextStyle(color: Colors.red[200]),
+                        style: TextStyle(color: Colors.red),
                       )),
                 ]));
   }
@@ -94,7 +94,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 ))
           ]);
         });
@@ -113,7 +113,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: Colors.green),
                 )),
             TextButton(
                 onPressed: () {
@@ -122,7 +122,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: Colors.red),
                 ))
           ]);
         });

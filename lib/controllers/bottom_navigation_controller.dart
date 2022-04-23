@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/services/auth_service.dart';
+import 'package:gemu/views/Home/home_screen.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:loader/loader.dart';
 
@@ -14,25 +15,24 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/widgets/bottom_share.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/riverpod/Navigation/index_games_provider.dart';
+import 'package:gemu/riverpod/Home/index_games_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../Home/home_screen.dart';
-import '../Games/games_screen.dart';
-import '../Highlights/highlights_screen.dart';
-import '../Profil/profil_screen.dart';
+import '../views/Home/home_screen.dart';
+import '../views/Games/games_screen.dart';
+import '../views/Highlights/highlights_screen.dart';
+import '../views/Profil/profil_screen.dart';
 
-class BottomNavigationScreen extends ConsumerStatefulWidget {
-  BottomNavigationScreen({Key? key}) : super(key: key);
+class BottomNavigationController extends ConsumerStatefulWidget {
+  BottomNavigationController({Key? key}) : super(key: key);
 
   @override
-  _BottomNavigationScreenState createState() => _BottomNavigationScreenState();
+  _BottomNavigationControllerState createState() =>
+      _BottomNavigationControllerState();
 }
 
-class _BottomNavigationScreenState
-    extends ConsumerState<BottomNavigationScreen> {
-  //late StreamSubscription _userListener, _gamesListener, _followingsListener;
-
+class _BottomNavigationControllerState
+    extends ConsumerState<BottomNavigationController> {
   List<Game> gamesList = [];
   List<PageController> gamePageController = [];
 
@@ -98,7 +98,6 @@ class _BottomNavigationScreenState
       }
     }
 
-    //listeningData();
     if (mounted) {
       setState(() {
         isLoading = true;
@@ -107,61 +106,15 @@ class _BottomNavigationScreenState
     return true;
   }
 
-  // Future<void> listeningData() async {
-  //   _userListener = await DatabaseService.usersCollectionReference
-  //       .doc(widget.uid)
-  //       .snapshots()
-  //       .listen((event) {
-  //     print('listening current user');
-  //     me = UserModel.fromMap(event, event.data() as Map<String, dynamic>);
-  //   });
-
-  //   _gamesListener = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(widget.uid)
-  //       .collection('games')
-  //       .snapshots()
-  //       .listen((event) {
-  //     print('listening games');
-  //     if (gamesList.length != 0) {
-  //       gamesList.clear();
-  //       gamePageController.clear();
-  //     }
-  //     for (var item in event.docs) {
-  //       gamesList.add(Game.fromMap(item, item.data()));
-  //       gamePageController.add(PageController());
-  //     }
-  //   });
-
-  //   _followingsListener = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(widget.uid)
-  //       .collection('following')
-  //       .snapshots()
-  //       .listen((event) {
-  //     print('listening followings');
-  //     if (followings.length != 0) {
-  //       followings.clear();
-  //     }
-  //     for (var item in event.docs) {
-  //       followings.add(item.id);
-  //     }
-  //   });
-  // }
-
   @override
   void initState() {
     super.initState();
     _navPageController = PageController(initialPage: 0);
-    //listeningData();
   }
 
   @override
   void dispose() {
     _navPageController.dispose();
-    // _userListener.cancel();
-    // _gamesListener.cancel();
-    // _followingsListener.cancel();
     super.dispose();
   }
 
@@ -225,7 +178,7 @@ class _BottomNavigationScreenState
                 bottom: 0,
                 child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 11,
+                    height: 60,
                     decoration: (selectedPage != 0 || !isLoading)
                         ? BoxDecoration(boxShadow: [
                             BoxShadow(
@@ -260,8 +213,8 @@ class _BottomNavigationScreenState
                               icon: Icon(Icons.home_outlined),
                               label: 'Home'),
                           BottomNavigationBarItem(
-                              activeIcon: Icon(Icons.highlight),
-                              icon: Icon(Icons.highlight_outlined),
+                              activeIcon: Icon(Icons.search),
+                              icon: Icon(Icons.search_outlined),
                               label: 'Highlights'),
                           BottomNavigationBarItem(
                               activeIcon: Icon(Icons.videogame_asset),
@@ -272,7 +225,7 @@ class _BottomNavigationScreenState
                               icon: Icon(Icons.person_outline),
                               label: 'Profil')
                         ]))),
-            BottomShare(),
+            BottomShare()
           ],
         ),
       ),

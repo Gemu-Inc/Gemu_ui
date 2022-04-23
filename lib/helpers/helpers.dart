@@ -32,13 +32,13 @@ class Helpers {
                 },
                 child: Text(
                   "Oui",
-                  style: textStyleCustom(Colors.blue[200]!, 12),
+                  style: textStyleCustomBold(Colors.green, 12),
                 )),
             TextButton(
                 onPressed: () => Navigator.pop(mainKey.currentContext!),
                 child: Text(
                   "Non",
-                  style: textStyleCustom(Colors.red[200]!, 12),
+                  style: textStyleCustomBold(Colors.red, 12),
                 ))
           ]);
         });
@@ -194,7 +194,7 @@ class Helpers {
                                           Text(
                                             "S'inscrire' avec Google",
                                             textAlign: TextAlign.center,
-                                            style: textStyleCustom(
+                                            style: textStyleCustomBold(
                                                 Colors.black, 12),
                                           )
                                         ],
@@ -240,7 +240,7 @@ class Helpers {
                                           Text(
                                             "S'inscrire avec Apple",
                                             textAlign: TextAlign.center,
-                                            style: textStyleCustom(
+                                            style: textStyleCustomBold(
                                                 Theme.of(context).brightness ==
                                                         Brightness.dark
                                                     ? Colors.black
@@ -371,7 +371,7 @@ class Helpers {
                                           ),
                                           Text("S'inscrire avec Google",
                                               textAlign: TextAlign.center,
-                                              style: textStyleCustom(
+                                              style: textStyleCustomBold(
                                                   Colors.black, 12))
                                         ],
                                       ))),
@@ -505,7 +505,7 @@ class Helpers {
                                           Text(
                                             "Se connecter avec Google",
                                             textAlign: TextAlign.center,
-                                            style: textStyleCustom(
+                                            style: textStyleCustomBold(
                                                 Colors.black, 12),
                                           )
                                         ],
@@ -551,7 +551,7 @@ class Helpers {
                                           Text(
                                             "Se connecter avec Apple",
                                             textAlign: TextAlign.center,
-                                            style: textStyleCustom(
+                                            style: textStyleCustomBold(
                                                 Theme.of(context).brightness ==
                                                         Brightness.dark
                                                     ? Colors.black
@@ -685,7 +685,7 @@ class Helpers {
                                           Text(
                                             "Se connecter avec Google",
                                             textAlign: TextAlign.center,
-                                            style: textStyleCustom(
+                                            style: textStyleCustomBold(
                                                 Colors.black, 12),
                                           )
                                         ],

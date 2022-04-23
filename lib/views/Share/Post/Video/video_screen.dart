@@ -11,7 +11,7 @@ import 'package:video_player/video_player.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Navigation/bottom_navigation_screen.dart';
+import 'package:gemu/controllers/bottom_navigation_controller.dart';
 import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 
@@ -220,7 +220,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => BottomNavigationScreen()),
+              builder: (BuildContext context) => BottomNavigationController()),
           (route) => false);
     } catch (e) {
       print(e);
@@ -388,14 +388,13 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                                                           MaterialPageRoute(
                                                               builder: (BuildContext
                                                                       context) =>
-                                                                  BottomNavigationScreen()),
+                                                                  BottomNavigationController()),
                                                           (route) => false);
                                                     },
                                                     child: Text(
                                                       'Oui',
                                                       style: TextStyle(
-                                                          color:
-                                                              Colors.blue[200]),
+                                                          color: Colors.green),
                                                     )),
                                                 TextButton(
                                                     onPressed: () =>

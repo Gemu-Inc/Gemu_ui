@@ -166,7 +166,7 @@ class _TextFieldCustomLoginState extends ConsumerState<TextFieldCustomLogin> {
             fillColor: Theme.of(context).canvasColor,
             filled: true,
             labelText: widget.label,
-            labelStyle: textStyleCustom(
+            labelStyle: textStyleCustomBold(
                 widget.focusNode.hasFocus
                     ? widget.isDayMood
                         ? cSecondaryPurple
@@ -280,7 +280,7 @@ class _TextFieldCustomRegisterState
             fillColor: Theme.of(context).canvasColor,
             filled: true,
             labelText: widget.label,
-            labelStyle: textStyleCustom(
+            labelStyle: textStyleCustomBold(
                 widget.focusNode.hasFocus
                     ? widget.isDayMood
                         ? cPrimaryPink

@@ -65,7 +65,7 @@ Future verifyAccount(BuildContext context) {
                 },
                 child: Text(
                   'Vérifier',
-                  style: textStyleCustom(Colors.green, 12),
+                  style: textStyleCustomBold(Colors.green, 12),
                 )),
             TextButton(
                 onPressed: () {
@@ -73,7 +73,7 @@ Future verifyAccount(BuildContext context) {
                 },
                 child: Text(
                   'Plus tard',
-                  style: textStyleCustom(Colors.red, 12),
+                  style: textStyleCustomBold(Colors.red, 12),
                 )),
           ],
         );

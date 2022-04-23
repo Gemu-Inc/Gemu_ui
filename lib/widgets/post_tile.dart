@@ -624,7 +624,7 @@ class PictureItemState extends State<PictureItem>
             opacity: _downAnimation as Animation<double>,
             child: Icon(
               Icons.arrow_downward,
-              color: Colors.red[200],
+              color: Colors.red,
               size: 80,
             ),
           ),
@@ -850,7 +850,7 @@ class PictureItemState extends State<PictureItem>
                     size: 28,
                     color:
                         (down.length != 0 && down.contains(widget.idUserActual))
-                            ? Colors.red[200]
+                            ? Colors.red
                             : Colors.grey[300]),
               ),
             ),
@@ -1612,7 +1612,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
             opacity: _downAnimation as Animation<double>,
             child: Icon(
               Icons.arrow_downward,
-              color: Colors.red[200],
+              color: Colors.red,
               size: 80,
             ),
           ),
@@ -1917,7 +1917,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                     size: 28,
                     color:
                         (down.length != 0 && down.contains(widget.idUserActual))
-                            ? Colors.red[200]
+                            ? Colors.red
                             : Colors.grey[300]),
               ),
             ),

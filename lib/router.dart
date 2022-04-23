@@ -5,7 +5,7 @@ import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/views/Login/login_screen.dart';
 import 'package:gemu/views/Register/register_screen.dart';
-import 'package:gemu/views/Navigation/bottom_navigation_screen.dart';
+import 'package:gemu/controllers/bottom_navigation_controller.dart';
 
 Route<dynamic> generateRouteNonAuth(
     RouteSettings settings, BuildContext context) {
@@ -35,7 +35,7 @@ Route<dynamic> generateRouteAuth(RouteSettings settings, BuildContext context) {
   final args = settings.arguments;
   switch (settings.name) {
     case Navigation:
-      return MaterialPageRoute(builder: (_) => BottomNavigationScreen());
+      return MaterialPageRoute(builder: (_) => BottomNavigationController());
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

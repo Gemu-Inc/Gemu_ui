@@ -108,7 +108,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                         children: [
                           Text(
                             "Bienvenue",
-                            style: textStyleCustom(
+                            style: textStyleCustomBold(
                                 Theme.of(context).brightness == Brightness.dark
                                     ? cTextDarkTheme
                                     : cTextLightTheme,
@@ -244,11 +244,11 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                       recognizer: TapGestureRecognizer()
                                         ..onTap =
                                             () => print("terms and conditions"),
-                                      style: TextStyle(
-                                          color: isDayMood
+                                      style: textStyleCustomBold(
+                                          isDayMood
                                               ? cPrimaryPink
                                               : cPrimaryPurple,
-                                          fontSize: 12)),
+                                          12)),
                                   TextSpan(
                                       text: " et la ",
                                       style: Theme.of(context)
@@ -258,7 +258,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                       text: "politique de confidentialité",
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () => print("privacy policy"),
-                                      style: textStyleCustom(
+                                      style: textStyleCustomBold(
                                           isDayMood
                                               ? cPrimaryPink
                                               : cPrimaryPurple,

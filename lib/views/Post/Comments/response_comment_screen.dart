@@ -316,7 +316,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                     ),
                                     Icon(Icons.arrow_downward,
                                         color: widget.downer.contains(me!.uid)
-                                            ? Colors.red[200]
+                                            ? Colors.red
                                             : Colors.grey,
                                         size: 17),
                                   ],
@@ -444,7 +444,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                                     ),
                                     Icon(Icons.arrow_downward,
                                         color: widget.downer.contains(me!.uid)
-                                            ? Colors.red[200]
+                                            ? Colors.red
                                             : Colors.grey,
                                         size: 17),
                                   ],
@@ -669,7 +669,7 @@ class ResponseTileState extends State<ResponseTile> {
                                   onTap: () => downResponse(widget.response),
                                   child: Icon(Icons.arrow_downward,
                                       color: downer.contains(me!.uid)
-                                          ? Colors.red[200]
+                                          ? Colors.red
                                           : Colors.grey,
                                       size: 17),
                                 )

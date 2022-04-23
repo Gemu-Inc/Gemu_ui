@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
-import 'package:gemu/riverpod/Navigation/index_games_provider.dart';
+import 'package:gemu/riverpod/Home/index_games_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -248,7 +248,7 @@ class _Gamesviewstate extends State<GamesScreen>
                   },
                   child: Text(
                     'Oui',
-                    style: TextStyle(color: Colors.blue[200]),
+                    style: TextStyle(color: Colors.green),
                   )),
               TextButton(
                   onPressed: () {
@@ -256,7 +256,7 @@ class _Gamesviewstate extends State<GamesScreen>
                   },
                   child: Text(
                     'Non',
-                    style: TextStyle(color: Colors.red[200]),
+                    style: TextStyle(color: Colors.red),
                   )),
             ]);
           });
