@@ -20,43 +20,6 @@ void messageUser(BuildContext context, String message) {
       displayDuration: const Duration(seconds: 6));
 }
 
-void verifyAccount(BuildContext context) {
-  ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
-    content: Text(
-      "Afin de sécuriser ton compte, tu peux dès maintenant vérifier ton email",
-      style: textStyleCustom(Colors.white, 10),
-      textAlign: TextAlign.center,
-    ),
-    leading: const Icon(
-      Icons.warning,
-      size: 30,
-      color: Colors.white,
-    ),
-    backgroundColor: Theme.of(context).colorScheme.primary,
-    actions: [
-      TextButton(
-          onPressed: () async {
-            ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-            await AuthService.sendMailVerifyEmail(context);
-            await Future.delayed(Duration(seconds: 5));
-            await AuthService.signOut();
-          },
-          child: Text(
-            'Vérifier',
-            style: textStyleCustom(Colors.white, 10),
-          )),
-      TextButton(
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-          },
-          child: Text(
-            'Plus tard',
-            style: textStyleCustom(Colors.white, 10),
-          )),
-    ],
-  ));
-}
-
 class SnackBarCustom extends SnackBar {
   SnackBarCustom({
     required BuildContext context,

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/services/auth_service.dart';
-import 'package:gemu/widgets/snack_bar_custom.dart';
+import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:loader/loader.dart';
 
 import 'package:gemu/models/user.dart';

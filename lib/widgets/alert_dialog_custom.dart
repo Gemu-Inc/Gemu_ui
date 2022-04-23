@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gemu/constants/constants.dart';
+import 'package:gemu/services/auth_service.dart';
 
 class AlertDialogCustom extends AlertDialog {
   AlertDialogCustom(
@@ -29,4 +31,51 @@ class AlertDialogResetPassword extends AlertDialog {
             ),
             content: content,
             actions: actions);
+}
+
+Future verifyAccount(BuildContext context) {
+  return showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          title: Row(
+            children: [
+              Icon(
+                Icons.warning,
+                size: 44,
+              ),
+              Text(
+                "Vérifier mon compte",
+                style: Theme.of(context).textTheme.titleSmall,
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
+          content: Text(
+            "Afin de sécuriser ton compte, tu peux dès maintenant vérifier ton email!",
+            style: Theme.of(context).textTheme.titleSmall,
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+                onPressed: () async {
+                  Navigator.pop(mainKey.currentContext!);
+                  await AuthService.sendMailVerifyEmail(context);
+                },
+                child: Text(
+                  'Vérifier',
+                  style: textStyleCustom(Colors.green, 12),
+                )),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(mainKey.currentContext!);
+                },
+                child: Text(
+                  'Plus tard',
+                  style: textStyleCustom(Colors.red, 12),
+                )),
+          ],
+        );
+      });
 }

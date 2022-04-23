@@ -114,9 +114,11 @@ class AuthService {
   //Send mail verify email
   static Future<void> sendMailVerifyEmail(BuildContext context) async {
     try {
-      await _auth.currentUser!.sendEmailVerification();
-      messageUser(
-                context, "Vous allez être déconnecter dans quelques instants");
+      await _auth.currentUser!.sendEmailVerification().then((value) =>
+          messageUser(
+              context, "Tu vas être déconnecter dans quelques instants"));
+      await Future.delayed(Duration(seconds: 1));
+      await AuthService.signOut();
     } catch (e) {
       print(e);
     }
