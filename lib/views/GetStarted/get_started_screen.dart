@@ -80,7 +80,7 @@ class _GetStartedBeforeScreenState
           padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
           child: Text(
             "Quelques explications avant d'entrer dans l'aventure Gemu",
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(context).textTheme.titleSmall,
             textAlign: TextAlign.center,
           ),
         )
@@ -116,7 +116,7 @@ class _GetStartedBeforeScreenState
                 borderRadius: BorderRadius.circular(15.0),
               )),
           child:
-              Text("Commencer", style: Theme.of(context).textTheme.bodyLarge),
+              Text("Commencer", style: textStyleCustomBold(Colors.white, 14)),
         ),
       ),
     );
@@ -244,7 +244,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   ),
                   Text(
                     "Met toi à jour quand tu le souhaites",
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleSmall,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -286,7 +286,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   Text(
                     "Met la lumière sur les dernières tendances",
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ],
               )),
@@ -317,7 +317,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.videogame_asset,
+                    Icons.notifications_active,
                     color: isDayMood ? cPrimaryPink : cPrimaryPurple,
                     size: 33,
                   ),
@@ -325,9 +325,9 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                     height: 15.0,
                   ),
                   Text(
-                    "Accède à tous les jeux possibles",
+                    "Reste connecté avec les autres",
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ],
               )),
@@ -338,7 +338,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
               height: MediaQuery.of(context).size.height / 6,
               alignment: Alignment.center,
               child: Text(
-                "Découvre et suit des nouveaux jeux afin d'avoir toute l'actualité et le contenu possible",
+                "Continue à échanger, partager et discuter avec la communauté à tout instant",
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge,
               ))
@@ -368,7 +368,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   Text(
                     "A ton tour!",
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ],
               )),
@@ -407,7 +407,11 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 },
                 child: Text(
                   "Passer",
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: textStyleCustomBold(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                      12),
                 )),
           ),
           TabPageSelector(
@@ -445,7 +449,11 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   _tabController.index != lengthGetStarted - 1
                       ? "Suivant"
                       : "Terminer",
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: textStyleCustomBold(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                      12),
                 )),
           )
         ],

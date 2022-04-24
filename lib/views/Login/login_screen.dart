@@ -11,11 +11,11 @@ import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/widgets/bottom_sheet_custom.dart';
 import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/riverpod/Login/login_provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   @override
@@ -175,7 +175,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
           padding: const EdgeInsets.only(bottom: 15.0, left: 5.0, right: 5.0),
           child: Text(
               "Ne te fais pas plus attendre!\nJuste à rentrer ton email et ton mot de passe et c'est parti pour l'aventure Gemu!",
-              style: Theme.of(context).textTheme.bodySmall),
+              style: Theme.of(context).textTheme.bodyLarge),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -294,7 +294,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                     )
                   : Text(
                       'Se connecter',
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: textStyleCustomBold(Colors.white, 14),
                     ),
             ),
           ),
@@ -347,6 +347,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                                     autofocus: true,
                                                     textInputAction:
                                                         TextInputAction.go,
+                                                    cursorColor: cPrimaryPink,
                                                     keyboardType: TextInputType
                                                         .emailAddress,
                                                     decoration: InputDecoration(
@@ -357,11 +358,12 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                                           Theme.of(context)
                                                               .canvasColor,
                                                       filled: true,
-                                                      prefixIcon:
-                                                          Icon(Icons.mail),
+                                                      prefixIcon: Icon(
+                                                          Icons.mail,
+                                                          color: cPrimaryPink),
                                                       labelStyle:
-                                                          GoogleFonts.ubuntu(
-                                                              fontSize: 13),
+                                                          textStyleCustomBold(
+                                                              cPrimaryPink, 13),
                                                       border:
                                                           OutlineInputBorder(),
                                                       focusedBorder:
@@ -465,15 +467,19 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
             textAlign: TextAlign.center,
             text: TextSpan(
                 text: "Vous n'avez pas encore un compte? ",
-                style: Theme.of(context).textTheme.bodySmall,
+                style: textStyleCustomRegular(
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                    13),
                 children: [
                   TextSpan(
                     text: "Inscription",
                     style: textStyleCustomBold(
                         isDayMood ? cPrimaryPurple : cPrimaryPink, 13),
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () => Helpers.inscriptionBottomSheet(
-                          context, isDayMood, ref),
+                      ..onTap =
+                          () => inscriptionBottomSheet(context, isDayMood, ref),
                   )
                 ])),
       ],

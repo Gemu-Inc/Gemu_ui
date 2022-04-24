@@ -285,8 +285,10 @@ class _TextFieldCustomRegisterState
                     ? widget.isDayMood
                         ? cPrimaryPink
                         : cPrimaryPurple
-                    : Colors.grey,
-                13),
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey
+                        : Color.fromARGB(221, 68, 68, 68),
+                12),
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -323,7 +325,9 @@ class _TextFieldCustomRegisterState
                               ? widget.isDayMood
                                   ? cPrimaryPink
                                   : cSecondaryPurple
-                              : Colors.grey,
+                              : Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.grey
+                                  : Color.fromARGB(221, 68, 68, 68),
                         ),
                         onPressed: widget.clear)));
   }

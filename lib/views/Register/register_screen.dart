@@ -556,7 +556,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             )),
         child: Text(
           "Suivant",
-          style: Theme.of(context).textTheme.titleSmall,
+          style: textStyleCustomBold(Colors.white, 14),
         ),
       ),
     );
@@ -580,8 +580,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: Text("Précédent",
-            style: GoogleFonts.ubuntu(
-                color: Colors.grey,
+            style: GoogleFonts.fredokaOne(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.grey,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline)));
   }
@@ -639,7 +641,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               )
             : Text(
                 "Terminer",
-                style: Theme.of(context).textTheme.titleSmall,
+                style: textStyleCustomBold(Colors.white, 14),
               ),
       ),
     );
@@ -654,7 +656,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       children: [
         Text(
             "Allez c'est parti pour ton inscription, la première étape étant de renseigner les informations personnelles pour te connecter à ton compte!",
-            style: Theme.of(context).textTheme.bodySmall),
+            style: Theme.of(context).textTheme.bodyLarge),
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
@@ -771,7 +773,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       children: [
         Text(
           "La seconde étape est pour te reconnaître et te retrouver au sein de la communauté, renseigne ton pseudonyme, ta date d'anniversaire et ta nationnalité.",
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -822,7 +824,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             Text(
               Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(
               width: 5.0,
@@ -830,7 +832,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             MaterialButton(
               child: Text(
                 'Sélectionner',
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               color: Theme.of(context).canvasColor,
               onPressed: () {
@@ -893,7 +895,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       Text(
                         '${country.name}',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
                   ),
@@ -921,7 +923,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       children: [
         Text(
           "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu.",
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -1026,7 +1028,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     ? Center(
                         child: Text(
                           "C'est tout pour le moment",
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: Theme.of(context).textTheme.titleSmall,
                         ),
                       )
                     : isLoadingMoreData
@@ -1069,7 +1071,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   _searchController.text.length < 10
                       ? 'Recherche de "${_searchController.text}.."'
                       : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Theme.of(context).textTheme.titleSmall,
                 )
               ],
             ),
@@ -1080,7 +1082,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 child: Center(
                   child: Text(
                     'No games found',
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: Theme.of(context).textTheme.titleSmall,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -1204,7 +1206,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           padding: const EdgeInsets.only(bottom: 5.0),
           child: Text(
             "Nous voici dans le récapitulatif d'inscription, vérifie bien que tu as tout saisi correctement pour ton compte et n'hésite pas à vérifier être en accord avec les cgu et la politique de confidentialité de Gemu.",
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
         Padding(
@@ -1346,7 +1348,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             Text(
               Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(
               width: 5.0,
@@ -1354,7 +1356,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             MaterialButton(
               child: Text(
                 'Sélectionner',
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               color: Theme.of(context).canvasColor,
               onPressed: () {
@@ -1425,7 +1427,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       Text(
                         '${country.name}',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
                   ),
@@ -1454,13 +1456,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   children: [
                     Text(
                       "Pas de jeux suivis actuellement",
-                      style: textStyleCustomRegular(Colors.red, 12),
+                      style: textStyleCustomBold(Colors.red, 12),
                       textAlign: TextAlign.center,
                     ),
                     MaterialButton(
                       child: Text(
                         'Vers les jeux',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                       color: Theme.of(context).canvasColor,
                       onPressed: () => {
@@ -1491,11 +1493,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           title: RichText(
               text: TextSpan(
                   text: "Accepter les ",
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: textStyleCustomBold(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                      12),
                   children: [
                 TextSpan(
                   text: "termes et conditions",
-                  style: textStyleCustomRegular(
+                  style: textStyleCustomBold(
                       isDayMood ? cPrimaryPink : cPrimaryPurple, 12),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () => print("voir les cgu"),
@@ -1515,11 +1521,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           title: RichText(
               text: TextSpan(
                   text: "Accepter la ",
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: textStyleCustomBold(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                      12),
                   children: [
                 TextSpan(
                     text: "politique de confidentialité",
-                    style: textStyleCustomRegular(
+                    style: textStyleCustomBold(
                         isDayMood ? cPrimaryPink : cPrimaryPurple, 12),
                     recognizer: TapGestureRecognizer()
                       ..onTap =

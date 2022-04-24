@@ -6,9 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
+import 'package:gemu/widgets/bottom_sheet_custom.dart';
 import 'package:gemu/widgets/clip_shadow_path.dart';
 import 'package:gemu/widgets/custom_clipper.dart';
-import 'package:gemu/helpers/helpers.dart';
 
 class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -73,8 +73,6 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
           Align(
             alignment: Alignment.topCenter,
             child: Container(
-              // height: 250,
-              // width: 250,
               child: Image.asset("assets/images/get_started.png"),
             ),
           ),
@@ -122,7 +120,11 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                           ),
                           Text(
                             "Rejoins-nous et vient découvrir l'univers de Gemu et de ses joueurs",
-                            style: Theme.of(context).textTheme.bodyLarge,
+                            style: textStyleCustomBold(
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                14),
                             textAlign: TextAlign.center,
                           )
                         ],
@@ -143,7 +145,12 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                               ),
                               Text(
                                 "Commencer l'aventure",
-                                style: Theme.of(context).textTheme.bodyLarge,
+                                style: textStyleCustomBold(
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    14),
                               ),
                               Container(
                                 height: 2,
@@ -159,7 +166,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             width: MediaQuery.of(context).size.width - 70,
                             height: MediaQuery.of(context).size.height / 14,
                             child: ElevatedButton(
-                                onPressed: () => Helpers.inscriptionBottomSheet(
+                                onPressed: () => inscriptionBottomSheet(
                                     context, isDayMood, ref),
                                 style: ElevatedButton.styleFrom(
                                     elevation: 6,
@@ -173,7 +180,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                     )),
                                 child: Text(
                                   'Inscription',
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  style: textStyleCustomBold(Colors.white, 14),
                                 )),
                           ),
                         ],
@@ -194,7 +201,12 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                               ),
                               Text(
                                 "Déjà un compte?",
-                                style: Theme.of(context).textTheme.bodyLarge,
+                                style: textStyleCustomBold(
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    14),
                               ),
                               Container(
                                 height: 2,
@@ -210,7 +222,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             width: MediaQuery.of(context).size.width - 70,
                             height: MediaQuery.of(context).size.height / 14,
                             child: ElevatedButton(
-                                onPressed: () => Helpers.connexionBottomSheet(
+                                onPressed: () => connexionBottomSheet(
                                     context, isDayMood, ref),
                                 style: ElevatedButton.styleFrom(
                                     elevation: 6,
@@ -224,7 +236,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                     )),
                                 child: Text(
                                   'Connexion',
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  style: textStyleCustomBold(Colors.white, 14),
                                 )),
                           ),
                         ],
@@ -237,7 +249,12 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             text: TextSpan(
                                 text:
                                     "En te connectant ou en t'inscrivant, tu dois être en accord avec les ",
-                                style: Theme.of(context).textTheme.bodySmall,
+                                style: textStyleCustomRegular(
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    12),
                                 children: [
                                   TextSpan(
                                       text: "termes et conditions",
