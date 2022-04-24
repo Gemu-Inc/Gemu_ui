@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/services/auth_service.dart';
+import 'package:gemu/views/Activities/activities_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:loader/loader.dart';
@@ -121,6 +122,7 @@ class _BottomNavigationControllerState
   @override
   Widget build(BuildContext context) {
     final activeUser = ref.watch(authNotifierProvider);
+    final indexGames = ref.watch(indexGamesNotifierProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -153,25 +155,23 @@ class _BottomNavigationControllerState
                 ),
               ),
               builder: (_, value) {
-                return Consumer(builder: (_, ref, child) {
-                  final indexGames = ref.watch(indexGamesNotifierProvider);
-                  return PageView(
-                    controller: _navPageController,
-                    physics: NeverScrollableScrollPhysics(),
-                    children: [
-                      HomeScreen(
-                          followings: followings,
-                          games: gamesList,
-                          gamePageController: gamePageController,
-                          indexGamesHome: indexGames),
-                      HighlightsScreen(
-                        gamesUser: gamesList,
-                      ),
-                      GamesScreen(games: gamesList, indexGamesHome: indexGames),
-                      MyProfilScreen()
-                    ],
-                  );
-                });
+                return PageView(
+                  controller: _navPageController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    HomeScreen(
+                        followings: followings,
+                        games: gamesList,
+                        gamePageController: gamePageController,
+                        indexGamesHome: indexGames),
+                    HighlightsScreen(
+                      gamesUser: gamesList,
+                    ),
+                    ActivitiesMenuDrawer(uid: me!.uid),
+                    // GamesScreen(games: gamesList, indexGamesHome: indexGames),
+                    MyProfilScreen()
+                  ],
+                );
               },
             ),
             Positioned(
@@ -213,13 +213,13 @@ class _BottomNavigationControllerState
                               icon: Icon(Icons.home_outlined),
                               label: 'Home'),
                           BottomNavigationBarItem(
-                              activeIcon: Icon(Icons.search),
-                              icon: Icon(Icons.search_outlined),
+                              activeIcon: Icon(Icons.highlight),
+                              icon: Icon(Icons.highlight_outlined),
                               label: 'Highlights'),
                           BottomNavigationBarItem(
-                              activeIcon: Icon(Icons.videogame_asset),
-                              icon: Icon(Icons.videogame_asset_outlined),
-                              label: 'Games'),
+                              activeIcon: Icon(Icons.notifications_active),
+                              icon: Icon(Icons.notifications_active_outlined),
+                              label: 'Activities'),
                           BottomNavigationBarItem(
                               activeIcon: Icon(Icons.person),
                               icon: Icon(Icons.person_outline),

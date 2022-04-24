@@ -289,8 +289,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                       height: 15,
                       width: 15,
                       child: CircularProgressIndicator(
-                          strokeWidth: 1.0,
-                          color: Theme.of(context).iconTheme.color),
+                          strokeWidth: 1.0, color: Colors.white),
                     )
                   : Text(
                       'Se connecter',

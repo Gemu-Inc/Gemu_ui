@@ -77,10 +77,7 @@ Future inscriptionBottomSheet(
                                       children: [
                                         Icon(
                                           Icons.mail,
-                                          color: Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black,
+                                          color: Colors.white,
                                         ),
                                         const SizedBox(
                                           width: 15.0,
@@ -252,10 +249,7 @@ Future inscriptionBottomSheet(
                                       children: [
                                         Icon(
                                           Icons.mail,
-                                          color: Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black,
+                                          color: Colors.white,
                                         ),
                                         const SizedBox(
                                           width: 15.0,
@@ -381,10 +375,7 @@ Future connexionBottomSheet(
                                       children: [
                                         Icon(
                                           Icons.mail,
-                                          color: Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black,
+                                          color: Colors.white,
                                         ),
                                         const SizedBox(
                                           width: 15.0,
@@ -557,10 +548,7 @@ Future connexionBottomSheet(
                                       children: [
                                         Icon(
                                           Icons.mail,
-                                          color: Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black,
+                                          color: Colors.white,
                                         ),
                                         const SizedBox(
                                           width: 15.0,

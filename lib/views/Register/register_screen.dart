@@ -637,7 +637,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 height: 15,
                 width: 15,
                 child: CircularProgressIndicator(
-                    strokeWidth: 1.0, color: Theme.of(context).iconTheme.color),
+                    strokeWidth: 1.0, color: Colors.white),
               )
             : Text(
                 "Terminer",
@@ -1167,7 +1167,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
                 child: Text(
                   game.name,
-                  style: Theme.of(context).textTheme.titleSmall,
+                  style: textStyleCustomBold(Colors.white, 14),
                   textAlign: TextAlign.end,
                 )),
           ),
@@ -1583,7 +1583,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
               child: Text(
                 game.name,
-                style: Theme.of(context).textTheme.titleSmall,
+                style: textStyleCustomBold(Colors.white, 14),
                 textAlign: TextAlign.end,
               )),
         ),

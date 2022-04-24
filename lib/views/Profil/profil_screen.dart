@@ -115,27 +115,12 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                                     : Brightness.dark),
                         forceElevated: true,
                         pinned: true,
-                        leading: me!.uid == "F65wJ5TGmvgO8t7HUZJYcw1PmbA2"
-                            ? IconButton(
-                                onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => PanelSupportScreen())),
-                                icon: Icon(Icons.support))
-                            : const SizedBox(),
                         centerTitle: true,
                         title: Text(
                           me!.username,
                           style: TextStyle(fontSize: 23),
                         ),
                         actions: [
-                          IconButton(
-                              onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) =>
-                                          ActivitiesMenuDrawer(uid: me!.uid))),
-                              icon: Icon(Icons.notifications_active)),
                           IconButton(
                               icon: Icon(
                                 Icons.settings,

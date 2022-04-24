@@ -39,22 +39,24 @@ Future verifyAccount(BuildContext context) {
       builder: (_) {
         return AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.primary,
+          elevation: 0,
           title: Row(
             children: [
               Icon(
                 Icons.warning,
+                color: Colors.white,
                 size: 44,
               ),
               Text(
                 "Vérifier mon compte",
-                style: Theme.of(context).textTheme.titleSmall,
+                style: textStyleCustomBold(Colors.white, 14),
                 textAlign: TextAlign.center,
               )
             ],
           ),
           content: Text(
             "Afin de sécuriser ton compte, tu peux dès maintenant vérifier ton email!",
-            style: Theme.of(context).textTheme.titleSmall,
+            style: textStyleCustomBold(Colors.white, 14),
             textAlign: TextAlign.center,
           ),
           actions: [
