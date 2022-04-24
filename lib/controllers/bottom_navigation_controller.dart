@@ -176,56 +176,164 @@ class _BottomNavigationControllerState
             ),
             Positioned(
                 bottom: 0,
+                left: 0,
                 child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 60,
-                    decoration: (selectedPage != 0 || !isLoading)
-                        ? BoxDecoration(boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).shadowColor,
-                              blurRadius: 1,
-                              spreadRadius: 3,
-                            )
-                          ])
-                        : BoxDecoration(
-                            border: Border(
-                                top: BorderSide(
-                                    color: Colors.white60, width: 0.5)),
-                          ),
-                    child: BottomNavigationBar(
-                        backgroundColor: (selectedPage != 0 || !isLoading)
-                            ? Theme.of(context).scaffoldBackgroundColor
-                            : Colors.black.withOpacity(0.2),
-                        currentIndex: selectedPage,
-                        onTap: (index) async {
-                          onTap(index);
-                        },
-                        unselectedItemColor: (selectedPage == 0 && isLoading)
-                            ? Colors.white60
-                            : Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white60
-                                : Colors.black45,
-                        selectedItemColor:
-                            Theme.of(context).colorScheme.primary,
-                        items: [
-                          BottomNavigationBarItem(
-                              activeIcon: Icon(Icons.home),
-                              icon: Icon(Icons.home_outlined),
-                              label: 'Home'),
-                          BottomNavigationBarItem(
-                              activeIcon: Icon(Icons.highlight),
-                              icon: Icon(Icons.highlight_outlined),
-                              label: 'Highlights'),
-                          BottomNavigationBarItem(
-                              activeIcon: Icon(Icons.notifications_active),
-                              icon: Icon(Icons.notifications_active_outlined),
-                              label: 'Activities'),
-                          BottomNavigationBarItem(
-                              activeIcon: Icon(Icons.person),
-                              icon: Icon(Icons.person_outline),
-                              label: 'Profil')
-                        ]))),
-            BottomShare()
+                  width: MediaQuery.of(context).size.width,
+                  height: 60,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 60,
+                        decoration: (selectedPage != 0 || !isLoading)
+                            ? BoxDecoration(
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                boxShadow: [
+                                    BoxShadow(
+                                      color: Theme.of(context).shadowColor,
+                                      blurRadius: 1,
+                                      spreadRadius: 3,
+                                    )
+                                  ])
+                            : BoxDecoration(
+                                color: Colors.black.withOpacity(0.2),
+                                border: Border(
+                                    top: BorderSide(
+                                        color: Colors.white60, width: 0.5)),
+                              ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            InkWell(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      selectedPage == 0
+                                          ? Icons.home
+                                          : Icons.home_outlined,
+                                      color: selectedPage == 0
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Colors.grey.shade400,
+                                    ),
+                                    Text(
+                                      "Accueil",
+                                      style: textStyleCustomBold(
+                                          selectedPage == 0
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Colors.grey.shade400,
+                                          12),
+                                    )
+                                  ],
+                                ),
+                                onTap: () {
+                                  onTap(0);
+                                }),
+                            InkWell(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      selectedPage == 1
+                                          ? Icons.highlight
+                                          : Icons.highlight_outlined,
+                                      color: selectedPage == 1
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Colors.grey.shade400,
+                                    ),
+                                    Text(
+                                      "Sélection",
+                                      style: textStyleCustomBold(
+                                          selectedPage == 1
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Colors.grey.shade400,
+                                          12),
+                                    )
+                                  ],
+                                ),
+                                onTap: () {
+                                  onTap(1);
+                                }),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.08,
+                            ),
+                            InkWell(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      selectedPage == 2
+                                          ? Icons.notifications_active
+                                          : Icons.notifications_active_outlined,
+                                      color: selectedPage == 2
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Colors.grey.shade400,
+                                    ),
+                                    Text(
+                                      "Activités",
+                                      style: textStyleCustomBold(
+                                          selectedPage == 2
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Colors.grey.shade400,
+                                          12),
+                                    )
+                                  ],
+                                ),
+                                onTap: () {
+                                  onTap(2);
+                                }),
+                            InkWell(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      selectedPage == 3
+                                          ? Icons.person
+                                          : Icons.person_outlined,
+                                      color: selectedPage == 3
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Colors.grey.shade400,
+                                    ),
+                                    Text(
+                                      "Profil",
+                                      style: textStyleCustomBold(
+                                          selectedPage == 3
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Colors.grey.shade400,
+                                          12),
+                                    )
+                                  ],
+                                ),
+                                onTap: () {
+                                  onTap(3);
+                                }),
+                          ],
+                        ),
+                      ),
+                      Center(
+                        heightFactor: 0.3,
+                        child: BottomShare(),
+                      ),
+                    ],
+                  ),
+                )),
           ],
         ),
       ),
