@@ -234,67 +234,77 @@ class _BottomNavigationControllerState
                                 onTap: () {
                                   onTap(0);
                                 }),
-                            InkWell(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      selectedPage == 1
-                                          ? Icons.highlight
-                                          : Icons.highlight_outlined,
-                                      color: selectedPage == 1
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Colors.grey.shade400,
-                                    ),
-                                    Text(
-                                      "Sélection",
-                                      style: textStyleCustomBold(
-                                          selectedPage == 1
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                              : Colors.grey.shade400,
-                                          12),
-                                    )
-                                  ],
-                                ),
-                                onTap: () {
-                                  onTap(1);
-                                }),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.08,
+                            Padding(
+                              padding: EdgeInsets.only(right: 25),
+                              child: InkWell(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        selectedPage == 1
+                                            ? Icons.highlight
+                                            : Icons.highlight_outlined,
+                                        color: selectedPage == 1
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Colors.grey.shade400,
+                                      ),
+                                      Text(
+                                        "Sélection",
+                                        style: textStyleCustomBold(
+                                            selectedPage == 1
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                : Colors.grey.shade400,
+                                            12),
+                                      )
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    onTap(1);
+                                  }),
                             ),
-                            InkWell(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      selectedPage == 2
-                                          ? Icons.notifications_active
-                                          : Icons.notifications_active_outlined,
-                                      color: selectedPage == 2
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Colors.grey.shade400,
-                                    ),
-                                    Text(
-                                      "Activités",
-                                      style: textStyleCustomBold(
-                                          selectedPage == 2
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                              : Colors.grey.shade400,
-                                          12),
-                                    )
-                                  ],
-                                ),
-                                onTap: () {
-                                  onTap(2);
-                                }),
+                            // Center(
+                            //   child: Container(
+                            //     color: Colors.red,
+                            //     width: MediaQuery.of(context).size.width * 0.05,
+                            //   ),
+                            // ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 25),
+                              child: InkWell(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        selectedPage == 2
+                                            ? Icons.notifications_active
+                                            : Icons
+                                                .notifications_active_outlined,
+                                        color: selectedPage == 2
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Colors.grey.shade400,
+                                      ),
+                                      Text(
+                                        "Activités",
+                                        style: textStyleCustomBold(
+                                            selectedPage == 2
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                : Colors.grey.shade400,
+                                            12),
+                                      )
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    onTap(2);
+                                  }),
+                            ),
                             InkWell(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
