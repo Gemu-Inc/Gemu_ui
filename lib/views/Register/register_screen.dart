@@ -664,35 +664,32 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Container(
-          height: MediaQuery.of(context).size.height / 12,
-          child: TextFieldCustomRegister(
-            context: context,
-            controller: _emailController,
-            focusNode: _focusNodeEmail,
-            label: 'Email',
-            obscure: false,
-            icon: Icons.mail,
-            textInputAction: TextInputAction.next,
-            textInputType: TextInputType.emailAddress,
-            clear: () {
-              setState(() {
-                _emailController.clear();
-              });
-            },
-            tap: () {
-              FocusScope.of(context).requestFocus(_focusNodeEmail);
-            },
-            changed: (value) {
-              setState(() {
-                value = _emailController.text;
-              });
-            },
-            editingComplete: () {
-              FocusScope.of(context).requestFocus(_focusNodePassword);
-            },
-            isDayMood: isDayMood,
-          ),
+        TextFieldCustomRegister(
+          context: context,
+          controller: _emailController,
+          focusNode: _focusNodeEmail,
+          label: 'Email',
+          obscure: false,
+          icon: Icons.mail,
+          textInputAction: TextInputAction.next,
+          textInputType: TextInputType.emailAddress,
+          clear: () {
+            setState(() {
+              _emailController.clear();
+            });
+          },
+          tap: () {
+            FocusScope.of(context).requestFocus(_focusNodeEmail);
+          },
+          changed: (value) {
+            setState(() {
+              value = _emailController.text;
+            });
+          },
+          editingComplete: () {
+            FocusScope.of(context).requestFocus(_focusNodePassword);
+          },
+          isDayMood: isDayMood,
         ),
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -701,65 +698,61 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Container(
-            height: MediaQuery.of(context).size.height / 12,
-            child: TextFieldCustomRegister(
-              context: context,
-              controller: _passwordController,
-              focusNode: _focusNodePassword,
-              label: 'Mot de passe',
-              obscure: true,
-              icon: Icons.lock,
-              textInputAction: TextInputAction.next,
-              clear: () {
-                setState(() {
-                  _passwordController.clear();
-                });
-              },
-              tap: () {
-                FocusScope.of(context).requestFocus(_focusNodePassword);
-              },
-              changed: (value) {
-                setState(() {
-                  value = _passwordController.text;
-                });
-              },
-              editingComplete: () {
-                FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
-              },
-              isDayMood: isDayMood,
-            )),
+        TextFieldCustomRegister(
+          context: context,
+          controller: _passwordController,
+          focusNode: _focusNodePassword,
+          label: 'Mot de passe',
+          obscure: true,
+          icon: Icons.lock,
+          textInputAction: TextInputAction.next,
+          clear: () {
+            setState(() {
+              _passwordController.clear();
+            });
+          },
+          tap: () {
+            FocusScope.of(context).requestFocus(_focusNodePassword);
+          },
+          changed: (value) {
+            setState(() {
+              value = _passwordController.text;
+            });
+          },
+          editingComplete: () {
+            FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
+          },
+          isDayMood: isDayMood,
+        ),
         const SizedBox(
           height: 10.0,
         ),
-        Container(
-            height: MediaQuery.of(context).size.height / 12,
-            child: TextFieldCustomRegister(
-              context: context,
-              controller: _confirmPasswordController,
-              focusNode: _focusNodeConfirmPassword,
-              label: 'Confirme ton mot de passe',
-              obscure: true,
-              icon: Icons.lock,
-              textInputAction: TextInputAction.go,
-              clear: () {
-                setState(() {
-                  _confirmPasswordController.clear();
-                });
-              },
-              tap: () {
-                FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
-              },
-              changed: (value) {
-                setState(() {
-                  value = _confirmPasswordController.text;
-                });
-              },
-              editingComplete: () {
-                FocusScope.of(context).unfocus();
-              },
-              isDayMood: isDayMood,
-            )),
+        TextFieldCustomRegister(
+          context: context,
+          controller: _confirmPasswordController,
+          focusNode: _focusNodeConfirmPassword,
+          label: 'Confirme ton mot de passe',
+          obscure: true,
+          icon: Icons.lock,
+          textInputAction: TextInputAction.go,
+          clear: () {
+            setState(() {
+              _confirmPasswordController.clear();
+            });
+          },
+          tap: () {
+            FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
+          },
+          changed: (value) {
+            setState(() {
+              value = _confirmPasswordController.text;
+            });
+          },
+          editingComplete: () {
+            FocusScope.of(context).unfocus();
+          },
+          isDayMood: isDayMood,
+        ),
       ],
     );
   }
@@ -782,34 +775,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Container(
-          height: MediaQuery.of(context).size.height / 12,
-          child: TextFieldCustomRegister(
-            context: context,
-            controller: _usernameController,
-            focusNode: _focusNodeUsername,
-            label: 'Pseudonyme',
-            obscure: false,
-            icon: Icons.person,
-            textInputAction: TextInputAction.go,
-            clear: () {
-              setState(() {
-                _usernameController.clear();
-              });
-            },
-            tap: () {
-              FocusScope.of(context).requestFocus(_focusNodeUsername);
-            },
-            changed: (value) {
-              setState(() {
-                value = _usernameController.text;
-              });
-            },
-            editingComplete: () {
-              FocusScope.of(context).unfocus();
-            },
-            isDayMood: isDayMood,
-          ),
+        TextFieldCustomRegister(
+          context: context,
+          controller: _usernameController,
+          focusNode: _focusNodeUsername,
+          label: 'Pseudonyme',
+          obscure: false,
+          icon: Icons.person,
+          textInputAction: TextInputAction.go,
+          clear: () {
+            setState(() {
+              _usernameController.clear();
+            });
+          },
+          tap: () {
+            FocusScope.of(context).requestFocus(_focusNodeUsername);
+          },
+          changed: (value) {
+            setState(() {
+              value = _usernameController.text;
+            });
+          },
+          editingComplete: () {
+            FocusScope.of(context).unfocus();
+          },
+          isDayMood: isDayMood,
         ),
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -818,54 +808,47 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text(
+        GestureDetector(
+          onTap: () {
+            DatePicker.showDatePicker(context,
+                showTitleActions: true,
+                theme: DatePickerTheme(
+                  backgroundColor: Theme.of(context).canvasColor,
+                  cancelStyle: textStyleCustomBold(Colors.red, 14),
+                  doneStyle: textStyleCustomBold(Colors.green, 14),
+                  itemStyle: textStyleCustomBold(
+                      Theme.of(context).iconTheme.color!, 15),
+                ),
+                minTime: DateTime(1900, 1, 1),
+                maxTime: DateTime.now(), onConfirm: (date) {
+              _dateBirthday = date;
+              final verif = DateTime.now().subtract(const Duration(days: 4745));
+              if (_dateBirthday!.isBefore(verif)) {
+                ref
+                    .read(anniversaryValidRegisterNotifierProvider.notifier)
+                    .updateValidity(true);
+              } else {
+                ref
+                    .read(anniversaryValidRegisterNotifierProvider.notifier)
+                    .updateValidity(false);
+              }
+            },
+                currentTime: _dateBirthday ?? DateTime.now(),
+                locale: LocaleType.fr);
+          },
+          child: Container(
+            height: MediaQuery.of(context).size.height / 14,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                color: Theme.of(context).canvasColor,
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(5.0)),
+            child: Text(
               Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleSmall,
             ),
-            const SizedBox(
-              width: 5.0,
-            ),
-            MaterialButton(
-              child: Text(
-                'Sélectionner',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              color: Theme.of(context).canvasColor,
-              onPressed: () {
-                DatePicker.showDatePicker(context,
-                    showTitleActions: true,
-                    theme: DatePickerTheme(
-                      backgroundColor: Theme.of(context).canvasColor,
-                      cancelStyle: textStyleCustomBold(Colors.red, 14),
-                      doneStyle: textStyleCustomBold(Colors.green, 14),
-                      itemStyle: textStyleCustomBold(
-                          Theme.of(context).iconTheme.color!, 15),
-                    ),
-                    minTime: DateTime(1900, 1, 1),
-                    maxTime: DateTime.now(), onConfirm: (date) {
-                  _dateBirthday = date;
-                  final verif =
-                      DateTime.now().subtract(const Duration(days: 4745));
-                  if (_dateBirthday!.isBefore(verif)) {
-                    ref
-                        .read(anniversaryValidRegisterNotifierProvider.notifier)
-                        .updateValidity(true);
-                  } else {
-                    ref
-                        .read(anniversaryValidRegisterNotifierProvider.notifier)
-                        .updateValidity(false);
-                  }
-                },
-                    currentTime: _dateBirthday ?? DateTime.now(),
-                    locale: LocaleType.fr);
-              },
-              elevation: 6,
-            ),
-          ],
+          ),
         ),
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -874,16 +857,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            country == null
+        GestureDetector(
+          onTap: () {
+            _onPressedShowBottomSheet();
+          },
+          child: Container(
+            height: MediaQuery.of(context).size.height / 14,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                color: Theme.of(context).canvasColor,
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(5.0)),
+            child: country == null
                 ? Container()
                 : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        height: 50,
-                        width: 50,
+                        height: 40,
+                        width: 40,
                         child: Image.asset(
                           country.flag,
                           package: countryCodePackageName,
@@ -899,16 +891,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       ),
                     ],
                   ),
-            MaterialButton(
-              child: Text(
-                'Sélectionner',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              color: Theme.of(context).canvasColor,
-              onPressed: _onPressedShowBottomSheet,
-              elevation: 6,
-            ),
-          ],
+          ),
         ),
       ],
     );
@@ -1216,32 +1199,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Container(
-            height: MediaQuery.of(context).size.height / 12,
-            child: TextFieldCustomRegister(
-              context: context,
-              controller: _emailController,
-              focusNode: _focusNodeEmail,
-              label: 'Email',
-              obscure: false,
-              icon: Icons.mail,
-              textInputAction: TextInputAction.go,
-              clear: () {
-                setState(() {
-                  _emailController.clear();
-                });
-              },
-              changed: (value) {
-                setState(() {
-                  value = _emailController.text;
-                });
-              },
-              submit: (value) {
-                value = _emailController.text;
-                _focusNodeEmail.unfocus();
-              },
-              isDayMood: isDayMood,
-            )),
+        TextFieldCustomRegister(
+          context: context,
+          controller: _emailController,
+          focusNode: _focusNodeEmail,
+          label: 'Email',
+          obscure: false,
+          icon: Icons.mail,
+          textInputAction: TextInputAction.go,
+          clear: () {
+            setState(() {
+              _emailController.clear();
+            });
+          },
+          changed: (value) {
+            setState(() {
+              value = _emailController.text;
+            });
+          },
+          submit: (value) {
+            value = _emailController.text;
+            _focusNodeEmail.unfocus();
+          },
+          isDayMood: isDayMood,
+        ),
         Padding(
           padding: const EdgeInsets.only(left: 5.0, top: 1.0),
           child: Visibility(
@@ -1258,32 +1239,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Container(
-            height: MediaQuery.of(context).size.height / 12,
-            child: TextFieldCustomRegister(
-              context: context,
-              controller: _passwordController,
-              focusNode: _focusNodePassword,
-              label: 'Mot de passe',
-              obscure: true,
-              icon: Icons.lock,
-              textInputAction: TextInputAction.go,
-              clear: () {
-                setState(() {
-                  _passwordController.clear();
-                });
-              },
-              changed: (value) {
-                setState(() {
-                  value = _passwordController.text;
-                });
-              },
-              submit: (value) {
-                value = _passwordController.text;
-                _focusNodePassword.unfocus();
-              },
-              isDayMood: isDayMood,
-            )),
+        TextFieldCustomRegister(
+          context: context,
+          controller: _passwordController,
+          focusNode: _focusNodePassword,
+          label: 'Mot de passe',
+          obscure: true,
+          icon: Icons.lock,
+          textInputAction: TextInputAction.go,
+          clear: () {
+            setState(() {
+              _passwordController.clear();
+            });
+          },
+          changed: (value) {
+            setState(() {
+              value = _passwordController.text;
+            });
+          },
+          submit: (value) {
+            value = _passwordController.text;
+            _focusNodePassword.unfocus();
+          },
+          isDayMood: isDayMood,
+        ),
         Padding(
           padding: const EdgeInsets.only(left: 5.0, top: 1.0),
           child: Visibility(
@@ -1300,32 +1279,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Container(
-            height: MediaQuery.of(context).size.height / 12,
-            child: TextFieldCustomRegister(
-              context: context,
-              controller: _usernameController,
-              focusNode: _focusNodeUsername,
-              label: 'Pseudonyme',
-              obscure: false,
-              icon: Icons.person,
-              textInputAction: TextInputAction.go,
-              clear: () {
-                setState(() {
-                  _usernameController.clear();
-                });
-              },
-              changed: (value) {
-                setState(() {
-                  value = _usernameController.text;
-                });
-              },
-              submit: (value) {
-                value = _usernameController.text;
-                _focusNodeUsername.unfocus();
-              },
-              isDayMood: isDayMood,
-            )),
+        TextFieldCustomRegister(
+          context: context,
+          controller: _usernameController,
+          focusNode: _focusNodeUsername,
+          label: 'Pseudonyme',
+          obscure: false,
+          icon: Icons.person,
+          textInputAction: TextInputAction.go,
+          clear: () {
+            setState(() {
+              _usernameController.clear();
+            });
+          },
+          changed: (value) {
+            setState(() {
+              value = _usernameController.text;
+            });
+          },
+          submit: (value) {
+            value = _usernameController.text;
+            _focusNodeUsername.unfocus();
+          },
+          isDayMood: isDayMood,
+        ),
         Padding(
           padding: const EdgeInsets.only(left: 5.0, top: 1.0),
           child: Visibility(
@@ -1342,54 +1319,47 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text(
+        GestureDetector(
+          onTap: () {
+            DatePicker.showDatePicker(context,
+                showTitleActions: true,
+                theme: DatePickerTheme(
+                  backgroundColor: Theme.of(context).canvasColor,
+                  cancelStyle: textStyleCustomBold(Colors.red, 14),
+                  doneStyle: textStyleCustomBold(Colors.green, 14),
+                  itemStyle: textStyleCustomBold(
+                      Theme.of(context).iconTheme.color!, 15),
+                ),
+                minTime: DateTime(1900, 1, 1),
+                maxTime: DateTime.now(), onConfirm: (date) {
+              _dateBirthday = date;
+              final verif = DateTime.now().subtract(const Duration(days: 4745));
+              if (_dateBirthday!.isBefore(verif)) {
+                ref
+                    .read(anniversaryValidRegisterNotifierProvider.notifier)
+                    .updateValidity(true);
+              } else {
+                ref
+                    .read(anniversaryValidRegisterNotifierProvider.notifier)
+                    .updateValidity(false);
+              }
+            },
+                currentTime: _dateBirthday ?? DateTime.now(),
+                locale: LocaleType.fr);
+          },
+          child: Container(
+            height: 45,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                color: Theme.of(context).canvasColor,
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(5.0)),
+            child: Text(
               Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleSmall,
             ),
-            const SizedBox(
-              width: 5.0,
-            ),
-            MaterialButton(
-              child: Text(
-                'Sélectionner',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              color: Theme.of(context).canvasColor,
-              onPressed: () {
-                DatePicker.showDatePicker(context,
-                    showTitleActions: true,
-                    theme: DatePickerTheme(
-                      backgroundColor: Theme.of(context).canvasColor,
-                      cancelStyle: textStyleCustomBold(Colors.red, 14),
-                      doneStyle: textStyleCustomBold(Colors.green, 14),
-                      itemStyle: textStyleCustomBold(
-                          Theme.of(context).iconTheme.color!, 15),
-                    ),
-                    minTime: DateTime(1900, 1, 1),
-                    maxTime: DateTime.now(), onConfirm: (date) {
-                  _dateBirthday = date;
-                  final verif =
-                      DateTime.now().subtract(const Duration(days: 4745));
-                  if (_dateBirthday!.isBefore(verif)) {
-                    ref
-                        .read(anniversaryValidRegisterNotifierProvider.notifier)
-                        .updateValidity(true);
-                  } else {
-                    ref
-                        .read(anniversaryValidRegisterNotifierProvider.notifier)
-                        .updateValidity(false);
-                  }
-                },
-                    currentTime: _dateBirthday ?? DateTime.now(),
-                    locale: LocaleType.fr);
-              },
-              elevation: 6,
-            ),
-          ],
+          ),
         ),
         Padding(
             padding: const EdgeInsets.only(left: 5.0, top: 1.0),
@@ -1406,16 +1376,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            country == null
+        GestureDetector(
+          onTap: () {
+            _onPressedShowBottomSheet();
+          },
+          child: Container(
+            height: 45,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                color: Theme.of(context).canvasColor,
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(5.0)),
+            child: country == null
                 ? Container()
                 : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        height: 50,
-                        width: 50,
+                        height: 40,
+                        width: 40,
                         child: Image.asset(
                           country.flag,
                           package: countryCodePackageName,
@@ -1431,16 +1410,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       ),
                     ],
                   ),
-            MaterialButton(
-              child: Text(
-                'Sélectionner',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              color: Theme.of(context).canvasColor,
-              onPressed: _onPressedShowBottomSheet,
-              elevation: 6,
-            ),
-          ],
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),

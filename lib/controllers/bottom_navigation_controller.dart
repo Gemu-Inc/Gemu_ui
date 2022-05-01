@@ -64,6 +64,7 @@ class _BottomNavigationControllerState
       me = UserModel.fromMap(value, value.data() as Map<String, dynamic>);
       user = await AuthService.getUser();
       print('current user: ${me!.uid}');
+      print(user);
     });
 
     await FirebaseFirestore.instance

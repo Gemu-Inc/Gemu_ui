@@ -179,80 +179,72 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
-          child: Container(
-            height: MediaQuery.of(context).size.height / 12,
-            child: TextFieldCustomLogin(
-              context: context,
-              controller: _emailController,
-              focusNode: _focusNodeEmail,
-              label: 'Email',
-              obscure: false,
-              icon: Icons.mail,
-              textInputAction: TextInputAction.next,
-              textInputType: TextInputType.emailAddress,
-              clear: () {
-                setState(() {
-                  _emailController.clear();
-                });
-              },
-              tap: () {
-                FocusScope.of(context).requestFocus(_focusNodeEmail);
-              },
-              changed: (value) {
-                setState(() {
-                  value = _emailController.text;
-                });
-              },
-              editingComplete: () {
-                FocusScope.of(context).requestFocus(_focusNodePassword);
-              },
-              isDayMood: isDayMood,
-            ),
+          child: TextFieldCustomLogin(
+            context: context,
+            controller: _emailController,
+            focusNode: _focusNodeEmail,
+            label: 'Email',
+            obscure: false,
+            icon: Icons.mail,
+            textInputAction: TextInputAction.next,
+            textInputType: TextInputType.emailAddress,
+            clear: () {
+              setState(() {
+                _emailController.clear();
+              });
+            },
+            tap: () {
+              FocusScope.of(context).requestFocus(_focusNodeEmail);
+            },
+            changed: (value) {
+              setState(() {
+                value = _emailController.text;
+              });
+            },
+            editingComplete: () {
+              FocusScope.of(context).requestFocus(_focusNodePassword);
+            },
+            isDayMood: isDayMood,
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 25.0),
-          child: Container(
-            height: MediaQuery.of(context).size.height / 12,
-            child: TextFieldCustomLogin(
-              context: context,
-              controller: _passwordController,
-              focusNode: _focusNodePassword,
-              label: 'Mot de passe',
-              obscure: true,
-              icon: Icons.lock,
-              textInputAction: TextInputAction.go,
-              clear: () {
-                setState(() {
-                  _passwordController.clear();
-                });
-              },
-              tap: () {},
-              changed: (value) {
-                setState(() {
-                  value = _passwordController.text;
-                });
-              },
-              submit: (value) async {
+          child: TextFieldCustomLogin(
+            context: context,
+            controller: _passwordController,
+            focusNode: _focusNodePassword,
+            label: 'Mot de passe',
+            obscure: true,
+            icon: Icons.lock,
+            textInputAction: TextInputAction.go,
+            clear: () {
+              setState(() {
+                _passwordController.clear();
+              });
+            },
+            tap: () {},
+            changed: (value) {
+              setState(() {
                 value = _passwordController.text;
-                _focusNodePassword.unfocus();
-                if (isCompleted) {
+              });
+            },
+            submit: (value) async {
+              value = _passwordController.text;
+              _focusNodePassword.unfocus();
+              if (isCompleted) {
+                ref.read(loadingLoginNotifierProvider.notifier).updateLoader();
+                await AuthService.signIn(
+                    context: context,
+                    email: _emailController.text,
+                    password: _passwordController.text);
+                if (mounted) {
                   ref
                       .read(loadingLoginNotifierProvider.notifier)
                       .updateLoader();
-                  await AuthService.signIn(
-                      context: context,
-                      email: _emailController.text,
-                      password: _passwordController.text);
-                  if (mounted) {
-                    ref
-                        .read(loadingLoginNotifierProvider.notifier)
-                        .updateLoader();
-                  }
                 }
-              },
-              isDayMood: isDayMood,
-            ),
+              }
+            },
+            isDayMood: isDayMood,
           ),
         ),
         Padding(
@@ -332,84 +324,76 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                               child: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 10.0),
-                                                child: Container(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height /
-                                                      12,
-                                                  child: TextField(
-                                                    controller:
-                                                        _emailResetPasswordController,
-                                                    focusNode:
-                                                        _focusNodeResetPassword,
-                                                    obscureText: false,
-                                                    autofocus: true,
-                                                    textInputAction:
-                                                        TextInputAction.go,
-                                                    cursorColor: cPrimaryPink,
-                                                    keyboardType: TextInputType
-                                                        .emailAddress,
-                                                    decoration: InputDecoration(
-                                                      labelText: "Email",
-                                                      contentPadding:
-                                                          EdgeInsets.zero,
-                                                      fillColor:
-                                                          Theme.of(context)
-                                                              .canvasColor,
-                                                      filled: true,
-                                                      prefixIcon: Icon(
-                                                          Icons.mail,
-                                                          color: cPrimaryPink),
-                                                      labelStyle:
-                                                          textStyleCustomBold(
-                                                              cPrimaryPink, 13),
-                                                      border:
-                                                          OutlineInputBorder(),
-                                                      focusedBorder:
-                                                          OutlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                        color: cPrimaryPink,
-                                                      )),
-                                                    ),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        value =
-                                                            _emailResetPasswordController
-                                                                .text;
-                                                      });
-                                                    },
-                                                    onSubmitted: (value) async {
+                                                child: TextField(
+                                                  controller:
+                                                      _emailResetPasswordController,
+                                                  focusNode:
+                                                      _focusNodeResetPassword,
+                                                  obscureText: false,
+                                                  autofocus: true,
+                                                  textInputAction:
+                                                      TextInputAction.go,
+                                                  cursorColor: cPrimaryPink,
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                  decoration: InputDecoration(
+                                                    labelText: "Email",
+                                                    contentPadding:
+                                                        EdgeInsets.zero,
+                                                    fillColor: Theme.of(context)
+                                                        .canvasColor,
+                                                    filled: true,
+                                                    prefixIcon: Icon(Icons.mail,
+                                                        color: cPrimaryPink),
+                                                    labelStyle:
+                                                        textStyleCustomBold(
+                                                            cPrimaryPink, 13),
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                    focusedBorder:
+                                                        OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                      color: cPrimaryPink,
+                                                    )),
+                                                  ),
+                                                  onChanged: (value) {
+                                                    setState(() {
                                                       value =
                                                           _emailResetPasswordController
                                                               .text;
-                                                      _focusNodeResetPassword
-                                                          .unfocus();
-                                                      UserModel? userData =
-                                                          await DatabaseService
-                                                              .searchVerifiedAccount(
-                                                                  _emailResetPasswordController
-                                                                      .text);
-
-                                                      if (userData != null &&
-                                                          userData
-                                                              .verifiedAccount!) {
-                                                        await AuthService
-                                                            .sendMailResetPassword(
+                                                    });
+                                                  },
+                                                  onSubmitted: (value) async {
+                                                    value =
+                                                        _emailResetPasswordController
+                                                            .text;
+                                                    _focusNodeResetPassword
+                                                        .unfocus();
+                                                    UserModel? userData =
+                                                        await DatabaseService
+                                                            .searchVerifiedAccount(
                                                                 _emailResetPasswordController
                                                                     .text);
-                                                        messageUser(context,
-                                                            'Un email pour changer ton mot de passe a été envoyé!');
-                                                      } else {
-                                                        messageUser(context,
-                                                            'Compte inexistant ou non vérifié');
-                                                      }
-                                                      Navigator.pop(mainKey
-                                                          .currentContext!);
-                                                      _emailResetPasswordController
-                                                          .clear();
-                                                    },
-                                                  ),
+
+                                                    if (userData != null &&
+                                                        userData
+                                                            .verifiedAccount!) {
+                                                      await AuthService
+                                                          .sendMailResetPassword(
+                                                              _emailResetPasswordController
+                                                                  .text);
+                                                      messageUser(context,
+                                                          'Un email pour changer ton mot de passe a été envoyé!');
+                                                    } else {
+                                                      messageUser(context,
+                                                          'Compte inexistant ou non vérifié');
+                                                    }
+                                                    Navigator.pop(mainKey
+                                                        .currentContext!);
+                                                    _emailResetPasswordController
+                                                        .clear();
+                                                  },
                                                 ),
                                               ),
                                             ),
