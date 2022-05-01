@@ -37,7 +37,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
     rotationAnimationCircularButton = Tween<double>(begin: 180.0, end: 0.0)
         .animate(CurvedAnimation(
             parent: animationController, curve: Curves.easeOut));
-    rotationAnimationFlatButton = Tween<double>(begin: 180.0, end: 0.0).animate(
+    rotationAnimationFlatButton = Tween<double>(begin: 0.0, end: 180.0).animate(
         CurvedAnimation(parent: animationController, curve: Curves.easeOut));
     animationController.addListener(() {
       setState(() {});

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
+import 'package:gemu/riverpod/Users/myself_provider.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/Reglages/Design/design_screen.dart';
@@ -22,11 +23,8 @@ class ReglagesScreen extends ConsumerStatefulWidget {
 class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
   _signOut(BuildContext context, WidgetRef ref) async {
     Navigator.pop(context);
-    ref
-        .read(currentRouteNonAuthNotifierProvider.notifier)
-        .updateCurrentRoute("Welcome");
-    ScaffoldMessenger.of(context).clearMaterialBanners();
-    await AuthService.signOut();
+    await AuthService.signOut()
+        .then((value) => ref.read(myselfNotifierProvider.notifier).cleanUser());
   }
 
   Future confirmDisconnect(BuildContext context) {

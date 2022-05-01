@@ -7,6 +7,7 @@ import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/riverpod/Register/searching_game.dart';
+import 'package:gemu/riverpod/Users/myself_provider.dart';
 
 class DatabaseService {
   //references des collections de la bdd
@@ -80,6 +81,14 @@ class DatabaseService {
         'imageUrl': gamesFollow[i].imageUrl
       });
     }
+  }
+
+  //Get current user
+  static Future<void> getCurrentUser(String uid, WidgetRef ref) async {
+    await usersCollectionReference.doc(uid).get().then((value) async {
+      ref.read(myselfNotifierProvider.notifier).initUser(
+          UserModel.fromMap(value, value.data() as Map<String, dynamic>));
+    });
   }
 
   //recherche d'un compte vérifié ou non dans la base

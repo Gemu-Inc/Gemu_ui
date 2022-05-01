@@ -5,13 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
+import 'package:gemu/riverpod/Users/myself_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:loader/loader.dart';
 
-import 'package:gemu/models/user.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/widgets/bottom_share.dart';
@@ -20,7 +20,6 @@ import 'package:gemu/riverpod/Home/index_games_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../views/Home/home_screen.dart';
-import '../views/Games/games_screen.dart';
 import '../views/Highlights/highlights_screen.dart';
 import '../views/Profil/profil_screen.dart';
 
@@ -54,18 +53,7 @@ class _BottomNavigationControllerState
   }
 
   Future<bool> loadingData(String uid) async {
-    print('dans le loader de la nav');
-    User? user;
-
-    await DatabaseService.usersCollectionReference
-        .doc(uid)
-        .get()
-        .then((value) async {
-      me = UserModel.fromMap(value, value.data() as Map<String, dynamic>);
-      user = await AuthService.getUser();
-      print('current user: ${me!.uid}');
-      print(user);
-    });
+    await DatabaseService.getCurrentUser(uid, ref);
 
     await FirebaseFirestore.instance
         .collection('users')
@@ -92,6 +80,13 @@ class _BottomNavigationControllerState
       }
     });
 
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
+    User? user = await AuthService.getUser();
     if (!user!.emailVerified) {
       verifyAccount(context);
     } else {
@@ -100,11 +95,6 @@ class _BottomNavigationControllerState
       }
     }
 
-    if (mounted) {
-      setState(() {
-        isLoading = true;
-      });
-    }
     return true;
   }
 
@@ -122,6 +112,7 @@ class _BottomNavigationControllerState
 
   @override
   Widget build(BuildContext context) {
+    me = ref.watch(myselfNotifierProvider);
     final activeUser = ref.watch(authNotifierProvider);
     final indexGames = ref.watch(indexGamesNotifierProvider);
 
@@ -149,12 +140,7 @@ class _BottomNavigationControllerState
           children: [
             Loader<void>(
               load: () => loadingData(activeUser!.uid),
-              loadingWidget: Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                  strokeWidth: 1.5,
-                ),
-              ),
+              loadingWidget: Container(),
               builder: (_, value) {
                 return PageView(
                   controller: _navPageController,
@@ -169,7 +155,6 @@ class _BottomNavigationControllerState
                       gamesUser: gamesList,
                     ),
                     ActivitiesMenuDrawer(uid: me!.uid),
-                    // GamesScreen(games: gamesList, indexGamesHome: indexGames),
                     MyProfilScreen()
                   ],
                 );

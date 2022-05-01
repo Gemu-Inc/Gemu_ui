@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -261,6 +262,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                       context: context,
                       email: _emailController.text,
                       password: _passwordController.text);
+
                   if (mounted) {
                     ref
                         .read(loadingLoginNotifierProvider.notifier)
