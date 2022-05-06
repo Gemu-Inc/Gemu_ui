@@ -52,11 +52,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 15,
-      left: MediaQuery.of(context).size.width / 4,
-      right: MediaQuery.of(context).size.width / 4,
-      child: Container(
+    return Container(
         height: 150,
         child: Stack(
           children: [
@@ -172,7 +168,6 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
             ),
           ],
         ),
-      ),
     );
   }
 }
