@@ -35,8 +35,6 @@ class BottomNavigationController extends ConsumerStatefulWidget {
 
 class _BottomNavigationControllerState
     extends ConsumerState<BottomNavigationController> {
-  // late PageController _navPageController;
-
   int selectedIndex = 0;
   late PersistentTabController _navController;
 
@@ -65,48 +63,48 @@ class _BottomNavigationControllerState
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
-        return [
-            PersistentBottomNavBarItem(
-                icon: Icon(CupertinoIcons.home),
-                title: ("Accueil"),
-                activeColorPrimary: Theme.of(context).colorScheme.primary,
-                inactiveColorPrimary: Colors.grey.shade400,
-            ),
-            PersistentBottomNavBarItem(
-                icon: Icon(Icons.highlight),
-                title: ("Sélection"),
-                activeColorPrimary: Theme.of(context).colorScheme.primary,
-                inactiveColorPrimary: Colors.grey.shade400,
-            ),
-            PersistentBottomNavBarItem(
-                icon: Container(
-                  color: Colors.red,
-                ),
-                activeColorPrimary: Colors.transparent,
-                opacity: 0.0
-            ),
-            PersistentBottomNavBarItem(
-                icon: Icon(Icons.notifications_active),
-                title: ("Home"),
-                activeColorPrimary: Theme.of(context).colorScheme.primary,
-                inactiveColorPrimary: Colors.grey.shade400,
-            ),
-            PersistentBottomNavBarItem(
-                icon: Icon(CupertinoIcons.person),
-                title: ("Home"),
-                activeColorPrimary: Theme.of(context).colorScheme.primary,
-                inactiveColorPrimary: Colors.grey.shade400,
-            ),
-        ];
-    }
-
-  // void onTap(int index) {
-  //   setState(() {
-  //     selectedPage = index;
-  //   });
-  //   print('selectedPage: $selectedPage');
-  //   _navPageController.jumpToPage(selectedPage);
-  // }
+    return [
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.home),
+        inactiveIcon: Icon(Icons.home_outlined),
+        title: ("Accueil"),
+        textStyle: textStyleCustomBold(Colors.transparent, 12),
+        activeColorPrimary: Theme.of(context).colorScheme.primary,
+        inactiveColorPrimary: Colors.grey.shade400,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.highlight),
+        inactiveIcon: Icon(Icons.highlight_outlined),
+        title: ("Sélection"),
+        textStyle: textStyleCustomBold(Colors.transparent, 12),
+        activeColorPrimary: Theme.of(context).colorScheme.primary,
+        inactiveColorPrimary: Colors.grey.shade400,
+      ),
+      PersistentBottomNavBarItem(
+          icon: Icon(
+            Icons.add,
+            size: 40,
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          activeColorPrimary: Theme.of(context).colorScheme.primary),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.notifications_active),
+        inactiveIcon: Icon(Icons.notifications_active_outlined),
+        title: ("Activités"),
+        textStyle: textStyleCustomBold(Colors.transparent, 12),
+        activeColorPrimary: Theme.of(context).colorScheme.primary,
+        inactiveColorPrimary: Colors.grey.shade400,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.person),
+        inactiveIcon: Icon(Icons.person_outlined),
+        title: ("Profil"),
+        textStyle: textStyleCustomBold(Colors.transparent, 12),
+        activeColorPrimary: Theme.of(context).colorScheme.primary,
+        inactiveColorPrimary: Colors.grey.shade400,
+      ),
+    ];
+  }
 
   Future<bool> loadingData(String uid) async {
     await DatabaseService.getCurrentUser(uid, ref);
@@ -157,13 +155,22 @@ class _BottomNavigationControllerState
   @override
   void initState() {
     super.initState();
-    // _navPageController = PageController(initialPage: 0);
     _navController = PersistentTabController(initialIndex: selectedIndex);
+    _navController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void deactivate() {
+    _navController.removeListener(() {
+      setState(() {});
+    });
+    super.deactivate();
   }
 
   @override
   void dispose() {
-    // _navPageController.dispose();
     _navController.dispose();
     super.dispose();
   }
@@ -178,66 +185,71 @@ class _BottomNavigationControllerState
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
-              statusBarColor: (selectedIndex == 0 && isLoading)
+              statusBarColor: _navController.index == 0
                   ? Colors.black.withOpacity(0.5)
                   : Colors.transparent,
-              statusBarIconBrightness: (selectedIndex == 0 && isLoading)
+              statusBarIconBrightness: _navController.index == 0
                   ? Brightness.light
                   : Theme.of(context).brightness == Brightness.dark
                       ? Brightness.light
                       : Brightness.dark,
-              systemNavigationBarColor: (selectedIndex == 0 && isLoading)
+              systemNavigationBarColor: _navController.index == 0
                   ? Colors.black
                   : Theme.of(context).scaffoldBackgroundColor,
-              systemNavigationBarIconBrightness:
-                  (selectedIndex == 0 && isLoading)
+              systemNavigationBarIconBrightness: _navController.index == 0
+                  ? Brightness.light
+                  : Theme.of(context).brightness == Brightness.dark
                       ? Brightness.light
-                      : Theme.of(context).brightness == Brightness.dark
-                          ? Brightness.light
-                          : Brightness.dark),
+                      : Brightness.dark),
           child: Loader<void>(
             load: () => loadingData(activeUser!.uid),
-              loadingWidget: Container(),
+            loadingWidget: Center(
+                child: CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.primary,
+              strokeWidth: 0.5,
+            )),
             builder: (_, value) {
-            return PersistentTabView(
-            context,
-            controller: _navController,
-            screens: _buildScreens(indexGames),
-            items: _navBarsItems(),
-            confineInSafeArea: true,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Default is Colors.white.
-            handleAndroidBackButtonPress: true, // Default is true.
-            resizeToAvoidBottomInset:
-                true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-            stateManagement: true, // Default is true.
-            hideNavigationBarWhenKeyboardShows:
-                true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
-            decoration: NavBarDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              boxShadow:[
-                              BoxShadow(
-                                color: Theme.of(context).shadowColor,
-                                blurRadius: 1,
-                                spreadRadius: 3,
-                              )
-                            ]),
-            popAllScreensOnTapOfSelectedTab: true,
-            popActionScreens: PopActionScreensType.all,
-            itemAnimationProperties: ItemAnimationProperties(
-              // Navigation Bar's items animation properties.
-              duration: Duration(milliseconds: 200),
-              curve: Curves.ease,
-            ),
-            screenTransitionAnimation: ScreenTransitionAnimation(
-              // Screen transition animation on change of selected tab.
-              animateTabTransition: true,
-              curve: Curves.ease,
-              duration: Duration(milliseconds: 200),
-            ),
-            navBarStyle: NavBarStyle
-                .style15, // Choose the nav bar style with this property.
-          );
-          },)),
+              return PersistentTabView(
+                context,
+                controller: _navController,
+                screens: _buildScreens(indexGames),
+                items: _navBarsItems(),
+                confineInSafeArea: true,
+                backgroundColor: _navController.index == 0
+                    ? Colors.black
+                    : Theme.of(context).scaffoldBackgroundColor,
+                handleAndroidBackButtonPress: true,
+                resizeToAvoidBottomInset: true,
+                stateManagement: true,
+                hideNavigationBarWhenKeyboardShows: true,
+                decoration: NavBarDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10.0),
+                        topRight: Radius.circular(10.0)),
+                    boxShadow: [
+                      BoxShadow(
+                          color: _navController.index == 0
+                              ? Colors.grey.shade400
+                              : Theme.of(context).shadowColor,
+                          blurRadius: 1,
+                          spreadRadius: 1,
+                          blurStyle: BlurStyle.solid)
+                    ]),
+                popAllScreensOnTapOfSelectedTab: true,
+                popActionScreens: PopActionScreensType.all,
+                itemAnimationProperties: ItemAnimationProperties(
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.ease,
+                ),
+                screenTransitionAnimation: ScreenTransitionAnimation(
+                  animateTabTransition: true,
+                  curve: Curves.ease,
+                  duration: Duration(milliseconds: 200),
+                ),
+                navBarStyle: NavBarStyle.style15,
+              );
+            },
+          )),
     );
   }
 }
