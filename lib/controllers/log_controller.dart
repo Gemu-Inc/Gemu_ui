@@ -1,13 +1,17 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gemu/models/game.dart';
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 import 'package:gemu/riverpod/Connectivity/connectivity_provider.dart';
 import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
 import 'package:gemu/riverpod/Theme/theme_provider.dart';
+import 'package:gemu/riverpod/Users/myself_provider.dart';
 import 'package:gemu/services/auth_service.dart';
+import 'package:gemu/services/database_service.dart';
 import 'package:gemu/views/NoConnectivity/noconnectivity_screen.dart';
 import 'package:gemu/views/Splash/splash_screen.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
@@ -36,13 +40,13 @@ class _LogControllerState extends ConsumerState<LogController> {
   final Connectivity _connectivity = Connectivity();
 
   bool isWaiting = false;
+  bool getDataUser = false;
 
-  @override
-  void initState() {
-    super.initState();
+  User? activeUser;
 
+  Future<void> initApp() async {
     ref.read(dayMoodNotifierProvider.notifier).timeMood();
-    ref.read(connectivityNotifierProvider.notifier).initConnectivity();
+    await ref.read(connectivityNotifierProvider.notifier).initConnectivity();
 
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
@@ -54,128 +58,50 @@ class _LogControllerState extends ConsumerState<LogController> {
     _userSubscription =
         AuthService.authStateChange().listen((User? user) async {
       if (!isWaiting) {
-        ref.read(authNotifierProvider.notifier).updateAuth(user);
+        if (user != null) {
+          await getUserData(user);
+        }
+        await ref.read(authNotifierProvider.notifier).updateAuth(user);
       } else {
         await Future.delayed(Duration(seconds: 4));
         if (!isWaiting) {
-          ref.read(authNotifierProvider.notifier).updateAuth(user);
+          if (user != null) {
+            await getUserData(user);
+          }
+          await ref.read(authNotifierProvider.notifier).updateAuth(user);
         }
+      }
+
+      if (!getDataUser) {
+        setState(() {
+          getDataUser = true;
+        });
       }
     });
   }
 
-  @override
-  void dispose() {
-    _connectivitySubscription.cancel();
-    _userSubscription.cancel();
-    super.dispose();
-  }
+  getUserData(User user) async {
+    List<Game> gamesList = [];
+    List<PageController> gamePageController = [];
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = ref.watch(themeProviderNotifier);
-    final primaryColor = ref.watch(primaryProviderNotifier);
-    final accentColor = ref.watch(accentProviderNotifier);
-    final seenGetStarted = ref.watch(getStartedNotifierProvider);
-    final connectivityStatus = ref.watch(connectivityNotifierProvider);
-    final activeUser = ref.watch(authNotifierProvider);
-    final currentRouteNonAuth = ref.watch(currentRouteNonAuthNotifierProvider);
-    isWaiting = ref.watch(waitingAuthNotifierProvider);
+    await DatabaseService.getCurrentUser(user.uid, ref);
 
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Gemu',
-        themeMode: ThemeMode.system,
-        theme: theme == ThemeData()
-            ? (primaryColor == cPrimaryPink && accentColor == cPrimaryPurple)
-                ? lightThemeSystemPink
-                : lightThemeSystemPurple
-            : theme,
-        darkTheme: theme == ThemeData()
-            ? (primaryColor == cPrimaryPink && accentColor == cPrimaryPurple)
-                ? darkThemeSystemPink
-                : darkThemeSystemPurple
-            : theme,
-        home: Loader<bool>(
-          load: () => loading(ref),
-          loadingWidget: SplashScreen(),
-          builder: (_, value) {
-            return Scaffold(
-              backgroundColor: Colors.transparent,
-              resizeToAvoidBottomInset: false,
-              key: mainKey,
-              body: connectivityStatus == ConnectivityResult.none
-                  ? NoConnectivityScreen()
-                  : activeUser == null
-                      ? WillPopScope(
-                          onWillPop: () async {
-                            if (currentRouteNonAuth == "Register") {
-                              showDialog(
-                                  context: navNonAuthKey.currentContext!,
-                                  builder: (_) {
-                                    return AlertDialogCustom(
-                                        _,
-                                        "Annuler l'inscription",
-                                        "Êtes-vous sur de vouloir annuler votre inscription?",
-                                        [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(
-                                                    mainKey.currentContext!);
-                                                ref
-                                                    .read(
-                                                        currentRouteNonAuthNotifierProvider
-                                                            .notifier)
-                                                    .updateCurrentRoute(
-                                                        "Welcome");
-                                                navNonAuthKey.currentState!
-                                                    .pushNamedAndRemoveUntil(
-                                                        Welcome,
-                                                        (route) => false);
-                                              },
-                                              child: Text(
-                                                "Oui",
-                                                style: textStyleCustomBold(
-                                                    Colors.green, 12),
-                                              )),
-                                          TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  mainKey.currentContext!),
-                                              child: Text(
-                                                "Non",
-                                                style: textStyleCustomBold(
-                                                    Colors.red, 12),
-                                              ))
-                                        ]);
-                                  });
-                              return false;
-                            } else {
-                              return !(await navNonAuthKey.currentState!
-                                  .maybePop());
-                            }
-                          },
-                          child: Navigator(
-                            key: navNonAuthKey,
-                            initialRoute:
-                                !seenGetStarted ? GetStartedBefore : Welcome,
-                            onGenerateRoute: (settings) =>
-                                generateRouteNonAuth(settings, context),
-                          ),
-                        )
-                      : WillPopScope(
-                          onWillPop: () async {
-                            return !(await navAuthKey.currentState!.maybePop());
-                          },
-                          child: Navigator(
-                            key: navAuthKey,
-                            initialRoute: Navigation,
-                            onGenerateRoute: (settings) =>
-                                generateRouteAuth(settings, context),
-                          ),
-                        ),
-            );
-          },
-        ));
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('games')
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        gamesList.add(Game.fromMap(item, item.data()));
+        gamePageController.add(PageController());
+      }
+    });
+
+    ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
+    ref
+        .read(myGamesControllerNotifierProvider.notifier)
+        .initGamesController(gamePageController);
   }
 
   Future<bool> loading(WidgetRef ref) async {
@@ -204,7 +130,137 @@ class _LogControllerState extends ConsumerState<LogController> {
       ref.read(accentProviderNotifier.notifier).createAccentColor(accentColor);
     }
     ref.read(themeProviderNotifier.notifier).createTheme(theme, context);
-    await Future.delayed(Duration(seconds: 3));
+
+    await Future.delayed(Duration(seconds: 2));
+
     return true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initApp();
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    _userSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = ref.watch(themeProviderNotifier);
+    final primaryColor = ref.watch(primaryProviderNotifier);
+    final accentColor = ref.watch(accentProviderNotifier);
+    final seenGetStarted = ref.watch(getStartedNotifierProvider);
+    final connectivityStatus = ref.watch(connectivityNotifierProvider);
+    activeUser = ref.watch(authNotifierProvider);
+    final currentRouteNonAuth = ref.watch(currentRouteNonAuthNotifierProvider);
+    isWaiting = ref.watch(waitingAuthNotifierProvider);
+
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Gemu',
+        themeMode: ThemeMode.system,
+        theme: theme == ThemeData()
+            ? (primaryColor == cPrimaryPink && accentColor == cPrimaryPurple)
+                ? lightThemeSystemPink
+                : lightThemeSystemPurple
+            : theme,
+        darkTheme: theme == ThemeData()
+            ? (primaryColor == cPrimaryPink && accentColor == cPrimaryPurple)
+                ? darkThemeSystemPink
+                : darkThemeSystemPurple
+            : theme,
+        home: getDataUser
+            ? Loader<bool>(
+                load: () => loading(ref),
+                loadingWidget: SplashScreen(),
+                builder: (_, value) {
+                  return Scaffold(
+                    backgroundColor: Colors.transparent,
+                    resizeToAvoidBottomInset: false,
+                    key: mainKey,
+                    body: connectivityStatus == ConnectivityResult.none
+                        ? NoConnectivityScreen()
+                        : activeUser == null
+                            ? WillPopScope(
+                                onWillPop: () async {
+                                  if (currentRouteNonAuth == "Register") {
+                                    showDialog(
+                                        context: navNonAuthKey.currentContext!,
+                                        builder: (_) {
+                                          return AlertDialogCustom(
+                                              _,
+                                              "Annuler l'inscription",
+                                              "Êtes-vous sur de vouloir annuler votre inscription?",
+                                              [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(mainKey
+                                                          .currentContext!);
+                                                      ref
+                                                          .read(
+                                                              currentRouteNonAuthNotifierProvider
+                                                                  .notifier)
+                                                          .updateCurrentRoute(
+                                                              "Welcome");
+                                                      navNonAuthKey
+                                                          .currentState!
+                                                          .pushNamedAndRemoveUntil(
+                                                              Welcome,
+                                                              (route) => false);
+                                                    },
+                                                    child: Text(
+                                                      "Oui",
+                                                      style:
+                                                          textStyleCustomBold(
+                                                              Colors.green, 12),
+                                                    )),
+                                                TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(mainKey
+                                                            .currentContext!),
+                                                    child: Text(
+                                                      "Non",
+                                                      style:
+                                                          textStyleCustomBold(
+                                                              Colors.red, 12),
+                                                    ))
+                                              ]);
+                                        });
+                                    return false;
+                                  } else {
+                                    return !(await navNonAuthKey.currentState!
+                                        .maybePop());
+                                  }
+                                },
+                                child: Navigator(
+                                  key: navNonAuthKey,
+                                  initialRoute: !seenGetStarted
+                                      ? GetStartedBefore
+                                      : Welcome,
+                                  onGenerateRoute: (settings) =>
+                                      generateRouteNonAuth(settings, context),
+                                ),
+                              )
+                            : WillPopScope(
+                                onWillPop: () async {
+                                  return !(await navAuthKey.currentState!
+                                      .maybePop());
+                                },
+                                child: Navigator(
+                                  key: navAuthKey,
+                                  initialRoute: Navigation,
+                                  onGenerateRoute: (settings) =>
+                                      generateRouteAuth(settings, context),
+                                ),
+                              ),
+                  );
+                },
+              )
+            : SplashScreen());
   }
 }

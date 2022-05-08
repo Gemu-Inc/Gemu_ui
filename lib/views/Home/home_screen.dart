@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
@@ -6,11 +7,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/riverpod/Home/index_games_provider.dart';
+import 'package:gemu/services/auth_service.dart';
+import 'package:gemu/services/database_service.dart';
+import 'package:gemu/widgets/alert_dialog_custom.dart';
 
 import 'game_section.dart';
 import 'following_section.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   final List followings;
   final List<Game> games;
   final List<PageController> gamePageController;
@@ -28,7 +32,7 @@ class HomeScreen extends StatefulWidget {
   _Homeviewstate createState() => _Homeviewstate();
 }
 
-class _Homeviewstate extends State<HomeScreen>
+class _Homeviewstate extends ConsumerState<HomeScreen>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   bool dataIsThere = false;
 
@@ -41,6 +45,17 @@ class _Homeviewstate extends State<HomeScreen>
       _animationGamesController;
   late Animation _animationRotate, _animationGames;
   bool panelGamesThere = false;
+
+  Future<void> accountVerified(String uid) async {
+    User? user = await AuthService.getUser();
+    if (!user!.emailVerified) {
+      verifyAccount(context);
+    } else {
+      if (!me!.verifiedAccount!) {
+        DatabaseService.updateVerifyAccount(me!.uid);
+      }
+    }
+  }
 
   void _onTabMenuChanged() async {
     if (_animationRotateController.isCompleted) {
@@ -84,6 +99,8 @@ class _Homeviewstate extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+
+    accountVerified(me!.uid);
 
     _tabMenuController = TabController(
         initialIndex: currentTabMenuIndex, length: 2, vsync: this);

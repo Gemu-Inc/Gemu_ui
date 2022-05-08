@@ -37,14 +37,10 @@ class _BottomNavigationControllerState
     extends ConsumerState<BottomNavigationController> {
   int selectedIndex = 0;
   late PersistentTabController _navController;
+  User? activeUser;
 
-  bool isLoading = false;
-
-  List<Game> gamesList = [];
-  List<PageController> gamePageController = [];
-  List followings = [];
-
-  List<Widget> _buildScreens(int indexGames) {
+  List<Widget> _buildScreens(User? activeUser, int indexGames, List followings,
+      List<Game> gamesList, List<PageController> gamePageController) {
     return [
       HomeScreen(
           followings: followings,
@@ -106,52 +102,6 @@ class _BottomNavigationControllerState
     ];
   }
 
-  Future<bool> loadingData(String uid) async {
-    await DatabaseService.getCurrentUser(uid, ref);
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('games')
-        .get()
-        .then((value) {
-      print('charging games');
-      for (var item in value.docs) {
-        gamesList.add(Game.fromMap(item, item.data()));
-        gamePageController.add(PageController());
-      }
-    });
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('following')
-        .get()
-        .then((value) {
-      print('charging followings');
-      for (var item in value.docs) {
-        followings.add(item.id);
-      }
-    });
-
-    if (mounted) {
-      setState(() {
-        isLoading = true;
-      });
-    }
-
-    User? user = await AuthService.getUser();
-    if (!user!.emailVerified) {
-      verifyAccount(context);
-    } else {
-      if (!me!.verifiedAccount!) {
-        DatabaseService.updateVerifyAccount(me!.uid);
-      }
-    }
-
-    return true;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -178,79 +128,71 @@ class _BottomNavigationControllerState
   @override
   Widget build(BuildContext context) {
     me = ref.watch(myselfNotifierProvider);
-    final activeUser = ref.watch(authNotifierProvider);
+    activeUser = ref.watch(authNotifierProvider);
+    final gamesList = ref.read(myGamesNotifierProvider);
+    final gamesControllerList = ref.read(myGamesControllerNotifierProvider);
     final indexGames = ref.watch(indexGamesNotifierProvider);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-              statusBarColor: _navController.index == 0
-                  ? Colors.black.withOpacity(0.5)
-                  : Colors.transparent,
-              statusBarIconBrightness: _navController.index == 0
-                  ? Brightness.light
-                  : Theme.of(context).brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark,
-              systemNavigationBarColor: _navController.index == 0
-                  ? Colors.black
-                  : Theme.of(context).scaffoldBackgroundColor,
-              systemNavigationBarIconBrightness: _navController.index == 0
-                  ? Brightness.light
-                  : Theme.of(context).brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark),
-          child: Loader<void>(
-            load: () => loadingData(activeUser!.uid),
-            loadingWidget: Center(
-                child: CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.primary,
-              strokeWidth: 0.5,
-            )),
-            builder: (_, value) {
-              return PersistentTabView(
-                context,
-                controller: _navController,
-                screens: _buildScreens(indexGames),
-                items: _navBarsItems(),
-                confineInSafeArea: true,
-                backgroundColor: _navController.index == 0
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+                statusBarColor: _navController.index == 0
+                    ? Colors.black.withOpacity(0.5)
+                    : Colors.transparent,
+                statusBarIconBrightness: _navController.index == 0
+                    ? Brightness.light
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark,
+                systemNavigationBarColor: _navController.index == 0
                     ? Colors.black
                     : Theme.of(context).scaffoldBackgroundColor,
-                handleAndroidBackButtonPress: true,
-                resizeToAvoidBottomInset: true,
-                stateManagement: true,
-                hideNavigationBarWhenKeyboardShows: true,
-                decoration: NavBarDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0)),
-                    boxShadow: [
-                      BoxShadow(
-                          color: _navController.index == 0
-                              ? Colors.grey.shade400
-                              : Theme.of(context).shadowColor,
-                          blurRadius: 1,
-                          spreadRadius: 1,
-                          blurStyle: BlurStyle.solid)
-                    ]),
-                popAllScreensOnTapOfSelectedTab: true,
-                popActionScreens: PopActionScreensType.all,
-                itemAnimationProperties: ItemAnimationProperties(
-                  duration: Duration(milliseconds: 200),
-                  curve: Curves.ease,
-                ),
-                screenTransitionAnimation: ScreenTransitionAnimation(
-                  animateTabTransition: true,
-                  curve: Curves.ease,
-                  duration: Duration(milliseconds: 200),
-                ),
-                navBarStyle: NavBarStyle.style15,
-              );
-            },
-          )),
-    );
+                systemNavigationBarIconBrightness: _navController.index == 0
+                    ? Brightness.light
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Brightness.light
+                        : Brightness.dark),
+            child: PersistentTabView(
+              context,
+              controller: _navController,
+              screens: _buildScreens(
+                  activeUser, indexGames, [], gamesList, gamesControllerList),
+              items: _navBarsItems(),
+              confineInSafeArea: true,
+              backgroundColor: _navController.index == 0
+                  ? Colors.black
+                  : Theme.of(context).scaffoldBackgroundColor,
+              handleAndroidBackButtonPress: true,
+              resizeToAvoidBottomInset: true,
+              stateManagement: true,
+              hideNavigationBarWhenKeyboardShows: true,
+              decoration: NavBarDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0)),
+                  boxShadow: [
+                    BoxShadow(
+                        color: _navController.index == 0
+                            ? Colors.grey.shade400
+                            : Theme.of(context).shadowColor,
+                        blurRadius: 1,
+                        spreadRadius: 1,
+                        blurStyle: BlurStyle.solid)
+                  ]),
+              popAllScreensOnTapOfSelectedTab: true,
+              popActionScreens: PopActionScreensType.all,
+              itemAnimationProperties: ItemAnimationProperties(
+                duration: Duration(milliseconds: 200),
+                curve: Curves.ease,
+              ),
+              screenTransitionAnimation: ScreenTransitionAnimation(
+                animateTabTransition: true,
+                curve: Curves.ease,
+                duration: Duration(milliseconds: 200),
+              ),
+              navBarStyle: NavBarStyle.style15,
+            )));
   }
 }
 
