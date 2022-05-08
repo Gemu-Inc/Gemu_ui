@@ -1,5 +1,10 @@
 import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:gemu/constants/constants.dart';
 
 class BottomShare extends StatefulWidget {
   @override
@@ -15,6 +20,112 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
   double getRadianFromDegree(double degree) {
     double unitRadian = 57.295779513;
     return degree / unitRadian;
+  }
+
+  showOptionsImage() {
+    return showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10.0),
+                topRight: Radius.circular(10.0))),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 6,
+        builder: (context) {
+          return Container(
+            height: 175,
+            child: Column(
+              children: [
+                ListTile(
+                  onTap: () => pickImage(ImageSource.camera),
+                  leading: Icon(Icons.photo_camera),
+                  title: Text('Appareil photo',
+                      style: Theme.of(context).textTheme.titleSmall),
+                ),
+                ListTile(
+                  onTap: () => pickImage(ImageSource.gallery),
+                  leading: Icon(Icons.photo),
+                  title: Text('Gallerie',
+                      style: Theme.of(context).textTheme.titleSmall),
+                ),
+                ListTile(
+                  onTap: () => Navigator.pop(context),
+                  leading: Icon(Icons.clear),
+                  title: Text('Annuler',
+                      style: Theme.of(context).textTheme.titleSmall),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  showOptionsVideo() {
+    return showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10.0),
+                topRight: Radius.circular(10.0))),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 6,
+        builder: (context) {
+          return Container(
+            height: 175,
+            child: Column(
+              children: [
+                ListTile(
+                  onTap: () => pickVideo(ImageSource.camera),
+                  leading: Icon(Icons.photo_camera),
+                  title: Text('Caméra',
+                      style: Theme.of(context).textTheme.titleSmall),
+                ),
+                ListTile(
+                  onTap: () => pickVideo(ImageSource.gallery),
+                  leading: Icon(Icons.photo),
+                  title: Text('Gallerie',
+                      style: Theme.of(context).textTheme.titleSmall),
+                ),
+                ListTile(
+                  onTap: () => Navigator.pop(context),
+                  leading: Icon(Icons.clear),
+                  title: Text('Annuler',
+                      style: Theme.of(context).textTheme.titleSmall),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  pickImage(ImageSource src) async {
+    try {
+      final image =
+          await ImagePicker().getImage(source: src, imageQuality: 100);
+      if (image != null) {
+        Navigator.pushNamed(context, PictureEditor,
+            arguments: [File(image.path)]);
+      } else {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  pickVideo(ImageSource src) async {
+    try {
+      final video = await ImagePicker()
+          .getVideo(source: src, maxDuration: Duration(seconds: 10));
+      if (video != null) {
+        Navigator.pushNamed(context, VideoEditor,
+            arguments: [File(video.path)]);
+      } else {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -79,11 +190,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                     ),
                     onTap: () {
                       animationController.reverse();
-                      print('Post picture');
-                      // Navigator.push(context,
-                      //     MaterialPageRoute(builder: (context) {
-                      //   return AddPostScreen();
-                      // }));
+                      showOptionsImage();
                     })),
           ),
         ),
@@ -112,7 +219,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                     ),
                     onTap: () {
                       animationController.reverse();
-                      print('Post vidéo');
+                      showOptionsVideo();
                     })),
           ),
         ),

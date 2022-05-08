@@ -22,9 +22,12 @@ const String Login = "Login";
 const String Navigation = "Nav";
 const String Home = "Home";
 const String Highlights = "Highlights";
+const String Activities = "Activities";
+const String Profile = "Profile";
 const String Games = "Games";
 const String MyProfil = "Profil";
-const String AddPost = "AddPost";
+const String PictureEditor = "PictureEditor";
+const String VideoEditor = "VideoEditor";
 
 //Themes
 const appTheme = "Theme";

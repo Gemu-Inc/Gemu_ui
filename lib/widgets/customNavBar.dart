@@ -86,40 +86,5 @@ class CustomNavBar extends StatelessWidget {
         ),
       ),
     );
-
-    // Container(
-    //   alignment: Alignment.center,
-    //   height: 60.0,
-    //   child: Column(
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     crossAxisAlignment: CrossAxisAlignment.center,
-    //     mainAxisSize: MainAxisSize.min,
-    //     children: <Widget>[
-    //       IconTheme(
-    //         data: IconThemeData(
-    //             size: 26.0,
-    //             color: isSelected
-    //                 ? (item.activeColorSecondary == null
-    //                     ? item.activeColorPrimary
-    //                     : item.activeColorSecondary)
-    //                 : item.inactiveColorPrimary == null
-    //                     ? item.activeColorPrimary
-    //                     : item.inactiveColorPrimary),
-    //         child: isSelected ? item.icon : item.inactiveIcon!,
-    //       ),
-    //       Padding(
-    //         padding: const EdgeInsets.only(top: 5.0),
-    //         child: Text(
-    //           item.title!,
-    //           style: textStyleCustomBold(
-    //               isSelected
-    //                   ? Theme.of(context).colorScheme.primary
-    //                   : Colors.grey.shade400,
-    //               12),
-    //         ),
-    //       )
-    //     ],
-    //   ),
-    // );
   }
 }

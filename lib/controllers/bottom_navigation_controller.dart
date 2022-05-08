@@ -1,18 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+
 import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/riverpod/Users/myself_provider.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
 import 'package:gemu/widgets/bottom_share.dart';
 import 'package:gemu/widgets/customNavBar.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-
 import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/riverpod/Home/index_games_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../views/Home/home_screen.dart';
 import '../views/Highlights/highlights_screen.dart';
@@ -28,7 +28,6 @@ class BottomNavigationController extends ConsumerStatefulWidget {
 
 class _BottomNavigationControllerState
     extends ConsumerState<BottomNavigationController> {
-  int selectedIndex = 0;
   late PersistentTabController _navController;
   User? activeUser;
 
@@ -88,7 +87,7 @@ class _BottomNavigationControllerState
   @override
   void initState() {
     super.initState();
-    _navController = PersistentTabController(initialIndex: selectedIndex);
+    _navController = PersistentTabController(initialIndex: 0);
     _navController.addListener(() {
       setState(() {});
     });
