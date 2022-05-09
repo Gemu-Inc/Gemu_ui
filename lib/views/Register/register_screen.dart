@@ -837,7 +837,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 locale: LocaleType.fr);
           },
           child: Container(
-            height: MediaQuery.of(context).size.height / 14,
+            height: 45,
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,
@@ -862,7 +862,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             _onPressedShowBottomSheet();
           },
           child: Container(
-            height: MediaQuery.of(context).size.height / 14,
+            height: 45,
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,

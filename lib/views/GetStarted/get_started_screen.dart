@@ -75,7 +75,10 @@ class _GetStartedBeforeScreenState
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset("assets/images/get_started.png"),
+        Image.asset(
+          "assets/images/get_started.png",
+          height: MediaQuery.of(context).size.height / 2.25,
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
           child: Text(
@@ -250,7 +253,10 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 ],
               )),
           Expanded(
-            child: Image.asset("assets/images/get_started.png"),
+            child: Image.asset(
+              "assets/images/get_started.png",
+              height: MediaQuery.of(context).size.height / 2.25,
+            ),
           ),
           Container(
               height: MediaQuery.of(context).size.height / 6,
@@ -291,7 +297,10 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 ],
               )),
           Expanded(
-            child: Image.asset("assets/images/get_started.png"),
+            child: Image.asset(
+              "assets/images/get_started.png",
+              height: MediaQuery.of(context).size.height / 2.25,
+            ),
           ),
           Container(
               height: MediaQuery.of(context).size.height / 6,
@@ -332,7 +341,10 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 ],
               )),
           Expanded(
-            child: Image.asset("assets/images/get_started.png"),
+            child: Image.asset(
+              "assets/images/get_started.png",
+              height: MediaQuery.of(context).size.height / 2.25,
+            ),
           ),
           Container(
               height: MediaQuery.of(context).size.height / 6,
@@ -373,7 +385,10 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 ],
               )),
           Expanded(
-            child: Image.asset("assets/images/get_started.png"),
+            child: Image.asset(
+              "assets/images/get_started.png",
+              height: MediaQuery.of(context).size.height / 2.25,
+            ),
           ),
           Container(
               height: MediaQuery.of(context).size.height / 6,

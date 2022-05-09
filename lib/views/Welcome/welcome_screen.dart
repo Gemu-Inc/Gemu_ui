@@ -72,8 +72,9 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
           ),
           Align(
             alignment: Alignment.topCenter,
-            child: Container(
-              child: Image.asset("assets/images/get_started.png"),
+            child: Image.asset(
+              "assets/images/get_started.png",
+              height: MediaQuery.of(context).size.height / 3,
             ),
           ),
           Align(
