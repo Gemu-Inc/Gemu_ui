@@ -153,7 +153,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
       initialIndex: widget.indexGamesHome,
       length: widget.games.length,
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Color(0xFF22213C),
         body: Stack(
           children: [
             bodyHome(widget.games[widget.indexGamesHome]),

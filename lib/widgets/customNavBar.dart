@@ -20,17 +20,15 @@ class CustomNavBar extends StatelessWidget {
       height: 60,
       decoration: BoxDecoration(
           color: selectedIndex == 0
-              ? Colors.black
+              ? Color(0xFF22213C)
               : Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
           boxShadow: [
             BoxShadow(
-                color: selectedIndex == 0
-                    ? Colors.grey.shade400
-                    : Theme.of(context).shadowColor,
-                blurRadius: 1,
-                spreadRadius: selectedIndex == 0 ? 1 : 2,
+                color: Theme.of(context).colorScheme.primary,
+                blurRadius: selectedIndex == 0 ? 1 : 2,
+                spreadRadius: 1,
                 blurStyle: BlurStyle.solid)
           ]),
       child: Row(

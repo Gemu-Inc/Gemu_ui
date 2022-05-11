@@ -55,7 +55,13 @@ class _BottomNavigationControllerState
         title: ("Accueil"),
         textStyle: textStyleCustomBold(Colors.transparent, 12),
         activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Color(0xFFC3BCF5).withOpacity(0.7),
+        inactiveColorPrimary: Theme.of(context).brightness == Brightness.dark
+            ? Theme.of(context).colorScheme.primary == cPrimaryPink
+                ? cInactiveIconPinkDarkTheme
+                : cInactiveIconPurpleDarkTheme
+            : Theme.of(context).colorScheme.primary == cPrimaryPink
+                ? cInactiveIconPinkLightTheme
+                : cInactiveIconPurpleLightTheme,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.highlight),
@@ -63,7 +69,13 @@ class _BottomNavigationControllerState
         title: ("Sélection"),
         textStyle: textStyleCustomBold(Colors.transparent, 12),
         activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Color(0xFFC3BCF5).withOpacity(0.7),
+        inactiveColorPrimary: Theme.of(context).brightness == Brightness.dark
+            ? Theme.of(context).colorScheme.primary == cPrimaryPink
+                ? cInactiveIconPinkDarkTheme
+                : cInactiveIconPurpleDarkTheme
+            : Theme.of(context).colorScheme.primary == cPrimaryPink
+                ? cInactiveIconPinkLightTheme
+                : cInactiveIconPurpleLightTheme,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.notifications_active),
@@ -71,7 +83,13 @@ class _BottomNavigationControllerState
         title: ("Activités"),
         textStyle: textStyleCustomBold(Colors.transparent, 12),
         activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Color(0xFFC3BCF5).withOpacity(0.7),
+        inactiveColorPrimary: Theme.of(context).brightness == Brightness.dark
+            ? Theme.of(context).colorScheme.primary == cPrimaryPink
+                ? cInactiveIconPinkDarkTheme
+                : cInactiveIconPurpleDarkTheme
+            : Theme.of(context).colorScheme.primary == cPrimaryPink
+                ? cInactiveIconPinkLightTheme
+                : cInactiveIconPurpleLightTheme,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.person),
@@ -79,7 +97,13 @@ class _BottomNavigationControllerState
         title: ("Profil"),
         textStyle: textStyleCustomBold(Colors.transparent, 12),
         activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Color(0xFFC3BCF5).withOpacity(0.7),
+        inactiveColorPrimary: Theme.of(context).brightness == Brightness.dark
+            ? Theme.of(context).colorScheme.primary == cPrimaryPink
+                ? cInactiveIconPinkDarkTheme
+                : cInactiveIconPurpleDarkTheme
+            : Theme.of(context).colorScheme.primary == cPrimaryPink
+                ? cInactiveIconPinkLightTheme
+                : cInactiveIconPurpleLightTheme,
       ),
     ];
   }
@@ -120,7 +144,7 @@ class _BottomNavigationControllerState
         body: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
                 statusBarColor: _navController.index == 0
-                    ? Colors.black.withOpacity(0.5)
+                    ? Color(0xFF22213C).withOpacity(0.5)
                     : Colors.transparent,
                 statusBarIconBrightness: _navController.index == 0
                     ? Brightness.light
@@ -128,7 +152,7 @@ class _BottomNavigationControllerState
                         ? Brightness.light
                         : Brightness.dark,
                 systemNavigationBarColor: _navController.index == 0
-                    ? Colors.black
+                    ? Color(0xFF22213C)
                     : Theme.of(context).scaffoldBackgroundColor,
                 systemNavigationBarIconBrightness: _navController.index == 0
                     ? Brightness.light
@@ -148,7 +172,7 @@ class _BottomNavigationControllerState
                   stateManagement: true,
                   hideNavigationBarWhenKeyboardShows: true,
                   backgroundColor: _navController.index == 0
-                      ? Colors.transparent
+                      ? Color(0xFF22213C)
                       : Theme.of(context).scaffoldBackgroundColor,
                   customWidget: CustomNavBar(
                     items: _navBarsItems(),

@@ -71,8 +71,10 @@ const cIconDarkTheme = Colors.white;
 const cIconLightTheme = Colors.black;
 const cTextDarkTheme = Colors.white;
 const cTextLightTheme = Colors.black;
-const cInactiveIconPurple = Color(0xFFC3BCF5);
-const cInactiveIconPink = Color(0xFFD6A5C0);
+const cInactiveIconPurpleLightTheme = Color(0xFFC3BCF5);
+const cInactiveIconPinkLightTheme = Color(0xFFD6A5C0);
+final cInactiveIconPurpleDarkTheme = Color(0xFFC3BCF5).withOpacity(0.7);
+final cInactiveIconPinkDarkTheme = Color(0xFFD6A5C0).withOpacity(0.7);
 
 //Lists colors dayMood
 List<Color> lightBgColors = [
