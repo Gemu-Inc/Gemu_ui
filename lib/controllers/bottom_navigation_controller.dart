@@ -55,7 +55,7 @@ class _BottomNavigationControllerState
         title: ("Accueil"),
         textStyle: textStyleCustomBold(Colors.transparent, 12),
         activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Colors.grey.shade400,
+        inactiveColorPrimary: Color(0xFFC3BCF5).withOpacity(0.7),
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.highlight),
@@ -63,7 +63,7 @@ class _BottomNavigationControllerState
         title: ("Sélection"),
         textStyle: textStyleCustomBold(Colors.transparent, 12),
         activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Colors.grey.shade400,
+        inactiveColorPrimary: Color(0xFFC3BCF5).withOpacity(0.7),
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.notifications_active),
@@ -71,7 +71,7 @@ class _BottomNavigationControllerState
         title: ("Activités"),
         textStyle: textStyleCustomBold(Colors.transparent, 12),
         activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Colors.grey.shade400,
+        inactiveColorPrimary: Color(0xFFC3BCF5).withOpacity(0.7),
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.person),
@@ -79,7 +79,7 @@ class _BottomNavigationControllerState
         title: ("Profil"),
         textStyle: textStyleCustomBold(Colors.transparent, 12),
         activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Colors.grey.shade400,
+        inactiveColorPrimary: Color(0xFFC3BCF5).withOpacity(0.7),
       ),
     ];
   }
