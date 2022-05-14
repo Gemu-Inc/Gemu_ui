@@ -13,12 +13,11 @@ import 'package:gemu/riverpod/Users/myself_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/views/NoConnectivity/noconnectivity_screen.dart';
-import 'package:gemu/views/Splash/splash_screen.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
-import 'package:loader/loader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import "package:flutter_native_splash/flutter_native_splash.dart";
 
 import 'package:gemu/router.dart';
 import 'package:gemu/constants/constants.dart';
@@ -40,71 +39,10 @@ class _LogControllerState extends ConsumerState<LogController> {
   final Connectivity _connectivity = Connectivity();
 
   bool isWaiting = false;
-  bool getDataUser = false;
 
   User? activeUser;
 
   Future<void> initApp() async {
-    ref.read(dayMoodNotifierProvider.notifier).timeMood();
-    await ref.read(connectivityNotifierProvider.notifier).initConnectivity();
-
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
-      ref
-          .read(connectivityNotifierProvider.notifier)
-          .updateConnectivity(result);
-    });
-
-    _userSubscription =
-        AuthService.authStateChange().listen((User? user) async {
-      if (!isWaiting) {
-        if (user != null) {
-          await getUserData(user);
-        }
-        await ref.read(authNotifierProvider.notifier).updateAuth(user);
-      } else {
-        await Future.delayed(Duration(seconds: 4));
-        if (!isWaiting) {
-          if (user != null) {
-            await getUserData(user);
-          }
-          await ref.read(authNotifierProvider.notifier).updateAuth(user);
-        }
-      }
-
-      if (!getDataUser) {
-        setState(() {
-          getDataUser = true;
-        });
-      }
-    });
-  }
-
-  getUserData(User user) async {
-    List<Game> gamesList = [];
-    List<PageController> gamePageController = [];
-
-    await DatabaseService.getCurrentUser(user.uid, ref);
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('games')
-        .get()
-        .then((value) {
-      for (var item in value.docs) {
-        gamesList.add(Game.fromMap(item, item.data()));
-        gamePageController.add(PageController());
-      }
-    });
-
-    ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
-    ref
-        .read(myGamesControllerNotifierProvider.notifier)
-        .initGamesController(gamePageController);
-  }
-
-  Future<bool> loading(WidgetRef ref) async {
     final prefs = await SharedPreferences.getInstance();
 
     ref.read(getStartedNotifierProvider.notifier).setSeenGetStarted();
@@ -131,9 +69,58 @@ class _LogControllerState extends ConsumerState<LogController> {
     }
     ref.read(themeProviderNotifier.notifier).createTheme(theme, context);
 
-    await Future.delayed(Duration(seconds: 2));
+    ref.read(dayMoodNotifierProvider.notifier).timeMood();
+    await ref.read(connectivityNotifierProvider.notifier).initConnectivity();
 
-    return true;
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
+      ref
+          .read(connectivityNotifierProvider.notifier)
+          .updateConnectivity(result);
+    });
+
+    _userSubscription =
+        AuthService.authStateChange().listen((User? user) async {
+      if (!isWaiting) {
+        if (user != null) {
+          await getUserData(user);
+        }
+        await ref.read(authNotifierProvider.notifier).updateAuth(user);
+      } else {
+        await Future.delayed(Duration(seconds: 4));
+        if (!isWaiting) {
+          if (user != null) {
+            await getUserData(user);
+          }
+          await ref.read(authNotifierProvider.notifier).updateAuth(user);
+        }
+      }
+      FlutterNativeSplash.remove();
+    });
+  }
+
+  getUserData(User user) async {
+    List<Game> gamesList = [];
+    List<PageController> gamePageController = [];
+
+    await DatabaseService.getCurrentUser(user.uid, ref);
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('games')
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        gamesList.add(Game.fromMap(item, item.data()));
+        gamePageController.add(PageController());
+      }
+    });
+
+    ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
+    ref
+        .read(myGamesControllerNotifierProvider.notifier)
+        .initGamesController(gamePageController);
   }
 
   @override
@@ -174,93 +161,77 @@ class _LogControllerState extends ConsumerState<LogController> {
                 ? darkThemeSystemPink
                 : darkThemeSystemPurple
             : theme,
-        home: getDataUser
-            ? Loader<bool>(
-                load: () => loading(ref),
-                loadingWidget: SplashScreen(),
-                builder: (_, value) {
-                  return Scaffold(
-                    backgroundColor: Colors.transparent,
-                    resizeToAvoidBottomInset: false,
-                    key: mainKey,
-                    body: connectivityStatus == ConnectivityResult.none
-                        ? NoConnectivityScreen()
-                        : activeUser == null
-                            ? WillPopScope(
-                                onWillPop: () async {
-                                  if (currentRouteNonAuth == "Register") {
-                                    showDialog(
-                                        context: navNonAuthKey.currentContext!,
-                                        builder: (_) {
-                                          return AlertDialogCustom(
-                                              _,
-                                              "Annuler l'inscription",
-                                              "Êtes-vous sur de vouloir annuler votre inscription?",
-                                              [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(mainKey
-                                                          .currentContext!);
-                                                      ref
-                                                          .read(
-                                                              currentRouteNonAuthNotifierProvider
-                                                                  .notifier)
-                                                          .updateCurrentRoute(
-                                                              "Welcome");
-                                                      navNonAuthKey
-                                                          .currentState!
-                                                          .pushNamedAndRemoveUntil(
-                                                              Welcome,
-                                                              (route) => false);
-                                                    },
-                                                    child: Text(
-                                                      "Oui",
-                                                      style:
-                                                          textStyleCustomBold(
-                                                              Colors.green, 12),
-                                                    )),
-                                                TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(mainKey
-                                                            .currentContext!),
-                                                    child: Text(
-                                                      "Non",
-                                                      style:
-                                                          textStyleCustomBold(
-                                                              Colors.red, 12),
-                                                    ))
-                                              ]);
-                                        });
-                                    return false;
-                                  } else {
-                                    return !(await navNonAuthKey.currentState!
-                                        .maybePop());
-                                  }
-                                },
-                                child: Navigator(
-                                  key: navNonAuthKey,
-                                  initialRoute: !seenGetStarted
-                                      ? GetStartedBefore
-                                      : Welcome,
-                                  onGenerateRoute: (settings) =>
-                                      generateRouteNonAuth(settings, context),
-                                ),
-                              )
-                            : WillPopScope(
-                                onWillPop: () async {
-                                  return !(await navAuthKey.currentState!
-                                      .maybePop());
-                                },
-                                child: Navigator(
-                                  key: navAuthKey,
-                                  initialRoute: Navigation,
-                                  onGenerateRoute: (settings) =>
-                                      generateRouteAuth(settings, context),
-                                ),
-                              ),
-                  );
-                },
-              )
-            : SplashScreen());
+        home: Scaffold(
+            backgroundColor: Colors.transparent,
+            resizeToAvoidBottomInset: false,
+            key: mainKey,
+            body: connectivityStatus == ConnectivityResult.none
+                ? NoConnectivityScreen()
+                : activeUser == null
+                    ? WillPopScope(
+                        onWillPop: () async {
+                          if (currentRouteNonAuth == "Register") {
+                            showDialog(
+                                context: navNonAuthKey.currentContext!,
+                                builder: (_) {
+                                  return AlertDialogCustom(
+                                      _,
+                                      "Annuler l'inscription",
+                                      "Êtes-vous sur de vouloir annuler votre inscription?",
+                                      [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(
+                                                  mainKey.currentContext!);
+                                              ref
+                                                  .read(
+                                                      currentRouteNonAuthNotifierProvider
+                                                          .notifier)
+                                                  .updateCurrentRoute(
+                                                      "Welcome");
+                                              navNonAuthKey.currentState!
+                                                  .pushNamedAndRemoveUntil(
+                                                      Welcome,
+                                                      (route) => false);
+                                            },
+                                            child: Text(
+                                              "Oui",
+                                              style: textStyleCustomBold(
+                                                  Colors.green, 12),
+                                            )),
+                                        TextButton(
+                                            onPressed: () => Navigator.pop(
+                                                mainKey.currentContext!),
+                                            child: Text(
+                                              "Non",
+                                              style: textStyleCustomBold(
+                                                  Colors.red, 12),
+                                            ))
+                                      ]);
+                                });
+                            return false;
+                          } else {
+                            return !(await navNonAuthKey.currentState!
+                                .maybePop());
+                          }
+                        },
+                        child: Navigator(
+                          key: navNonAuthKey,
+                          initialRoute:
+                              !seenGetStarted ? GetStartedBefore : Welcome,
+                          onGenerateRoute: (settings) =>
+                              generateRouteNonAuth(settings, context),
+                        ),
+                      )
+                    : WillPopScope(
+                        onWillPop: () async {
+                          return !(await navAuthKey.currentState!.maybePop());
+                        },
+                        child: Navigator(
+                          key: navAuthKey,
+                          initialRoute: Navigation,
+                          onGenerateRoute: (settings) =>
+                              generateRouteAuth(settings, context),
+                        ))));
   }
 }
