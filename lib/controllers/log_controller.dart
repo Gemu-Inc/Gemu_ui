@@ -72,31 +72,7 @@ class _LogControllerState extends ConsumerState<LogController> {
     ref.read(dayMoodNotifierProvider.notifier).timeMood();
     await ref.read(connectivityNotifierProvider.notifier).initConnectivity();
 
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
-      ref
-          .read(connectivityNotifierProvider.notifier)
-          .updateConnectivity(result);
-    });
-
-    _userSubscription =
-        AuthService.authStateChange().listen((User? user) async {
-      if (!isWaiting) {
-        if (user != null) {
-          await getUserData(user);
-        }
-        await ref.read(authNotifierProvider.notifier).updateAuth(user);
-      } else {
-        await Future.delayed(Duration(seconds: 4));
-        if (!isWaiting) {
-          if (user != null) {
-            await getUserData(user);
-          }
-          await ref.read(authNotifierProvider.notifier).updateAuth(user);
-        }
-      }
-      FlutterNativeSplash.remove();
-    });
+    FlutterNativeSplash.remove();
   }
 
   getUserData(User user) async {
@@ -126,6 +102,31 @@ class _LogControllerState extends ConsumerState<LogController> {
   @override
   void initState() {
     super.initState();
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
+      ref.read(connectivityNotifierProvider.notifier).connectivityState(result);
+    });
+
+
+  ///TODO plus mettre en listen je pense mais gérer avec le riverpod du user
+    _userSubscription =
+        AuthService.authStateChange().listen((User? user) async {
+      if (!isWaiting) {
+        if (user != null) {
+          await getUserData(user);
+        }
+        await ref.read(authNotifierProvider.notifier).updateAuth(user);
+      } else {
+        await Future.delayed(Duration(seconds: 4));
+        if (!isWaiting) {
+          if (user != null) {
+            await getUserData(user);
+          }
+          await ref.read(authNotifierProvider.notifier).updateAuth(user);
+        }
+      }
+    });
+
     initApp();
   }
 

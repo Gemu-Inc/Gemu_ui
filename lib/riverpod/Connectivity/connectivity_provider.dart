@@ -27,7 +27,7 @@ class ConnectivityProvider extends StateNotifier<ConnectivityResult> {
     state = result;
   }
 
-  updateConnectivity(ConnectivityResult result) {
+  connectivityState(ConnectivityResult result) {
     state = result;
     print("connectivity: $state");
   }
