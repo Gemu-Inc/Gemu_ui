@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gemu/models/game.dart';
-import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
 import 'package:gemu/riverpod/Connectivity/connectivity_provider.dart';
 import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
@@ -34,13 +33,8 @@ class _LogControllerState extends ConsumerState<LogController> {
   late Color primaryColor, accentColor;
 
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
-  late StreamSubscription<User?> _userSubscription;
 
   final Connectivity _connectivity = Connectivity();
-
-  bool isWaiting = false;
-
-  User? activeUser;
 
   Future<void> initApp() async {
     final prefs = await SharedPreferences.getInstance();
@@ -72,14 +66,25 @@ class _LogControllerState extends ConsumerState<LogController> {
     ref.read(dayMoodNotifierProvider.notifier).timeMood();
     await ref.read(connectivityNotifierProvider.notifier).initConnectivity();
 
+    if (prefs.getString("token") != null) {
+      User? user = await AuthService.getUser();
+
+      if (user != null) {
+        if (user.uid != prefs.getString("token")) {
+          await prefs.setString("token", user.uid);
+        }
+        await getUserData(user);
+      } else {
+        await prefs.remove("token");
+      }
+    }
+
     FlutterNativeSplash.remove();
   }
 
   getUserData(User user) async {
     List<Game> gamesList = [];
     List<PageController> gamePageController = [];
-
-    await DatabaseService.getCurrentUser(user.uid, ref);
 
     await FirebaseFirestore.instance
         .collection('users')
@@ -97,6 +102,8 @@ class _LogControllerState extends ConsumerState<LogController> {
     ref
         .read(myGamesControllerNotifierProvider.notifier)
         .initGamesController(gamePageController);
+
+    await DatabaseService.getCurrentUser(user.uid, ref);
   }
 
   @override
@@ -107,33 +114,12 @@ class _LogControllerState extends ConsumerState<LogController> {
       ref.read(connectivityNotifierProvider.notifier).connectivityState(result);
     });
 
-
-  ///TODO plus mettre en listen je pense mais gérer avec le riverpod du user
-    _userSubscription =
-        AuthService.authStateChange().listen((User? user) async {
-      if (!isWaiting) {
-        if (user != null) {
-          await getUserData(user);
-        }
-        await ref.read(authNotifierProvider.notifier).updateAuth(user);
-      } else {
-        await Future.delayed(Duration(seconds: 4));
-        if (!isWaiting) {
-          if (user != null) {
-            await getUserData(user);
-          }
-          await ref.read(authNotifierProvider.notifier).updateAuth(user);
-        }
-      }
-    });
-
     initApp();
   }
 
   @override
   void dispose() {
     _connectivitySubscription.cancel();
-    _userSubscription.cancel();
     super.dispose();
   }
 
@@ -144,9 +130,8 @@ class _LogControllerState extends ConsumerState<LogController> {
     final accentColor = ref.watch(accentProviderNotifier);
     final seenGetStarted = ref.watch(getStartedNotifierProvider);
     final connectivityStatus = ref.watch(connectivityNotifierProvider);
-    activeUser = ref.watch(authNotifierProvider);
     final currentRouteNonAuth = ref.watch(currentRouteNonAuthNotifierProvider);
-    isWaiting = ref.watch(waitingAuthNotifierProvider);
+    final activeUser = ref.watch(myselfNotifierProvider);
 
     return MaterialApp(
         debugShowCheckedModeBanner: false,

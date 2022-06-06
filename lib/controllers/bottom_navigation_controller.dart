@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
-import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/riverpod/Users/myself_provider.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
@@ -31,7 +30,7 @@ class _BottomNavigationControllerState
   late PersistentTabController _navController;
   User? activeUser;
 
-  List<Widget> _buildScreens(User? activeUser, int indexGames, List followings,
+  List<Widget> _buildScreens(int indexGames, List followings,
       List<Game> gamesList, List<PageController> gamePageController) {
     return [
       HomeScreen(
@@ -134,7 +133,6 @@ class _BottomNavigationControllerState
   @override
   Widget build(BuildContext context) {
     me = ref.watch(myselfNotifierProvider);
-    activeUser = ref.watch(authNotifierProvider);
     final gamesList = ref.read(myGamesNotifierProvider);
     final gamesControllerList = ref.read(myGamesControllerNotifierProvider);
     final indexGames = ref.watch(indexGamesNotifierProvider);
@@ -165,8 +163,8 @@ class _BottomNavigationControllerState
                   context,
                   controller: _navController,
                   itemCount: 4,
-                  screens: _buildScreens(activeUser, indexGames, [], gamesList,
-                      gamesControllerList),
+                  screens: _buildScreens(
+                      indexGames, [], gamesList, gamesControllerList),
                   confineInSafeArea: true,
                   handleAndroidBackButtonPress: true,
                   stateManagement: true,

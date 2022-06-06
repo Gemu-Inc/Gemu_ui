@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,10 +9,10 @@ import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:gemu/riverpod/Connectivity/auth_provider.dart';
 import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/riverpod/Register/register_provider.dart';
 import 'package:gemu/riverpod/Register/searching_game.dart';
+import 'package:gemu/riverpod/Users/myself_provider.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loader/loader.dart';
@@ -26,6 +27,7 @@ import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -120,6 +122,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
       ref.read(searchingRegisterNotifierProvider.notifier).update(false);
     }
+  }
+
+  getUserData(User user) async {
+    List<Game> gamesList = [];
+    List<PageController> gamePageController = [];
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('games')
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        gamesList.add(Game.fromMap(item, item.data()));
+        gamePageController.add(PageController());
+      }
+    });
+
+    ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
+    ref
+        .read(myGamesControllerNotifierProvider.notifier)
+        .initGamesController(gamePageController);
+
+    await DatabaseService.getCurrentUser(user.uid, ref);
   }
 
   @override
@@ -604,10 +630,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             if (verif.docs != null && verif.docs.isNotEmpty) {
               messageUser(context, "Ce pseudonyme existe déjà");
             } else {
-              ref
-                  .read(waitingAuthNotifierProvider.notifier)
-                  .updateWaiting(true);
-              await AuthService.registerUser(
+              User? user = await AuthService.registerUser(
                   context,
                   _emailController.text,
                   _passwordController.text,
@@ -616,9 +639,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   _selectedCountry!.countryCode,
                   gamesFollow,
                   ref);
-              ref
-                  .read(waitingAuthNotifierProvider.notifier)
-                  .updateWaiting(false);
+
+              if (user != null) {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString("token", user.uid);
+                await getUserData(user);
+              }
             }
             if (mounted) {
               ref.read(loadingRegisterNotifierProvider.notifier).updateLoader();

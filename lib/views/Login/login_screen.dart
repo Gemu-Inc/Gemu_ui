@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,11 @@ import 'package:email_validator/email_validator.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
+import 'package:gemu/models/game.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
 import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
+import 'package:gemu/riverpod/Users/myself_provider.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:gemu/widgets/bottom_sheet_custom.dart';
@@ -17,6 +20,7 @@ import 'package:gemu/widgets/snack_bar_custom.dart';
 import 'package:gemu/widgets/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/riverpod/Login/login_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   @override
@@ -33,6 +37,30 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   late FocusNode _focusNodeResetPassword;
 
   bool isCompleted = false;
+
+  getUserData(User user) async {
+    List<Game> gamesList = [];
+    List<PageController> gamePageController = [];
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('games')
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        gamesList.add(Game.fromMap(item, item.data()));
+        gamePageController.add(PageController());
+      }
+    });
+
+    ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
+    ref
+        .read(myGamesControllerNotifierProvider.notifier)
+        .initGamesController(gamePageController);
+
+    await DatabaseService.getCurrentUser(user.uid, ref);
+  }
 
   @override
   void initState() {
@@ -234,10 +262,18 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
               _focusNodePassword.unfocus();
               if (isCompleted) {
                 ref.read(loadingLoginNotifierProvider.notifier).updateLoader();
-                await AuthService.signIn(
+                User? user = await AuthService.signIn(
                     context: context,
                     email: _emailController.text,
                     password: _passwordController.text);
+
+                if (user != null) {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.setString("token", user.uid);
+                  await getUserData(user);
+                }
+
                 if (mounted) {
                   ref
                       .read(loadingLoginNotifierProvider.notifier)
@@ -258,10 +294,17 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                   ref
                       .read(loadingLoginNotifierProvider.notifier)
                       .updateLoader();
-                  await AuthService.signIn(
+                  User? user = await AuthService.signIn(
                       context: context,
                       email: _emailController.text,
                       password: _passwordController.text);
+
+                  if (user != null) {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setString("token", user.uid);
+                    await getUserData(user);
+                  }
 
                   if (mounted) {
                     ref

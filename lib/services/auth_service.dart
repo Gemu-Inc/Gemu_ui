@@ -21,14 +21,17 @@ class AuthService {
   }
 
   //Check pour la connexion d'un compte
-  static Future<void> signIn(
+  static Future<User?> signIn(
       {required BuildContext context,
       required String email,
       required String password}) async {
+    User? user;
+
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
+        user = await AuthService.getUser();
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-email') {
           messageUser(context, 'Try again, invalid email');
@@ -48,10 +51,11 @@ class AuthService {
         error: 'Try again, no email or password',
       ));
     }
+    return user;
   }
 
   //Créer un utilisateur
-  static Future<void> registerUser(
+  static Future<User?> registerUser(
       BuildContext context,
       String email,
       String password,
@@ -60,6 +64,7 @@ class AuthService {
       String country,
       List<Game> gamesFollow,
       WidgetRef ref) async {
+    User? user;
     try {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
@@ -80,11 +85,13 @@ class AuthService {
           ref.read(successRegisterNotifierProvider.notifier).updateSuccess();
           messageUser(context,
               "Compte créé avec succès, vous allez être redirigé dans quelques instants");
+          user = await AuthService.getUser();
         } catch (e) {
           messageUser(context,
               "Un problème est survenu, veuillez réessayer ultérieurement");
         }
       });
+      return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         messageUser(context, "Email already use, try again");
@@ -98,6 +105,7 @@ class AuthService {
         messageUser(context,
             "Un problème est survenu, veuillez réessayer ultérieurement");
       }
+      return null;
     }
   }
 

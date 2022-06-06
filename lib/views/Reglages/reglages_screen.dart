@@ -10,6 +10,7 @@ import 'package:gemu/views/Reglages/Privacy/privacy_screen.dart';
 import 'package:gemu/widgets/app_bar_custom.dart';
 import 'package:gemu/widgets/alert_dialog_custom.dart';
 import 'package:gemu/models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReglagesScreen extends ConsumerStatefulWidget {
   final UserModel user;
@@ -23,6 +24,8 @@ class ReglagesScreen extends ConsumerStatefulWidget {
 class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
   _signOut(BuildContext context, WidgetRef ref) async {
     Navigator.pop(context);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("token");
     await AuthService.signOut()
         .then((value) => ref.read(myselfNotifierProvider.notifier).cleanUser());
   }
