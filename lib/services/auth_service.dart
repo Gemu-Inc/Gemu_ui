@@ -2,11 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemu/riverpod/Register/register_provider.dart';
+import 'package:gemu/providers/Register/register_provider.dart';
 
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/widgets/snack_bar_custom.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -18,6 +19,16 @@ class AuthService {
   static Future<User?> getUser() async {
     User? user = _auth.currentUser;
     return user;
+  }
+
+  static Future<void> setUserToken(User user) async {
+    user.getIdToken().then((token) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      if (token != prefs.getString("token")) {
+        prefs.setString("token", token);
+      }
+    });
   }
 
   //Check pour la connexion d'un compte

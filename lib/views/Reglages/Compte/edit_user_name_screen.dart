@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/user.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 class EditUserNameScreen extends StatefulWidget {
   final UserModel user;

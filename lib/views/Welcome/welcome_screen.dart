@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
-import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
-import 'package:gemu/widgets/bottom_sheet_custom.dart';
-import 'package:gemu/widgets/clip_shadow_path.dart';
-import 'package:gemu/widgets/custom_clipper.dart';
+import 'package:gemu/providers/Navigation/nav_non_auth.dart';
+import 'package:gemu/providers/Theme/dayMood_provider.dart';
+import 'package:gemu/components/bottom_sheet_custom.dart';
+import 'package:gemu/components/clip_shadow_path.dart';
+import 'package:gemu/components/custom_clipper.dart';
 
 class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);

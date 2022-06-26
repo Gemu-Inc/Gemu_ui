@@ -7,7 +7,6 @@ import 'package:gemu/models/user.dart';
 UserModel? me;
 
 //Navigator global keys
-final GlobalKey<NavigatorState> mainKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> navNonAuthKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> navAuthKey = GlobalKey<NavigatorState>();
 

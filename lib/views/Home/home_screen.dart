@@ -6,10 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/riverpod/Home/index_games_provider.dart';
+import 'package:gemu/providers/Home/index_games_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 import 'game_section.dart';
 import 'following_section.dart';
@@ -49,7 +49,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   Future<void> accountVerified(String uid) async {
     User? user = await AuthService.getUser();
     if (!user!.emailVerified) {
-      verifyAccount(context);
+      verifyAccount();
     } else {
       if (!me!.verifiedAccount!) {
         DatabaseService.updateVerifyAccount(me!.uid);

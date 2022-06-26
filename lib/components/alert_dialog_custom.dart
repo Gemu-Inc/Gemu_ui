@@ -33,10 +33,10 @@ class AlertDialogResetPassword extends AlertDialog {
             actions: actions);
 }
 
-Future verifyAccount(BuildContext context) {
+Future verifyAccount() {
   return showDialog(
-      context: context,
-      builder: (_) {
+      context: navAuthKey.currentContext!,
+      builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.primary,
           elevation: 0,
@@ -62,7 +62,7 @@ Future verifyAccount(BuildContext context) {
           actions: [
             TextButton(
                 onPressed: () async {
-                  Navigator.pop(mainKey.currentContext!);
+                  Navigator.pop(context);
                   await AuthService.sendMailVerifyEmail(context);
                 },
                 child: Text(
@@ -71,7 +71,7 @@ Future verifyAccount(BuildContext context) {
                 )),
             TextButton(
                 onPressed: () {
-                  Navigator.pop(mainKey.currentContext!);
+                  Navigator.pop(context);
                 },
                 child: Text(
                   'Plus tard',

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/widgets/bouncing_button.dart';
+import 'package:gemu/components/bouncing_button.dart';
 import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/models/game.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({Key? key}) : super(key: key);

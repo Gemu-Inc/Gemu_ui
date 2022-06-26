@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/game.dart';
-import 'package:gemu/widgets/app_bar_custom.dart';
+import 'package:gemu/components/app_bar_custom.dart';
 
 class PanelSupportScreen extends StatefulWidget {
   @override

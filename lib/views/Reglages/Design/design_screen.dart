@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gemu/widgets/app_bar_custom.dart';
+import 'package:gemu/components/app_bar_custom.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/riverpod/Theme/theme_provider.dart';
+import 'package:gemu/providers/Theme/theme_provider.dart';
 
 class DesignScreen extends StatefulWidget {
   @override

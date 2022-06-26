@@ -4,14 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
-import 'package:gemu/riverpod/Users/myself_provider.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
-import 'package:gemu/widgets/bottom_share.dart';
-import 'package:gemu/widgets/customNavBar.dart';
+import 'package:gemu/components/bottom_share.dart';
+import 'package:gemu/components/customNavBar.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/riverpod/Home/index_games_provider.dart';
+import 'package:gemu/providers/Home/index_games_provider.dart';
 
 import '../views/Home/home_screen.dart';
 import '../views/Highlights/highlights_screen.dart';

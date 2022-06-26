@@ -10,8 +10,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/controllers/bottom_navigation_controller.dart';
 import 'package:gemu/models/user.dart';
-import 'package:gemu/widgets/snack_bar_custom.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 class PictureScreen extends StatefulWidget {
   final File file;

@@ -10,7 +10,7 @@ import 'package:gemu/services/database_service.dart';
 import 'package:gemu/views/Reglages/Compte/edit_email_screen.dart';
 import 'package:gemu/views/Reglages/Compte/edit_password_screen.dart';
 import 'package:gemu/views/Reglages/Compte/edit_user_name_screen.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 // ignore: must_be_immutable
 class EditProfileScreen extends StatefulWidget {

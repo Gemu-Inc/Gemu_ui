@@ -6,7 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/commentaire.dart';
-import 'package:gemu/widgets/snack_bar_custom.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/helpers/helpers.dart';

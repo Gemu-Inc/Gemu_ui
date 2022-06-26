@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/riverpod/Login/login_provider.dart';
-import 'package:gemu/riverpod/Register/register_provider.dart';
+import 'package:gemu/providers/Login/login_provider.dart';
+import 'package:gemu/providers/Register/register_provider.dart';
 
 class TextFieldCustom extends StatefulWidget {
   final BuildContext context;

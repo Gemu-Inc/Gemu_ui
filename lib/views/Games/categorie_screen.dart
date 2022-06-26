@@ -7,7 +7,7 @@ import 'package:algolia/algolia.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
-import 'package:gemu/riverpod/Home/index_games_provider.dart';
+import 'package:gemu/providers/Home/index_games_provider.dart';
 import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/views/Games/game_screen.dart';
 

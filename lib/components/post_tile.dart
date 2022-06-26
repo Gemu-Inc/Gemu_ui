@@ -16,7 +16,7 @@ import 'package:video_player/video_player.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/widgets/expandable_text.dart';
+import 'package:gemu/components/expandable_text.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/views/Post/Comments/comments_screen.dart';
 import 'package:gemu/services/database_service.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
-import 'package:gemu/riverpod/Home/index_games_provider.dart';
+import 'package:gemu/providers/Home/index_games_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,7 +10,7 @@ import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Games/categorie_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:gemu/views/Games/game_screen.dart';
 
 import 'add_game_screen.dart';

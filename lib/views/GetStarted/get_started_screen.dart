@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
-import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
-import 'package:gemu/riverpod/GetStarted/getStarted_provider.dart';
+import 'package:gemu/providers/Navigation/nav_non_auth.dart';
+import 'package:gemu/providers/Theme/dayMood_provider.dart';
+import 'package:gemu/providers/GetStarted/getStarted_provider.dart';
 
 import 'package:gemu/constants/constants.dart';
 

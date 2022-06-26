@@ -12,8 +12,8 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/controllers/bottom_navigation_controller.dart';
-import 'package:gemu/widgets/snack_bar_custom.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 class VideoScreen extends StatefulWidget {
   final File file;

@@ -9,10 +9,10 @@ import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
-import 'package:gemu/riverpod/Register/register_provider.dart';
-import 'package:gemu/riverpod/Register/searching_game.dart';
-import 'package:gemu/riverpod/Users/myself_provider.dart';
+import 'package:gemu/providers/Navigation/nav_non_auth.dart';
+import 'package:gemu/providers/Register/register_provider.dart';
+import 'package:gemu/providers/Register/searching_game.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loader/loader.dart';
@@ -20,13 +20,13 @@ import "package:email_validator/email_validator.dart";
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
-import 'package:gemu/widgets/snack_bar_custom.dart';
-import 'package:gemu/widgets/text_field_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/components/text_field_custom.dart';
 import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
+import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
@@ -151,6 +151,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   @override
   void initState() {
     super.initState();
+    DatabaseService.getGamesRegister(ref);
+
     initCountry();
 
     _tabController = TabController(length: 4, vsync: this);
@@ -391,37 +393,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
     return Scaffold(
         resizeToAvoidBottomInset: currentIndex == 2 ? false : true,
-        body: Loader<bool>(
-          load: () => DatabaseService.getGamesRegister(ref),
-          loadingWidget: Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 1.0,
-              color: isDayMood ? cPrimaryPink : cSecondaryPurple,
-            ),
-          ),
-          builder: (_, value) {
-            return GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-                Helpers.hideKeyboard(context);
-              },
-              child: Column(children: [
-                topRegisterEmail(isDayMood),
-                Expanded(
-                    child: bodyRegister(
-                        isDayMood,
-                        isLoading,
-                        isSuccess,
-                        emailValid,
-                        passwordValid,
-                        usernameValid,
-                        anniversaryValid,
-                        gamesValid,
-                        cgu,
-                        policyPrivacy)),
-              ]),
-            );
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            Helpers.hideKeyboard(context);
           },
+          child: Column(children: [
+            topRegisterEmail(isDayMood),
+            Expanded(
+                child: bodyRegister(
+                    isDayMood,
+                    isLoading,
+                    isSuccess,
+                    emailValid,
+                    passwordValid,
+                    usernameValid,
+                    anniversaryValid,
+                    gamesValid,
+                    cgu,
+                    policyPrivacy)),
+          ]),
         ));
   }
 
@@ -448,12 +439,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               Helpers.hideKeyboard(context);
               showDialog(
                   context: navNonAuthKey.currentContext!,
-                  builder: (_) {
-                    return AlertDialogCustom(_, "Annuler l'inscription",
+                  builder: (BuildContext context) {
+                    return AlertDialogCustom(context, "Annuler l'inscription",
                         "Êtes-vous sur de vouloir annuler votre inscription?", [
                       TextButton(
                           onPressed: () {
-                            Navigator.pop(mainKey.currentContext!);
+                            Navigator.of(context).pop();
                             ref
                                 .read(currentRouteNonAuthNotifierProvider
                                     .notifier)
@@ -466,8 +457,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             style: textStyleCustomBold(Colors.green, 12),
                           )),
                       TextButton(
-                          onPressed: () =>
-                              Navigator.pop(mainKey.currentContext!),
+                          onPressed: () => Navigator.of(context).pop(),
                           child: Text(
                             "Non",
                             style: textStyleCustomBold(Colors.red, 12),
@@ -641,8 +631,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   ref);
 
               if (user != null) {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setString("token", user.uid);
+                await AuthService.setUserToken(user);
                 await getUserData(user);
               }
             }

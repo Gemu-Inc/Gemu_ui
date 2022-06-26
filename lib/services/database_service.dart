@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
 import 'package:gemu/models/game.dart';
-import 'package:gemu/riverpod/Register/searching_game.dart';
-import 'package:gemu/riverpod/Users/myself_provider.dart';
+import 'package:gemu/providers/Register/searching_game.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 
 class DatabaseService {
   //references des collections de la bdd
@@ -17,7 +17,7 @@ class DatabaseService {
 //Partie register
 
   //Récupérer les 12 premiers jeux de la bdd pour la partie inscription
-  static Future<bool> getGamesRegister(WidgetRef ref) async {
+  static Future<void> getGamesRegister(WidgetRef ref) async {
     List<Game> allGames = [];
 
     await FirebaseFirestore.instance
@@ -33,8 +33,6 @@ class DatabaseService {
       }
     });
     ref.read(allGamesRegisterNotifierProvider.notifier).initGames(allGames);
-
-    return true;
   }
 
   //Récupère 12 nouveaux jeux dans la bdd pour la partie inscription

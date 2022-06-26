@@ -10,16 +10,16 @@ import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/user.dart';
-import 'package:gemu/riverpod/Navigation/nav_non_auth.dart';
-import 'package:gemu/riverpod/Theme/dayMood_provider.dart';
-import 'package:gemu/riverpod/Users/myself_provider.dart';
+import 'package:gemu/providers/Navigation/nav_non_auth.dart';
+import 'package:gemu/providers/Theme/dayMood_provider.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
-import 'package:gemu/widgets/bottom_sheet_custom.dart';
-import 'package:gemu/widgets/snack_bar_custom.dart';
-import 'package:gemu/widgets/text_field_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
+import 'package:gemu/components/bottom_sheet_custom.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/components/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
-import 'package:gemu/riverpod/Login/login_provider.dart';
+import 'package:gemu/providers/Login/login_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -268,9 +268,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                     password: _passwordController.text);
 
                 if (user != null) {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  await prefs.setString("token", user.uid);
+                  await AuthService.setUserToken(user);
                   await getUserData(user);
                 }
 
@@ -346,7 +344,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                   ..onTap = () {
                     showDialog(
                         context: context,
-                        builder: (_) => Container(
+                        builder: (BuildContext context) => Container(
                               child: GestureDetector(
                                 onTap: () {
                                   _focusNodeResetPassword.unfocus();
@@ -434,8 +432,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                                       messageUser(context,
                                                           'Compte inexistant ou non vérifié');
                                                     }
-                                                    Navigator.pop(mainKey
-                                                        .currentContext!);
+                                                    Navigator.pop(context);
                                                     _emailResetPasswordController
                                                         .clear();
                                                   },
@@ -468,8 +465,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                               messageUser(context,
                                                   'Compte inexistant ou non vérifié');
                                             }
-                                            Navigator.pop(
-                                                mainKey.currentContext!);
+                                            Navigator.pop(context);
                                             _emailResetPasswordController
                                                 .clear();
                                           },
@@ -477,8 +473,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                               style: textStyleCustomBold(
                                                   Colors.green, 12))),
                                       TextButton(
-                                          onPressed: () => Navigator.pop(
-                                              mainKey.currentContext!),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
                                           child: Text("Annuler",
                                               style: textStyleCustomBold(
                                                   Colors.red, 12)))
