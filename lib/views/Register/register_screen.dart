@@ -415,6 +415,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               Helpers.hideKeyboard(context);
               showDialog(
                   context: navNonAuthKey.currentContext!,
+                  barrierDismissible: false,
                   builder: (BuildContext context) {
                     return AlertDialogCustom(context, "Annuler l'inscription",
                         "Êtes-vous sur de vouloir annuler votre inscription?", [

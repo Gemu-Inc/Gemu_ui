@@ -129,6 +129,7 @@ class _LogControllerState extends ConsumerState<LogController> {
                       if (currentRouteNonAuth == "Register") {
                         showDialog(
                             context: navNonAuthKey.currentContext!,
+                            barrierDismissible: false,
                             builder: (BuildContext context) {
                               return AlertDialogCustom(
                                   context,

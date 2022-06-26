@@ -36,6 +36,7 @@ class AlertDialogResetPassword extends AlertDialog {
 Future verifyAccount() {
   return showDialog(
       context: navAuthKey.currentContext!,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.primary,

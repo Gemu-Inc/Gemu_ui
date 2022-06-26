@@ -44,6 +44,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
   Future alertUpdateUsername(String title, String content) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -62,6 +63,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
   Future alertSaveBeforeLeave() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Sauvegarder',
               'Voulez-vous sauvegarder vos changements?', [

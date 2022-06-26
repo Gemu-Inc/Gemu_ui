@@ -42,6 +42,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
   Future alertReAuthentification() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) => AlertDialog(
                 backgroundColor: Theme.of(context).canvasColor,
                 shape: RoundedRectangleBorder(
@@ -85,6 +86,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
   Future alertUpdateMail(String title, String content) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -103,6 +105,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
   Future alertSaveBeforeLeave() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Sauvegarder',
               'Voulez-vous sauvegarder vos changements?', [

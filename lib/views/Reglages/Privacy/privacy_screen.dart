@@ -26,6 +26,7 @@ class Privacyviewstate extends State<PrivacyScreen> {
   Future alertPrivacy(bool newValue) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (_) {
           return AlertDialogCustom(context, 'Change privacy',
               'Voulez-vous modifier la confidentialité de votre compte?', [

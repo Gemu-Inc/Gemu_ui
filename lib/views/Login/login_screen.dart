@@ -320,6 +320,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                   ..onTap = () {
                     showDialog(
                         context: context,
+                        barrierDismissible: false,
                         builder: (BuildContext context) => Container(
                               child: GestureDetector(
                                 onTap: () {

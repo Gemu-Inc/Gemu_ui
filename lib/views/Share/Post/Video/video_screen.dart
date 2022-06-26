@@ -375,6 +375,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                                   onPressed: () async {
                                     await showDialog(
                                         context: context,
+                                        barrierDismissible: false,
                                         builder: (context) {
                                           return AlertDialogCustom(
                                               context,

@@ -299,6 +299,7 @@ class Pictureviewstate extends State<PictureScreen>
                         onPressed: () async {
                           await showDialog(
                               context: context,
+                              barrierDismissible: false,
                               builder: (context) {
                                 return AlertDialogCustom(
                                     context,

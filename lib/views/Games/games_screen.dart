@@ -236,6 +236,7 @@ class _Gamesviewstate extends State<GamesScreen>
   Future alertUnfollowGame(Game game) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) {
           return Consumer(builder: (_, ref, child) {
             return AlertDialogCustom(context, 'Unfollow game',

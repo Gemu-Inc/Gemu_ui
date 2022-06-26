@@ -33,6 +33,7 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
   Future confirmDisconnect(BuildContext context) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(
               context,

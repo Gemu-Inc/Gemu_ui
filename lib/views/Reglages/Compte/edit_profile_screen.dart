@@ -98,6 +98,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
   Future alertSaveBeforeLeave() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Sauvegarder',
               'Voulez-vous sauvegarder vos changements?', [
@@ -126,6 +127,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
   Future alertUpdateProfile(String title, String content) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -143,6 +145,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
   Future alertNotUpdateProfile(String title, String content) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -160,6 +163,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
   Future alreadyImgDelete() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Youhou',
               'Tu es au courant que ton icône est déjà supprimé?', [
