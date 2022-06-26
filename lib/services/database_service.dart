@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/models/user.dart';
@@ -87,6 +89,31 @@ class DatabaseService {
       ref.read(myselfNotifierProvider.notifier).initUser(
           UserModel.fromMap(value, value.data() as Map<String, dynamic>));
     });
+  }
+
+  //get data current user
+  static Future<void> getUserData(User user, WidgetRef ref) async {
+    List<Game> gamesList = [];
+    List<PageController> gamePageController = [];
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('games')
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        gamesList.add(Game.fromMap(item, item.data()));
+        gamePageController.add(PageController());
+      }
+    });
+
+    ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
+    ref
+        .read(myGamesControllerNotifierProvider.notifier)
+        .initGamesController(gamePageController);
+
+    await DatabaseService.getCurrentUser(user.uid, ref);
   }
 
   //recherche d'un compte vérifié ou non dans la base

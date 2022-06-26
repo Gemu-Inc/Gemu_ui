@@ -38,30 +38,6 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
 
   bool isCompleted = false;
 
-  getUserData(User user) async {
-    List<Game> gamesList = [];
-    List<PageController> gamePageController = [];
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('games')
-        .get()
-        .then((value) {
-      for (var item in value.docs) {
-        gamesList.add(Game.fromMap(item, item.data()));
-        gamePageController.add(PageController());
-      }
-    });
-
-    ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
-    ref
-        .read(myGamesControllerNotifierProvider.notifier)
-        .initGamesController(gamePageController);
-
-    await DatabaseService.getCurrentUser(user.uid, ref);
-  }
-
   @override
   void initState() {
     super.initState();
@@ -269,7 +245,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
 
                 if (user != null) {
                   await AuthService.setUserToken(user);
-                  await getUserData(user);
+                  await DatabaseService.getUserData(user, ref);
                 }
 
                 if (mounted) {
@@ -301,7 +277,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     await prefs.setString("token", user.uid);
-                    await getUserData(user);
+                    await DatabaseService.getUserData(user, ref);
                   }
 
                   if (mounted) {
