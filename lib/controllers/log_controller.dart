@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gemu/models/game.dart';
 import 'package:gemu/providers/GetStarted/getStarted_provider.dart';
 import 'package:gemu/providers/Connectivity/connectivity_provider.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';

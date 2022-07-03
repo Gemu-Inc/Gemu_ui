@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/views/Share/Post/Picture/picture_screen.dart';
-import 'package:gemu/constants/constants.dart';
 
 class PictureEditorScreen extends StatefulWidget {
   final File file;

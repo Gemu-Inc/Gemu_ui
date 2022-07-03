@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +7,9 @@ import 'package:email_validator/email_validator.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:gemu/models/game.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Theme/dayMood_provider.dart';
-import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:gemu/components/bottom_sheet_custom.dart';

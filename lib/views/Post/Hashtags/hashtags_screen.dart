@@ -1,11 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:gemu/models/post.dart';
 import 'package:gemu/models/hashtag.dart';
-import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Highlights/highlights_posts_view.dart';
 
 class HashtagsScreen extends StatefulWidget {

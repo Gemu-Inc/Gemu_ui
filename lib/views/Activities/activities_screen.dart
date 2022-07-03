@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:gemu/constants/constants.dart';
-
 import 'Notifications/notifications_screen.dart';
 
 class ActivitiesMenuDrawer extends StatefulWidget {

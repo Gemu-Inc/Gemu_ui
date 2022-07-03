@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:algolia/algolia.dart';
 import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
@@ -12,10 +11,8 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Register/searching_game.dart';
-import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:loader/loader.dart';
 import "package:email_validator/email_validator.dart";
 
 import 'package:gemu/services/auth_service.dart';
@@ -27,7 +24,6 @@ import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/providers/Theme/dayMood_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {

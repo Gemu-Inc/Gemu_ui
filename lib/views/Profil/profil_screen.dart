@@ -6,9 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Activities/activities_screen.dart';
 import 'package:gemu/views/Reglages/reglages_screen.dart';
-import 'package:gemu/views/Support/panel_support_screen.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/services/database_service.dart';
 

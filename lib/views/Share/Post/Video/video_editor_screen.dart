@@ -6,7 +6,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Share/Post/Video/video_screen.dart';
 
 class VideoEditorScreen extends StatefulWidget {

@@ -6,7 +6,6 @@ import 'package:bubble/bubble.dart';
 import 'package:gemu/models/chat_messages.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/constants/constants.dart';
 
 import 'text_message.dart';
 import 'audio_message.dart';

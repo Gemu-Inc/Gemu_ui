@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gemu/constants/constants.dart';
 import 'package:loader/loader.dart';
 
 class LoaderDataCustom extends StatelessWidget {
