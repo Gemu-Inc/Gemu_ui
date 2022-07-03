@@ -121,13 +121,17 @@ class AuthService {
   }
 
   //Send mail reset password
-  static Future<void> sendMailResetPassword(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-    } catch (e) {
+  static Future<void> sendMailResetPassword(
+      String email, BuildContext context) async {
+    await _auth
+        .sendPasswordResetEmail(email: email)
+        .then((value) => messageUser(
+            context, 'Un mail pour changer ton mot de passe a été envoyé!'))
+        .catchError((e) {
       print(e);
-      print("failed to send email");
-    }
+      messageUser(
+          context, "Oups, un problème est survenu lors de l'envoi du mail!");
+    });
   }
 
   //Send mail verify email
@@ -135,7 +139,7 @@ class AuthService {
     await _auth.currentUser!
         .sendEmailVerification()
         .then((value) =>
-            messageUser(context, "Un mail de vérification vous a été envoyé!"))
+            messageUser(context, "Un mail de vérification a été envoyé!"))
         .catchError((e) {
       print(e);
       messageUser(

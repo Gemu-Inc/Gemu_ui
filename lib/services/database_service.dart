@@ -119,20 +119,17 @@ class DatabaseService {
   //recherche d'un compte vérifié ou non dans la base
   static Future<UserModel?> searchVerifiedAccount(String email) async {
     UserModel? userData;
-    await usersCollectionReference
-        .where("email", isEqualTo: email)
-        .get()
-        .then((value) {
-      for (var item in value.docs) {
-        userData = UserModel.fromMap(item, item.data() as Map<String, dynamic>);
-      }
-    });
+    var user =
+        await usersCollectionReference.where("email", isEqualTo: email).get();
+    for (var item in user.docs) {
+      userData = UserModel.fromMap(item, item.data() as Map<String, dynamic>);
+    }
     return userData;
   }
 
   //Update verify account
   static Future<void> updateVerifyAccount(String uid) async {
-    await usersCollectionReference.doc(uid).update({"verify_account": true});
+    await usersCollectionReference.doc(uid).update({"verified_account": true});
   }
 
 //Others parties

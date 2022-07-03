@@ -319,7 +319,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     showDialog(
-                        context: context,
+                        context: navNonAuthKey.currentContext!,
                         barrierDismissible: false,
                         builder: (BuildContext context) => Container(
                               child: GestureDetector(
@@ -390,24 +390,34 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                                             .text;
                                                     _focusNodeResetPassword
                                                         .unfocus();
-                                                    UserModel? userData =
-                                                        await DatabaseService
-                                                            .searchVerifiedAccount(
-                                                                _emailResetPasswordController
-                                                                    .text);
+                                                    try {
+                                                      UserModel? userData =
+                                                          await DatabaseService
+                                                              .searchVerifiedAccount(
+                                                                  _emailResetPasswordController
+                                                                      .text);
 
-                                                    if (userData != null &&
-                                                        userData
-                                                            .verifiedAccount!) {
-                                                      await AuthService
-                                                          .sendMailResetPassword(
-                                                              _emailResetPasswordController
-                                                                  .text);
-                                                      messageUser(context,
-                                                          'Un email pour changer ton mot de passe a été envoyé!');
-                                                    } else {
-                                                      messageUser(context,
-                                                          'Compte inexistant ou non vérifié');
+                                                      if (userData != null &&
+                                                          userData
+                                                              .verifiedAccount!) {
+                                                        await AuthService
+                                                            .sendMailResetPassword(
+                                                                _emailResetPasswordController
+                                                                    .text,
+                                                                navNonAuthKey
+                                                                    .currentContext!);
+                                                      } else {
+                                                        messageUser(
+                                                            navNonAuthKey
+                                                                .currentContext!,
+                                                            'Compte inexistant ou non vérifié');
+                                                      }
+                                                    } catch (e) {
+                                                      print(e);
+                                                      messageUser(
+                                                          navNonAuthKey
+                                                              .currentContext!,
+                                                          "Oups, une erreur est survenue!");
                                                     }
                                                     Navigator.pop(context);
                                                     _emailResetPasswordController
@@ -424,23 +434,31 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                       TextButton(
                                           onPressed: () async {
                                             _focusNodeResetPassword.unfocus();
-                                            UserModel? userData =
-                                                await DatabaseService
-                                                    .searchVerifiedAccount(
+                                            try {
+                                              UserModel? userData =
+                                                  await DatabaseService
+                                                      .searchVerifiedAccount(
+                                                          _emailResetPasswordController
+                                                              .text);
+                                              if (userData != null &&
+                                                  userData.verifiedAccount!) {
+                                                await AuthService
+                                                    .sendMailResetPassword(
                                                         _emailResetPasswordController
-                                                            .text);
-
-                                            if (userData != null &&
-                                                userData.verifiedAccount!) {
-                                              await AuthService
-                                                  .sendMailResetPassword(
-                                                      _emailResetPasswordController
-                                                          .text);
-                                              messageUser(context,
-                                                  'Un email pour changer ton mot de passe a été envoyé!');
-                                            } else {
-                                              messageUser(context,
-                                                  'Compte inexistant ou non vérifié');
+                                                            .text,
+                                                        navNonAuthKey
+                                                            .currentContext!);
+                                              } else {
+                                                messageUser(
+                                                    navNonAuthKey
+                                                        .currentContext!,
+                                                    'Compte inexistant ou non vérifié');
+                                              }
+                                            } catch (e) {
+                                              print(e);
+                                              messageUser(
+                                                  navNonAuthKey.currentContext!,
+                                                  "Oups, une erreur est survenue!");
                                             }
                                             Navigator.pop(context);
                                             _emailResetPasswordController
