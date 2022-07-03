@@ -27,7 +27,7 @@ class Privacyviewstate extends State<PrivacyScreen> {
     return showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) {
+        builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Change privacy',
               'Voulez-vous modifier la confidentialité de votre compte?', [
             TextButton(
@@ -37,13 +37,13 @@ class Privacyviewstate extends State<PrivacyScreen> {
                 },
                 child: Text(
                   'Oui',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'Non',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });

@@ -319,14 +319,14 @@ class Pictureviewstate extends State<PictureScreen>
                                           child: Text(
                                             'Oui',
                                             style:
-                                                TextStyle(color: Colors.green),
+                                                TextStyle(color: cGreenConfirm),
                                           )),
                                       TextButton(
                                           onPressed: () =>
                                               Navigator.pop(context),
                                           child: Text('Non',
                                               style:
-                                                  TextStyle(color: Colors.red)))
+                                                  TextStyle(color: cRedCancel)))
                                     ]);
                               });
                         },

@@ -395,15 +395,14 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                                                     child: Text(
                                                       'Oui',
                                                       style: TextStyle(
-                                                          color: Colors.green),
+                                                          color: cGreenConfirm),
                                                     )),
                                                 TextButton(
                                                     onPressed: () =>
                                                         Navigator.pop(context),
                                                     child: Text('Non',
                                                         style: TextStyle(
-                                                            color: Colors
-                                                                .red[200])))
+                                                            color: cRedCancel)))
                                               ]);
                                         });
                                   },

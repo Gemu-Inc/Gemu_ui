@@ -448,13 +448,13 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                           },
                                           child: Text("Envoyer",
                                               style: textStyleCustomBold(
-                                                  Colors.green, 12))),
+                                                  cGreenConfirm, 12))),
                                       TextButton(
                                           onPressed: () =>
                                               Navigator.pop(context),
                                           child: Text("Annuler",
                                               style: textStyleCustomBold(
-                                                  Colors.red, 12)))
+                                                  cRedCancel, 12)))
                                     ]),
                               ),
                             ));

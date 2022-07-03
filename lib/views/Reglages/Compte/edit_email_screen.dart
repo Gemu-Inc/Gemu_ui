@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gemu/constants/constants.dart';
 
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/user.dart';
@@ -69,7 +70,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                       },
                       child: Text(
                         'OK',
-                        style: TextStyle(color: Colors.green),
+                        style: TextStyle(color: cGreenConfirm),
                       )),
                   TextButton(
                       onPressed: () {
@@ -78,7 +79,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                       },
                       child: Text(
                         'Cancel',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: cRedCancel),
                       )),
                 ]));
   }
@@ -96,7 +97,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -116,7 +117,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -125,7 +126,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:gemu/components/alert_dialog_custom.dart';
+import 'package:gemu/constants/constants.dart';
 
 class EditPasswordScreen extends StatefulWidget {
   EditPasswordScreen({Key? key}) : super(key: key);
@@ -45,7 +46,7 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -67,7 +68,7 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -76,7 +77,7 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });

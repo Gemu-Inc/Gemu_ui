@@ -421,7 +421,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                         "Êtes-vous sur de vouloir annuler votre inscription?", [
                       TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            Navigator.pop(context);
                             ref
                                 .read(currentRouteNonAuthNotifierProvider
                                     .notifier)
@@ -431,13 +431,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                           },
                           child: Text(
                             "Oui",
-                            style: textStyleCustomBold(Colors.green, 12),
+                            style: textStyleCustomBold(cGreenConfirm, 12),
                           )),
                       TextButton(
                           onPressed: () => Navigator.of(context).pop(),
                           child: Text(
                             "Non",
-                            style: textStyleCustomBold(Colors.red, 12),
+                            style: textStyleCustomBold(cRedCancel, 12),
                           ))
                     ]);
                   });

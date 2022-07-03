@@ -249,7 +249,7 @@ class _Gamesviewstate extends State<GamesScreen>
                   },
                   child: Text(
                     'Oui',
-                    style: TextStyle(color: Colors.green),
+                    style: TextStyle(color: cGreenConfirm),
                   )),
               TextButton(
                   onPressed: () {
@@ -257,7 +257,7 @@ class _Gamesviewstate extends State<GamesScreen>
                   },
                   child: Text(
                     'Non',
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: cRedCancel),
                   )),
             ]);
           });

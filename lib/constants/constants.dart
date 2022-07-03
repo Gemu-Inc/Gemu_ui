@@ -74,6 +74,8 @@ const cInactiveIconPurpleLightTheme = Color(0xFFC3BCF5);
 const cInactiveIconPinkLightTheme = Color(0xFFD6A5C0);
 final cInactiveIconPurpleDarkTheme = Color(0xFFC3BCF5).withOpacity(0.7);
 final cInactiveIconPinkDarkTheme = Color(0xFFD6A5C0).withOpacity(0.7);
+final cRedCancel = Color(0xFF8A1111);
+final cGreenConfirm = Color(0xFF78A86B);
 
 //Lists colors dayMood
 List<Color> lightBgColors = [

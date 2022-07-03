@@ -68,7 +68,7 @@ Future verifyAccount() {
                 },
                 child: Text(
                   'Vérifier',
-                  style: textStyleCustomBold(Colors.green, 12),
+                  style: textStyleCustomBold(cGreenConfirm, 12),
                 )),
             TextButton(
                 onPressed: () {
@@ -76,7 +76,7 @@ Future verifyAccount() {
                 },
                 child: Text(
                   'Plus tard',
-                  style: textStyleCustomBold(Colors.red, 12),
+                  style: textStyleCustomBold(cRedCancel, 12),
                 )),
           ],
         );

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gemu/constants/constants.dart';
 
 import 'package:gemu/models/user.dart';
 import 'package:gemu/services/cloud_storage_service.dart';
@@ -110,7 +111,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -118,7 +119,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });
@@ -136,7 +137,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -154,7 +155,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -173,7 +174,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Message reçu',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -181,7 +182,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Chut d\'abord',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });

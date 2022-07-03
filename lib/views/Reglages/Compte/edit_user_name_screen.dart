@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gemu/constants/constants.dart';
 
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/user.dart';
@@ -54,7 +55,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -74,7 +75,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -83,7 +84,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });
