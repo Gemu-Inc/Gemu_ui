@@ -132,15 +132,15 @@ class AuthService {
 
   //Send mail verify email
   static Future<void> sendMailVerifyEmail(BuildContext context) async {
-    try {
-      await _auth.currentUser!.sendEmailVerification().then((value) =>
-          messageUser(
-              context, "Tu vas être déconnecter dans quelques instants"));
-      await Future.delayed(Duration(seconds: 1));
-      await AuthService.signOut();
-    } catch (e) {
+    await _auth.currentUser!
+        .sendEmailVerification()
+        .then((value) =>
+            messageUser(context, "Un mail de vérification vous a été envoyé!"))
+        .catchError((e) {
       print(e);
-    }
+      messageUser(
+          context, "Oups, un problème est survenu lors de l'envoi du mail!");
+    });
   }
 
   //Fonction de déconnexion de l'application

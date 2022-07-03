@@ -46,14 +46,15 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   late Animation _animationRotate, _animationGames;
   bool panelGamesThere = false;
 
+  //Vérifie si l'email de l'utilisateur est vérifié ou non
   Future<void> accountVerified(String uid) async {
     User? user = await AuthService.getUser();
+    await user!.reload();
+    user = await AuthService.getUser();
     if (!user!.emailVerified) {
       verifyAccount();
     } else {
-      if (!me!.verifiedAccount!) {
-        DatabaseService.updateVerifyAccount(me!.uid);
-      }
+      DatabaseService.updateVerifyAccount(me!.uid);
     }
   }
 
@@ -100,7 +101,9 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   void initState() {
     super.initState();
 
-    accountVerified(me!.uid);
+    if (!me!.verifiedAccount!) {
+      accountVerified(me!.uid);
+    }
 
     _tabMenuController = TabController(
         initialIndex: currentTabMenuIndex, length: 2, vsync: this);

@@ -64,7 +64,8 @@ Future verifyAccount() {
             TextButton(
                 onPressed: () async {
                   Navigator.pop(context);
-                  await AuthService.sendMailVerifyEmail(context);
+                  await AuthService.sendMailVerifyEmail(
+                      navAuthKey.currentContext!);
                 },
                 child: Text(
                   'Vérifier',
