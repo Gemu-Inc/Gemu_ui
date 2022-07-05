@@ -9,6 +9,7 @@ import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:gemu/components/bottom_sheet_custom.dart';
 import 'package:gemu/components/clip_shadow_path.dart';
 import 'package:gemu/components/custom_clipper.dart';
+import 'package:gemu/translations/app_localizations.dart';
 
 class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -106,7 +107,8 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Bienvenue",
+                            AppLocalization.of(context)
+                                .translate("welcome_screen", "welcome"),
                             style: textStyleCustomBold(
                                 Theme.of(context).brightness == Brightness.dark
                                     ? cTextDarkTheme

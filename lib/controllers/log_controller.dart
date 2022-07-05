@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gemu/providers/GetStarted/getStarted_provider.dart';
 import 'package:gemu/providers/Connectivity/connectivity_provider.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
@@ -9,6 +10,7 @@ import 'package:gemu/providers/Theme/theme_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/services/database_service.dart';
+import 'package:gemu/translations/app_localizations.dart';
 import 'package:gemu/views/NoConnectivity/noconnectivity_screen.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -108,6 +110,21 @@ class _LogControllerState extends ConsumerState<LogController> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Gemu',
+        supportedLocales: [Locale("en", ""), Locale("fr", "")],
+        localeResolutionCallback: (deviceLocale, supportedLocales) {
+          for (var locale in supportedLocales) {
+            if (locale.languageCode == deviceLocale!.languageCode) {
+              return deviceLocale;
+            }
+          }
+          return supportedLocales.first;
+        },
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          AppLocalization.delegate,
+        ],
         themeMode: ThemeMode.system,
         theme: theme == ThemeData()
             ? (primaryColor == cPrimaryPink && accentColor == cPrimaryPurple)

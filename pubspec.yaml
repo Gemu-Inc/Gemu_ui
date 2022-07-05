@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   
   bubble: ^1.2.1
   cached_network_image: ^3.2.1
@@ -106,3 +108,5 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - lib/translations/locales/fr.json
+    - lib/translations/locales/en.json
