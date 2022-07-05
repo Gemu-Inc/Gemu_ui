@@ -8,7 +8,13 @@ UserModel? me;
 
 //Navigator global keys
 final GlobalKey<NavigatorState> navNonAuthKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> navAuthKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navMainAuthKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navHomeAuthKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navSelectionAuthKey =
+    GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navActivitiesAuthKey =
+    GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navProfileAuthKey = GlobalKey<NavigatorState>();
 
 //route names for generated routes non auth
 const String GetStartedBefore = "GetStartedBefore";
@@ -18,7 +24,7 @@ const String Register = "Register";
 const String Login = "Login";
 
 //route names for generated routes auth
-const String Navigation = "Nav";
+const String BottomTabNav = "BottomTabNav";
 const String Home = "Home";
 const String Highlights = "Highlights";
 const String Activities = "Activities";

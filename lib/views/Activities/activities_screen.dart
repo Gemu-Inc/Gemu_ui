@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'Notifications/notifications_screen.dart';
 
 class ActivitiesMenuDrawer extends StatefulWidget {
-  final String uid;
-
-  ActivitiesMenuDrawer({Key? key, required this.uid}) : super(key: key);
+  ActivitiesMenuDrawer({Key? key}) : super(key: key);
 
   @override
   _ActivitiesMenuDrawerState createState() => _ActivitiesMenuDrawerState();

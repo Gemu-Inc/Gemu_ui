@@ -182,13 +182,13 @@ class _LogControllerState extends ConsumerState<LogController> {
                   )
                 : WillPopScope(
                     onWillPop: () async {
-                      return !(await navAuthKey.currentState!.maybePop());
+                      return !(await navMainAuthKey.currentState!.maybePop());
                     },
                     child: Navigator(
-                      key: navAuthKey,
-                      initialRoute: Navigation,
+                      key: navMainAuthKey,
+                      initialRoute: BottomTabNav,
                       onGenerateRoute: (settings) =>
-                          generateRouteAuth(settings, context),
+                          generateRouteMainAuth(settings, context),
                     )));
   }
 }

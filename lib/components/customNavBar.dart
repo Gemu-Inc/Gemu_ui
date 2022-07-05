@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class CustomNavBar extends StatelessWidget {
   final int selectedIndex;
-  final List<PersistentBottomNavBarItem> items;
+  final List<BottomNavigationBarItem> items;
   final ValueChanged<int> onItemSelected;
 
   CustomNavBar(
@@ -17,19 +16,21 @@ class CustomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 60,
+      height: 50,
       decoration: BoxDecoration(
           color: selectedIndex == 0
-              ? Color(0xFF22213C)
+              ? cBGDarkTheme
               : Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
           boxShadow: [
             BoxShadow(
-                color: Theme.of(context).colorScheme.primary,
-                blurRadius: selectedIndex == 0 ? 1 : 2,
+                color: selectedIndex == 0
+                    ? Theme.of(context).colorScheme.primary.withOpacity(0.4)
+                    : Theme.of(context).colorScheme.primary,
+                blurRadius: 2,
                 spreadRadius: 1,
-                blurStyle: BlurStyle.solid)
+                blurStyle: BlurStyle.normal)
           ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -41,7 +42,7 @@ class CustomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildItem(PersistentBottomNavBarItem item, bool isSelected,
+  Widget _buildItem(BottomNavigationBarItem item, bool isSelected,
       BuildContext context, int index) {
     return Padding(
       padding: index == 1
@@ -50,7 +51,7 @@ class CustomNavBar extends StatelessWidget {
               ? EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.08)
               : EdgeInsets.zero,
       child: Container(
-        height: 60,
+        height: 50,
         width: 60,
         alignment: Alignment.center,
         child: InkWell(
@@ -62,21 +63,38 @@ class CustomNavBar extends StatelessWidget {
             children: [
               IconTheme(
                 data: IconThemeData(
-                    size: 26.0,
-                    color: isSelected
-                        ? item.activeColorPrimary
-                        : item.inactiveColorPrimary),
-                child: isSelected ? item.icon : item.inactiveIcon!,
+                  size: 25.0,
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).brightness == Brightness.dark
+                          ? Theme.of(context).colorScheme.primary ==
+                                  cPrimaryPink
+                              ? cInactiveIconPinkDarkTheme
+                              : cInactiveIconPurpleDarkTheme
+                          : Theme.of(context).colorScheme.primary ==
+                                  cPrimaryPink
+                              ? cInactiveIconPinkLightTheme
+                              : cInactiveIconPurpleLightTheme,
+                ),
+                child: isSelected ? item.activeIcon : item.icon,
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 5.0),
+                padding: const EdgeInsets.only(top: 1.0),
                 child: Text(
-                  item.title!,
+                  item.label!,
                   style: textStyleCustomBold(
                       isSelected
-                          ? item.activeColorPrimary
-                          : item.inactiveColorPrimary!,
-                      12),
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).brightness == Brightness.dark
+                              ? Theme.of(context).colorScheme.primary ==
+                                      cPrimaryPink
+                                  ? cInactiveIconPinkDarkTheme
+                                  : cInactiveIconPurpleDarkTheme
+                              : Theme.of(context).colorScheme.primary ==
+                                      cPrimaryPink
+                                  ? cInactiveIconPinkLightTheme
+                                  : cInactiveIconPurpleLightTheme,
+                      11),
                 ),
               )
             ],

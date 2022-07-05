@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:gemu/providers/Home/index_games_provider.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,19 +16,14 @@ import 'package:gemu/views/Games/game_screen.dart';
 
 import 'add_game_screen.dart';
 
-class GamesScreen extends StatefulWidget {
-  final List<Game> games;
-  final int indexGamesHome;
-
-  const GamesScreen(
-      {Key? key, required this.games, required this.indexGamesHome})
-      : super(key: key);
+class GamesScreen extends ConsumerStatefulWidget {
+  const GamesScreen({Key? key}) : super(key: key);
 
   @override
   _Gamesviewstate createState() => _Gamesviewstate();
 }
 
-class _Gamesviewstate extends State<GamesScreen>
+class _Gamesviewstate extends ConsumerState<GamesScreen>
     with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
@@ -37,18 +33,21 @@ class _Gamesviewstate extends State<GamesScreen>
   bool loadMoreCategorie = false;
   List<Categorie> categoriesList = [];
 
+  List gamesList = [];
+  int indexGames = 0;
+
   scrollListener() {}
 
   unfollowGame(Game game, WidgetRef ref) async {
-    ref
-        .read(indexGamesNotifierProvider.notifier)
-        .updateIndexNewGame(widget.games.length - 1);
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(me!.uid)
-        .collection('games')
-        .doc(game.name)
-        .delete();
+    // ref
+    //     .read(indexGamesNotifierProvider.notifier)
+    //     .updateIndexNewGame(widget.games.length - 1);
+    // await FirebaseFirestore.instance
+    //     .collection('users')
+    //     .doc(me!.uid)
+    //     .collection('games')
+    //     .doc(game.name)
+    //     .delete();
   }
 
   getCategories() async {
@@ -123,6 +122,9 @@ class _Gamesviewstate extends State<GamesScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    gamesList = ref.read(myGamesNotifierProvider);
+    indexGames = ref.watch(indexGamesNotifierProvider);
+
     return Scaffold(
       appBar: PreferredSize(
           child: AppBar(
@@ -189,9 +191,9 @@ class _Gamesviewstate extends State<GamesScreen>
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           physics: BouncingScrollPhysics(),
-          itemCount: widget.games.length,
+          itemCount: gamesList.length,
           itemBuilder: (BuildContext context, int index) {
-            Game game = widget.games[index];
+            Game game = gamesList[index];
             return Container(
                 margin: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 5.0),
                 child: Column(
@@ -244,7 +246,7 @@ class _Gamesviewstate extends State<GamesScreen>
               TextButton(
                   onPressed: () async {
                     await unfollowGame(game, ref);
-                    print(widget.games.length);
+                    print(gamesList.length);
                     Navigator.pop(context);
                   },
                   child: Text(
@@ -324,7 +326,7 @@ class _Gamesviewstate extends State<GamesScreen>
                                 MaterialPageRoute(
                                     builder: (_) => CategorieScreen(
                                           categorie: categorie,
-                                          indexGamesHome: widget.indexGamesHome,
+                                          indexGamesHome: indexGames,
                                         ))),
                             child: Row(
                               children: [

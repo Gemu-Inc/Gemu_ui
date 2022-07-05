@@ -17,9 +17,23 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
   late Animation rotationAnimationCircularButton;
   late Animation rotationAnimationFlatButton;
 
+  Timer? timer;
+
   double getRadianFromDegree(double degree) {
     double unitRadian = 57.295779513;
     return degree / unitRadian;
+  }
+
+  void startTimer() {
+    timer = Timer(Duration(seconds: 6), () {
+      if (animationController.isCompleted) {
+        animationController.reverse();
+      }
+    });
+  }
+
+  void stopTimer() {
+    timer?.cancel();
   }
 
   showOptionsImage() {
@@ -103,8 +117,8 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
       final image =
           await ImagePicker().getImage(source: src, imageQuality: 100);
       if (image != null) {
-        Navigator.pushNamed(context, PictureEditor,
-            arguments: [File(image.path)]);
+        navMainAuthKey.currentState!
+            .pushNamed(PictureEditor, arguments: [File(image.path)]);
       } else {
         Navigator.pop(context);
       }
@@ -118,8 +132,8 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
       final video = await ImagePicker()
           .getVideo(source: src, maxDuration: Duration(seconds: 10));
       if (video != null) {
-        Navigator.pushNamed(context, VideoEditor,
-            arguments: [File(video.path)]);
+        navMainAuthKey.currentState!
+            .pushNamed(VideoEditor, arguments: [File(video.path)]);
       } else {
         Navigator.pop(context);
       }
@@ -189,6 +203,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                       ),
                     ),
                     onTap: () {
+                      stopTimer();
                       animationController.reverse();
                       showOptionsImage();
                     })),
@@ -218,6 +233,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                       ),
                     ),
                     onTap: () {
+                      stopTimer();
                       animationController.reverse();
                       showOptionsVideo();
                     })),
@@ -234,18 +250,14 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                   onPressed: () {
                     if (animationController.isCompleted) {
                       animationController.reverse();
+                      stopTimer();
                     } else {
                       animationController.forward();
-                      Timer(Duration(seconds: 6), () {
-                        if (animationController.isCompleted) {
-                          animationController.reverse();
-                          print('Timer over');
-                        }
-                      });
+                      startTimer();
                     }
                   },
                   backgroundColor: Colors.transparent,
-                  elevation: 6.0,
+                  elevation: 2.0,
                   tooltip: 'Share',
                   child: Stack(
                     children: [

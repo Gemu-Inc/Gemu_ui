@@ -35,7 +35,7 @@ class AlertDialogResetPassword extends AlertDialog {
 
 Future verifyAccount() {
   return showDialog(
-      context: navAuthKey.currentContext!,
+      context: navMainAuthKey.currentContext!,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -65,7 +65,7 @@ Future verifyAccount() {
                 onPressed: () async {
                   Navigator.pop(context);
                   await AuthService.sendMailVerifyEmail(
-                      navAuthKey.currentContext!);
+                      navMainAuthKey.currentContext!);
                 },
                 child: Text(
                   'Vérifier',

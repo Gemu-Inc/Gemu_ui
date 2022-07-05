@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/models/user.dart';
 import 'package:gemu/providers/Home/index_games_provider.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
@@ -14,18 +16,7 @@ import 'game_section.dart';
 import 'following_section.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  final List followings;
-  final List<Game> games;
-  final List<PageController> gamePageController;
-  final int indexGamesHome;
-
-  HomeScreen(
-      {Key? key,
-      required this.followings,
-      required this.games,
-      required this.gamePageController,
-      required this.indexGamesHome})
-      : super(key: key);
+  HomeScreen({Key? key}) : super(key: key);
 
   @override
   _Homeviewstate createState() => _Homeviewstate();
@@ -44,6 +35,11 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
       _animationGamesController;
   late Animation _animationRotate, _animationGames;
   bool panelGamesThere = false;
+
+  List<Game> gamesList = [];
+  List<PageController> gamesControllerList = [];
+  int indexGames = 0;
+  List followings = [];
 
   //Vérifie si l'email de l'utilisateur est vérifié ou non
   Future<void> accountVerified(String uid) async {
@@ -127,16 +123,14 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
 
   @override
   void didUpdateWidget(covariant HomeScreen oldWidget) {
-    widget.gamePageController[widget.indexGamesHome]
-        .addListener(_onPageChanged);
+    gamesControllerList[indexGames].addListener(_onPageChanged);
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void deactivate() {
     _tabMenuController.removeListener(_onTabMenuChanged);
-    widget.gamePageController[widget.indexGamesHome]
-        .removeListener(_onPageChanged);
+    gamesControllerList[indexGames].removeListener(_onPageChanged);
     super.deactivate();
   }
 
@@ -151,17 +145,21 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    gamesList = ref.read(myGamesNotifierProvider);
+    gamesControllerList = ref.read(myGamesControllerNotifierProvider);
+    indexGames = ref.watch(indexGamesNotifierProvider);
+
     return DefaultTabController(
-      initialIndex: widget.indexGamesHome,
-      length: widget.games.length,
+      initialIndex: indexGames,
+      length: gamesList.length,
       child: Scaffold(
         backgroundColor: Color(0xFF22213C),
         body: Stack(
           children: [
-            bodyHome(widget.games[widget.indexGamesHome]),
+            bodyHome(gamesList[indexGames]),
             Padding(
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: topHome(widget.games[widget.indexGamesHome]),
+              child: topHome(gamesList[indexGames]),
             ),
           ],
         ),
@@ -179,7 +177,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
         children: [
           topAppBar(),
           bottomAppBar(),
-          tabGames(widget.games),
+          tabGames(gamesList),
         ],
       ),
     );
@@ -217,10 +215,9 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
           return GestureDetector(
             onTap: () {
               //voir comment faire pour dire qu'on ne rentre pas dans cette condition si 0 posts dans la section
-              if (widget.gamePageController[widget.indexGamesHome].positions
-                      .isNotEmpty &&
-                  widget.gamePageController[widget.indexGamesHome].page != 0) {
-                widget.gamePageController[widget.indexGamesHome].jumpToPage(0);
+              if (gamesControllerList[indexGames].positions.isNotEmpty &&
+                  gamesControllerList[indexGames].page != 0) {
+                gamesControllerList[indexGames].jumpToPage(0);
               }
             },
             child: Container(
@@ -238,7 +235,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                       ]),
                   image: DecorationImage(
                       image: CachedNetworkImageProvider(
-                          widget.games[widget.indexGamesHome].imageUrl),
+                          gamesList[indexGames].imageUrl),
                       fit: BoxFit.cover)),
             ),
           );
@@ -341,12 +338,12 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
         controller: _tabMenuController,
         children: [
           following,
-          games(widget.games),
+          games(gamesList),
         ]);
   }
 
   Widget get following => FollowingSection(
-        followings: widget.followings,
+        followings: followings,
         pageController: followingsPageController,
       );
 
@@ -389,12 +386,11 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                                     borderRadius: BorderRadius.circular(10.0),
                                     border: Border.all(
                                         width: 1.5,
-                                        color:
-                                            widget.indexGamesHome == indexGame
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .primary
-                                                : Colors.grey),
+                                        color: indexGames == indexGame
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Colors.grey),
                                     image: DecorationImage(
                                         fit: BoxFit.cover,
                                         image: CachedNetworkImageProvider(
@@ -425,7 +421,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
             animationGamesController: _animationGamesController,
             animationRotateController: _animationRotateController,
             panelGamesThere: panelGamesThere,
-            pageController: widget.gamePageController[widget.indexGamesHome],
+            pageController: gamesControllerList[indexGames],
           );
         }).toList());
   }

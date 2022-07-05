@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import 'package:gemu/components/bouncing_button.dart';
@@ -15,21 +17,21 @@ import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
 import '../Search/search_screen.dart';
 import 'highlights_posts_view.dart';
 
-class HighlightsScreen extends StatefulWidget {
-  final List<Game> gamesUser;
-
-  const HighlightsScreen({Key? key, required this.gamesUser}) : super(key: key);
+class HighlightsScreen extends ConsumerStatefulWidget {
+  const HighlightsScreen({Key? key}) : super(key: key);
 
   Highlightsviewstate createState() => Highlightsviewstate();
 }
 
-class Highlightsviewstate extends State<HighlightsScreen>
+class Highlightsviewstate extends ConsumerState<HighlightsScreen>
     with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   late TabController _tabController;
   int currentTabIndex = 0;
 
   ScrollController _mainScrollController = ScrollController();
   double positionScroll = 0.0;
+
+  List<Game> gamesList = [];
 
 //Variables Hashtags
   bool dataHashtagsIsThere = false;
@@ -217,9 +219,9 @@ class Highlightsviewstate extends State<HighlightsScreen>
       }
     });
 
-    for (var i = 0; i < widget.gamesUser.length; i++) {
+    for (var i = 0; i < gamesList.length; i++) {
       for (var j = 0; j < discoverGames.length; j++) {
-        if (discoverGames[j].name == widget.gamesUser[i].name) {
+        if (discoverGames[j].name == gamesList[i].name) {
           discoverGames.remove(discoverGames[j]);
         }
       }
@@ -358,9 +360,9 @@ class Highlightsviewstate extends State<HighlightsScreen>
       }
     });
 
-    for (var i = 0; i < widget.gamesUser.length; i++) {
+    for (var i = 0; i < gamesList.length; i++) {
       for (var j = 0; j < discoverGames.length; j++) {
-        if (discoverGames[j].name == widget.gamesUser[i].name) {
+        if (discoverGames[j].name == gamesList[i].name) {
           discoverGames.remove(discoverGames[j]);
         }
       }
@@ -441,6 +443,7 @@ class Highlightsviewstate extends State<HighlightsScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    gamesList = ref.read(myGamesNotifierProvider);
     return Scaffold(
       appBar: PreferredSize(
           child: AppBar(

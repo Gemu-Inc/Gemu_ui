@@ -2,20 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-
 import 'package:gemu/providers/Users/myself_provider.dart';
-import 'package:gemu/views/Activities/activities_screen.dart';
-import 'package:gemu/views/Home/home_screen.dart';
+
 import 'package:gemu/components/bottom_share.dart';
 import 'package:gemu/components/customNavBar.dart';
-import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/providers/Home/index_games_provider.dart';
-
-import '../views/Home/home_screen.dart';
-import '../views/Highlights/highlights_screen.dart';
-import '../views/Profil/profil_screen.dart';
+import 'package:gemu/router.dart';
 
 class BottomNavigationController extends ConsumerStatefulWidget {
   BottomNavigationController({Key? key}) : super(key: key);
@@ -26,83 +18,77 @@ class BottomNavigationController extends ConsumerStatefulWidget {
 }
 
 class _BottomNavigationControllerState
-    extends ConsumerState<BottomNavigationController> {
-  late PersistentTabController _navController;
+    extends ConsumerState<BottomNavigationController>
+    with TickerProviderStateMixin {
+  late TabController _navController;
   User? activeUser;
 
-  List<Widget> _buildScreens(int indexGames, List followings,
-      List<Game> gamesList, List<PageController> gamePageController) {
+  List<Widget> _buildScreens() {
     return [
-      HomeScreen(
-          followings: followings,
-          games: gamesList,
-          gamePageController: gamePageController,
-          indexGamesHome: indexGames),
-      HighlightsScreen(
-        gamesUser: gamesList,
-      ),
-      ActivitiesMenuDrawer(uid: me!.uid),
-      MyProfilScreen()
+      WillPopScope(
+          child: Navigator(
+            key: navHomeAuthKey,
+            initialRoute: Home,
+            onGenerateRoute: (settings) =>
+                generateRouteHomeAuth(settings, context),
+          ),
+          onWillPop: () async {
+            return !(await navHomeAuthKey.currentState!.maybePop());
+          }),
+      WillPopScope(
+          child: Navigator(
+            key: navSelectionAuthKey,
+            initialRoute: Highlights,
+            onGenerateRoute: (settings) =>
+                generateRouteSelectionAuth(settings, context),
+          ),
+          onWillPop: () async {
+            return !(await navSelectionAuthKey.currentState!.maybePop());
+          }),
+      WillPopScope(
+          child: Navigator(
+            key: navActivitiesAuthKey,
+            initialRoute: Activities,
+            onGenerateRoute: (settings) =>
+                generateRouteActivitiesAuth(settings, context),
+          ),
+          onWillPop: () async {
+            return !(await navProfileAuthKey.currentState!.maybePop());
+          }),
+      WillPopScope(
+          child: Navigator(
+            key: navProfileAuthKey,
+            initialRoute: Profile,
+            onGenerateRoute: (settings) =>
+                generateRouteProfileAuth(settings, context),
+          ),
+          onWillPop: () async {
+            return !(await navProfileAuthKey.currentState!.maybePop());
+          })
     ];
   }
 
-  List<PersistentBottomNavBarItem> _navBarsItems() {
+  List<BottomNavigationBarItem> _navBarsItems() {
     return [
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.home),
-        inactiveIcon: Icon(Icons.home_outlined),
-        title: ("Accueil"),
-        textStyle: textStyleCustomBold(Colors.transparent, 12),
-        activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Theme.of(context).brightness == Brightness.dark
-            ? Theme.of(context).colorScheme.primary == cPrimaryPink
-                ? cInactiveIconPinkDarkTheme
-                : cInactiveIconPurpleDarkTheme
-            : Theme.of(context).colorScheme.primary == cPrimaryPink
-                ? cInactiveIconPinkLightTheme
-                : cInactiveIconPurpleLightTheme,
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home_outlined),
+        activeIcon: Icon(Icons.home),
+        label: ("Accueil"),
       ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.highlight),
-        inactiveIcon: Icon(Icons.highlight_outlined),
-        title: ("Sélection"),
-        textStyle: textStyleCustomBold(Colors.transparent, 12),
-        activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Theme.of(context).brightness == Brightness.dark
-            ? Theme.of(context).colorScheme.primary == cPrimaryPink
-                ? cInactiveIconPinkDarkTheme
-                : cInactiveIconPurpleDarkTheme
-            : Theme.of(context).colorScheme.primary == cPrimaryPink
-                ? cInactiveIconPinkLightTheme
-                : cInactiveIconPurpleLightTheme,
+      BottomNavigationBarItem(
+        icon: Icon(Icons.highlight_outlined),
+        activeIcon: Icon(Icons.highlight),
+        label: ("Sélection"),
       ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.notifications_active),
-        inactiveIcon: Icon(Icons.notifications_active_outlined),
-        title: ("Activités"),
-        textStyle: textStyleCustomBold(Colors.transparent, 12),
-        activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Theme.of(context).brightness == Brightness.dark
-            ? Theme.of(context).colorScheme.primary == cPrimaryPink
-                ? cInactiveIconPinkDarkTheme
-                : cInactiveIconPurpleDarkTheme
-            : Theme.of(context).colorScheme.primary == cPrimaryPink
-                ? cInactiveIconPinkLightTheme
-                : cInactiveIconPurpleLightTheme,
+      BottomNavigationBarItem(
+        icon: Icon(Icons.notifications_active_outlined),
+        activeIcon: Icon(Icons.notifications_active),
+        label: ("Activités"),
       ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.person),
-        inactiveIcon: Icon(Icons.person_outlined),
-        title: ("Profil"),
-        textStyle: textStyleCustomBold(Colors.transparent, 12),
-        activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Theme.of(context).brightness == Brightness.dark
-            ? Theme.of(context).colorScheme.primary == cPrimaryPink
-                ? cInactiveIconPinkDarkTheme
-                : cInactiveIconPurpleDarkTheme
-            : Theme.of(context).colorScheme.primary == cPrimaryPink
-                ? cInactiveIconPinkLightTheme
-                : cInactiveIconPurpleLightTheme,
+      BottomNavigationBarItem(
+        icon: Icon(Icons.person_outlined),
+        activeIcon: Icon(Icons.person),
+        label: ("Profil"),
       ),
     ];
   }
@@ -110,7 +96,11 @@ class _BottomNavigationControllerState
   @override
   void initState() {
     super.initState();
-    _navController = PersistentTabController(initialIndex: 0);
+    _navController = TabController(
+        initialIndex: 0,
+        length: 4,
+        animationDuration: Duration.zero,
+        vsync: this);
     _navController.addListener(() {
       setState(() {});
     });
@@ -133,67 +123,84 @@ class _BottomNavigationControllerState
   @override
   Widget build(BuildContext context) {
     me = ref.watch(myselfNotifierProvider);
-    final gamesList = ref.read(myGamesNotifierProvider);
-    final gamesControllerList = ref.read(myGamesControllerNotifierProvider);
-    final indexGames = ref.watch(indexGamesNotifierProvider);
 
     return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
-                statusBarColor: _navController.index == 0
-                    ? Color(0xFF22213C).withOpacity(0.5)
-                    : Colors.transparent,
-                statusBarIconBrightness: _navController.index == 0
-                    ? Brightness.light
-                    : Theme.of(context).brightness == Brightness.dark
-                        ? Brightness.light
-                        : Brightness.dark,
-                systemNavigationBarColor: _navController.index == 0
-                    ? Color(0xFF22213C)
-                    : Theme.of(context).scaffoldBackgroundColor,
-                systemNavigationBarIconBrightness: _navController.index == 0
-                    ? Brightness.light
-                    : Theme.of(context).brightness == Brightness.dark
-                        ? Brightness.light
-                        : Brightness.dark),
-            child: Stack(
-              children: [
-                PersistentTabView.custom(
-                  context,
-                  controller: _navController,
-                  itemCount: 4,
-                  screens: _buildScreens(
-                      indexGames, [], gamesList, gamesControllerList),
-                  confineInSafeArea: true,
-                  handleAndroidBackButtonPress: true,
-                  stateManagement: true,
-                  hideNavigationBarWhenKeyboardShows: true,
-                  backgroundColor: _navController.index == 0
-                      ? Color(0xFF22213C)
-                      : Theme.of(context).scaffoldBackgroundColor,
-                  customWidget: CustomNavBar(
-                    items: _navBarsItems(),
-                    selectedIndex: _navController.index,
-                    onItemSelected: (index) {
-                      setState(() {
-                        _navController.index = index;
-                      });
-                    },
+      backgroundColor: _navController.index == 0
+          ? cBGDarkTheme
+          : Theme.of(context).scaffoldBackgroundColor,
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+              statusBarColor: _navController.index == 0
+                  ? Color(0xFF22213C).withOpacity(0.5)
+                  : Colors.transparent,
+              statusBarIconBrightness: _navController.index == 0
+                  ? Brightness.light
+                  : Theme.of(context).brightness == Brightness.dark
+                      ? Brightness.light
+                      : Brightness.dark,
+              systemNavigationBarColor: _navController.index == 0
+                  ? Color(0xFF22213C)
+                  : Theme.of(context).scaffoldBackgroundColor,
+              systemNavigationBarIconBrightness: _navController.index == 0
+                  ? Brightness.light
+                  : Theme.of(context).brightness == Brightness.dark
+                      ? Brightness.light
+                      : Brightness.dark),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Expanded(
+                    child: TabBarView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        controller: _navController,
+                        children: _buildScreens()),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: CustomNavBar(
+                      items: _navBarsItems(),
+                      selectedIndex: _navController.index,
+                      onItemSelected: (index) {
+                        if (_navController.index == 0 && index == 0) {
+                          while (navHomeAuthKey.currentState!.canPop()) {
+                            navHomeAuthKey.currentState!.pop();
+                          }
+                        } else if (_navController.index == 1 && index == 1) {
+                          while (navSelectionAuthKey.currentState!.canPop()) {
+                            navSelectionAuthKey.currentState!.pop();
+                          }
+                        } else if (_navController.index == 2 && index == 2) {
+                          while (navActivitiesAuthKey.currentState!.canPop()) {
+                            navActivitiesAuthKey.currentState!.pop();
+                          }
+                        } else if (_navController.index == 3 && index == 3) {
+                          while (navProfileAuthKey.currentState!.canPop()) {
+                            navProfileAuthKey.currentState!.pop();
+                          }
+                        } else {
+                          setState(() {
+                            _navController.index = index;
+                          });
+                        }
+                      },
+                    ),
+                  )
+                ],
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Container(
+                    width: double.infinity,
+                    height: 150,
+                    child: BottomShare(),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      width: double.infinity,
-                      height: 150,
-                      child: BottomShare(),
-                    ),
-                  ),
-                )
-              ],
-            )));
+              )
+            ],
+          )),
+    );
   }
 }
