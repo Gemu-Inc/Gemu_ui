@@ -6,6 +6,7 @@ import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:gemu/providers/GetStarted/getStarted_provider.dart';
 
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/translations/app_localizations.dart';
 
 class GetStartedBeforeScreen extends ConsumerStatefulWidget {
   const GetStartedBeforeScreen({Key? key}) : super(key: key);
@@ -82,7 +83,8 @@ class _GetStartedBeforeScreenState
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
           child: Text(
-            "Quelques explications avant d'entrer dans l'aventure Gemu",
+            AppLocalization.of(context)
+                .translate("get_started_screen", "explanations"),
             style: Theme.of(context).textTheme.titleSmall,
             textAlign: TextAlign.center,
           ),
@@ -118,8 +120,10 @@ class _GetStartedBeforeScreenState
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               )),
-          child:
-              Text("Commencer", style: textStyleCustomBold(Colors.white, 14)),
+          child: Text(
+              AppLocalization.of(context)
+                  .translate("get_started_screen", "start"),
+              style: textStyleCustomBold(Colors.white, 14)),
         ),
       ),
     );
@@ -246,7 +250,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                     height: 15.0,
                   ),
                   Text(
-                    "Met toi à jour quand tu le souhaites",
+                    AppLocalization.of(context).translate(
+                        "get_started_screen", "explanations_home_title"),
                     style: Theme.of(context).textTheme.titleSmall,
                     textAlign: TextAlign.center,
                   ),
@@ -262,7 +267,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
               height: MediaQuery.of(context).size.height / 6,
               alignment: Alignment.center,
               child: Text(
-                "Regarde, réagit et partage tes émotions à travers le contenu des jeux et utilisateurs que tu suis à chaque instant!",
+                AppLocalization.of(context).translate(
+                    "get_started_screen", "explanations_home_content"),
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ))
@@ -290,7 +296,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                     height: 15.0,
                   ),
                   Text(
-                    "Met la lumière sur les dernières tendances",
+                    AppLocalization.of(context).translate(
+                        "get_started_screen", "explanations_selection_title"),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
@@ -306,7 +313,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
               height: MediaQuery.of(context).size.height / 6,
               alignment: Alignment.center,
               child: Text(
-                "Découvre tous les jours des nouveaux jeux mais aussi des nouveaux talents",
+                AppLocalization.of(context).translate(
+                    "get_started_screen", "explanations_selection_content"),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge,
               ))
@@ -334,7 +342,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                     height: 15.0,
                   ),
                   Text(
-                    "Reste connecté avec les autres",
+                    AppLocalization.of(context).translate(
+                        "get_started_screen", "explanations_activities_title"),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
@@ -350,7 +359,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
               height: MediaQuery.of(context).size.height / 6,
               alignment: Alignment.center,
               child: Text(
-                "Continue à échanger, partager et discuter avec la communauté à tout instant",
+                AppLocalization.of(context).translate(
+                    "get_started_screen", "explanations_activities_content"),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge,
               ))
@@ -378,7 +388,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                     height: 15.0,
                   ),
                   Text(
-                    "A ton tour!",
+                    AppLocalization.of(context).translate(
+                        "get_started_screen", "explanations_add_title"),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
@@ -394,7 +405,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
               height: MediaQuery.of(context).size.height / 6,
               alignment: Alignment.center,
               child: Text(
-                "Ne sois pas timide et partage toi aussi ton contenu sur tes jeux favoris à la communauté!",
+                AppLocalization.of(context).translate(
+                    "get_started_screen", "explanations_add_content"),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge,
               ))
@@ -421,7 +433,8 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                   }
                 },
                 child: Text(
-                  "Passer",
+                  AppLocalization.of(context)
+                      .translate("get_started_screen", "passed"),
                   style: textStyleCustomBold(
                       Theme.of(context).brightness == Brightness.dark
                           ? Colors.white
@@ -462,8 +475,10 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                 },
                 child: Text(
                   _tabController.index != lengthGetStarted - 1
-                      ? "Suivant"
-                      : "Terminer",
+                      ? AppLocalization.of(context)
+                          .translate("get_started_screen", "next")
+                      : AppLocalization.of(context)
+                          .translate("get_started_screen", "finish"),
                   style: textStyleCustomBold(
                       Theme.of(context).brightness == Brightness.dark
                           ? Colors.white

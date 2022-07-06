@@ -12,6 +12,7 @@ import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Register/searching_game.dart';
 import 'package:gemu/services/database_service.dart';
+import 'package:gemu/translations/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import "package:email_validator/email_validator.dart";
 
@@ -80,7 +81,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   void _onPressedShowBottomSheet() async {
     final country = await showCountryPickerSheet(context,
         title: Text(
-          'Sélectionne ta nationnalité',
+          AppLocalization.of(context)
+              .translate("register_screen", "dialog_nationnality"),
           style: Theme.of(context).textTheme.titleSmall,
         ),
         heightFactor: 0.79,
@@ -413,29 +415,39 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   context: navNonAuthKey.currentContext!,
                   barrierDismissible: false,
                   builder: (BuildContext context) {
-                    return AlertDialogCustom(context, "Annuler l'inscription",
-                        "Êtes-vous sur de vouloir annuler votre inscription?", [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            ref
-                                .read(currentRouteNonAuthNotifierProvider
-                                    .notifier)
-                                .updateCurrentRoute("Welcome");
-                            navNonAuthKey.currentState!.pushNamedAndRemoveUntil(
-                                Welcome, (route) => false);
-                          },
-                          child: Text(
-                            "Oui",
-                            style: textStyleCustomBold(cGreenConfirm, 12),
-                          )),
-                      TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text(
-                            "Non",
-                            style: textStyleCustomBold(cRedCancel, 12),
-                          ))
-                    ]);
+                    return AlertDialogCustom(
+                        context,
+                        AppLocalization.of(context).translate(
+                            "register_screen", "cancel_register_title"),
+                        AppLocalization.of(context).translate(
+                            "register_screen", "cancel_register_content"),
+                        [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                ref
+                                    .read(currentRouteNonAuthNotifierProvider
+                                        .notifier)
+                                    .updateCurrentRoute("Welcome");
+                                navNonAuthKey.currentState!
+                                    .pushNamedAndRemoveUntil(
+                                        Welcome, (route) => false);
+                              },
+                              child: Text(
+                                AppLocalization.of(context).translate(
+                                    "register_screen",
+                                    "cancel_register_confirm"),
+                                style: textStyleCustomBold(cGreenConfirm, 12),
+                              )),
+                          TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text(
+                                AppLocalization.of(context).translate(
+                                    "register_screen",
+                                    "cancel_register_cancel"),
+                                style: textStyleCustomBold(cRedCancel, 12),
+                              ))
+                        ]);
                   });
             },
             icon: Icon(Icons.arrow_back_ios,
@@ -444,7 +456,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     : Colors.black,
                 size: 25)),
         title: Text(
-          "Inscription",
+          AppLocalization.of(context)
+              .translate("register_screen", "register_title"),
           style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: false,
@@ -544,7 +557,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               borderRadius: BorderRadius.circular(15.0),
             )),
         child: Text(
-          "Suivant",
+          AppLocalization.of(context).translate("register_screen", "next"),
           style: textStyleCustomBold(Colors.white, 14),
         ),
       ),
@@ -568,7 +581,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           padding: EdgeInsets.only(top: 6.0, bottom: 2.0),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
-        child: Text("Précédent",
+        child: Text(
+            AppLocalization.of(context)
+                .translate("register_screen", "previous"),
             style: GoogleFonts.fredokaOne(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white
@@ -591,7 +606,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             final verif =
                 await DatabaseService.verifPseudo(_usernameController.text);
             if (verif.docs != null && verif.docs.isNotEmpty) {
-              messageUser(context, "Ce pseudonyme existe déjà");
+              messageUser(
+                  context,
+                  AppLocalization.of(context)
+                      .translate("message_user", "pseudo_already_exist"));
             } else {
               User? user = await AuthService.registerUser(
                   context,
@@ -628,7 +646,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     strokeWidth: 1.0, color: Colors.white),
               )
             : Text(
-                "Terminer",
+                AppLocalization.of(context)
+                    .translate("register_screen", "finish"),
                 style: textStyleCustomBold(Colors.white, 14),
               ),
       ),
@@ -643,12 +662,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       controller: _firstPageScrollController,
       children: [
         Text(
-            "Allez c'est parti pour ton inscription, la première étape étant de renseigner les informations personnelles pour te connecter à ton compte!",
+            AppLocalization.of(context)
+                .translate("register_screen", "register_first_step"),
             style: Theme.of(context).textTheme.bodyLarge),
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            'Renseigne ton email*',
+            AppLocalization.of(context)
+                .translate("register_screen", "inform_email"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -656,7 +677,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _emailController,
           focusNode: _focusNodeEmail,
-          label: 'Email',
+          label: AppLocalization.of(context)
+              .translate("register_screen", "placeholder_mail"),
           obscure: false,
           icon: Icons.mail,
           textInputAction: TextInputAction.next,
@@ -682,7 +704,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            'Renseigne ton mot de passe*',
+            AppLocalization.of(context)
+                .translate("register_screen", "inform_password"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -690,7 +713,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _passwordController,
           focusNode: _focusNodePassword,
-          label: 'Mot de passe',
+          label: AppLocalization.of(context)
+              .translate("register_screen", "placeholder_password"),
           obscure: true,
           icon: Icons.lock,
           textInputAction: TextInputAction.next,
@@ -719,7 +743,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _confirmPasswordController,
           focusNode: _focusNodeConfirmPassword,
-          label: 'Confirme ton mot de passe',
+          label: AppLocalization.of(context)
+              .translate("register_screen", "placeholder_confirm_password"),
           obscure: true,
           icon: Icons.lock,
           textInputAction: TextInputAction.go,
@@ -753,13 +778,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       children: [
         Text(
-          "La seconde étape est pour te reconnaître et te retrouver au sein de la communauté, renseigne ton pseudonyme, ta date d'anniversaire et ta nationnalité.",
+          AppLocalization.of(context)
+              .translate("register_screen", "register_second_step"),
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            'Entre ton pseudonyme*',
+            AppLocalization.of(context)
+                .translate("register_screen", "inform_pseudo"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -767,7 +794,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _usernameController,
           focusNode: _focusNodeUsername,
-          label: 'Pseudonyme',
+          label: AppLocalization.of(context)
+              .translate("register_screen", "placeholder_pseudo"),
           obscure: false,
           icon: Icons.person,
           textInputAction: TextInputAction.go,
@@ -792,37 +820,41 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            "Sélectionne ta date d'anniversaire*",
+            AppLocalization.of(context)
+                .translate("register_screen", "inform_birthday"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
         GestureDetector(
           onTap: () {
-            DatePicker.showDatePicker(context,
-                showTitleActions: true,
-                theme: DatePickerTheme(
-                  backgroundColor: Theme.of(context).canvasColor,
-                  cancelStyle: textStyleCustomBold(Colors.red, 14),
-                  doneStyle: textStyleCustomBold(Colors.green, 14),
-                  itemStyle: textStyleCustomBold(
-                      Theme.of(context).iconTheme.color!, 15),
-                ),
-                minTime: DateTime(1900, 1, 1),
-                maxTime: DateTime.now(), onConfirm: (date) {
-              _dateBirthday = date;
-              final verif = DateTime.now().subtract(const Duration(days: 4745));
-              if (_dateBirthday!.isBefore(verif)) {
-                ref
-                    .read(anniversaryValidRegisterNotifierProvider.notifier)
-                    .updateValidity(true);
-              } else {
-                ref
-                    .read(anniversaryValidRegisterNotifierProvider.notifier)
-                    .updateValidity(false);
-              }
-            },
-                currentTime: _dateBirthday ?? DateTime.now(),
-                locale: LocaleType.fr);
+            DatePicker.showDatePicker(
+              context,
+              showTitleActions: true,
+              theme: DatePickerTheme(
+                backgroundColor: Theme.of(context).canvasColor,
+                cancelStyle: textStyleCustomBold(Colors.red, 14),
+                doneStyle: textStyleCustomBold(Colors.green, 14),
+                itemStyle:
+                    textStyleCustomBold(Theme.of(context).iconTheme.color!, 15),
+              ),
+              minTime: DateTime(1900, 1, 1),
+              maxTime: DateTime.now(),
+              onConfirm: (date) {
+                _dateBirthday = date;
+                final verif =
+                    DateTime.now().subtract(const Duration(days: 4745));
+                if (_dateBirthday!.isBefore(verif)) {
+                  ref
+                      .read(anniversaryValidRegisterNotifierProvider.notifier)
+                      .updateValidity(true);
+                } else {
+                  ref
+                      .read(anniversaryValidRegisterNotifierProvider.notifier)
+                      .updateValidity(false);
+                }
+              },
+              currentTime: _dateBirthday ?? DateTime.now(),
+            );
           },
           child: Container(
             height: 45,
@@ -841,7 +873,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Padding(
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            'Sélectionne ta nationnalité*',
+            AppLocalization.of(context)
+                .translate("register_screen", "inform_birthday"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -893,7 +926,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       children: [
         Text(
-          "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu.",
+          AppLocalization.of(context)
+              .translate("register_screen", "register_third_step"),
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         Padding(
@@ -921,7 +955,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               context: context,
               controller: _searchController,
               focusNode: _focusNodeSearch,
-              label: 'Chercher un jeu',
+              label: AppLocalization.of(context)
+                  .translate("register_screen", "placeholder_search_game"),
               obscure: false,
               icon: Icons.search,
               textInputAction: TextInputAction.search,
@@ -959,7 +994,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   }
                 },
                 child: Text(
-                  "Annuler",
+                  AppLocalization.of(context)
+                      .translate("register_screen", "cancel"),
                   textAlign: TextAlign.center,
                   style: textStyleCustomBold(
                       _searchController.text.isNotEmpty
@@ -998,7 +1034,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 child: stopReached
                     ? Center(
                         child: Text(
-                          "C'est tout pour le moment",
+                          AppLocalization.of(context)
+                              .translate("register_screen", "no_more_games"),
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       )
@@ -1040,8 +1077,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 ),
                 Text(
                   _searchController.text.length < 10
-                      ? 'Recherche de "${_searchController.text}.."'
-                      : 'Recherche de "${_searchController.text.substring(0, 10)}.."',
+                      ? '${AppLocalization.of(context).translate("register_screen", "search_game")} "${_searchController.text}.."'
+                      : '${AppLocalization.of(context).translate("register_screen", "search_game")} "${_searchController.text.substring(0, 10)}.."',
                   style: Theme.of(context).textTheme.titleSmall,
                 )
               ],
@@ -1052,7 +1089,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 padding: const EdgeInsets.symmetric(vertical: 25.0),
                 child: Center(
                   child: Text(
-                    'No games found',
+                    AppLocalization.of(context)
+                        .translate("register_screen", "no_games_found"),
                     style: Theme.of(context).textTheme.titleSmall,
                     textAlign: TextAlign.center,
                   ),
@@ -1176,14 +1214,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Padding(
           padding: const EdgeInsets.only(bottom: 5.0),
           child: Text(
-            "Nous voici dans le récapitulatif d'inscription, vérifie bien que tu as tout saisi correctement pour ton compte et n'hésite pas à vérifier être en accord avec les cgu et la politique de confidentialité de Gemu.",
+            AppLocalization.of(context)
+                .translate("register_screen", "register_finish"),
             style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            "Ton email*",
+            AppLocalization.of(context).translate("register_screen", "email"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -1191,7 +1230,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _emailController,
           focusNode: _focusNodeEmail,
-          label: 'Email',
+          label: AppLocalization.of(context)
+              .translate("register_screen", "placeholder_mail"),
           obscure: false,
           icon: Icons.mail,
           textInputAction: TextInputAction.go,
@@ -1216,14 +1256,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           child: Visibility(
               visible: !emailValid ? true : false,
               child: Text(
-                "Ton email n'est pas valide",
+                AppLocalization.of(context)
+                    .translate("register_screen", "invalid_email"),
                 style: textStyleCustomBold(Colors.red, 11),
               )),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            "Ton mot de passe*",
+            AppLocalization.of(context)
+                .translate("register_screen", "password"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -1231,7 +1273,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _passwordController,
           focusNode: _focusNodePassword,
-          label: 'Mot de passe',
+          label: AppLocalization.of(context)
+              .translate("register_screen", "placeholder_password"),
           obscure: true,
           icon: Icons.lock,
           textInputAction: TextInputAction.go,
@@ -1256,14 +1299,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           child: Visibility(
               visible: !passwordValid ? true : false,
               child: Text(
-                "Ton mot de passe n'est pas valide",
+                AppLocalization.of(context)
+                    .translate("register_screen", "invalid_password"),
                 style: textStyleCustomBold(Colors.red, 11),
               )),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            "Ton pseudonyme*",
+            AppLocalization.of(context).translate("register_screen", "pseudo"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -1271,7 +1315,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _usernameController,
           focusNode: _focusNodeUsername,
-          label: 'Pseudonyme',
+          label: AppLocalization.of(context)
+              .translate("register_screen", "placeholder_pseudo"),
           obscure: false,
           icon: Icons.person,
           textInputAction: TextInputAction.go,
@@ -1296,44 +1341,49 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           child: Visibility(
               visible: !usernameValid ? true : false,
               child: Text(
-                "Ton pseudonyme n'est pas valide",
+                AppLocalization.of(context)
+                    .translate("register_screen", "invalid_pseudo"),
                 style: textStyleCustomBold(Colors.red, 11),
               )),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            "Ta date de naissance*",
+            AppLocalization.of(context)
+                .translate("register_screen", "birthday"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
         GestureDetector(
           onTap: () {
-            DatePicker.showDatePicker(context,
-                showTitleActions: true,
-                theme: DatePickerTheme(
-                  backgroundColor: Theme.of(context).canvasColor,
-                  cancelStyle: textStyleCustomBold(Colors.red, 14),
-                  doneStyle: textStyleCustomBold(Colors.green, 14),
-                  itemStyle: textStyleCustomBold(
-                      Theme.of(context).iconTheme.color!, 15),
-                ),
-                minTime: DateTime(1900, 1, 1),
-                maxTime: DateTime.now(), onConfirm: (date) {
-              _dateBirthday = date;
-              final verif = DateTime.now().subtract(const Duration(days: 4745));
-              if (_dateBirthday!.isBefore(verif)) {
-                ref
-                    .read(anniversaryValidRegisterNotifierProvider.notifier)
-                    .updateValidity(true);
-              } else {
-                ref
-                    .read(anniversaryValidRegisterNotifierProvider.notifier)
-                    .updateValidity(false);
-              }
-            },
-                currentTime: _dateBirthday ?? DateTime.now(),
-                locale: LocaleType.fr);
+            DatePicker.showDatePicker(
+              context,
+              showTitleActions: true,
+              theme: DatePickerTheme(
+                backgroundColor: Theme.of(context).canvasColor,
+                cancelStyle: textStyleCustomBold(Colors.red, 14),
+                doneStyle: textStyleCustomBold(Colors.green, 14),
+                itemStyle:
+                    textStyleCustomBold(Theme.of(context).iconTheme.color!, 15),
+              ),
+              minTime: DateTime(1900, 1, 1),
+              maxTime: DateTime.now(),
+              onConfirm: (date) {
+                _dateBirthday = date;
+                final verif =
+                    DateTime.now().subtract(const Duration(days: 4745));
+                if (_dateBirthday!.isBefore(verif)) {
+                  ref
+                      .read(anniversaryValidRegisterNotifierProvider.notifier)
+                      .updateValidity(true);
+                } else {
+                  ref
+                      .read(anniversaryValidRegisterNotifierProvider.notifier)
+                      .updateValidity(false);
+                }
+              },
+              currentTime: _dateBirthday ?? DateTime.now(),
+            );
           },
           child: Container(
             height: 45,
@@ -1354,13 +1404,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             child: Visibility(
                 visible: !anniversaryValid ? true : false,
                 child: Text(
-                  "Il faut impérativement avoir minimum 13 ans",
+                  AppLocalization.of(context)
+                      .translate("register_screen", "invalid_birthday"),
                   style: textStyleCustomBold(Colors.red, 11),
                 ))),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            "Ta nationnalité*",
+            AppLocalization.of(context)
+                .translate("register_screen", "nationnality"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -1403,7 +1455,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
-            "Les jeux que tu veux suivre*",
+            AppLocalization.of(context)
+                .translate("register_screen", "follows_games"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -1413,13 +1466,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 child: Column(
                   children: [
                     Text(
-                      "Pas de jeux suivis actuellement",
+                      AppLocalization.of(context)
+                          .translate("register_screen", "invalid_games"),
                       style: textStyleCustomBold(Colors.red, 12),
                       textAlign: TextAlign.center,
                     ),
                     MaterialButton(
                       child: Text(
-                        'Vers les jeux',
+                        AppLocalization.of(context)
+                            .translate("register_screen", "redirect_games"),
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       color: Theme.of(context).canvasColor,
@@ -1450,7 +1505,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           value: cgu,
           title: RichText(
               text: TextSpan(
-                  text: "Accepter les ",
+                  text: AppLocalization.of(context)
+                      .translate("register_screen", "accept_cgu"),
                   style: textStyleCustomBold(
                       Theme.of(context).brightness == Brightness.dark
                           ? Colors.white
@@ -1458,7 +1514,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       12),
                   children: [
                 TextSpan(
-                  text: "termes et conditions",
+                  text: AppLocalization.of(context)
+                      .translate("register_screen", "cgu"),
                   style: textStyleCustomBold(
                       isDayMood ? cPrimaryPink : cPrimaryPurple, 12),
                   recognizer: TapGestureRecognizer()
@@ -1478,7 +1535,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           value: policyPrivacy,
           title: RichText(
               text: TextSpan(
-                  text: "Accepter la ",
+                  text: AppLocalization.of(context)
+                      .translate("register_screen", "accept_confidentiality"),
                   style: textStyleCustomBold(
                       Theme.of(context).brightness == Brightness.dark
                           ? Colors.white
@@ -1486,7 +1544,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       12),
                   children: [
                 TextSpan(
-                    text: "politique de confidentialité",
+                    text: AppLocalization.of(context)
+                        .translate("register_screen", "confidentiality"),
                     style: textStyleCustomBold(
                         isDayMood ? cPrimaryPink : cPrimaryPurple, 12),
                     recognizer: TapGestureRecognizer()

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
+import 'package:gemu/translations/app_localizations.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -35,7 +36,8 @@ Future inscriptionBottomSheet(
                           height: 50.0,
                           alignment: Alignment.center,
                           child: Text(
-                            "Choisis ton moyen d'inscription",
+                            AppLocalization.of(context)
+                                .translate("register_screen", "choice"),
                             style: Theme.of(context).textTheme.titleSmall,
                             textAlign: TextAlign.center,
                           ),
@@ -83,7 +85,9 @@ Future inscriptionBottomSheet(
                                           width: 15.0,
                                         ),
                                         Text(
-                                          "S'inscrire avec une adresse mail",
+                                          AppLocalization.of(context).translate(
+                                              "register_screen",
+                                              "register_mail"),
                                           textAlign: TextAlign.center,
                                           style: textStyleCustomBold(
                                               Colors.white, 12),
@@ -121,7 +125,9 @@ Future inscriptionBottomSheet(
                                           width: 15.0,
                                         ),
                                         Text(
-                                          "S'inscrire' avec Google",
+                                          AppLocalization.of(context).translate(
+                                              "register_screen",
+                                              "register_google"),
                                           textAlign: TextAlign.center,
                                           style: textStyleCustomBold(
                                               Colors.black, 12),
@@ -165,7 +171,9 @@ Future inscriptionBottomSheet(
                                           width: 15.0,
                                         ),
                                         Text(
-                                          "S'inscrire avec Apple",
+                                          AppLocalization.of(context).translate(
+                                              "register_screen",
+                                              "register_apple"),
                                           textAlign: TextAlign.center,
                                           style: textStyleCustomBold(
                                               Theme.of(context).brightness ==
@@ -208,7 +216,8 @@ Future inscriptionBottomSheet(
                             height: 50.0,
                             alignment: Alignment.center,
                             child: Text(
-                              "Choisis ton moyen d'inscription",
+                              AppLocalization.of(context)
+                                  .translate("register_screen", "choice"),
                               style: Theme.of(context).textTheme.titleSmall,
                               textAlign: TextAlign.center,
                             ),
@@ -254,7 +263,10 @@ Future inscriptionBottomSheet(
                                         const SizedBox(
                                           width: 15.0,
                                         ),
-                                        Text("S'inscrire avec une adresse mail",
+                                        Text(
+                                            AppLocalization.of(context)
+                                                .translate("register_screen",
+                                                    "register_mail"),
                                             textAlign: TextAlign.center,
                                             style: textStyleCustomBold(
                                                 Colors.white, 12))
@@ -290,7 +302,10 @@ Future inscriptionBottomSheet(
                                         const SizedBox(
                                           width: 15.0,
                                         ),
-                                        Text("S'inscrire avec Google",
+                                        Text(
+                                            AppLocalization.of(context)
+                                                .translate("register_screen",
+                                                    "register_google"),
                                             textAlign: TextAlign.center,
                                             style: textStyleCustomBold(
                                                 Colors.black, 12))
@@ -333,7 +348,8 @@ Future connexionBottomSheet(
                           height: 50.0,
                           alignment: Alignment.center,
                           child: Text(
-                            "Choisis ton moyen de connexion",
+                            AppLocalization.of(context)
+                                .translate("login_screen", "choice"),
                             style: Theme.of(context).textTheme.titleSmall,
                             textAlign: TextAlign.center,
                           ),
@@ -381,7 +397,8 @@ Future connexionBottomSheet(
                                           width: 15.0,
                                         ),
                                         Text(
-                                          "Se connecter avec une adresse mail",
+                                          AppLocalization.of(context).translate(
+                                              "login_screen", "login_email"),
                                           textAlign: TextAlign.center,
                                           style: textStyleCustomBold(
                                               Colors.white, 12),
@@ -419,7 +436,8 @@ Future connexionBottomSheet(
                                           width: 15.0,
                                         ),
                                         Text(
-                                          "Se connecter avec Google",
+                                          AppLocalization.of(context).translate(
+                                              "login_screen", "login_google"),
                                           textAlign: TextAlign.center,
                                           style: textStyleCustomBold(
                                               Colors.black, 12),
@@ -463,7 +481,8 @@ Future connexionBottomSheet(
                                           width: 15.0,
                                         ),
                                         Text(
-                                          "Se connecter avec Apple",
+                                          AppLocalization.of(context).translate(
+                                              "login_screen", "login_apple"),
                                           textAlign: TextAlign.center,
                                           style: textStyleCustomBold(
                                               Theme.of(context).brightness ==
@@ -506,7 +525,8 @@ Future connexionBottomSheet(
                           height: 50.0,
                           alignment: Alignment.center,
                           child: Text(
-                            "Choisis ton moyen de connexion",
+                            AppLocalization.of(context)
+                                .translate("login_screen", "choice"),
                             style: Theme.of(context).textTheme.titleSmall,
                             textAlign: TextAlign.center,
                           ),
@@ -554,7 +574,8 @@ Future connexionBottomSheet(
                                           width: 15.0,
                                         ),
                                         Text(
-                                          "Se connecter avec une adresse mail",
+                                          AppLocalization.of(context).translate(
+                                              "login_screen", "login_email"),
                                           textAlign: TextAlign.center,
                                           style: textStyleCustomBold(
                                               Colors.white, 12),
@@ -592,7 +613,8 @@ Future connexionBottomSheet(
                                           width: 15.0,
                                         ),
                                         Text(
-                                          "Se connecter avec Google",
+                                          AppLocalization.of(context).translate(
+                                              "login_screen", "login_google"),
                                           textAlign: TextAlign.center,
                                           style: textStyleCustomBold(
                                               Colors.black, 12),

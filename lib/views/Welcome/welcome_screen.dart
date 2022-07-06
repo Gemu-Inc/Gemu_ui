@@ -122,7 +122,8 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             height: 10.0,
                           ),
                           Text(
-                            "Rejoins-nous et vient découvrir l'univers de Gemu et de ses joueurs",
+                            AppLocalization.of(context)
+                                .translate("welcome_screen", "rejoign"),
                             style: textStyleCustomBold(
                                 Theme.of(context).brightness == Brightness.dark
                                     ? Colors.white
@@ -147,7 +148,8 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                 color: Theme.of(context).canvasColor,
                               ),
                               Text(
-                                "Commencer l'aventure",
+                                AppLocalization.of(context)
+                                    .translate("welcome_screen", "start"),
                                 style: textStyleCustomBold(
                                     Theme.of(context).brightness ==
                                             Brightness.dark
@@ -182,7 +184,8 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                       borderRadius: BorderRadius.circular(15.0),
                                     )),
                                 child: Text(
-                                  'Inscription',
+                                  AppLocalization.of(context)
+                                      .translate("welcome_screen", "register"),
                                   style: textStyleCustomBold(Colors.white, 14),
                                 )),
                           ),
@@ -203,7 +206,8 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                 color: Theme.of(context).canvasColor,
                               ),
                               Text(
-                                "Déjà un compte?",
+                                AppLocalization.of(context).translate(
+                                    "welcome_screen", "already_account"),
                                 style: textStyleCustomBold(
                                     Theme.of(context).brightness ==
                                             Brightness.dark
@@ -238,7 +242,8 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                       borderRadius: BorderRadius.circular(15.0),
                                     )),
                                 child: Text(
-                                  'Connexion',
+                                  AppLocalization.of(context)
+                                      .translate("welcome_screen", "login"),
                                   style: textStyleCustomBold(Colors.white, 14),
                                 )),
                           ),
@@ -250,8 +255,8 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             horizontal: 10.0, vertical: 10.0),
                         child: RichText(
                             text: TextSpan(
-                                text:
-                                    "En te connectant ou en t'inscrivant, tu dois être en accord avec les ",
+                                text: AppLocalization.of(context)
+                                    .translate("welcome_screen", "accord"),
                                 style: textStyleCustomRegular(
                                     Theme.of(context).brightness ==
                                             Brightness.dark
@@ -260,7 +265,8 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                     12),
                                 children: [
                                   TextSpan(
-                                      text: "termes et conditions",
+                                      text: AppLocalization.of(context)
+                                          .translate("welcome_screen", "cgu"),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap =
                                             () => print("terms and conditions"),
@@ -270,12 +276,16 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                                               : cPrimaryPurple,
                                           12)),
                                   TextSpan(
-                                      text: " et la ",
+                                      text: AppLocalization.of(context)
+                                          .translate(
+                                              "welcome_screen", "accord_bis"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall),
                                   TextSpan(
-                                      text: "politique de confidentialité",
+                                      text: AppLocalization.of(context)
+                                          .translate("welcome_screen",
+                                              "confidentiality"),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () => print("privacy policy"),
                                       style: textStyleCustomBold(

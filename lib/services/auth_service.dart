@@ -7,6 +7,7 @@ import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';
+import 'package:gemu/translations/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -44,23 +45,28 @@ class AuthService {
             email: email, password: password);
         user = await AuthService.getUser();
       } on FirebaseAuthException catch (e) {
-        if (e.code == 'invalid-email') {
-          messageUser(context, 'Try again, invalid email');
-        } else if (e.code == 'user-disabled') {
-          messageUser(context, "Try again, user disabled");
+        if (e.code == 'user-disabled') {
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "user_disabled"));
         } else if (e.code == 'user-not-found') {
-          messageUser(context, 'Try again, user not found for that email');
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "wrong_mail"));
         } else if (e.code == 'wrong-password') {
-          messageUser(context, 'Try again, wrong password for that user');
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "wrong_password"));
         } else {
-          messageUser(context, 'Try again');
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "try_again"));
         }
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-        context: context,
-        error: 'Try again, no email or password',
-      ));
     }
     return user;
   }
@@ -94,27 +100,36 @@ class AuthService {
         try {
           await DatabaseService.addUser(uid, gamesFollow, map);
           ref.read(successRegisterNotifierProvider.notifier).updateSuccess();
-          messageUser(context,
-              "Compte créé avec succès, vous allez être redirigé dans quelques instants");
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "create_account_success"));
           user = await AuthService.getUser();
         } catch (e) {
           messageUser(context,
-              "Un problème est survenu, veuillez réessayer ultérieurement");
+              AppLocalization.of(context).translate("message_user", "problem"));
         }
       });
       return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        messageUser(context, "Email already use, try again");
-      } else if (e.code == 'invalid-email') {
-        messageUser(context, "Invalid email, try again");
+        messageUser(
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "already_use_mail"));
       } else if (e.code == 'operation-not-allowed') {
-        messageUser(context, "Operation not allowed");
+        messageUser(
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "operation_not_allowed"));
       } else if (e.code == 'weak-password') {
-        messageUser(context, "Weak password, try again");
+        messageUser(
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "weak_password"));
       } else {
         messageUser(context,
-            "Un problème est survenu, veuillez réessayer ultérieurement");
+            AppLocalization.of(context).translate("message_user", "problem"));
       }
       return null;
     }
@@ -126,11 +141,15 @@ class AuthService {
     await _auth
         .sendPasswordResetEmail(email: email)
         .then((value) => messageUser(
-            context, 'Un mail pour changer ton mot de passe a été envoyé!'))
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "forgot_password_success")))
         .catchError((e) {
       print(e);
       messageUser(
-          context, "Oups, un problème est survenu lors de l'envoi du mail!");
+          context,
+          AppLocalization.of(context)
+              .translate("message_user", "oups_error_mail"));
     });
   }
 
@@ -138,12 +157,16 @@ class AuthService {
   static Future<void> sendMailVerifyEmail(BuildContext context) async {
     await _auth.currentUser!
         .sendEmailVerification()
-        .then((value) =>
-            messageUser(context, "Un mail de vérification a été envoyé!"))
+        .then((value) => messageUser(
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "send_verif_mail_success")))
         .catchError((e) {
       print(e);
       messageUser(
-          context, "Oups, un problème est survenu lors de l'envoi du mail!");
+          context,
+          AppLocalization.of(context)
+              .translate("message_user", "oups_error_mail"));
     });
   }
 

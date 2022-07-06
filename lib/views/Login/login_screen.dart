@@ -17,6 +17,7 @@ import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/components/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/providers/Login/login_provider.dart';
+import 'package:gemu/translations/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -159,7 +160,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                     : Colors.black,
                 size: 25)),
         title: Text(
-          "Connexion",
+          AppLocalization.of(context).translate("login_screen", "login_title"),
           style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: false,
@@ -176,7 +177,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
         Padding(
           padding: const EdgeInsets.only(bottom: 15.0, left: 5.0, right: 5.0),
           child: Text(
-              "Ne te fais pas plus attendre!\nJuste à rentrer ton email et ton mot de passe et c'est parti pour l'aventure Gemu!",
+              AppLocalization.of(context)
+                  .translate("login_screen", "login_content"),
               style: Theme.of(context).textTheme.bodyLarge),
         ),
         Padding(
@@ -185,7 +187,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
             context: context,
             controller: _emailController,
             focusNode: _focusNodeEmail,
-            label: 'Email',
+            label: AppLocalization.of(context)
+                .translate("login_screen", "placeholder_mail"),
             obscure: false,
             icon: Icons.mail,
             textInputAction: TextInputAction.next,
@@ -215,7 +218,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
             context: context,
             controller: _passwordController,
             focusNode: _focusNodePassword,
-            label: 'Mot de passe',
+            label: AppLocalization.of(context)
+                .translate("login_screen", "placeholder_password"),
             obscure: true,
             icon: Icons.lock,
             textInputAction: TextInputAction.go,
@@ -300,7 +304,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                           strokeWidth: 1.0, color: Colors.white),
                     )
                   : Text(
-                      'Se connecter',
+                      AppLocalization.of(context)
+                          .translate("login_screen", "log"),
                       style: textStyleCustomBold(Colors.white, 14),
                     ),
             ),
@@ -312,7 +317,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
         RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-                text: "Mot de passe oublié",
+                text: AppLocalization.of(context)
+                    .translate("login_screen", "forgot_password"),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     showDialog(
@@ -325,13 +331,17 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                 },
                                 child: AlertDialogResetPassword(
                                     context,
-                                    "Mot de passe oublié?",
+                                    AppLocalization.of(context).translate(
+                                        "login_screen",
+                                        "forgot_password_title"),
                                     Container(
                                       height: 100,
                                       child: Column(
                                         children: [
                                           Text(
-                                            "Saisit ton email afin de réinitialiser ton mot de passe:",
+                                            AppLocalization.of(context)
+                                                .translate("login_screen",
+                                                    "forgot_password_content"),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodySmall,
@@ -354,7 +364,11 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                                   keyboardType: TextInputType
                                                       .emailAddress,
                                                   decoration: InputDecoration(
-                                                    labelText: "Email",
+                                                    labelText: AppLocalization
+                                                            .of(context)
+                                                        .translate(
+                                                            "login_screen",
+                                                            "placeholder_mail"),
                                                     contentPadding:
                                                         EdgeInsets.zero,
                                                     fillColor: Theme.of(context)
@@ -407,14 +421,22 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                                         messageUser(
                                                             navNonAuthKey
                                                                 .currentContext!,
-                                                            'Compte inexistant ou non vérifié');
+                                                            AppLocalization.of(
+                                                                    context)
+                                                                .translate(
+                                                                    "message_user",
+                                                                    "forgot_password_error"));
                                                       }
                                                     } catch (e) {
                                                       print(e);
                                                       messageUser(
                                                           navNonAuthKey
                                                               .currentContext!,
-                                                          "Oups, une erreur est survenue!");
+                                                          AppLocalization.of(
+                                                                  context)
+                                                              .translate(
+                                                                  "message_user",
+                                                                  "oups_problem"));
                                                     }
                                                     Navigator.pop(context);
                                                     _emailResetPasswordController
@@ -449,25 +471,36 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                                                 messageUser(
                                                     navNonAuthKey
                                                         .currentContext!,
-                                                    'Compte inexistant ou non vérifié');
+                                                    AppLocalization.of(context)
+                                                        .translate(
+                                                            "message_user",
+                                                            "forgot_password_error"));
                                               }
                                             } catch (e) {
                                               print(e);
                                               messageUser(
                                                   navNonAuthKey.currentContext!,
-                                                  "Oups, une erreur est survenue!");
+                                                  AppLocalization.of(context)
+                                                      .translate("message_user",
+                                                          "oups_problem"));
                                             }
                                             Navigator.pop(context);
                                             _emailResetPasswordController
                                                 .clear();
                                           },
-                                          child: Text("Envoyer",
+                                          child: Text(
+                                              AppLocalization.of(context)
+                                                  .translate(
+                                                      "login_screen", "send"),
                                               style: textStyleCustomBold(
                                                   cGreenConfirm, 12))),
                                       TextButton(
                                           onPressed: () =>
                                               Navigator.pop(context),
-                                          child: Text("Annuler",
+                                          child: Text(
+                                              AppLocalization.of(context)
+                                                  .translate(
+                                                      "login_screen", "cancel"),
                                               style: textStyleCustomBold(
                                                   cRedCancel, 12)))
                                     ]),
@@ -482,7 +515,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
         RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-                text: "Vous n'avez pas encore un compte? ",
+                text: AppLocalization.of(context)
+                    .translate("login_screen", "no_account"),
                 style: textStyleCustomRegular(
                     Theme.of(context).brightness == Brightness.dark
                         ? Colors.white
@@ -490,7 +524,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                     13),
                 children: [
                   TextSpan(
-                    text: "Inscription",
+                    text: AppLocalization.of(context)
+                        .translate("login_screen", "register"),
                     style: textStyleCustomBold(
                         isDayMood ? cPrimaryPurple : cPrimaryPink, 13),
                     recognizer: TapGestureRecognizer()
