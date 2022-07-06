@@ -836,8 +836,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 showTitleActions: true,
                 theme: DatePickerTheme(
                   backgroundColor: Theme.of(context).canvasColor,
-                  cancelStyle: textStyleCustomBold(Colors.red, 14),
-                  doneStyle: textStyleCustomBold(Colors.green, 14),
+                  cancelStyle: textStyleCustomBold(cRedCancel, 14),
+                  doneStyle: textStyleCustomBold(cGreenConfirm, 14),
                   itemStyle: textStyleCustomBold(
                       Theme.of(context).iconTheme.color!, 15),
                 ),
@@ -876,7 +876,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
             AppLocalization.of(context)
-                .translate("register_screen", "inform_birthday"),
+                .translate("register_screen", "inform_nationnality"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -1260,7 +1260,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               child: Text(
                 AppLocalization.of(context)
                     .translate("register_screen", "invalid_email"),
-                style: textStyleCustomBold(Colors.red, 11),
+                style: textStyleCustomBold(cRedCancel, 11),
               )),
         ),
         Padding(
@@ -1279,20 +1279,52 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               .translate("register_screen", "placeholder_password"),
           obscure: true,
           icon: Icons.lock,
-          textInputAction: TextInputAction.go,
+          textInputAction: TextInputAction.next,
           clear: () {
             setState(() {
               _passwordController.clear();
             });
+          },
+          tap: () {
+            FocusScope.of(context).requestFocus(_focusNodePassword);
           },
           changed: (value) {
             setState(() {
               value = _passwordController.text;
             });
           },
-          submit: (value) {
-            value = _passwordController.text;
-            _focusNodePassword.unfocus();
+          editingComplete: () {
+            FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
+          },
+          isDayMood: isDayMood,
+        ),
+        const SizedBox(
+          height: 10.0,
+        ),
+        TextFieldCustomRegister(
+          context: context,
+          controller: _confirmPasswordController,
+          focusNode: _focusNodeConfirmPassword,
+          label: AppLocalization.of(context)
+              .translate("register_screen", "placeholder_confirm_password"),
+          obscure: true,
+          icon: Icons.lock,
+          textInputAction: TextInputAction.go,
+          clear: () {
+            setState(() {
+              _confirmPasswordController.clear();
+            });
+          },
+          tap: () {
+            FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
+          },
+          changed: (value) {
+            setState(() {
+              value = _confirmPasswordController.text;
+            });
+          },
+          editingComplete: () {
+            FocusScope.of(context).unfocus();
           },
           isDayMood: isDayMood,
         ),
@@ -1303,7 +1335,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               child: Text(
                 AppLocalization.of(context)
                     .translate("register_screen", "invalid_password"),
-                style: textStyleCustomBold(Colors.red, 11),
+                style: textStyleCustomBold(cRedCancel, 11),
               )),
         ),
         Padding(
@@ -1345,7 +1377,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               child: Text(
                 AppLocalization.of(context)
                     .translate("register_screen", "invalid_pseudo"),
-                style: textStyleCustomBold(Colors.red, 11),
+                style: textStyleCustomBold(cRedCancel, 11),
               )),
         ),
         Padding(
@@ -1362,8 +1394,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 showTitleActions: true,
                 theme: DatePickerTheme(
                   backgroundColor: Theme.of(context).canvasColor,
-                  cancelStyle: textStyleCustomBold(Colors.red, 14),
-                  doneStyle: textStyleCustomBold(Colors.green, 14),
+                  cancelStyle: textStyleCustomBold(cRedCancel, 14),
+                  doneStyle: textStyleCustomBold(cGreenConfirm, 14),
                   itemStyle: textStyleCustomBold(
                       Theme.of(context).iconTheme.color!, 15),
                 ),
@@ -1405,7 +1437,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 child: Text(
                   AppLocalization.of(context)
                       .translate("register_screen", "invalid_birthday"),
-                  style: textStyleCustomBold(Colors.red, 11),
+                  style: textStyleCustomBold(cRedCancel, 11),
                 ))),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -1452,53 +1484,57 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+          padding: const EdgeInsets.only(top: 20.0),
           child: Text(
             AppLocalization.of(context)
                 .translate("register_screen", "follows_games"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        gamesFollow.length == 0
-            ? Padding(
-                padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
-                child: Column(
-                  children: [
-                    Text(
+        Column(
+          children: [
+            gamesFollow.length != 0
+                ? GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 0.6,
+                        crossAxisSpacing: 6,
+                        mainAxisSpacing: 6),
+                    padding: EdgeInsets.symmetric(vertical: 10.0),
+                    itemCount: gamesFollow.length,
+                    itemBuilder: (_, index) {
+                      Game game = gamesFollow[index];
+                      return _itemGameFollow(game, isDayMood);
+                    })
+                : const SizedBox(),
+            gamesFollow.length < 2
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 5.0),
+                    child: Text(
                       AppLocalization.of(context)
                           .translate("register_screen", "invalid_games"),
-                      style: textStyleCustomBold(Colors.red, 12),
-                      textAlign: TextAlign.center,
+                      style: textStyleCustomBold(cRedCancel, 12),
                     ),
-                    MaterialButton(
-                      child: Text(
-                        AppLocalization.of(context)
-                            .translate("register_screen", "redirect_games"),
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      color: Theme.of(context).canvasColor,
-                      onPressed: () => {
-                        setState(() {
-                          _tabController.index -= 1;
-                        })
-                      },
-                      elevation: 6,
-                    ),
-                  ],
-                ))
-            : GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 0.6,
-                    crossAxisSpacing: 6,
-                    mainAxisSpacing: 6),
-                itemCount: gamesFollow.length,
-                itemBuilder: (_, index) {
-                  Game game = gamesFollow[index];
-                  return _itemGameFollow(game, isDayMood);
-                }),
+                  )
+                : const SizedBox(),
+            MaterialButton(
+              child: Text(
+                AppLocalization.of(context)
+                    .translate("register_screen", "redirect_games"),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              color: isDayMood ? cPrimaryPink : cPrimaryPurple,
+              onPressed: () => {
+                setState(() {
+                  _tabController.index -= 1;
+                })
+              },
+              elevation: 6,
+            ),
+          ],
+        ),
         CheckboxListTile(
           dense: false,
           value: cgu,

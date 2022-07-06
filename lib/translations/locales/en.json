@@ -82,7 +82,7 @@
         "birthday": "Your date of birth*",
         "invalid_birthday": "You must be at least 13 years old",
         "nationnality": "Your nationality*",
-        "follows_games": "The games you follow",
+        "follows_games": "Games you want to follow",
         "invalid_games": "Not enough games currently followed",
         "redirect_games": "To the games",
         "accept_cgu": "Accept the ",
