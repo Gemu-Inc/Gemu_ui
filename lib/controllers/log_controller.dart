@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gemu/providers/GetStarted/getStarted_provider.dart';
 import 'package:gemu/providers/Connectivity/connectivity_provider.dart';
+import 'package:gemu/providers/Langue/device_language_provider.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:gemu/providers/Theme/theme_provider.dart';
@@ -114,9 +115,15 @@ class _LogControllerState extends ConsumerState<LogController> {
         localeResolutionCallback: (deviceLocale, supportedLocales) {
           for (var locale in supportedLocales) {
             if (locale.languageCode == deviceLocale!.languageCode) {
+              ref
+                  .read(deviceLanguageProvider.notifier)
+                  .setLanguage(deviceLocale.languageCode);
               return deviceLocale;
             }
           }
+          ref
+              .read(deviceLanguageProvider.notifier)
+              .setLanguage(supportedLocales.first.languageCode);
           return supportedLocales.first;
         },
         localizationsDelegates: [

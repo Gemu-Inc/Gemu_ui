@@ -8,6 +8,7 @@ import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:gemu/providers/Langue/device_language_provider.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Register/searching_game.dart';
@@ -72,6 +73,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   DateTime? _dateBirthday;
 
   bool isComplete = false;
+
+  String deviceLanguage = "en";
 
   void initCountry() async {
     final country = await getCountryByCountryCode(context, 'FR');
@@ -364,6 +367,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     isLoadingMoreData = ref.watch(loadingMoreGamesRegisterNotifierProvider);
     stopReached = ref.watch(stopReachedRegisterNotifierProvider);
     isSearching = ref.watch(searchingRegisterNotifierProvider);
+
+    deviceLanguage = ref.watch(deviceLanguageProvider);
 
     return Scaffold(
         resizeToAvoidBottomInset: currentIndex == 2 ? false : true,
@@ -827,34 +832,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         ),
         GestureDetector(
           onTap: () {
-            DatePicker.showDatePicker(
-              context,
-              showTitleActions: true,
-              theme: DatePickerTheme(
-                backgroundColor: Theme.of(context).canvasColor,
-                cancelStyle: textStyleCustomBold(Colors.red, 14),
-                doneStyle: textStyleCustomBold(Colors.green, 14),
-                itemStyle:
-                    textStyleCustomBold(Theme.of(context).iconTheme.color!, 15),
-              ),
-              minTime: DateTime(1900, 1, 1),
-              maxTime: DateTime.now(),
-              onConfirm: (date) {
-                _dateBirthday = date;
-                final verif =
-                    DateTime.now().subtract(const Duration(days: 4745));
-                if (_dateBirthday!.isBefore(verif)) {
-                  ref
-                      .read(anniversaryValidRegisterNotifierProvider.notifier)
-                      .updateValidity(true);
-                } else {
-                  ref
-                      .read(anniversaryValidRegisterNotifierProvider.notifier)
-                      .updateValidity(false);
-                }
-              },
-              currentTime: _dateBirthday ?? DateTime.now(),
-            );
+            DatePicker.showDatePicker(context,
+                showTitleActions: true,
+                theme: DatePickerTheme(
+                  backgroundColor: Theme.of(context).canvasColor,
+                  cancelStyle: textStyleCustomBold(Colors.red, 14),
+                  doneStyle: textStyleCustomBold(Colors.green, 14),
+                  itemStyle: textStyleCustomBold(
+                      Theme.of(context).iconTheme.color!, 15),
+                ),
+                minTime: DateTime(1900, 1, 1),
+                maxTime: DateTime.now(), onConfirm: (date) {
+              _dateBirthday = date;
+              final verif = DateTime.now().subtract(const Duration(days: 4745));
+              if (_dateBirthday!.isBefore(verif)) {
+                ref
+                    .read(anniversaryValidRegisterNotifierProvider.notifier)
+                    .updateValidity(true);
+              } else {
+                ref
+                    .read(anniversaryValidRegisterNotifierProvider.notifier)
+                    .updateValidity(false);
+              }
+            },
+                currentTime: _dateBirthday ?? DateTime.now(),
+                locale: deviceLanguage == "fr" ? LocaleType.fr : LocaleType.en);
           },
           child: Container(
             height: 45,
@@ -1356,34 +1358,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         ),
         GestureDetector(
           onTap: () {
-            DatePicker.showDatePicker(
-              context,
-              showTitleActions: true,
-              theme: DatePickerTheme(
-                backgroundColor: Theme.of(context).canvasColor,
-                cancelStyle: textStyleCustomBold(Colors.red, 14),
-                doneStyle: textStyleCustomBold(Colors.green, 14),
-                itemStyle:
-                    textStyleCustomBold(Theme.of(context).iconTheme.color!, 15),
-              ),
-              minTime: DateTime(1900, 1, 1),
-              maxTime: DateTime.now(),
-              onConfirm: (date) {
-                _dateBirthday = date;
-                final verif =
-                    DateTime.now().subtract(const Duration(days: 4745));
-                if (_dateBirthday!.isBefore(verif)) {
-                  ref
-                      .read(anniversaryValidRegisterNotifierProvider.notifier)
-                      .updateValidity(true);
-                } else {
-                  ref
-                      .read(anniversaryValidRegisterNotifierProvider.notifier)
-                      .updateValidity(false);
-                }
-              },
-              currentTime: _dateBirthday ?? DateTime.now(),
-            );
+            DatePicker.showDatePicker(context,
+                showTitleActions: true,
+                theme: DatePickerTheme(
+                  backgroundColor: Theme.of(context).canvasColor,
+                  cancelStyle: textStyleCustomBold(Colors.red, 14),
+                  doneStyle: textStyleCustomBold(Colors.green, 14),
+                  itemStyle: textStyleCustomBold(
+                      Theme.of(context).iconTheme.color!, 15),
+                ),
+                minTime: DateTime(1900, 1, 1),
+                maxTime: DateTime.now(), onConfirm: (date) {
+              _dateBirthday = date;
+              final verif = DateTime.now().subtract(const Duration(days: 4745));
+              if (_dateBirthday!.isBefore(verif)) {
+                ref
+                    .read(anniversaryValidRegisterNotifierProvider.notifier)
+                    .updateValidity(true);
+              } else {
+                ref
+                    .read(anniversaryValidRegisterNotifierProvider.notifier)
+                    .updateValidity(false);
+              }
+            },
+                currentTime: _dateBirthday ?? DateTime.now(),
+                locale: deviceLanguage == "fr" ? LocaleType.fr : LocaleType.en);
           },
           child: Container(
             height: 45,
