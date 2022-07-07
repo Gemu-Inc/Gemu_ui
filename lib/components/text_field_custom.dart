@@ -224,7 +224,7 @@ class TextFieldCustomRegister extends ConsumerStatefulWidget {
   final IconData icon;
   final TextInputAction textInputAction;
   final TextInputType? textInputType;
-  final Function() clear;
+  final Function()? clear;
   final Function()? editingComplete;
   final Function(String)? submit;
   final Function(String)? changed;
@@ -241,7 +241,7 @@ class TextFieldCustomRegister extends ConsumerStatefulWidget {
       required this.icon,
       required this.textInputAction,
       this.textInputType,
-      required this.clear,
+      this.clear,
       this.editingComplete,
       this.submit,
       this.tap,
@@ -298,7 +298,7 @@ class _TextFieldCustomRegisterState
                         ? cPrimaryPink
                         : cSecondaryPurple
                     : Colors.grey),
-            suffixIcon: widget.controller.text.isEmpty
+            suffixIcon: widget.controller.text.isEmpty || widget.clear == null
                 ? SizedBox()
                 : widget.obscure
                     ? IconButton(

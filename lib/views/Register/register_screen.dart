@@ -58,6 +58,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   late TextEditingController _searchController;
   Algolia algolia = AlgoliaService.algolia;
   List<AlgoliaObjectSnapshot> gamesSearch = [];
+  String value = "";
+  Timer? timer;
+  bool isResultsSearch = false;
 
   late bool isSearching;
   late bool isLoadingMoreData;
@@ -114,6 +117,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   _searchGames(String value) async {
     if (value.isNotEmpty) {
+      print("je rentre");
       ref.read(searchingRegisterNotifierProvider.notifier).update(true);
 
       AlgoliaQuery query = algolia.instance.index('games');
@@ -122,6 +126,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       gamesSearch = (await query.getObjects()).hits;
 
       ref.read(searchingRegisterNotifierProvider.notifier).update(false);
+      setState(() {
+        isResultsSearch = true;
+      });
+    }
+  }
+
+  _searchGamesAfterWaiting() {
+    if (_searchController.text.isEmpty) {
+      isResultsSearch = false;
+      value = "";
+    }
+    if (!isSearching) {
+      timer = Timer(Duration(seconds: 4), () {
+        if (isResultsSearch) {
+          timer?.cancel();
+        } else if (_searchController.text.isNotEmpty &&
+            value != _searchController.text) {
+          value = _searchController.text;
+          _searchGames(_searchController.text);
+        }
+      });
     }
   }
 
@@ -161,13 +186,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       }
     });
 
-    // _searchController.addListener(() {
-    //   Timer(Duration(milliseconds: 750), () {
-    //     if (_searchController.text != "") {
-    //       _searchGames(_searchController.text);
-    //     }
-    //   });
-    // });
+    _searchController.addListener(_searchGamesAfterWaiting);
 
     _emailController.addListener(() {
       if (_emailController.text.trim().isNotEmpty &&
@@ -247,13 +266,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       }
     });
 
-    // _searchController.removeListener(() {
-    //   Timer(Duration(milliseconds: 500), () {
-    //     if (_searchController.text != "") {
-    //       _searchGames(_searchController.text);
-    //     }
-    //   });
-    // });
+    _searchController.removeListener(_searchGamesAfterWaiting);
 
     _emailController.removeListener(() {
       if (_emailController.text.trim().isNotEmpty &&
@@ -937,9 +950,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           child: StickyHeader(
               controller: _mainScrollController,
               header: _searchBar(isDayMood),
-              content: _searchController.text.isNotEmpty
-                  ? _searchListGames(isDayMood)
-                  : _listGames(isDayMood)),
+              content: _games(isDayMood)),
         )
       ],
     );
@@ -962,15 +973,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               obscure: false,
               icon: Icons.search,
               textInputAction: TextInputAction.search,
-              clear: () {
-                setState(() {
-                  _searchController.clear();
-                  _focusNodeSearch.unfocus();
-                });
-                if (gamesSearch.length != 0) {
-                  gamesSearch.clear();
-                }
-              },
               tap: () {
                 FocusScope.of(context).requestFocus(_focusNodeSearch);
               },
@@ -980,8 +982,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 });
               },
               editingComplete: () {
+                timer?.cancel();
                 Helpers.hideKeyboard(context);
-                _searchGames(_searchController.text);
+                if (_searchController.text.isNotEmpty &&
+                    !isSearching &&
+                    !isResultsSearch) {
+                  value = _searchController.text;
+                  _searchGames(_searchController.text);
+                }
               },
               isDayMood: isDayMood,
             ),
@@ -992,15 +1000,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   if (_searchController.text.isNotEmpty) {
                     setState(() {
                       _searchController.clear();
+                      isResultsSearch = false;
+                      value = "";
                     });
                   }
+                  _focusNodeSearch.unfocus();
+                  Helpers.hideKeyboard(context);
                 },
                 child: Text(
                   AppLocalization.of(context)
                       .translate("register_screen", "cancel"),
                   textAlign: TextAlign.center,
                   style: textStyleCustomBold(
-                      _searchController.text.isNotEmpty
+                      _focusNodeSearch.hasFocus
                           ? isDayMood
                               ? cPrimaryPink
                               : cPrimaryPurple
@@ -1009,6 +1021,38 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 )),
           )
         ]));
+  }
+
+  Widget _games(bool isDayMood) {
+    return isSearching
+        ? Padding(
+            padding: const EdgeInsets.symmetric(vertical: 25.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 15.0,
+                  width: 15.0,
+                  child: CircularProgressIndicator(
+                    color: isDayMood ? cPrimaryPink : cPrimaryPurple,
+                  ),
+                ),
+                SizedBox(
+                  width: 5.0,
+                ),
+                Text(
+                  _searchController.text.length < 10
+                      ? '${AppLocalization.of(context).translate("register_screen", "search_game")} "${_searchController.text}.."'
+                      : '${AppLocalization.of(context).translate("register_screen", "search_game")} "${_searchController.text.substring(0, 10)}.."',
+                  style: Theme.of(context).textTheme.titleSmall,
+                )
+              ],
+            ),
+          )
+        : _searchController.text.isEmpty || !isResultsSearch
+            ? _listGames(isDayMood)
+            : _searchListGames(isDayMood);
   }
 
   Widget _listGames(bool isDayMood) {
@@ -1060,60 +1104,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   Widget _searchListGames(bool isDayMood) {
-    return isSearching
+    return gamesSearch.length == 0
         ? Padding(
             padding: const EdgeInsets.symmetric(vertical: 25.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 15.0,
-                  width: 15.0,
-                  child: CircularProgressIndicator(
-                    color: isDayMood ? cPrimaryPink : cPrimaryPurple,
-                  ),
-                ),
-                SizedBox(
-                  width: 5.0,
-                ),
-                Text(
-                  _searchController.text.length < 10
-                      ? '${AppLocalization.of(context).translate("register_screen", "search_game")} "${_searchController.text}.."'
-                      : '${AppLocalization.of(context).translate("register_screen", "search_game")} "${_searchController.text.substring(0, 10)}.."',
-                  style: Theme.of(context).textTheme.titleSmall,
-                )
-              ],
+            child: Center(
+              child: Text(
+                AppLocalization.of(context)
+                    .translate("register_screen", "no_games_found"),
+                style: Theme.of(context).textTheme.titleSmall,
+                textAlign: TextAlign.center,
+              ),
             ),
           )
-        : gamesSearch.length == 0
-            ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 25.0),
-                child: Center(
-                  child: Text(
-                    AppLocalization.of(context)
-                        .translate("register_screen", "no_games_found"),
-                    style: Theme.of(context).textTheme.titleSmall,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            : GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 0.6,
-                    crossAxisSpacing: 6,
-                    mainAxisSpacing: 6),
-                shrinkWrap: true,
-                controller: _gamesScrollController,
-                padding: const EdgeInsets.symmetric(vertical: 15.0),
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: gamesSearch.length,
-                itemBuilder: (_, index) {
-                  Game gameAlgolia = Game.fromMapAlgolia(
-                      gamesSearch[index], gamesSearch[index].data);
-                  return _itemGame(gameAlgolia, isDayMood);
-                });
+        : GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 0.6,
+                crossAxisSpacing: 6,
+                mainAxisSpacing: 6),
+            shrinkWrap: true,
+            controller: _gamesScrollController,
+            padding: const EdgeInsets.symmetric(vertical: 15.0),
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: gamesSearch.length,
+            itemBuilder: (_, index) {
+              Game gameAlgolia = Game.fromMapAlgolia(
+                  gamesSearch[index], gamesSearch[index].data);
+              return _itemGame(gameAlgolia, isDayMood);
+            });
   }
 
   Widget _itemGame(Game game, bool isDayMood) {
@@ -1509,7 +1527,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       return _itemGameFollow(game, isDayMood);
                     })
                 : const SizedBox(),
-            gamesFollow.length < 2
+            !gamesValid
                 ? Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Text(
