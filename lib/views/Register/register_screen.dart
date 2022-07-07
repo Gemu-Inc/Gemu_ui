@@ -908,7 +908,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 contentPadding: EdgeInsets.zero,
                 fillColor: Theme.of(context).canvasColor,
                 filled: true,
-                labelText: "Rechercher un pays",
+                labelText: AppLocalization.of(context)
+                    .translate("register_screen", "search_country"),
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -916,7 +917,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 )),
               ),
               emptySearchBuilder: (_) => Text(
-                "Pas de pays trouvé",
+                AppLocalization.of(context)
+                    .translate("register_screen", "no_country_found"),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
@@ -1494,7 +1496,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 contentPadding: EdgeInsets.zero,
                 fillColor: Theme.of(context).canvasColor,
                 filled: true,
-                labelText: "Rechercher un pays",
+                labelText: AppLocalization.of(context)
+                    .translate("register_screen", "search_country"),
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -1502,7 +1505,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 )),
               ),
               emptySearchBuilder: (_) => Text(
-                "Pas de pays trouvé",
+                AppLocalization.of(context)
+                    .translate("register_screen", "no_country_found"),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleSmall,
               ),

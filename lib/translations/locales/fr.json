@@ -66,6 +66,8 @@
         "inform_birthday": "Sélectionne ta date d'anniversaire*",
         "inform_nationnality": "Sélectionne ta nationnalité*",
         "dialog_nationnality": "Sélectionne ta nationnalité",
+        "search_country": "Rechercher un pays",
+        "no_country_found": "Pas de pays trouvé",
         "register_third_step": "Une seule étape et c'est parti pour une grande aventure, tu es prêt? Il suffit que tu renseignes au minimum deux jeux auquels tu joues et/ou que tu voudrais suivre sur Gemu.",
         "placeholder_search_game": "Chercher un jeu",
         "cancel": "Annuler",
