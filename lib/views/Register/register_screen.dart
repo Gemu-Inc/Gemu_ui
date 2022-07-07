@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:algolia/algolia.dart';
-import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -27,6 +27,8 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
+
+import 'package:country_code_picker/country_code_picker.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   @override
@@ -72,33 +74,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   late bool gamesValid;
 
-  Country? _selectedCountry;
+  CountryCode? _selectedCountry;
   DateTime? _dateBirthday;
 
   bool isComplete = false;
 
   String deviceLanguage = "en";
-
-  void initCountry() async {
-    final country = await getCountryByCountryCode(context, 'FR');
-    _selectedCountry = country;
-  }
-
-  void _onPressedShowBottomSheet() async {
-    final country = await showCountryPickerSheet(context,
-        title: Text(
-          AppLocalization.of(context)
-              .translate("register_screen", "dialog_nationnality"),
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        heightFactor: 0.79,
-        cornerRadius: 15.0);
-    if (country != null) {
-      setState(() {
-        _selectedCountry = country;
-      });
-    }
-  }
 
   loadMoreData() async {
     Game game = allGames.last;
@@ -154,8 +135,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   void initState() {
     super.initState();
     DatabaseService.getGamesRegister(ref);
-
-    initCountry();
 
     _tabController = TabController(length: 4, vsync: this);
 
@@ -504,7 +483,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       final gamesValid,
       final cgu,
       final policyPrivacy) {
-    final country = _selectedCountry;
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
         child: TabBarView(
@@ -519,7 +497,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               ),
               Column(
                 children: [
-                  Expanded(child: secondPage(country, isDayMood)),
+                  Expanded(child: secondPage(isDayMood)),
                   btnPrevious(),
                   btnNext(isDayMood),
                 ],
@@ -536,7 +514,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   Expanded(
                       child: fourthPage(
                           isDayMood,
-                          country,
                           emailValid,
                           passwordValid,
                           usernameValid,
@@ -635,7 +612,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   _passwordController.text,
                   _usernameController.text,
                   _dateBirthday!,
-                  _selectedCountry!.countryCode,
+                  _selectedCountry!.code!,
                   gamesFollow,
                   ref);
 
@@ -788,7 +765,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     );
   }
 
-  Widget secondPage(Country? country, bool isDayMood) {
+  Widget secondPage(bool isDayMood) {
     return ListView(
       controller: _secondPageScrollController,
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -873,15 +850,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           },
           child: Container(
             height: 45,
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(5.0)),
-            child: Text(
-              Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleSmall,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Text(
+                Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
             ),
           ),
         ),
@@ -893,42 +873,54 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            _onPressedShowBottomSheet();
-          },
-          child: Container(
-            height: 45,
-            alignment: Alignment.center,
+        Container(
+            height: 55,
             decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(5.0)),
-            child: country == null
-                ? Container()
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 40,
-                        width: 40,
-                        child: Image.asset(
-                          country.flag,
-                          package: countryCodePackageName,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Text(
-                        '${country.name}',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
-                  ),
-          ),
-        ),
+            child: CountryCodePicker(
+              onInit: (countryCode) {
+                if (_selectedCountry == null) {
+                  _selectedCountry = countryCode!;
+                }
+              },
+              onChanged: (countryCode) {
+                setState(() {
+                  _selectedCountry = countryCode;
+                });
+              },
+              initialSelection:
+                  _selectedCountry != null ? _selectedCountry!.code : 'FR',
+              showCountryOnly: true,
+              showOnlyCountryWhenClosed: true,
+              alignLeft: true,
+              boxDecoration: BoxDecoration(
+                  color: Theme.of(context).canvasColor,
+                  borderRadius: BorderRadius.circular(5.0)),
+              barrierColor: Colors.black.withOpacity(0.5),
+              dialogSize: Size(MediaQuery.of(context).size.width - 20,
+                  MediaQuery.of(context).size.height / 1.5),
+              textStyle: Theme.of(context).textTheme.titleSmall,
+              dialogTextStyle: Theme.of(context).textTheme.titleSmall,
+              flagWidth: 30,
+              searchDecoration: InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                fillColor: Theme.of(context).canvasColor,
+                filled: true,
+                labelText: "Rechercher un pays",
+                border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                )),
+              ),
+              emptySearchBuilder: (_) => Text(
+                "Pas de pays trouvé",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ))
       ],
     );
   }
@@ -1218,7 +1210,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   Widget fourthPage(
       bool isDayMood,
-      Country? country,
       final emailValid,
       final passwordValid,
       final usernameValid,
@@ -1436,15 +1427,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           },
           child: Container(
             height: 45,
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(5.0)),
-            child: Text(
-              Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleSmall,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Text(
+                Helpers.dateBirthday(_dateBirthday ?? DateTime.now()),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
             ),
           ),
         ),
@@ -1465,42 +1459,54 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            _onPressedShowBottomSheet();
-          },
-          child: Container(
-            height: 45,
-            alignment: Alignment.center,
+        Container(
+            height: 55,
             decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(5.0)),
-            child: country == null
-                ? Container()
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 40,
-                        width: 40,
-                        child: Image.asset(
-                          country.flag,
-                          package: countryCodePackageName,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Text(
-                        '${country.name}',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
-                  ),
-          ),
-        ),
+            child: CountryCodePicker(
+              onInit: (countryCode) {
+                if (_selectedCountry == null) {
+                  _selectedCountry = countryCode!;
+                }
+              },
+              onChanged: (countryCode) {
+                setState(() {
+                  _selectedCountry = countryCode;
+                });
+              },
+              initialSelection:
+                  _selectedCountry != null ? _selectedCountry!.code : 'FR',
+              showCountryOnly: true,
+              showOnlyCountryWhenClosed: true,
+              alignLeft: true,
+              boxDecoration: BoxDecoration(
+                  color: Theme.of(context).canvasColor,
+                  borderRadius: BorderRadius.circular(5.0)),
+              barrierColor: Colors.black.withOpacity(0.5),
+              dialogSize: Size(MediaQuery.of(context).size.width - 20,
+                  MediaQuery.of(context).size.height / 1.5),
+              textStyle: Theme.of(context).textTheme.titleSmall,
+              dialogTextStyle: Theme.of(context).textTheme.titleSmall,
+              flagWidth: 30,
+              searchDecoration: InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                fillColor: Theme.of(context).canvasColor,
+                filled: true,
+                labelText: "Rechercher un pays",
+                border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                )),
+              ),
+              emptySearchBuilder: (_) => Text(
+                "Pas de pays trouvé",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            )),
         Padding(
           padding: const EdgeInsets.only(top: 20.0),
           child: Text(

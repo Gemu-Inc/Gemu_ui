@@ -60,6 +60,7 @@ dependencies:
   algolia: ^1.0.1
   sticky_headers: ^0.3.0+2
   country_calling_code_picker: ^2.0.0
+  country_code_picker: ^2.0.2
   loader: ^1.0.0
   flutter_overlay_loader: ^1.0.3
   loading_indicator: ^3.0.2

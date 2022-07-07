@@ -23,6 +23,8 @@ import 'package:gemu/router.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:country_code_picker/country_localizations.dart';
+
 class LogController extends ConsumerStatefulWidget {
   const LogController({Key? key}) : super(key: key);
 
@@ -127,6 +129,7 @@ class _LogControllerState extends ConsumerState<LogController> {
           return supportedLocales.first;
         },
         localizationsDelegates: [
+          CountryLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
