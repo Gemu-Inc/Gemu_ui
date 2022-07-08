@@ -275,9 +275,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                       password: _passwordController.text);
 
                   if (user != null) {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    await prefs.setString("token", user.uid);
+                    await AuthService.setUserToken(user);
                     await DatabaseService.getUserData(user, ref);
                   }
 
