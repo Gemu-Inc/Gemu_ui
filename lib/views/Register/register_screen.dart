@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -60,7 +59,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   late TextEditingController _searchController;
   Algolia algolia = AlgoliaService.algolia;
   List<AlgoliaObjectSnapshot> gamesSearch = [];
-  String value = "";
+  String valueSearching = "";
   Timer? timer;
   bool isResultsSearch = false;
 
@@ -98,7 +97,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   _searchGames(String value) async {
     if (value.isNotEmpty) {
-      print("je rentre");
       ref.read(searchingRegisterNotifierProvider.notifier).update(true);
 
       AlgoliaQuery query = algolia.instance.index('games');
@@ -114,17 +112,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   _searchGamesAfterWaiting() {
+    print("j'écoute");
     if (_searchController.text.isEmpty) {
       isResultsSearch = false;
-      value = "";
+      valueSearching = "";
     }
     if (!isSearching) {
-      timer = Timer(Duration(seconds: 4), () {
-        if (isResultsSearch) {
-          timer?.cancel();
-        } else if (_searchController.text.isNotEmpty &&
-            value != _searchController.text) {
-          value = _searchController.text;
+      timer = Timer(Duration(seconds: 2), () {
+        if (_searchController.text.isNotEmpty &&
+            valueSearching != _searchController.text) {
+          valueSearching = _searchController.text;
           _searchGames(_searchController.text);
         }
       });
@@ -981,7 +978,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 if (_searchController.text.isNotEmpty &&
                     !isSearching &&
                     !isResultsSearch) {
-                  value = _searchController.text;
+                  valueSearching = _searchController.text;
                   _searchGames(_searchController.text);
                 }
               },
@@ -995,7 +992,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     setState(() {
                       _searchController.clear();
                       isResultsSearch = false;
-                      value = "";
+                      valueSearching = "";
                     });
                   }
                   _focusNodeSearch.unfocus();

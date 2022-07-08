@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/models/user.dart';
 import 'package:gemu/providers/Home/index_games_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/auth_service.dart';

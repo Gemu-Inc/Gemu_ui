@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
-import 'package:gemu/views/Games/game_screen.dart';
 import 'package:gemu/views/Games/games_screen.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/views/Highlights/highlights_screen.dart';
