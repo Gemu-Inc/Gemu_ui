@@ -61,6 +61,7 @@ Future inscriptionBottomSheet(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                     onPressed: () {
+                                      Navigator.pop(context);
                                       navNonAuthKey.currentState!.pushNamed(
                                           Register,
                                           arguments: [false, null]);
@@ -257,6 +258,7 @@ Future inscriptionBottomSheet(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                     onPressed: () {
+                                      Navigator.pop(context);
                                       navNonAuthKey.currentState!.pushNamed(
                                           Register,
                                           arguments: [false, null]);
@@ -410,6 +412,7 @@ Future connexionBottomSheet(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                     onPressed: () {
+                                      Navigator.pop(context);
                                       navNonAuthKey.currentState!
                                           .pushNamed(Login);
                                     },
@@ -603,6 +606,7 @@ Future connexionBottomSheet(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                     onPressed: () {
+                                      Navigator.pop(context);
                                       navNonAuthKey.currentState!
                                           .pushNamed(Login);
                                     },
