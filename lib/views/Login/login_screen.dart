@@ -129,8 +129,13 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
               ]),
             )),
         onWillPop: () async {
-              navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
-          return false;
+          navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
+          print(Navigator.of(context).userGestureInProgress);
+          if (Navigator.of(context).userGestureInProgress) {
+            return true;
+          } else {
+            return false;
+          }
         });
   }
 
