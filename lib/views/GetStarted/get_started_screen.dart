@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:gemu/providers/GetStarted/getStarted_provider.dart';
 
@@ -108,9 +107,6 @@ class _GetStartedBeforeScreenState
         ),
         child: ElevatedButton(
           onPressed: () {
-            ref
-                .read(currentRouteNonAuthNotifierProvider.notifier)
-                .updateCurrentRoute("GetStarted");
             navNonAuthKey.currentState!.pushNamed(GetStarted);
           },
           style: ElevatedButton.styleFrom(
@@ -457,9 +453,6 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                       _tabController.index += 1;
                     });
                   } else {
-                    ref
-                        .read(currentRouteNonAuthNotifierProvider.notifier)
-                        .updateCurrentRoute("Welcome");
                     if (!seenGetStarted) {
                       navNonAuthKey.currentState!
                           .pushNamedAndRemoveUntil(Welcome, (route) => false);

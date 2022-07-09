@@ -35,7 +35,6 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   late FocusNode _focusNodeResetPassword;
 
   bool isCompleted = false;
-  bool loadingGoogle = false;
 
   @override
   void initState() {
@@ -116,19 +115,24 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
     if (creationComplete.asData != null) {
       isCompleted = creationComplete.asData!.value;
     }
-    loadingGoogle = ref.watch(loadingSignGoogleProvider);
 
-    return Scaffold(
-        resizeToAvoidBottomInset: true,
-        body: GestureDetector(
-          onTap: () => Helpers.hideKeyboard(context),
-          child: Column(children: [
-            topLoginEmail(),
-            Expanded(
-              child: loginEmail(isDayMood, isLoading),
-            )
-          ]),
-        ));
+    return WillPopScope(
+        child: Scaffold(
+            resizeToAvoidBottomInset: true,
+            body: GestureDetector(
+              onTap: () => Helpers.hideKeyboard(context),
+              child: Column(children: [
+                topLoginEmail(),
+                Expanded(
+                  child: loginEmail(isDayMood, isLoading),
+                )
+              ]),
+            )),
+        onWillPop: () async {
+          navNonAuthKey.currentState!
+              .pushNamedAndRemoveUntil(Welcome, (route) => false);
+          return false;
+        });
   }
 
   Widget topLoginEmail() {
@@ -151,9 +155,6 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
         leading: IconButton(
             onPressed: () {
               Helpers.hideKeyboard(context);
-              ref
-                  .read(currentRouteNonAuthNotifierProvider.notifier)
-                  .updateCurrentRoute("Welcome");
               navNonAuthKey.currentState!
                   .pushNamedAndRemoveUntil(Welcome, (route) => false);
             },
@@ -530,8 +531,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                     style: textStyleCustomBold(
                         isDayMood ? cPrimaryPurple : cPrimaryPink, 13),
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () => inscriptionBottomSheet(
-                          context, isDayMood, ref, loadingGoogle),
+                      ..onTap =
+                          () => inscriptionBottomSheet(context, isDayMood, ref),
                   )
                 ])),
       ],

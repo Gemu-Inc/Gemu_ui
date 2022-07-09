@@ -22,6 +22,7 @@ import "package:flutter_native_splash/flutter_native_splash.dart";
 
 import 'package:gemu/router.dart';
 import 'package:gemu/constants/constants.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:country_code_picker/country_localizations.dart';
@@ -107,7 +108,6 @@ class _LogControllerState extends ConsumerState<LogController> {
     final accentColor = ref.watch(accentProviderNotifier);
     final seenGetStarted = ref.watch(getStartedNotifierProvider);
     final connectivityStatus = ref.watch(connectivityNotifierProvider);
-    final currentRouteNonAuth = ref.watch(currentRouteNonAuthNotifierProvider);
     final activeUser = ref.watch(myselfNotifierProvider);
 
     return MaterialApp(
@@ -149,27 +149,28 @@ class _LogControllerState extends ConsumerState<LogController> {
         home: connectivityStatus == ConnectivityResult.none
             ? NoConnectivityScreen()
             : activeUser == null
-                ? WillPopScope(
-                    onWillPop: () async {
-                      if (currentRouteNonAuth == "Login") {
-                        ref
-                            .read(currentRouteNonAuthNotifierProvider.notifier)
-                            .updateCurrentRoute("Welcome");
-                        navNonAuthKey.currentState!
-                            .pushNamedAndRemoveUntil(Welcome, (route) => false);
-                        return false;
-                      } else {
-                        return !(await navNonAuthKey.currentState!.maybePop());
-                      }
-                    },
-                    child: Navigator(
-                      key: navNonAuthKey,
-                      initialRoute:
-                          !seenGetStarted ? GetStartedBefore : Welcome,
-                      onGenerateRoute: (settings) =>
-                          generateRouteNonAuth(settings, context),
+                ? LoaderOverlay(
+                    useDefaultLoading: false,
+                    overlayWidget: Center(
+                      child: CircularProgressIndicator(
+                        color: cPrimaryPink,
+                        strokeWidth: 1.0,
+                      ),
                     ),
-                  )
+                    overlayColor: Colors.black,
+                    overlayOpacity: 0.7,
+                    child: WillPopScope(
+                      onWillPop: () async {
+                        return !(await navNonAuthKey.currentState!.maybePop());
+                      },
+                      child: Navigator(
+                        key: navNonAuthKey,
+                        initialRoute:
+                            !seenGetStarted ? GetStartedBefore : Welcome,
+                        onGenerateRoute: (settings) =>
+                            generateRouteNonAuth(settings, context),
+                      ),
+                    ))
                 : WillPopScope(
                     onWillPop: () async {
                       return !(await navMainAuthKey.currentState!.maybePop());

@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/Credentials/credentials_provider.dart';
@@ -19,12 +20,9 @@ class WelcomeScreen extends ConsumerStatefulWidget {
 }
 
 class WelcomeviewState extends ConsumerState<WelcomeScreen> {
-  bool loadingGoogle = false;
-
   @override
   Widget build(BuildContext context) {
     bool isDayMood = ref.watch(dayMoodNotifierProvider);
-    loadingGoogle = ref.watch(loadingSignGoogleProvider);
 
     return Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -93,9 +91,6 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
               padding: const EdgeInsets.only(right: 25.0, top: 15.0),
               child: GestureDetector(
                   onTap: () {
-                    ref
-                        .read(currentRouteNonAuthNotifierProvider.notifier)
-                        .updateCurrentRoute("GetStarted");
                     navNonAuthKey.currentState!.pushNamed(GetStartedBefore);
                   },
                   child: Icon(Icons.info_outline,
@@ -181,7 +176,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             height: MediaQuery.of(context).size.height / 14,
                             child: ElevatedButton(
                                 onPressed: () => inscriptionBottomSheet(
-                                    context, isDayMood, ref, loadingGoogle),
+                                    context, isDayMood, ref),
                                 style: ElevatedButton.styleFrom(
                                     elevation: 6,
                                     shadowColor: Theme.of(context).shadowColor,
@@ -239,7 +234,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
                             height: MediaQuery.of(context).size.height / 14,
                             child: ElevatedButton(
                                 onPressed: () => connexionBottomSheet(
-                                    context, isDayMood, ref, loadingGoogle),
+                                    context, isDayMood, ref),
                                 style: ElevatedButton.styleFrom(
                                     elevation: 6,
                                     shadowColor: Theme.of(context).shadowColor,

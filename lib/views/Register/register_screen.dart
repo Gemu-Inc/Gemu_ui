@@ -393,9 +393,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 TextButton(
                     onPressed: () async {
                       Navigator.pop(context);
-                      ref
-                          .read(currentRouteNonAuthNotifierProvider.notifier)
-                          .updateCurrentRoute("Welcome");
                       if (widget.isSocial) {
                         await AuthService.deleteAccount(
                             navNonAuthKey.currentContext!, widget.user!);
@@ -478,10 +475,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                           TextButton(
                               onPressed: () async {
                                 Navigator.pop(context);
-                                ref
-                                    .read(currentRouteNonAuthNotifierProvider
-                                        .notifier)
-                                    .updateCurrentRoute("Welcome");
                                 if (widget.isSocial) {
                                   await AuthService.deleteAccount(
                                       navNonAuthKey.currentContext!,

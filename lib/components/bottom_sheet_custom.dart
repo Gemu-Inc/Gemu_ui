@@ -8,11 +8,14 @@ import 'package:gemu/providers/Credentials/credentials_provider.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/translations/app_localizations.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 Future inscriptionBottomSheet(
-    BuildContext context, bool isDayMood, WidgetRef ref, bool loadingGoogle) {
+    BuildContext context, bool isDayMood, WidgetRef ref) {
+  final loadingGoogle = ref.watch(loadingSignGoogleProvider);
+
   return Platform.isIOS
       ? showCupertinoModalBottomSheet(
           context: context,
@@ -57,11 +60,6 @@ Future inscriptionBottomSheet(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                     onPressed: () {
-                                      ref
-                                          .read(
-                                              currentRouteNonAuthNotifierProvider
-                                                  .notifier)
-                                          .updateCurrentRoute("Register");
                                       navNonAuthKey.currentState!.pushNamed(
                                           Register,
                                           arguments: [false, null]);
@@ -107,6 +105,7 @@ Future inscriptionBottomSheet(
                                 child: ElevatedButton(
                                     onPressed: () async {
                                       if (!loadingGoogle) {
+                                        context.loaderOverlay.show();
                                         ref
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
@@ -124,6 +123,7 @@ Future inscriptionBottomSheet(
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
                                             .updateLoading(false);
+                                        context.loaderOverlay.hide();
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -255,11 +255,6 @@ Future inscriptionBottomSheet(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                     onPressed: () {
-                                      ref
-                                          .read(
-                                              currentRouteNonAuthNotifierProvider
-                                                  .notifier)
-                                          .updateCurrentRoute("Register");
                                       navNonAuthKey.currentState!.pushNamed(
                                           Register,
                                           arguments: [false, null]);
@@ -304,6 +299,7 @@ Future inscriptionBottomSheet(
                                 child: ElevatedButton(
                                     onPressed: () async {
                                       if (!loadingGoogle) {
+                                        context.loaderOverlay.show();
                                         ref
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
@@ -321,6 +317,7 @@ Future inscriptionBottomSheet(
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
                                             .updateLoading(false);
+                                        context.loaderOverlay.hide();
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -363,7 +360,9 @@ Future inscriptionBottomSheet(
 }
 
 Future connexionBottomSheet(
-    BuildContext context, bool isDayMood, WidgetRef ref, bool loadingGoogle) {
+    BuildContext context, bool isDayMood, WidgetRef ref) {
+  final loadingGoogle = ref.watch(loadingSignGoogleProvider);
+
   return Platform.isIOS
       ? showCupertinoModalBottomSheet(
           context: context,
@@ -408,11 +407,6 @@ Future connexionBottomSheet(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                     onPressed: () {
-                                      ref
-                                          .read(
-                                              currentRouteNonAuthNotifierProvider
-                                                  .notifier)
-                                          .updateCurrentRoute("Login");
                                       navNonAuthKey.currentState!
                                           .pushNamed(Login);
                                     },
@@ -456,6 +450,7 @@ Future connexionBottomSheet(
                                 child: ElevatedButton(
                                     onPressed: () async {
                                       if (!loadingGoogle) {
+                                        context.loaderOverlay.show();
                                         ref
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
@@ -473,6 +468,7 @@ Future connexionBottomSheet(
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
                                             .updateLoading(false);
+                                        context.loaderOverlay.hide();
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -603,11 +599,6 @@ Future connexionBottomSheet(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                     onPressed: () {
-                                      ref
-                                          .read(
-                                              currentRouteNonAuthNotifierProvider
-                                                  .notifier)
-                                          .updateCurrentRoute("Login");
                                       navNonAuthKey.currentState!
                                           .pushNamed(Login);
                                     },
@@ -651,6 +642,7 @@ Future connexionBottomSheet(
                                 child: ElevatedButton(
                                     onPressed: () async {
                                       if (!loadingGoogle) {
+                                        context.loaderOverlay.show();
                                         ref
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
@@ -668,6 +660,7 @@ Future connexionBottomSheet(
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
                                             .updateLoading(false);
+                                        context.loaderOverlay.hide();
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(

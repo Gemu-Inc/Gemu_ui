@@ -100,9 +100,6 @@ class AuthService {
           await AuthService.setUserToken(user);
           await DatabaseService.getUserData(user, ref);
         } else {
-          ref
-              .read(currentRouteNonAuthNotifierProvider.notifier)
-              .updateCurrentRoute("Register");
           navNonAuthKey.currentState!
               .pushNamed(Register, arguments: [true, user]);
         }
