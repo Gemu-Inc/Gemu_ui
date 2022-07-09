@@ -230,6 +230,7 @@ class TextFieldCustomRegister extends ConsumerStatefulWidget {
   final Function(String)? changed;
   final bool isDayMood;
   final Function()? tap;
+  final bool readOnly;
 
   const TextFieldCustomRegister(
       {Key? key,
@@ -246,7 +247,8 @@ class TextFieldCustomRegister extends ConsumerStatefulWidget {
       this.submit,
       this.tap,
       required this.changed,
-      required this.isDayMood})
+      required this.isDayMood,
+      required this.readOnly})
       : super(key: key);
 
   @override
@@ -265,6 +267,7 @@ class _TextFieldCustomRegisterState
     }
     return TextField(
         maxLines: 1,
+        readOnly: widget.readOnly,
         obscureText: widget.obscure ? pwdVisible : false,
         controller: widget.controller,
         focusNode: widget.focusNode,
@@ -281,24 +284,34 @@ class _TextFieldCustomRegisterState
             filled: true,
             labelText: widget.label,
             labelStyle: textStyleCustomBold(
-                widget.focusNode.hasFocus
-                    ? widget.isDayMood
-                        ? cPrimaryPink
-                        : cPrimaryPurple
-                    : Colors.grey,
+                widget.readOnly
+                    ? Colors.grey
+                    : widget.focusNode.hasFocus
+                        ? widget.isDayMood
+                            ? cPrimaryPink
+                            : cPrimaryPurple
+                        : Colors.grey,
                 12),
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-              color: widget.isDayMood ? cPrimaryPink : cPrimaryPurple,
+              color: widget.readOnly
+                  ? Colors.grey
+                  : widget.isDayMood
+                      ? cPrimaryPink
+                      : cPrimaryPurple,
             )),
             prefixIcon: Icon(widget.icon,
-                color: widget.focusNode.hasFocus
-                    ? widget.isDayMood
-                        ? cPrimaryPink
-                        : cSecondaryPurple
-                    : Colors.grey),
-            suffixIcon: widget.controller.text.isEmpty || widget.clear == null
+                color: widget.readOnly
+                    ? Colors.grey
+                    : widget.focusNode.hasFocus
+                        ? widget.isDayMood
+                            ? cPrimaryPink
+                            : cSecondaryPurple
+                        : Colors.grey),
+            suffixIcon: widget.controller.text.isEmpty ||
+                    widget.clear == null ||
+                    widget.readOnly
                 ? SizedBox()
                 : widget.obscure
                     ? IconButton(

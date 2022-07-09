@@ -11,7 +11,6 @@ class LoadingSignGoogle extends StateNotifier<bool> {
 
   updateLoading(bool newState) {
     state = newState;
-    print("state: $state");
   }
 }
 

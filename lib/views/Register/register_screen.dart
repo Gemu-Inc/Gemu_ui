@@ -194,42 +194,44 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             .updateValidity(false);
       }
     });
-    _passwordController.addListener(() {
-      if (_passwordController.text.trim().isNotEmpty &&
-          _passwordController.text == _confirmPasswordController.text) {
-        ref
-            .read(passwordValidRegisterNotifierProvider.notifier)
-            .updateValidity(true);
-        ref
-            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
-            .updateValidity(true);
-      } else {
-        ref
-            .read(passwordValidRegisterNotifierProvider.notifier)
-            .updateValidity(false);
-        ref
-            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
-            .updateValidity(false);
-      }
-    });
-    _confirmPasswordController.addListener(() {
-      if (_confirmPasswordController.text.trim().isNotEmpty &&
-          _confirmPasswordController.text == _passwordController.text) {
-        ref
-            .read(passwordValidRegisterNotifierProvider.notifier)
-            .updateValidity(true);
-        ref
-            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
-            .updateValidity(true);
-      } else {
-        ref
-            .read(passwordValidRegisterNotifierProvider.notifier)
-            .updateValidity(false);
-        ref
-            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
-            .updateValidity(false);
-      }
-    });
+    if (!widget.isSocial) {
+      _passwordController.addListener(() {
+        if (_passwordController.text.trim().isNotEmpty &&
+            _passwordController.text == _confirmPasswordController.text) {
+          ref
+              .read(passwordValidRegisterNotifierProvider.notifier)
+              .updateValidity(true);
+          ref
+              .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+              .updateValidity(true);
+        } else {
+          ref
+              .read(passwordValidRegisterNotifierProvider.notifier)
+              .updateValidity(false);
+          ref
+              .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+              .updateValidity(false);
+        }
+      });
+      _confirmPasswordController.addListener(() {
+        if (_confirmPasswordController.text.trim().isNotEmpty &&
+            _confirmPasswordController.text == _passwordController.text) {
+          ref
+              .read(passwordValidRegisterNotifierProvider.notifier)
+              .updateValidity(true);
+          ref
+              .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+              .updateValidity(true);
+        } else {
+          ref
+              .read(passwordValidRegisterNotifierProvider.notifier)
+              .updateValidity(false);
+          ref
+              .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+              .updateValidity(false);
+        }
+      });
+    }
     _usernameController.addListener(() {
       if (_usernameController.text.trim().isNotEmpty) {
         ref
@@ -274,42 +276,44 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             .updateValidity(false);
       }
     });
-    _passwordController.removeListener(() {
-      if (_passwordController.text.trim().isNotEmpty &&
-          _passwordController.text == _confirmPasswordController.text) {
-        ref
-            .read(passwordValidRegisterNotifierProvider.notifier)
-            .updateValidity(true);
-        ref
-            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
-            .updateValidity(true);
-      } else {
-        ref
-            .read(passwordValidRegisterNotifierProvider.notifier)
-            .updateValidity(false);
-        ref
-            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
-            .updateValidity(false);
-      }
-    });
-    _confirmPasswordController.removeListener(() {
-      if (_confirmPasswordController.text.trim().isNotEmpty &&
-          _confirmPasswordController.text == _passwordController.text) {
-        ref
-            .read(passwordValidRegisterNotifierProvider.notifier)
-            .updateValidity(true);
-        ref
-            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
-            .updateValidity(true);
-      } else {
-        ref
-            .read(passwordValidRegisterNotifierProvider.notifier)
-            .updateValidity(false);
-        ref
-            .read(confirmPasswordValidRegisterNotifierProvider.notifier)
-            .updateValidity(false);
-      }
-    });
+    if (!widget.isSocial) {
+      _passwordController.removeListener(() {
+        if (_passwordController.text.trim().isNotEmpty &&
+            _passwordController.text == _confirmPasswordController.text) {
+          ref
+              .read(passwordValidRegisterNotifierProvider.notifier)
+              .updateValidity(true);
+          ref
+              .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+              .updateValidity(true);
+        } else {
+          ref
+              .read(passwordValidRegisterNotifierProvider.notifier)
+              .updateValidity(false);
+          ref
+              .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+              .updateValidity(false);
+        }
+      });
+      _confirmPasswordController.removeListener(() {
+        if (_confirmPasswordController.text.trim().isNotEmpty &&
+            _confirmPasswordController.text == _passwordController.text) {
+          ref
+              .read(passwordValidRegisterNotifierProvider.notifier)
+              .updateValidity(true);
+          ref
+              .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+              .updateValidity(true);
+        } else {
+          ref
+              .read(passwordValidRegisterNotifierProvider.notifier)
+              .updateValidity(false);
+          ref
+              .read(confirmPasswordValidRegisterNotifierProvider.notifier)
+              .updateValidity(false);
+        }
+      });
+    }
     _usernameController.removeListener(() {
       if (_usernameController.text.trim().isNotEmpty) {
         ref
@@ -739,6 +743,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _emailController,
           focusNode: _focusNodeEmail,
+          readOnly: widget.isSocial ? true : false,
           label: AppLocalization.of(context)
               .translate("register_screen", "placeholder_mail"),
           obscure: false,
@@ -759,75 +764,92 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             });
           },
           editingComplete: () {
-            FocusScope.of(context).requestFocus(_focusNodePassword);
+            if (widget.isSocial) {
+              FocusScope.of(context).unfocus();
+            } else {
+              FocusScope.of(context).requestFocus(_focusNodePassword);
+            }
           },
           isDayMood: isDayMood,
         ),
-        Padding(
-          padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
-          child: Text(
-            AppLocalization.of(context)
-                .translate("register_screen", "inform_password"),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ),
-        TextFieldCustomRegister(
-          context: context,
-          controller: _passwordController,
-          focusNode: _focusNodePassword,
-          label: AppLocalization.of(context)
-              .translate("register_screen", "placeholder_password"),
-          obscure: true,
-          icon: Icons.lock,
-          textInputAction: TextInputAction.next,
-          clear: () {
-            setState(() {
-              _passwordController.clear();
-            });
-          },
-          tap: () {
-            FocusScope.of(context).requestFocus(_focusNodePassword);
-          },
-          changed: (value) {
-            setState(() {
-              value = _passwordController.text;
-            });
-          },
-          editingComplete: () {
-            FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
-          },
-          isDayMood: isDayMood,
-        ),
-        const SizedBox(
-          height: 10.0,
-        ),
-        TextFieldCustomRegister(
-          context: context,
-          controller: _confirmPasswordController,
-          focusNode: _focusNodeConfirmPassword,
-          label: AppLocalization.of(context)
-              .translate("register_screen", "placeholder_confirm_password"),
-          obscure: true,
-          icon: Icons.lock,
-          textInputAction: TextInputAction.go,
-          clear: () {
-            setState(() {
-              _confirmPasswordController.clear();
-            });
-          },
-          tap: () {
-            FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
-          },
-          changed: (value) {
-            setState(() {
-              value = _confirmPasswordController.text;
-            });
-          },
-          editingComplete: () {
-            FocusScope.of(context).unfocus();
-          },
-          isDayMood: isDayMood,
-        ),
+        widget.isSocial
+            ? const SizedBox()
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+                    child: Text(
+                      AppLocalization.of(context)
+                          .translate("register_screen", "inform_password"),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  TextFieldCustomRegister(
+                    context: context,
+                    controller: _passwordController,
+                    focusNode: _focusNodePassword,
+                    readOnly: false,
+                    label: AppLocalization.of(context)
+                        .translate("register_screen", "placeholder_password"),
+                    obscure: true,
+                    icon: Icons.lock,
+                    textInputAction: widget.isSocial
+                        ? TextInputAction.done
+                        : TextInputAction.next,
+                    clear: () {
+                      setState(() {
+                        _passwordController.clear();
+                      });
+                    },
+                    tap: () {
+                      FocusScope.of(context).requestFocus(_focusNodePassword);
+                    },
+                    changed: (value) {
+                      setState(() {
+                        value = _passwordController.text;
+                      });
+                    },
+                    editingComplete: () {
+                      FocusScope.of(context)
+                          .requestFocus(_focusNodeConfirmPassword);
+                    },
+                    isDayMood: isDayMood,
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  TextFieldCustomRegister(
+                    context: context,
+                    controller: _confirmPasswordController,
+                    focusNode: _focusNodeConfirmPassword,
+                    readOnly: false,
+                    label: AppLocalization.of(context).translate(
+                        "register_screen", "placeholder_confirm_password"),
+                    obscure: true,
+                    icon: Icons.lock,
+                    textInputAction: TextInputAction.go,
+                    clear: () {
+                      setState(() {
+                        _confirmPasswordController.clear();
+                      });
+                    },
+                    tap: () {
+                      FocusScope.of(context)
+                          .requestFocus(_focusNodeConfirmPassword);
+                    },
+                    changed: (value) {
+                      setState(() {
+                        value = _confirmPasswordController.text;
+                      });
+                    },
+                    editingComplete: () {
+                      FocusScope.of(context).unfocus();
+                    },
+                    isDayMood: isDayMood,
+                  ),
+                ],
+              )
       ],
     );
   }
@@ -856,6 +878,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _usernameController,
           focusNode: _focusNodeUsername,
+          readOnly: false,
           label: AppLocalization.of(context)
               .translate("register_screen", "placeholder_pseudo"),
           obscure: false,
@@ -1029,6 +1052,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               context: context,
               controller: _searchController,
               focusNode: _focusNodeSearch,
+              readOnly: false,
               label: AppLocalization.of(context)
                   .translate("register_screen", "placeholder_search_game"),
               obscure: false,
@@ -1310,6 +1334,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _emailController,
           focusNode: _focusNodeEmail,
+          readOnly: widget.isSocial ? true : false,
           label: AppLocalization.of(context)
               .translate("register_screen", "placeholder_mail"),
           obscure: false,
@@ -1341,81 +1366,92 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 style: textStyleCustomBold(cRedCancel, 11),
               )),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
-          child: Text(
-            AppLocalization.of(context)
-                .translate("register_screen", "password"),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ),
-        TextFieldCustomRegister(
-          context: context,
-          controller: _passwordController,
-          focusNode: _focusNodePassword,
-          label: AppLocalization.of(context)
-              .translate("register_screen", "placeholder_password"),
-          obscure: true,
-          icon: Icons.lock,
-          textInputAction: TextInputAction.next,
-          clear: () {
-            setState(() {
-              _passwordController.clear();
-            });
-          },
-          tap: () {
-            FocusScope.of(context).requestFocus(_focusNodePassword);
-          },
-          changed: (value) {
-            setState(() {
-              value = _passwordController.text;
-            });
-          },
-          editingComplete: () {
-            FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
-          },
-          isDayMood: isDayMood,
-        ),
-        const SizedBox(
-          height: 10.0,
-        ),
-        TextFieldCustomRegister(
-          context: context,
-          controller: _confirmPasswordController,
-          focusNode: _focusNodeConfirmPassword,
-          label: AppLocalization.of(context)
-              .translate("register_screen", "placeholder_confirm_password"),
-          obscure: true,
-          icon: Icons.lock,
-          textInputAction: TextInputAction.go,
-          clear: () {
-            setState(() {
-              _confirmPasswordController.clear();
-            });
-          },
-          tap: () {
-            FocusScope.of(context).requestFocus(_focusNodeConfirmPassword);
-          },
-          changed: (value) {
-            setState(() {
-              value = _confirmPasswordController.text;
-            });
-          },
-          editingComplete: () {
-            FocusScope.of(context).unfocus();
-          },
-          isDayMood: isDayMood,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 5.0, top: 1.0),
-          child: Visibility(
-              visible: !passwordValid ? true : false,
-              child: Text(
-                AppLocalization.of(context)
-                    .translate("register_screen", "invalid_password"),
-                style: textStyleCustomBold(cRedCancel, 11),
-              )),
-        ),
+        widget.isSocial
+            ? const SizedBox()
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+                    child: Text(
+                      AppLocalization.of(context)
+                          .translate("register_screen", "password"),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  TextFieldCustomRegister(
+                    context: context,
+                    controller: _passwordController,
+                    focusNode: _focusNodePassword,
+                    readOnly: false,
+                    label: AppLocalization.of(context)
+                        .translate("register_screen", "placeholder_password"),
+                    obscure: true,
+                    icon: Icons.lock,
+                    textInputAction: TextInputAction.next,
+                    clear: () {
+                      setState(() {
+                        _passwordController.clear();
+                      });
+                    },
+                    tap: () {
+                      FocusScope.of(context).requestFocus(_focusNodePassword);
+                    },
+                    changed: (value) {
+                      setState(() {
+                        value = _passwordController.text;
+                      });
+                    },
+                    editingComplete: () {
+                      FocusScope.of(context)
+                          .requestFocus(_focusNodeConfirmPassword);
+                    },
+                    isDayMood: isDayMood,
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  TextFieldCustomRegister(
+                    context: context,
+                    controller: _confirmPasswordController,
+                    focusNode: _focusNodeConfirmPassword,
+                    readOnly: false,
+                    label: AppLocalization.of(context).translate(
+                        "register_screen", "placeholder_confirm_password"),
+                    obscure: true,
+                    icon: Icons.lock,
+                    textInputAction: TextInputAction.go,
+                    clear: () {
+                      setState(() {
+                        _confirmPasswordController.clear();
+                      });
+                    },
+                    tap: () {
+                      FocusScope.of(context)
+                          .requestFocus(_focusNodeConfirmPassword);
+                    },
+                    changed: (value) {
+                      setState(() {
+                        value = _confirmPasswordController.text;
+                      });
+                    },
+                    editingComplete: () {
+                      FocusScope.of(context).unfocus();
+                    },
+                    isDayMood: isDayMood,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0, top: 1.0),
+                    child: Visibility(
+                        visible: !passwordValid ? true : false,
+                        child: Text(
+                          AppLocalization.of(context)
+                              .translate("register_screen", "invalid_password"),
+                          style: textStyleCustomBold(cRedCancel, 11),
+                        )),
+                  ),
+                ],
+              ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
           child: Text(
@@ -1427,6 +1463,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           context: context,
           controller: _usernameController,
           focusNode: _focusNodeUsername,
+          readOnly: false,
           label: AppLocalization.of(context)
               .translate("register_screen", "placeholder_pseudo"),
           obscure: false,
