@@ -167,21 +167,17 @@ class _BottomNavigationControllerState
                         selectedIndex: _navController.index,
                         onItemSelected: (index) {
                           if (_navController.index == 0 && index == 0) {
-                            while (navHomeAuthKey.currentState!.canPop()) {
-                              navHomeAuthKey.currentState!.pop();
-                            }
+                            navHomeAuthKey.currentState!
+                                .popUntil((route) => route.isFirst);
                           } else if (_navController.index == 1 && index == 1) {
-                            while (navSelectionAuthKey.currentState!.canPop()) {
-                              navSelectionAuthKey.currentState!.pop();
-                            }
+                            navSelectionAuthKey.currentState!
+                                .popUntil((route) => route.isFirst);
                           } else if (_navController.index == 2 && index == 2) {
-                            while (navActivitiesAuthKey.currentState!.canPop()) {
-                              navActivitiesAuthKey.currentState!.pop();
-                            }
+                            navActivitiesAuthKey.currentState!
+                                .popUntil((route) => route.isFirst);
                           } else if (_navController.index == 3 && index == 3) {
-                            while (navProfileAuthKey.currentState!.canPop()) {
-                              navProfileAuthKey.currentState!.pop();
-                            }
+                            navProfileAuthKey.currentState!
+                                .popUntil((route) => route.isFirst);
                           } else {
                             setState(() {
                               _navController.index = index;
