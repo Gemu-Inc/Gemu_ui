@@ -146,60 +146,65 @@ class _BottomNavigationControllerState
                   : Theme.of(context).brightness == Brightness.dark
                       ? Brightness.light
                       : Brightness.dark),
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: TabBarView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        controller: _navController,
-                        children: _buildScreens()),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: CustomNavBar(
-                      items: _navBarsItems(),
-                      selectedIndex: _navController.index,
-                      onItemSelected: (index) {
-                        if (_navController.index == 0 && index == 0) {
-                          while (navHomeAuthKey.currentState!.canPop()) {
-                            navHomeAuthKey.currentState!.pop();
-                          }
-                        } else if (_navController.index == 1 && index == 1) {
-                          while (navSelectionAuthKey.currentState!.canPop()) {
-                            navSelectionAuthKey.currentState!.pop();
-                          }
-                        } else if (_navController.index == 2 && index == 2) {
-                          while (navActivitiesAuthKey.currentState!.canPop()) {
-                            navActivitiesAuthKey.currentState!.pop();
-                          }
-                        } else if (_navController.index == 3 && index == 3) {
-                          while (navProfileAuthKey.currentState!.canPop()) {
-                            navProfileAuthKey.currentState!.pop();
-                          }
-                        } else {
-                          setState(() {
-                            _navController.index = index;
-                          });
-                        }
-                      },
+          child: SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Expanded(
+                      child: TabBarView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          controller: _navController,
+                          children: _buildScreens()),
                     ),
-                  )
-                ],
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 5),
-                  child: Container(
-                    width: double.infinity,
-                    height: 150,
-                    child: BottomShare(),
-                  ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: CustomNavBar(
+                        items: _navBarsItems(),
+                        selectedIndex: _navController.index,
+                        onItemSelected: (index) {
+                          if (_navController.index == 0 && index == 0) {
+                            while (navHomeAuthKey.currentState!.canPop()) {
+                              navHomeAuthKey.currentState!.pop();
+                            }
+                          } else if (_navController.index == 1 && index == 1) {
+                            while (navSelectionAuthKey.currentState!.canPop()) {
+                              navSelectionAuthKey.currentState!.pop();
+                            }
+                          } else if (_navController.index == 2 && index == 2) {
+                            while (navActivitiesAuthKey.currentState!.canPop()) {
+                              navActivitiesAuthKey.currentState!.pop();
+                            }
+                          } else if (_navController.index == 3 && index == 3) {
+                            while (navProfileAuthKey.currentState!.canPop()) {
+                              navProfileAuthKey.currentState!.pop();
+                            }
+                          } else {
+                            setState(() {
+                              _navController.index = index;
+                            });
+                          }
+                        },
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                    child: Container(
+                      width: double.infinity,
+                      height: 150,
+                      child: BottomShare(),
+                    ),
+                  ),
+                )
+              ],
+            ),
           )),
     );
   }

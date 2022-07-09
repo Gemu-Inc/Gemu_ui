@@ -60,8 +60,7 @@ class _GetStartedBeforeScreenState
       padding: const EdgeInsets.only(right: 15.0),
       child: IconButton(
           onPressed: () {
-            navNonAuthKey.currentState!
-                .pushNamedAndRemoveUntil(Welcome, (route) => false);
+                navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
           },
           icon: Icon(
             Icons.clear,
@@ -204,8 +203,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
       padding: const EdgeInsets.only(right: 15.0),
       child: IconButton(
           onPressed: () {
-            navNonAuthKey.currentState!
-                .pushNamedAndRemoveUntil(Welcome, (route) => false);
+            navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
           },
           icon: Icon(
             Icons.clear,

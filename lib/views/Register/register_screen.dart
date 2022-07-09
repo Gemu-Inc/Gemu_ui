@@ -397,8 +397,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                         await AuthService.deleteAccount(
                             navNonAuthKey.currentContext!, widget.user!);
                       }
-                      navNonAuthKey.currentState!
-                          .pushNamedAndRemoveUntil(Welcome, (route) => false);
+                      navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
                     },
                     child: Text(
                       "Oui",
@@ -480,9 +479,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                       navNonAuthKey.currentContext!,
                                       widget.user!);
                                 }
-                                navNonAuthKey.currentState!
-                                    .pushNamedAndRemoveUntil(
-                                        Welcome, (route) => false);
+                                navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
                               },
                               child: Text(
                                 AppLocalization.of(context).translate(

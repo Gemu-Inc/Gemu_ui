@@ -129,8 +129,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
               ]),
             )),
         onWillPop: () async {
-          navNonAuthKey.currentState!
-              .pushNamedAndRemoveUntil(Welcome, (route) => false);
+              navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
           return false;
         });
   }
@@ -155,8 +154,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
         leading: IconButton(
             onPressed: () {
               Helpers.hideKeyboard(context);
-              navNonAuthKey.currentState!
-                  .pushNamedAndRemoveUntil(Welcome, (route) => false);
+              navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
             },
             icon: Icon(Icons.arrow_back_ios,
                 color: Theme.of(context).brightness == Brightness.dark

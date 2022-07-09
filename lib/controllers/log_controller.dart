@@ -147,39 +147,39 @@ class _LogControllerState extends ConsumerState<LogController> {
                 : darkThemeSystemPurple
             : theme,
         home: connectivityStatus == ConnectivityResult.none
-            ? NoConnectivityScreen()
-            : activeUser == null
-                ? LoaderOverlay(
-                    useDefaultLoading: false,
-                    overlayWidget: Center(
-                      child: CircularProgressIndicator(
-                        color: cPrimaryPink,
-                        strokeWidth: 1.0,
-                      ),
+          ? NoConnectivityScreen()
+          : activeUser == null
+              ? LoaderOverlay(
+                  useDefaultLoading: false,
+                  overlayWidget: Center(
+                    child: CircularProgressIndicator(
+                      color: cPrimaryPink,
+                      strokeWidth: 1.0,
                     ),
-                    overlayColor: Colors.black,
-                    overlayOpacity: 0.7,
-                    child: WillPopScope(
-                      onWillPop: () async {
-                        return !(await navNonAuthKey.currentState!.maybePop());
-                      },
-                      child: Navigator(
-                        key: navNonAuthKey,
-                        initialRoute:
-                            !seenGetStarted ? GetStartedBefore : Welcome,
-                        onGenerateRoute: (settings) =>
-                            generateRouteNonAuth(settings, context),
-                      ),
-                    ))
-                : WillPopScope(
+                  ),
+                  overlayColor: Colors.black,
+                  overlayOpacity: 0.7,
+                  child: WillPopScope(
                     onWillPop: () async {
-                      return !(await navMainAuthKey.currentState!.maybePop());
+                      return !(await navNonAuthKey.currentState!.maybePop());
                     },
                     child: Navigator(
-                      key: navMainAuthKey,
-                      initialRoute: BottomTabNav,
+                      key: navNonAuthKey,
+                      initialRoute:
+                          !seenGetStarted ? GetStartedBefore : Welcome,
                       onGenerateRoute: (settings) =>
-                          generateRouteMainAuth(settings, context),
-                    )));
+                          generateRouteNonAuth(settings, context),
+                    ),
+                  ))
+              : WillPopScope(
+                  onWillPop: () async {
+                    return !(await navMainAuthKey.currentState!.maybePop());
+                  },
+                  child: Navigator(
+                    key: navMainAuthKey,
+                    initialRoute: BottomTabNav,
+                    onGenerateRoute: (settings) =>
+                        generateRouteMainAuth(settings, context),
+                  )));
   }
 }

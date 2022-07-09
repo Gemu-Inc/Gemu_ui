@@ -20,7 +20,8 @@ Future inscriptionBottomSheet(
       ? showCupertinoModalBottomSheet(
           context: context,
           enableDrag: true,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).canvasColor,
+          barrierColor: Colors.black.withOpacity(0.7),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15.0),
@@ -216,7 +217,8 @@ Future inscriptionBottomSheet(
       : showMaterialModalBottomSheet(
           context: context,
           enableDrag: true,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).canvasColor,
+          barrierColor: Colors.black.withOpacity(0.7),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15.0),
@@ -367,7 +369,8 @@ Future connexionBottomSheet(
       ? showCupertinoModalBottomSheet(
           context: context,
           enableDrag: true,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).canvasColor,
+          barrierColor: Colors.black.withOpacity(0.7),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15.0),
@@ -559,7 +562,8 @@ Future connexionBottomSheet(
       : showMaterialModalBottomSheet(
           context: context,
           enableDrag: true,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).canvasColor,
+          barrierColor: Colors.black.withOpacity(0.7),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15.0),
