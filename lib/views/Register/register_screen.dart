@@ -30,6 +30,12 @@ import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
+  final bool isSocial;
+  final User? user;
+
+  const RegisterScreen({Key? key, required this.isSocial, this.user})
+      : super(key: key);
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -112,7 +118,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   _searchGamesAfterWaiting() {
-    print("j'écoute");
     if (_searchController.text.isEmpty) {
       isResultsSearch = false;
       valueSearching = "";
@@ -128,14 +133,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     }
   }
 
+  Future<void> updateStateSocial(WidgetRef ref) async {
+    await Future.delayed(Duration.zero, () async {
+      ref
+          .read(emailValidRegisterNotifierProvider.notifier)
+          .updateValidity(true);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     DatabaseService.getGamesRegister(ref);
 
+    if (widget.isSocial) {
+      updateStateSocial(ref);
+    }
+
     _tabController = TabController(length: 4, vsync: this);
 
-    _emailController = TextEditingController();
+    _emailController =
+        TextEditingController(text: widget.isSocial ? widget.user!.email : "");
     _usernameController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
@@ -328,7 +346,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     _mainScrollController.dispose();
     _gamesScrollController.dispose();
     _fourthPageScrollController.dispose();
-
     super.dispose();
   }
 
@@ -345,7 +362,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     gamesValid = ref.watch(gamesValidRegisterNotifierProvider);
     final cgu = ref.watch(cguValidRegisterNotifierProvider);
     final policyPrivacy = ref.watch(policyPrivacyRegisterNotifierProvider);
-    final creationComplete = ref.watch(registerCompleteProvider);
+    final creationComplete = ref.watch(widget.isSocial
+        ? registerSocialsCompleteProvider
+        : registerCompleteProvider);
     if (creationComplete.asData != null) {
       isComplete = creationComplete.asData!.value;
     }
@@ -359,29 +378,65 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
     deviceLanguage = ref.watch(deviceLanguageProvider);
 
-    return Scaffold(
-        resizeToAvoidBottomInset: currentIndex == 2 ? false : true,
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-            Helpers.hideKeyboard(context);
-          },
-          child: Column(children: [
-            topRegisterEmail(isDayMood),
-            Expanded(
-                child: bodyRegister(
-                    isDayMood,
-                    isLoading,
-                    isSuccess,
-                    emailValid,
-                    passwordValid,
-                    usernameValid,
-                    anniversaryValid,
-                    gamesValid,
-                    cgu,
-                    policyPrivacy)),
-          ]),
-        ));
+    return WillPopScope(
+      onWillPop: () async {
+        showDialog(
+            context: navNonAuthKey.currentContext!,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialogCustom(context, "Annuler l'inscription",
+                  "Êtes-vous sur de vouloir annuler votre inscription?", [
+                TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      ref
+                          .read(currentRouteNonAuthNotifierProvider.notifier)
+                          .updateCurrentRoute("Welcome");
+                      if (widget.isSocial) {
+                        await AuthService.deleteAccount(
+                            navNonAuthKey.currentContext!, widget.user!);
+                      }
+                      navNonAuthKey.currentState!
+                          .pushNamedAndRemoveUntil(Welcome, (route) => false);
+                    },
+                    child: Text(
+                      "Oui",
+                      style: textStyleCustomBold(cGreenConfirm, 12),
+                    )),
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      "Non",
+                      style: textStyleCustomBold(cRedCancel, 12),
+                    ))
+              ]);
+            });
+        return false;
+      },
+      child: Scaffold(
+          resizeToAvoidBottomInset: currentIndex == 2 ? false : true,
+          body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+              Helpers.hideKeyboard(context);
+            },
+            child: Column(children: [
+              topRegisterEmail(isDayMood),
+              Expanded(
+                  child: bodyRegister(
+                      isDayMood,
+                      isLoading,
+                      isSuccess,
+                      emailValid,
+                      passwordValid,
+                      usernameValid,
+                      anniversaryValid,
+                      gamesValid,
+                      cgu,
+                      policyPrivacy)),
+            ]),
+          )),
+    );
   }
 
   Widget topRegisterEmail(bool isDayMood) {
@@ -417,12 +472,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             "register_screen", "cancel_register_content"),
                         [
                           TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 Navigator.pop(context);
                                 ref
                                     .read(currentRouteNonAuthNotifierProvider
                                         .notifier)
                                     .updateCurrentRoute("Welcome");
+                                if (widget.isSocial) {
+                                  await AuthService.deleteAccount(
+                                      navNonAuthKey.currentContext!,
+                                      widget.user!);
+                                }
                                 navNonAuthKey.currentState!
                                     .pushNamedAndRemoveUntil(
                                         Welcome, (route) => false);
@@ -603,15 +663,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   AppLocalization.of(context)
                       .translate("message_user", "pseudo_already_exist"));
             } else {
-              User? user = await AuthService.registerUser(
-                  context,
-                  _emailController.text,
-                  _passwordController.text,
-                  _usernameController.text,
-                  _dateBirthday!,
-                  _selectedCountry!.code!,
-                  gamesFollow,
-                  ref);
+              User? user = widget.isSocial
+                  ? await AuthService.registerUserSocials(
+                      context,
+                      _emailController.text,
+                      _usernameController.text,
+                      _dateBirthday!,
+                      _selectedCountry!.code!,
+                      gamesFollow,
+                      ref,
+                      widget.user!.uid)
+                  : await AuthService.registerUser(
+                      context,
+                      _emailController.text,
+                      _passwordController.text,
+                      _usernameController.text,
+                      _dateBirthday!,
+                      _selectedCountry!.code!,
+                      gamesFollow,
+                      ref);
 
               if (user != null) {
                 await AuthService.setUserToken(user);

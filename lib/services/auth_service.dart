@@ -2,12 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/constants/constants.dart';
+import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Register/register_provider.dart';
 
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/translations/app_localizations.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -71,6 +74,44 @@ class AuthService {
     return user;
   }
 
+  //Check pour la connexion/inscription d'un compte via Google
+  static Future<void> signWithGoogle(WidgetRef ref) async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.disconnect().catchError((e, stack) {
+      print(e);
+    });
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+      final AuthCredential authCredential = GoogleAuthProvider.credential(
+          idToken: googleSignInAuthentication.idToken,
+          accessToken: googleSignInAuthentication.accessToken);
+
+      // Getting users credential
+      UserCredential result = await _auth.signInWithCredential(authCredential);
+      User? user = result.user;
+
+      if (user != null) {
+        bool exist = await DatabaseService.userAlreadyExist(user.uid);
+        if (exist) {
+          await AuthService.setUserToken(user);
+          await DatabaseService.getUserData(user, ref);
+        } else {
+          ref
+              .read(currentRouteNonAuthNotifierProvider.notifier)
+              .updateCurrentRoute("Register");
+          navNonAuthKey.currentState!
+              .pushNamed(Register, arguments: [true, user]);
+        }
+      }
+    } else {
+      return null;
+    }
+  }
+
   //Créer un utilisateur
   static Future<User?> registerUser(
       BuildContext context,
@@ -132,6 +173,54 @@ class AuthService {
             AppLocalization.of(context).translate("message_user", "problem"));
       }
       return null;
+    }
+  }
+
+  //Register user with credentials google/apple
+  static Future<User?> registerUserSocials(
+      BuildContext context,
+      String email,
+      String username,
+      DateTime dateBirthday,
+      String country,
+      List<Game> gamesFollow,
+      WidgetRef ref,
+      String uid) async {
+    User? user;
+    Map<String, dynamic> map = {
+      'id': uid,
+      'imageUrl': null,
+      'privacy': 'public',
+      'verified_account': false,
+      'email': email,
+      'username': username,
+      'dateBirthday': dateBirthday,
+      'country': country,
+    };
+    try {
+      await DatabaseService.addUser(uid, gamesFollow, map);
+      ref.read(successRegisterNotifierProvider.notifier).updateSuccess();
+      messageUser(
+          context,
+          AppLocalization.of(context)
+              .translate("message_user", "create_account_success"));
+      user = await AuthService.getUser();
+    } catch (e) {
+      messageUser(context,
+          AppLocalization.of(context).translate("message_user", "problem"));
+    }
+    return user;
+  }
+
+  //Delete account firebase auth
+  static Future<void> deleteAccount(BuildContext context, User user) async {
+    try {
+      await user.delete();
+    } catch (e) {
+      messageUser(
+          context,
+          AppLocalization.of(context)
+              .translate("message_user", "oups_problem"));
     }
   }
 

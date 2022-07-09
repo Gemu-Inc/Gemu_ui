@@ -6,6 +6,7 @@ import 'package:gemu/providers/GetStarted/getStarted_provider.dart';
 import 'package:gemu/providers/Connectivity/connectivity_provider.dart';
 import 'package:gemu/providers/Langue/device_language_provider.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
+import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:gemu/providers/Theme/theme_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
@@ -71,7 +72,6 @@ class _LogControllerState extends ConsumerState<LogController> {
 
     if (prefs.getString("token") != null) {
       User? user = await AuthService.getUser();
-
       if (user != null) {
         await AuthService.setUserToken(user);
         await DatabaseService.getUserData(user, ref);
@@ -151,44 +151,7 @@ class _LogControllerState extends ConsumerState<LogController> {
             : activeUser == null
                 ? WillPopScope(
                     onWillPop: () async {
-                      if (currentRouteNonAuth == "Register") {
-                        showDialog(
-                            context: navNonAuthKey.currentContext!,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return AlertDialogCustom(
-                                  context,
-                                  "Annuler l'inscription",
-                                  "Êtes-vous sur de vouloir annuler votre inscription?",
-                                  [
-                                    TextButton(
-                                        onPressed: () async {
-                                          Navigator.pop(context);
-                                          ref
-                                              .read(
-                                                  currentRouteNonAuthNotifierProvider
-                                                      .notifier)
-                                              .updateCurrentRoute("Welcome");
-                                          navNonAuthKey.currentState!
-                                              .pushNamedAndRemoveUntil(
-                                                  Welcome, (route) => false);
-                                        },
-                                        child: Text(
-                                          "Oui",
-                                          style: textStyleCustomBold(
-                                              cGreenConfirm, 12),
-                                        )),
-                                    TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text(
-                                          "Non",
-                                          style: textStyleCustomBold(
-                                              cRedCancel, 12),
-                                        ))
-                                  ]);
-                            });
-                        return false;
-                      } else if (currentRouteNonAuth == "Login") {
+                      if (currentRouteNonAuth == "Login") {
                         ref
                             .read(currentRouteNonAuthNotifierProvider.notifier)
                             .updateCurrentRoute("Welcome");

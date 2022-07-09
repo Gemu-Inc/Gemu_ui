@@ -76,6 +76,7 @@ dependencies:
       url: https://github.com/jonataslaw/VideoCompress.git
       ref: master
   flutter_native_splash: ^2.1.6
+  google_sign_in: ^5.4.0
 
 
 dev_dependencies:

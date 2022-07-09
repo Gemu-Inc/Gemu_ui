@@ -2,14 +2,17 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/providers/Credentials/credentials_provider.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
+import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/translations/app_localizations.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 Future inscriptionBottomSheet(
-    BuildContext context, bool isDayMood, WidgetRef ref) {
+    BuildContext context, bool isDayMood, WidgetRef ref, bool loadingGoogle) {
   return Platform.isIOS
       ? showCupertinoModalBottomSheet(
           context: context,
@@ -59,8 +62,9 @@ Future inscriptionBottomSheet(
                                               currentRouteNonAuthNotifierProvider
                                                   .notifier)
                                           .updateCurrentRoute("Register");
-                                      navNonAuthKey.currentState!
-                                          .pushNamed(Register);
+                                      navNonAuthKey.currentState!.pushNamed(
+                                          Register,
+                                          arguments: [false, null]);
                                     },
                                     style: ElevatedButton.styleFrom(
                                         elevation: 6,
@@ -101,8 +105,26 @@ Future inscriptionBottomSheet(
                                 height: 50,
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
-                                    onPressed: () {
-                                      print("inscription avec google");
+                                    onPressed: () async {
+                                      if (!loadingGoogle) {
+                                        ref
+                                            .read(loadingSignGoogleProvider
+                                                .notifier)
+                                            .updateLoading(true);
+                                        try {
+                                          await AuthService.signWithGoogle(ref);
+                                        } catch (e) {
+                                          messageUser(
+                                              context,
+                                              AppLocalization.of(context)
+                                                  .translate("message_user",
+                                                      "oups_problem"));
+                                        }
+                                        ref
+                                            .read(loadingSignGoogleProvider
+                                                .notifier)
+                                            .updateLoading(false);
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                         elevation: 6,
@@ -238,8 +260,9 @@ Future inscriptionBottomSheet(
                                               currentRouteNonAuthNotifierProvider
                                                   .notifier)
                                           .updateCurrentRoute("Register");
-                                      navNonAuthKey.currentState!
-                                          .pushNamed(Register);
+                                      navNonAuthKey.currentState!.pushNamed(
+                                          Register,
+                                          arguments: [false, null]);
                                     },
                                     style: ElevatedButton.styleFrom(
                                         elevation: 6,
@@ -279,8 +302,26 @@ Future inscriptionBottomSheet(
                                 height: 50,
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
-                                    onPressed: () {
-                                      print("inscription avec google");
+                                    onPressed: () async {
+                                      if (!loadingGoogle) {
+                                        ref
+                                            .read(loadingSignGoogleProvider
+                                                .notifier)
+                                            .updateLoading(true);
+                                        try {
+                                          await AuthService.signWithGoogle(ref);
+                                        } catch (e) {
+                                          messageUser(
+                                              context,
+                                              AppLocalization.of(context)
+                                                  .translate("message_user",
+                                                      "oups_problem"));
+                                        }
+                                        ref
+                                            .read(loadingSignGoogleProvider
+                                                .notifier)
+                                            .updateLoading(false);
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                         elevation: 6,
@@ -303,12 +344,13 @@ Future inscriptionBottomSheet(
                                           width: 15.0,
                                         ),
                                         Text(
-                                            AppLocalization.of(context)
-                                                .translate("register_screen",
-                                                    "register_google"),
-                                            textAlign: TextAlign.center,
-                                            style: textStyleCustomBold(
-                                                Colors.black, 12))
+                                          AppLocalization.of(context).translate(
+                                              "register_screen",
+                                              "register_google"),
+                                          textAlign: TextAlign.center,
+                                          style: textStyleCustomBold(
+                                              Colors.black, 12),
+                                        )
                                       ],
                                     ))),
                           ],
@@ -321,7 +363,7 @@ Future inscriptionBottomSheet(
 }
 
 Future connexionBottomSheet(
-    BuildContext context, bool isDayMood, WidgetRef ref) {
+    BuildContext context, bool isDayMood, WidgetRef ref, bool loadingGoogle) {
   return Platform.isIOS
       ? showCupertinoModalBottomSheet(
           context: context,
@@ -412,8 +454,26 @@ Future connexionBottomSheet(
                                 height: 50,
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
-                                    onPressed: () {
-                                      print("connexion avec google");
+                                    onPressed: () async {
+                                      if (!loadingGoogle) {
+                                        ref
+                                            .read(loadingSignGoogleProvider
+                                                .notifier)
+                                            .updateLoading(true);
+                                        try {
+                                          await AuthService.signWithGoogle(ref);
+                                        } catch (e) {
+                                          messageUser(
+                                              context,
+                                              AppLocalization.of(context)
+                                                  .translate("message_user",
+                                                      "oups_problem"));
+                                        }
+                                        ref
+                                            .read(loadingSignGoogleProvider
+                                                .notifier)
+                                            .updateLoading(false);
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                         elevation: 6,
@@ -589,8 +649,26 @@ Future connexionBottomSheet(
                                 height: 50,
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
-                                    onPressed: () {
-                                      print("connexion avec google");
+                                    onPressed: () async {
+                                      if (!loadingGoogle) {
+                                        ref
+                                            .read(loadingSignGoogleProvider
+                                                .notifier)
+                                            .updateLoading(true);
+                                        try {
+                                          await AuthService.signWithGoogle(ref);
+                                        } catch (e) {
+                                          messageUser(
+                                              context,
+                                              AppLocalization.of(context)
+                                                  .translate("message_user",
+                                                      "oups_problem"));
+                                        }
+                                        ref
+                                            .read(loadingSignGoogleProvider
+                                                .notifier)
+                                            .updateLoading(false);
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                         elevation: 6,

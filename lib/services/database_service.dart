@@ -83,6 +83,16 @@ class DatabaseService {
     }
   }
 
+  //find if user already exist or not
+  static Future<bool> userAlreadyExist(String uid) async {
+    bool exist = false;
+    var user = await usersCollectionReference.doc(uid).get();
+    if (user.exists) {
+      exist = true;
+    }
+    return exist;
+  }
+
   //Get current user
   static Future<void> getCurrentUser(String uid, WidgetRef ref) async {
     await usersCollectionReference.doc(uid).get().then((value) async {

@@ -17,6 +17,7 @@ import 'package:gemu/controllers/bottom_navigation_controller.dart';
 //router non auth part
 Route<dynamic> generateRouteNonAuth(
     RouteSettings settings, BuildContext context) {
+  final List<dynamic>? args = settings.arguments as List<dynamic>?;
   switch (settings.name) {
     case GetStartedBefore:
       return MaterialPageRoute(builder: (_) => GetStartedBeforeScreen());
@@ -27,7 +28,11 @@ Route<dynamic> generateRouteNonAuth(
     case Login:
       return MaterialPageRoute(builder: (_) => LoginScreen());
     case Register:
-      return MaterialPageRoute(builder: (_) => RegisterScreen());
+      return MaterialPageRoute(
+          builder: (_) => RegisterScreen(
+                isSocial: args![0],
+                user: args[1],
+              ));
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final loadingRegisterNotifierProvider =
@@ -33,6 +34,8 @@ final cguValidRegisterNotifierProvider =
 final policyPrivacyRegisterNotifierProvider =
     StateNotifierProvider.autoDispose<PolicyPrivacyRegisterProvider, bool>(
         (ref) => PolicyPrivacyRegisterProvider());
+
+//provider register complete with email and password
 final registerCompleteProvider = FutureProvider.autoDispose<bool>((ref) async {
   final email = ref.watch(emailValidRegisterNotifierProvider);
   final password = ref.watch(passwordValidRegisterNotifierProvider);
@@ -57,10 +60,26 @@ final registerCompleteProvider = FutureProvider.autoDispose<bool>((ref) async {
   return false;
 });
 
+//provider register complete with google/apple
+final registerSocialsCompleteProvider =
+    FutureProvider.autoDispose<bool>((ref) async {
+  final email = ref.watch(emailValidRegisterNotifierProvider);
+  final pseudonyme = ref.watch(pseudonymeValidRegisterNotifierProvider);
+  final anniversary = ref.watch(anniversaryValidRegisterNotifierProvider);
+  final games = ref.watch(gamesValidRegisterNotifierProvider);
+  final cgu = ref.watch(cguValidRegisterNotifierProvider);
+  final policyPrivacy = ref.watch(policyPrivacyRegisterNotifierProvider);
+
+  if (email && pseudonyme && anniversary && games && cgu && policyPrivacy) {
+    return true;
+  }
+  return false;
+});
+
 class EmailValidRegisterProvider extends StateNotifier<bool> {
   EmailValidRegisterProvider() : super(false);
 
-  updateValidity(bool newState) {
+  void updateValidity(bool newState) {
     state = newState;
   }
 }

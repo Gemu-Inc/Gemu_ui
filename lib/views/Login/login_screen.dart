@@ -8,6 +8,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/models/user.dart';
+import 'package:gemu/providers/Credentials/credentials_provider.dart';
 import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:gemu/services/database_service.dart';
@@ -18,7 +19,6 @@ import 'package:gemu/components/text_field_custom.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/providers/Login/login_provider.dart';
 import 'package:gemu/translations/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   @override
@@ -35,6 +35,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
   late FocusNode _focusNodeResetPassword;
 
   bool isCompleted = false;
+  bool loadingGoogle = false;
 
   @override
   void initState() {
@@ -115,6 +116,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
     if (creationComplete.asData != null) {
       isCompleted = creationComplete.asData!.value;
     }
+    loadingGoogle = ref.watch(loadingSignGoogleProvider);
+
     return Scaffold(
         resizeToAvoidBottomInset: true,
         body: GestureDetector(
@@ -527,8 +530,8 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
                     style: textStyleCustomBold(
                         isDayMood ? cPrimaryPurple : cPrimaryPink, 13),
                     recognizer: TapGestureRecognizer()
-                      ..onTap =
-                          () => inscriptionBottomSheet(context, isDayMood, ref),
+                      ..onTap = () => inscriptionBottomSheet(
+                          context, isDayMood, ref, loadingGoogle),
                   )
                 ])),
       ],
