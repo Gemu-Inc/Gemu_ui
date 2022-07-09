@@ -23,17 +23,13 @@ class CustomNavBar extends StatelessWidget {
               : Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-          // boxShadow: [
-          //   BoxShadow(
-          //       color: Theme.of(context).brightness == Brightness.dark
-          //           ? Colors.black38
-          //           : Colors.black26,
-          //       blurRadius: 1,
-          //       spreadRadius: 1,
-          //       blurStyle: BlurStyle.normal,
-          //       offset: Offset(0, -1))
-          // ]
-          ),
+          boxShadow: [
+            BoxShadow(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black38
+                    : Colors.black26,
+                offset: Offset(0, -1.5))
+          ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: items.map((item) {
