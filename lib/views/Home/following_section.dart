@@ -97,9 +97,30 @@ class FollowingSectionState extends State<FollowingSection>
     return dataIsThere
         ? posts.length == 0
             ? Center(
-                child: Text('No following/posts at the moment',
-                    style: Theme.of(context).textTheme.bodySmall),
+                child: Container(
+      width: 250,
+      height: 50,
+      decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+          boxShadow: [
+            BoxShadow(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black38
+                    : Colors.black26,
+                blurRadius: 1,
+                spreadRadius: 1,
+                blurStyle: BlurStyle.normal,
+                offset: Offset(0, -1))
+          ]
+          ),
+    ),
               )
+            // Center(
+            //     child: Text('No following/posts at the moment',
+            //         style: Theme.of(context).textTheme.bodySmall),
+            //   )
             : PageView.builder(
                 controller: widget.pageController,
                 physics: AlwaysScrollableScrollPhysics(
