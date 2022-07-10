@@ -16,6 +16,9 @@
         "pseudo_already_exist": "This pseudonym already exists",
         "send_verif_mail_success": "A verification email has been sent!"
     },
+    "connectivity_screen": {
+        "content": "Connection problem, check your network as soon as possible!"
+    },
     "get_started_screen": {
         "start": "Get started",
         "explanations": "Some explanations before entering the Gemu adventure",

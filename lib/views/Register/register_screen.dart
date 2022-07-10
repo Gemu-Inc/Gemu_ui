@@ -387,29 +387,36 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             context: navNonAuthKey.currentContext!,
             barrierDismissible: false,
             builder: (BuildContext context) {
-              return AlertDialogCustom(context, "Annuler l'inscription",
-                  "Êtes-vous sur de vouloir annuler votre inscription?", [
-                TextButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      if (widget.isSocial) {
-                        await AuthService.deleteAccount(
-                            navNonAuthKey.currentContext!, widget.user!);
-                      }
-                      navNonAuthKey.currentState!
-                          .popUntil((route) => route.isFirst);
-                    },
-                    child: Text(
-                      "Oui",
-                      style: textStyleCustomBold(cGreenConfirm, 12),
-                    )),
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      "Non",
-                      style: textStyleCustomBold(cRedCancel, 12),
-                    ))
-              ]);
+              return AlertDialogCustom(
+                  context,
+                  AppLocalization.of(context)
+                      .translate("register_screen", "cancel_register_title"),
+                  AppLocalization.of(context)
+                      .translate("register_screen", "cancel_register_content"),
+                  [
+                    TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          if (widget.isSocial) {
+                            await AuthService.deleteAccount(
+                                navNonAuthKey.currentContext!, widget.user!);
+                          }
+                          navNonAuthKey.currentState!
+                              .popUntil((route) => route.isFirst);
+                        },
+                        child: Text(
+                          AppLocalization.of(context).translate(
+                              "register_screen", "cancel_register_confirm"),
+                          style: textStyleCustomBold(cGreenConfirm, 12),
+                        )),
+                    TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          AppLocalization.of(context).translate(
+                              "register_screen", "cancel_register_cancel"),
+                          style: textStyleCustomBold(cRedCancel, 12),
+                        ))
+                  ]);
             });
         return false;
       },
@@ -960,12 +967,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           ),
         ),
         Container(
-            height: 55,
+            height: 45,
             decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(5.0)),
             child: CountryCodePicker(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               onInit: (countryCode) {
                 if (_selectedCountry == null) {
                   _selectedCountry = countryCode!;
@@ -1562,12 +1570,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           ),
         ),
         Container(
-            height: 55,
+            height: 45,
             decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(5.0)),
             child: CountryCodePicker(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               onInit: (countryCode) {
                 if (_selectedCountry == null) {
                   _selectedCountry = countryCode!;

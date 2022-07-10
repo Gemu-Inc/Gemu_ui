@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gemu/translations/app_localizations.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
 class NoConnectivityScreen extends StatelessWidget {
@@ -43,7 +44,8 @@ class NoConnectivityScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Text(
-                "Problème de connexion, vérifie au plus vite ton réseau!",
+                AppLocalization.of(context)
+                    .translate("connectivity_screen", "content"),
                 style: Theme.of(context).textTheme.titleSmall!,
                 textAlign: TextAlign.center,
               ),
