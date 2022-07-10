@@ -608,54 +608,43 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       final policyPrivacy) {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
-        child: TabBarView(
-            controller: _tabController,
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              Column(
+        child: Column(children: [
+          Expanded(
+            child: TabBarView(
+                controller: _tabController,
+                physics: NeverScrollableScrollPhysics(),
                 children: [
-                  Expanded(child: firstPage(isDayMood)),
-                  if (!isKeyboard) btnNext(isDayMood),
-                ],
-              ),
-              Column(
-                children: [
-                  Expanded(child: secondPage(isDayMood)),
-                  if (!isKeyboard) btnPrevious(),
-                  if (!isKeyboard) btnNext(isDayMood),
-                ],
-              ),
-              Column(
-                children: [
-                  Expanded(child: thirdPage(isDayMood)),
-                  if (!isKeyboard) btnPrevious(),
-                  if (!isKeyboard) btnNext(isDayMood),
-                ],
-              ),
-              Column(
-                children: [
-                  Expanded(
-                      child: fourthPage(
-                          isDayMood,
-                          emailValid,
-                          passwordValid,
-                          usernameValid,
-                          anniversaryValid,
-                          gamesValid,
-                          cgu,
-                          policyPrivacy)),
-                  if (!isKeyboard) btnPrevious(),
-                  if (!isKeyboard) btnFinish(isDayMood, isLoading, isSuccess),
-                ],
-              )
-            ]));
+                  firstPage(isDayMood),
+                  secondPage(isDayMood),
+                  thirdPage(isDayMood),
+                  fourthPage(
+                      isDayMood,
+                      emailValid,
+                      passwordValid,
+                      usernameValid,
+                      anniversaryValid,
+                      gamesValid,
+                      cgu,
+                      policyPrivacy)
+                ]),
+          ),
+          if (!isKeyboard)
+            Column(
+              children: [
+                if (_tabController.index != 0) btnPrevious(),
+                _tabController.index != _tabController.length - 1
+                    ? btnNext(isDayMood)
+                    : btnFinish(isDayMood, isLoading, isSuccess)
+              ],
+            )
+        ]));
   }
 
   Widget btnNext(bool isDayMood) {
     return Container(
       height: MediaQuery.of(context).size.height / 12,
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
       child: ElevatedButton(
         onPressed: () {
           if (_tabController.index != _tabController.length - 1) {
@@ -696,7 +685,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         },
         style: TextButton.styleFrom(
           minimumSize: Size.zero,
-          padding: EdgeInsets.only(top: 6.0, bottom: 2.0),
+          padding: EdgeInsets.only(top: 4.0, bottom: 2.0),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: Text(
@@ -714,7 +703,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     return Container(
       height: MediaQuery.of(context).size.height / 12,
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
       child: ElevatedButton(
         onPressed: () async {
           FocusScope.of(context).unfocus();
