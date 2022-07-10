@@ -40,7 +40,7 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late TabController _tabController;
   int currentIndex = 0;
 
@@ -82,6 +82,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   DateTime? _dateBirthday;
 
   bool isComplete = false;
+  bool isKeyboard = false;
 
   String deviceLanguage = "en";
 
@@ -143,6 +144,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     DatabaseService.getGamesRegister(ref);
 
     if (widget.isSocial) {
@@ -245,6 +247,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   @override
+  void didChangeMetrics() {
+    final bottomInset = WidgetsBinding.instance.window.viewInsets.bottom;
+    final newValue = bottomInset > 0.0;
+    if (newValue != isKeyboard) {
+      setState(() {
+        isKeyboard = newValue;
+      });
+    }
+    super.didChangeMetrics();
+  }
+
+  @override
   void deactivate() {
     _tabController.removeListener(() {
       if (!_tabController.indexIsChanging) {
@@ -330,6 +344,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
     _tabController.dispose();
 
     _focusNodeEmail.dispose();
@@ -421,7 +437,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         return false;
       },
       child: Scaffold(
-          resizeToAvoidBottomInset: currentIndex == 2 ? false : true,
+          resizeToAvoidBottomInset: true,
           body: GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
@@ -556,21 +572,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               Column(
                 children: [
                   Expanded(child: firstPage(isDayMood)),
-                  btnNext(isDayMood),
+                  if (!isKeyboard) btnNext(isDayMood),
                 ],
               ),
               Column(
                 children: [
                   Expanded(child: secondPage(isDayMood)),
-                  btnPrevious(),
-                  btnNext(isDayMood),
+                  if (!isKeyboard) btnPrevious(),
+                  if (!isKeyboard) btnNext(isDayMood),
                 ],
               ),
               Column(
                 children: [
                   Expanded(child: thirdPage(isDayMood)),
-                  btnPrevious(),
-                  btnNext(isDayMood),
+                  if (!isKeyboard) btnPrevious(),
+                  if (!isKeyboard) btnNext(isDayMood),
                 ],
               ),
               Column(
@@ -585,8 +601,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                           gamesValid,
                           cgu,
                           policyPrivacy)),
-                  btnPrevious(),
-                  btnFinish(isDayMood, isLoading, isSuccess),
+                  if (!isKeyboard) btnPrevious(),
+                  if (!isKeyboard) btnFinish(isDayMood, isLoading, isSuccess),
                 ],
               )
             ]));
