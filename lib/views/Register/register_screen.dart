@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -439,6 +440,48 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       child: Scaffold(
           resizeToAvoidBottomInset: true,
           body: GestureDetector(
+            onHorizontalDragUpdate: (details) {
+              if (Platform.isIOS && details.delta.dx > 0) {
+                showDialog(
+                    context: navNonAuthKey.currentContext!,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialogCustom(
+                          context,
+                          AppLocalization.of(context).translate(
+                              "register_screen", "cancel_register_title"),
+                          AppLocalization.of(context).translate(
+                              "register_screen", "cancel_register_content"),
+                          [
+                            TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  if (widget.isSocial) {
+                                    await AuthService.deleteAccount(
+                                        navNonAuthKey.currentContext!,
+                                        widget.user!);
+                                  }
+                                  navNonAuthKey.currentState!
+                                      .popUntil((route) => route.isFirst);
+                                },
+                                child: Text(
+                                  AppLocalization.of(context).translate(
+                                      "register_screen",
+                                      "cancel_register_confirm"),
+                                  style: textStyleCustomBold(cGreenConfirm, 12),
+                                )),
+                            TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(
+                                  AppLocalization.of(context).translate(
+                                      "register_screen",
+                                      "cancel_register_cancel"),
+                                  style: textStyleCustomBold(cRedCancel, 12),
+                                ))
+                          ]);
+                    });
+              }
+            },
             onTap: () {
               FocusScope.of(context).unfocus();
               Helpers.hideKeyboard(context);
@@ -567,7 +610,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
         child: TabBarView(
             controller: _tabController,
-            physics: AlwaysScrollableScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(),
             children: [
               Column(
                 children: [
