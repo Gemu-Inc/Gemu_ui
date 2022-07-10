@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
 import 'package:gemu/models/game.dart';
+import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Register/searching_game.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 
@@ -35,6 +36,7 @@ class DatabaseService {
       }
     });
     ref.read(allGamesRegisterNotifierProvider.notifier).initGames(allGames);
+    ref.read(loadingGamesRegisterNotifierProvider.notifier).updateLoading(true);
   }
 
   //Récupère 12 nouveaux jeux dans la bdd pour la partie inscription

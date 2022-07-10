@@ -1,6 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final loadingGamesRegisterNotifierProvider =
+    StateNotifierProvider.autoDispose<LoadingGamesRegisterProvider, bool>(
+        (ref) => LoadingGamesRegisterProvider());
 final loadingRegisterNotifierProvider =
     StateNotifierProvider.autoDispose<LoadingRegisterProvider, bool>(
         (ref) => LoadingRegisterProvider());
@@ -75,6 +77,14 @@ final registerSocialsCompleteProvider =
   }
   return false;
 });
+
+class LoadingGamesRegisterProvider extends StateNotifier<bool> {
+  LoadingGamesRegisterProvider() : super(false);
+
+  void updateLoading(bool newState) {
+    state = newState;
+  }
+}
 
 class EmailValidRegisterProvider extends StateNotifier<bool> {
   EmailValidRegisterProvider() : super(false);

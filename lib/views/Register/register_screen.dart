@@ -1070,6 +1070,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   Widget thirdPage(bool isDayMood) {
+    final loadingGames = ref.watch(loadingGamesRegisterNotifierProvider);
+
     return ListView(
       controller: _mainScrollController,
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -1086,7 +1088,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           child: StickyHeader(
               controller: _mainScrollController,
               header: _searchBar(isDayMood),
-              content: _games(isDayMood)),
+              content: loadingGames
+                  ? _games(isDayMood)
+                  : Container(
+                      height: 200,
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        height: 30.0,
+                        width: 30.0,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.primary,
+                          strokeWidth: 1.5,
+                        ),
+                      ),
+                    )),
         )
       ],
     );
