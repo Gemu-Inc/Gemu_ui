@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/Credentials/credentials_provider.dart';
-import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/translations/app_localizations.dart';
+import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -706,5 +706,21 @@ Future connexionBottomSheet(
                     ],
                   ),
                 ));
+          });
+}
+
+Future getStartedBottomSheet(BuildContext context) {
+  return Platform.isIOS
+      ? showCupertinoModalBottomSheet(
+          context: context,
+          expand: true,
+          builder: (context) {
+            return GetStartedScreen();
+          })
+      : showMaterialModalBottomSheet(
+          context: context,
+          expand: true,
+          builder: (context) {
+            return GetStartedScreen();
           });
 }

@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gemu/providers/Langue/device_language_provider.dart';
-import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Register/searching_game.dart';
 import 'package:gemu/services/database_service.dart';
@@ -397,7 +396,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                         await AuthService.deleteAccount(
                             navNonAuthKey.currentContext!, widget.user!);
                       }
-                      navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
+                      navNonAuthKey.currentState!
+                          .popUntil((route) => route.isFirst);
                     },
                     child: Text(
                       "Oui",
@@ -423,17 +423,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             child: Column(children: [
               topRegisterEmail(isDayMood),
               Expanded(
-                  child: bodyRegister(
-                      isDayMood,
-                      isLoading,
-                      isSuccess,
-                      emailValid,
-                      passwordValid,
-                      usernameValid,
-                      anniversaryValid,
-                      gamesValid,
-                      cgu,
-                      policyPrivacy)),
+                  child: SafeArea(
+                top: false,
+                left: false,
+                right: false,
+                child: bodyRegister(
+                    isDayMood,
+                    isLoading,
+                    isSuccess,
+                    emailValid,
+                    passwordValid,
+                    usernameValid,
+                    anniversaryValid,
+                    gamesValid,
+                    cgu,
+                    policyPrivacy),
+              )),
             ]),
           )),
     );
@@ -479,7 +484,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                       navNonAuthKey.currentContext!,
                                       widget.user!);
                                 }
-                                navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
+                                navNonAuthKey.currentState!
+                                    .popUntil((route) => route.isFirst);
                               },
                               child: Text(
                                 AppLocalization.of(context).translate(

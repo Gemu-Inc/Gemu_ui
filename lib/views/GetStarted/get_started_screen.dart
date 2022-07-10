@@ -17,13 +17,7 @@ class GetStartedBeforeScreen extends ConsumerStatefulWidget {
 class _GetStartedBeforeScreenState
     extends ConsumerState<GetStartedBeforeScreen> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    bool seenGetStarted = ref.watch(getStartedNotifierProvider);
     bool isDayMood = ref.watch(dayMoodNotifierProvider);
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -40,34 +34,17 @@ class _GetStartedBeforeScreenState
                   Theme.of(context).brightness == Brightness.dark
                       ? Brightness.light
                       : Brightness.dark),
-          child: Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          child: SafeArea(
+            left: false,
+            right: false,
             child: Column(
               children: [
-                if (seenGetStarted) btnClear(),
                 Expanded(child: bodyGetStartedBefore()),
                 btnStart(isDayMood)
               ],
             ),
           ),
         ));
-  }
-
-  Widget btnClear() {
-    return Container(
-      height: 75,
-      alignment: Alignment.topRight,
-      padding: const EdgeInsets.only(right: 15.0),
-      child: IconButton(
-          onPressed: () {
-                navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
-          },
-          icon: Icon(
-            Icons.clear,
-            size: 30,
-            color: Theme.of(context).iconTheme.color,
-          )),
-    );
   }
 
   Widget bodyGetStartedBefore() {
@@ -184,8 +161,9 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                     Theme.of(context).brightness == Brightness.dark
                         ? Brightness.light
                         : Brightness.dark),
-            child: Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: SafeArea(
+              left: false,
+              right: false,
               child: Column(
                 children: [
                   if (seenGetStarted) btnClear(),

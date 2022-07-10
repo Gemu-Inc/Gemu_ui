@@ -8,8 +8,6 @@ import 'package:email_validator/email_validator.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/models/user.dart';
-import 'package:gemu/providers/Credentials/credentials_provider.dart';
-import 'package:gemu/providers/Navigation/nav_non_auth.dart';
 import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
@@ -22,10 +20,10 @@ import 'package:gemu/translations/app_localizations.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   @override
-  Loginviewstate createState() => Loginviewstate();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class Loginviewstate extends ConsumerState<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _emailResetPasswordController;
@@ -116,27 +114,21 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
       isCompleted = creationComplete.asData!.value;
     }
 
-    return WillPopScope(
-        child: Scaffold(
-            resizeToAvoidBottomInset: true,
-            body: GestureDetector(
-              onTap: () => Helpers.hideKeyboard(context),
-              child: Column(children: [
-                topLoginEmail(),
-                Expanded(
-                  child: loginEmail(isDayMood, isLoading),
-                )
-              ]),
-            )),
-        onWillPop: () async {
-          navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
-          print(Navigator.of(context).userGestureInProgress);
-          if (Navigator.of(context).userGestureInProgress) {
-            return true;
-          } else {
-            return false;
-          }
-        });
+    return Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: GestureDetector(
+          onTap: () => Helpers.hideKeyboard(context),
+          child: Column(children: [
+            topLoginEmail(),
+            Expanded(
+              child: SafeArea(
+                  top: false,
+                  left: false,
+                  right: false,
+                  child: loginEmail(isDayMood, isLoading)),
+            )
+          ]),
+        ));
   }
 
   Widget topLoginEmail() {
@@ -159,7 +151,7 @@ class Loginviewstate extends ConsumerState<LoginScreen> {
         leading: IconButton(
             onPressed: () {
               Helpers.hideKeyboard(context);
-              navNonAuthKey.currentState!.popUntil((route) => route.isFirst);
+              navNonAuthKey.currentState!.pop();
             },
             icon: Icon(Icons.arrow_back_ios,
                 color: Theme.of(context).brightness == Brightness.dark

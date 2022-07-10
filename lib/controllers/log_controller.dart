@@ -5,8 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gemu/providers/GetStarted/getStarted_provider.dart';
 import 'package:gemu/providers/Connectivity/connectivity_provider.dart';
 import 'package:gemu/providers/Langue/device_language_provider.dart';
-import 'package:gemu/providers/Navigation/nav_non_auth.dart';
-import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Theme/dayMood_provider.dart';
 import 'package:gemu/providers/Theme/theme_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
@@ -14,7 +12,6 @@ import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/translations/app_localizations.dart';
 import 'package:gemu/views/NoConnectivity/noconnectivity_screen.dart';
-import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -147,39 +144,39 @@ class _LogControllerState extends ConsumerState<LogController> {
                 : darkThemeSystemPurple
             : theme,
         home: connectivityStatus == ConnectivityResult.none
-          ? NoConnectivityScreen()
-          : activeUser == null
-              ? LoaderOverlay(
-                  useDefaultLoading: false,
-                  overlayWidget: Center(
-                    child: CircularProgressIndicator(
-                      color: cPrimaryPink,
-                      strokeWidth: 1.0,
+            ? NoConnectivityScreen()
+            : activeUser == null
+                ? LoaderOverlay(
+                    useDefaultLoading: false,
+                    overlayWidget: Center(
+                      child: CircularProgressIndicator(
+                        color: cPrimaryPink,
+                        strokeWidth: 1.0,
+                      ),
                     ),
-                  ),
-                  overlayColor: Colors.black,
-                  overlayOpacity: 0.7,
-                  child: WillPopScope(
+                    overlayColor: Colors.black,
+                    overlayOpacity: 0.7,
+                    child: WillPopScope(
+                      onWillPop: () async {
+                        return !(await navNonAuthKey.currentState!.maybePop());
+                      },
+                      child: Navigator(
+                        key: navNonAuthKey,
+                        initialRoute:
+                            !seenGetStarted ? GetStartedBefore : Welcome,
+                        onGenerateRoute: (settings) =>
+                            generateRouteNonAuth(settings, context),
+                      ),
+                    ))
+                : WillPopScope(
                     onWillPop: () async {
-                      return !(await navNonAuthKey.currentState!.maybePop());
+                      return !(await navMainAuthKey.currentState!.maybePop());
                     },
                     child: Navigator(
-                      key: navNonAuthKey,
-                      initialRoute:
-                          !seenGetStarted ? GetStartedBefore : Welcome,
+                      key: navMainAuthKey,
+                      initialRoute: BottomTabNav,
                       onGenerateRoute: (settings) =>
-                          generateRouteNonAuth(settings, context),
-                    ),
-                  ))
-              : WillPopScope(
-                  onWillPop: () async {
-                    return !(await navMainAuthKey.currentState!.maybePop());
-                  },
-                  child: Navigator(
-                    key: navMainAuthKey,
-                    initialRoute: BottomTabNav,
-                    onGenerateRoute: (settings) =>
-                        generateRouteMainAuth(settings, context),
-                  )));
+                          generateRouteMainAuth(settings, context),
+                    )));
   }
 }
