@@ -1,4 +1,4 @@
-import 'dart:io' show Platform;
+import 'dart:io' show File, Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +8,8 @@ import 'package:gemu/providers/Credentials/credentials_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/translations/app_localizations.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
+import 'package:gemu/views/Share/Post/Picture/picture_editor_screen.dart';
+import 'package:gemu/views/Share/Post/Video/video_editor_screen.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -722,5 +724,37 @@ Future getStartedBottomSheet(BuildContext context) {
           expand: true,
           builder: (context) {
             return GetStartedScreen();
+          });
+}
+
+Future pictureEditorBottomSheet(BuildContext context, File file) {
+  return Platform.isIOS
+      ? showCupertinoModalBottomSheet(
+          context: context,
+          expand: true,
+          builder: (context) {
+            return PictureEditorScreen(file: file);
+          })
+      : showMaterialModalBottomSheet(
+          context: context,
+          expand: true,
+          builder: (context) {
+            return PictureEditorScreen(file: file);
+          });
+}
+
+Future videoEditorBottomSheet(BuildContext context, File file) {
+  return Platform.isIOS
+      ? showCupertinoModalBottomSheet(
+          context: context,
+          expand: true,
+          builder: (context) {
+            return VideoEditorScreen(file: file);
+          })
+      : showMaterialModalBottomSheet(
+          context: context,
+          expand: true,
+          builder: (context) {
+            return VideoEditorScreen(file: file);
           });
 }

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gemu/components/bottom_sheet_custom.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:gemu/constants/constants.dart';
@@ -117,13 +119,13 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
       final image =
           await ImagePicker().getImage(source: src, imageQuality: 100);
       if (image != null) {
-        navMainAuthKey.currentState!
-            .pushNamed(PictureEditor, arguments: [File(image.path)]);
+        Navigator.pop(context);
+        pictureEditorBottomSheet(context, File(image.path));
       } else {
         Navigator.pop(context);
       }
     } catch (e) {
-      print(e);
+      messageUser(context, "Oups un prblème est survenu");
     }
   }
 
@@ -132,13 +134,13 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
       final video = await ImagePicker()
           .getVideo(source: src, maxDuration: Duration(seconds: 10));
       if (video != null) {
-        navMainAuthKey.currentState!
-            .pushNamed(VideoEditor, arguments: [File(video.path)]);
+        Navigator.pop(context);
+        videoEditorBottomSheet(context, File(video.path));
       } else {
         Navigator.pop(context);
       }
     } catch (e) {
-      print(e);
+      messageUser(context, "Oups, un problème est survenu");
     }
   }
 
