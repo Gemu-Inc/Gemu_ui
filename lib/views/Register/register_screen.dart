@@ -13,7 +13,6 @@ import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Register/searching_game.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/translations/app_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
 import "package:email_validator/email_validator.dart";
 
 import 'package:gemu/services/auth_service.dart';
@@ -691,7 +690,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         child: Text(
             AppLocalization.of(context)
                 .translate("register_screen", "previous"),
-            style: GoogleFonts.fredokaOne(
+            style: TextStyle(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white
                     : Colors.grey,

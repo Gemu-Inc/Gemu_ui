@@ -6,8 +6,6 @@ import 'package:gemu/components/bottom_sheet_custom.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:gemu/constants/constants.dart';
-
 class BottomShare extends StatefulWidget {
   @override
   _BottomShare createState() => _BottomShare();

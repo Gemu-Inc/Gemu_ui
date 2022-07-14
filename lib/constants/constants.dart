@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:gemu/models/user.dart';
 
@@ -45,16 +44,18 @@ const themeLightPurple = "ThemeLightPurple";
 //Theme text
 textStyleCustomBold(Color color, double fontSize,
     [FontWeight? fontWeight, FontStyle? fontStyle]) {
-  return GoogleFonts.fredokaOne(
+  return TextStyle(
+      fontFamily: 'Fredoka',
       fontSize: fontSize,
       color: color,
-      fontWeight: fontWeight ?? FontWeight.normal,
+      fontWeight: fontWeight ?? FontWeight.bold,
       fontStyle: fontStyle ?? FontStyle.normal);
 }
 
 textStyleCustomRegular(Color color, double fontSize,
     [FontWeight? fontWeight, FontStyle? fontStyle]) {
-  return GoogleFonts.nunito(
+  return TextStyle(
+      fontFamily: 'Fredoka',
       fontSize: fontSize,
       color: color,
       fontWeight: fontWeight ?? FontWeight.w500,

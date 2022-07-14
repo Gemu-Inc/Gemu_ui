@@ -36,7 +36,6 @@ dependencies:
   flutter_image_compress: ^1.0.0
   flutter_riverpod: ^1.0.4
   flutter_svg: ^1.0.3
-  google_fonts: ^2.0.0
   helpers: ^1.1.2 
   image_cropper: ^1.4.0
   image_picker: ^0.7.4
@@ -69,12 +68,7 @@ dependencies:
   connectivity_plus: ^2.2.1
   email_validator: ^2.0.1
   top_snackbar_flutter: ^1.0.2
-  # video_compress: ^3.1.0
-  ## TODO attendre une nouvelle version du package video_compress afin d'enlever le git ##
-  video_compress:
-    git:
-      url: https://github.com/jonataslaw/VideoCompress.git
-      ref: master
+  video_compress: ^3.1.1
   flutter_native_splash: ^2.1.6
   google_sign_in: ^5.4.0
   loader_overlay: ^2.0.7
@@ -98,14 +92,17 @@ flutter_native_splash:
 flutter_launcher_name:
   name: "Gemu"
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-# The following section is specific to Flutter.
 flutter:
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
+
+  fonts:
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/Fredoka-Bold.ttf
+        - asset: assets/fonts/Fredoka-Light.ttf
+        - asset: assets/fonts/Fredoka-Medium.ttf
+        - asset: assets/fonts/Fredoka-Regular.ttf
+        - asset: assets/fonts/Fredoka-SemiBold.ttf
 
   # To add assets to your application, add an assets section, like this:
   assets:
