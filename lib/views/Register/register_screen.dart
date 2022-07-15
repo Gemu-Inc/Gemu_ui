@@ -65,8 +65,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   Algolia algolia = AlgoliaService.algolia;
   List<AlgoliaObjectSnapshot> gamesSearch = [];
   String valueSearching = "";
-  Timer? timer;
-  bool isResultsSearch = false;
+  Timer? _timer;
+  int _timerTime = 1;
 
   late bool isSearching;
   late bool isLoadingMoreData;
@@ -111,19 +111,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       gamesSearch = (await query.getObjects()).hits;
 
       ref.read(searchingRegisterNotifierProvider.notifier).update(false);
-      setState(() {
-        isResultsSearch = true;
-      });
     }
   }
 
   _searchGamesAfterWaiting() {
     if (_searchController.text.isEmpty) {
-      isResultsSearch = false;
       valueSearching = "";
     }
     if (!isSearching) {
-      timer = Timer(Duration(seconds: 2), () {
+      if (_timer != null && _timer!.isActive) _timer!.cancel();
+      _timer = Timer(Duration(seconds: _timerTime), () {
         if (_searchController.text.isNotEmpty &&
             valueSearching != _searchController.text) {
           valueSearching = _searchController.text;
@@ -1133,11 +1130,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 });
               },
               editingComplete: () {
-                timer?.cancel();
+                if (_timer != null && _timer!.isActive) _timer?.cancel();
                 Helpers.hideKeyboard(context);
                 if (_searchController.text.isNotEmpty &&
                     !isSearching &&
-                    !isResultsSearch) {
+                    valueSearching != _searchController.text) {
                   valueSearching = _searchController.text;
                   _searchGames(_searchController.text);
                 }
@@ -1151,7 +1148,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   if (_searchController.text.isNotEmpty) {
                     setState(() {
                       _searchController.clear();
-                      isResultsSearch = false;
                       valueSearching = "";
                     });
                   }
@@ -1201,9 +1197,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               ],
             ),
           )
-        : _searchController.text.isEmpty || !isResultsSearch
-            ? _listGames(isDayMood)
-            : _searchListGames(isDayMood);
+        : _searchController.text.isNotEmpty &&
+                valueSearching == _searchController.text
+            ? _searchListGames(isDayMood)
+            : _listGames(isDayMood);
   }
 
   Widget _listGames(bool isDayMood) {
