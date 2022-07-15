@@ -9,9 +9,6 @@ final myselfNotifierProvider =
 final myGamesNotifierProvider =
     StateNotifierProvider<MyGamesProvider, List<Game>>(
         (ref) => MyGamesProvider());
-final myGamesControllerNotifierProvider =
-    StateNotifierProvider<MyGamesControllerProvider, List<PageController>>(
-        (ref) => MyGamesControllerProvider());
 
 class MyselfProvider extends StateNotifier<UserModel?> {
   MyselfProvider() : super(null);
@@ -30,13 +27,5 @@ class MyGamesProvider extends StateNotifier<List<Game>> {
 
   initGames(List<Game> gameList) {
     state = gameList;
-  }
-}
-
-class MyGamesControllerProvider extends StateNotifier<List<PageController>> {
-  MyGamesControllerProvider() : super([]);
-
-  initGamesController(List<PageController> gamesControllerList) {
-    state = gamesControllerList;
   }
 }

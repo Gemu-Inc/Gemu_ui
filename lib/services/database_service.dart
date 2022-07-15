@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
 import 'package:gemu/models/game.dart';
+import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Register/searching_game.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';

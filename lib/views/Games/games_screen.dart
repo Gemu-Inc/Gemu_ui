@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
-import 'package:gemu/providers/Home/index_games_provider.dart';
+import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
