@@ -191,7 +191,7 @@ class _BottomNavigationControllerState
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 5),
+                    padding: EdgeInsets.only(bottom: 10),
                     child: Container(
                       width: double.infinity,
                       height: 150,

@@ -16,7 +16,7 @@ class CustomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 50,
+      height: 60,
       decoration: BoxDecoration(
           color: selectedIndex == 0
               ? cBGDarkTheme
