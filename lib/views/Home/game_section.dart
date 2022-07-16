@@ -61,6 +61,8 @@ class GameSectionState extends State<GameSection>
 
     posts.shuffle();
 
+    await Future.delayed(Duration(seconds: 5));
+
     if (!dataIsThere && mounted) {
       setState(() {
         dataIsThere = true;
@@ -107,7 +109,7 @@ class GameSectionState extends State<GameSection>
             ? posts.length == 0
                 ? Center(
                     child: Text(
-                      'No posts at the moment',
+                      'No posts at the moment ${widget.game.name}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   )

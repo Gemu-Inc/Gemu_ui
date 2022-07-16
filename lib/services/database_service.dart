@@ -122,6 +122,7 @@ class DatabaseService {
     });
 
     ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
+    ref.read(gamesTabNotifierProvider.notifier).initGames(gamesList);
     ref
         .read(myGamesControllerNotifierProvider.notifier)
         .initGamesController(gamePageController);

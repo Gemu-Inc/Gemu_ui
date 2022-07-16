@@ -7,6 +7,7 @@ import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/Credentials/credentials_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/translations/app_localizations.dart';
+import 'package:gemu/views/Games/games_screen.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/views/Share/Post/Picture/picture_editor_screen.dart';
 import 'package:gemu/views/Share/Post/Video/video_editor_screen.dart';
@@ -724,6 +725,22 @@ Future getStartedBottomSheet(BuildContext context) {
           expand: true,
           builder: (context) {
             return GetStartedScreen();
+          });
+}
+
+Future gamesBottomSheet(BuildContext context, PageController controller) {
+  return Platform.isIOS
+      ? showCupertinoModalBottomSheet(
+          context: context,
+          expand: true,
+          builder: (context) {
+            return GamesScreen(controller: controller);
+          })
+      : showMaterialModalBottomSheet(
+          context: context,
+          expand: true,
+          builder: (context) {
+            return GamesScreen(controller: controller);
           });
 }
 

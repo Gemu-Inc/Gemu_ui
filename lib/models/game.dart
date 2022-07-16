@@ -48,4 +48,8 @@ class Game {
   Map<String, dynamic> toMap() {
     return {'name': name, 'imageUrl': imageUrl};
   }
+
+  Game copy() {
+    return Game(name: name, imageUrl: imageUrl);
+  }
 }

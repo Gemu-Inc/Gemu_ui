@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/user.dart';
@@ -27,5 +26,19 @@ class MyGamesProvider extends StateNotifier<List<Game>> {
 
   initGames(List<Game> gameList) {
     state = gameList;
+  }
+
+  updateGames(Game game) {
+    List<Game> newState = copyState();
+    newState.removeWhere((element) => element.name == game.name);
+    state = newState;
+  }
+
+  List<Game> copyState() {
+    List<Game> games = [];
+    for (Game game in state) {
+      games.add(game.copy());
+    }
+    return games;
   }
 }

@@ -443,7 +443,7 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    gamesList = ref.read(myGamesNotifierProvider);
+    gamesList = ref.watch(myGamesNotifierProvider);
     return Scaffold(
       appBar: PreferredSize(
           child: AppBar(

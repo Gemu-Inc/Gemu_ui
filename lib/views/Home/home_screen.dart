@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/components/bottom_sheet_custom.dart';
 
 import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
@@ -10,6 +11,7 @@ import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import 'game_section.dart';
 import 'following_section.dart';
@@ -22,20 +24,19 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _Homeviewstate extends ConsumerState<HomeScreen>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  bool dataIsThere = false;
-
+    with TickerProviderStateMixin {
   late TabController _tabMenuController;
   int currentTabMenuIndex = 1;
 
   late PageController followingsPageController;
+  late PageController gamesController;
 
   late AnimationController _animationRotateController,
       _animationGamesController;
   late Animation _animationRotate, _animationGames;
   bool panelGamesThere = false;
 
-  List<Game> gamesList = [];
+  List<Game> gamesTab = [];
   List<PageController> gamesControllerList = [];
   int indexGames = 0;
   List followings = [];
@@ -70,26 +71,10 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     }
   }
 
-  void _onPageChanged() async {
-    if (_animationRotateController.isCompleted) {
-      _animationRotateController.reverse();
-      _animationGamesController.reverse();
-      if (panelGamesThere) {
-        await Future.delayed(Duration(milliseconds: 200));
-        setState(() {
-          panelGamesThere = false;
-        });
-      }
-    }
-  }
-
   double getRadianFromDegree(double degree) {
     double unitRadian = 57.295779513;
     return degree / unitRadian;
   }
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -104,6 +89,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     _tabMenuController.addListener(_onTabMenuChanged);
 
     followingsPageController = PageController();
+    gamesController = PageController();
 
     _animationGamesController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 100));
@@ -121,15 +107,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   }
 
   @override
-  void didUpdateWidget(covariant HomeScreen oldWidget) {
-    gamesControllerList[indexGames].addListener(_onPageChanged);
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
   void deactivate() {
     _tabMenuController.removeListener(_onTabMenuChanged);
-    gamesControllerList[indexGames].removeListener(_onPageChanged);
     super.deactivate();
   }
 
@@ -143,41 +122,28 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    gamesList = ref.read(myGamesNotifierProvider);
-    gamesControllerList = ref.read(myGamesControllerNotifierProvider);
+    gamesTab = ref.watch(gamesTabNotifierProvider);
+    gamesControllerList = ref.watch(myGamesControllerNotifierProvider);
     indexGames = ref.watch(indexGamesNotifierProvider);
 
-    return DefaultTabController(
-      initialIndex: indexGames,
-      length: gamesList.length,
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Color(0xFF22213C),
         body: Stack(
           children: [
-            bodyHome(gamesList[indexGames]),
+            bodyHome(),
             Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: topHome(gamesList[indexGames]),
+              padding:
+                  EdgeInsets.only(top: MediaQuery.of(context).padding.top + 15),
+              child: topHome(gamesTab[indexGames]),
             ),
           ],
-        ),
-      ),
-    );
+        ));
   }
 
   Widget topHome(Game game) {
     return Container(
-      padding: EdgeInsets.only(top: 10.0),
-      height: panelGamesThere
-          ? MediaQuery.of(context).size.height / 4
-          : MediaQuery.of(context).size.height / 6,
       child: Column(
-        children: [
-          topAppBar(),
-          bottomAppBar(),
-          tabGames(gamesList),
-        ],
+        children: [topAppBar(), bottomAppBar(), tabGames(gamesTab)],
       ),
     );
   }
@@ -194,8 +160,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
               }
             },
             child: Container(
-              height: 50,
-              width: 50,
+              height: 55,
+              width: 55,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(10.0),
@@ -207,7 +173,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                       Theme.of(context).colorScheme.secondary
                     ]),
               ),
-              child: Icon(Icons.subscriptions, size: 30, color: Colors.black),
+              child: Icon(Icons.people_alt, size: 30, color: Colors.black),
             ),
           );
         case 1:
@@ -220,8 +186,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
               }
             },
             child: Container(
-              height: 50,
-              width: 50,
+              height: 55,
+              width: 55,
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(10.0),
@@ -234,14 +200,14 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                       ]),
                   image: DecorationImage(
                       image: CachedNetworkImageProvider(
-                          gamesList[indexGames].imageUrl),
+                          gamesTab[indexGames].imageUrl),
                       fit: BoxFit.cover)),
             ),
           );
         default:
           return Container(
-            height: 50,
-            width: 50,
+            height: 55,
+            width: 55,
             alignment: Alignment.center,
             color: Colors.grey,
             child: CircularProgressIndicator(
@@ -255,89 +221,92 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
 
   Widget bottomAppBar() {
     return Container(
-        height: 30.0,
+        height: 50,
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(horizontal: 15.0),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: TabBar(
-              controller: _tabMenuController,
-              overlayColor: MaterialStateProperty.all(Colors.transparent),
-              indicatorColor: Theme.of(context).colorScheme.primary,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorWeight: 1.0,
-              labelColor: Theme.of(context).colorScheme.primary,
-              unselectedLabelColor: Colors.grey,
-              isScrollable: true,
-              tabs: [
-                Tab(
-                  child: currentTabMenuIndex == 0
-                      ? Text('Followings',
-                          style: Theme.of(context).textTheme.bodySmall)
-                      : Text(
-                          'Followings',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                ),
-                Tab(
-                  child: currentTabMenuIndex == 1
-                      ? GestureDetector(
-                          onTap: () async {
-                            if (_animationRotateController.isCompleted) {
-                              _animationRotateController.reverse();
-                              _animationGamesController.reverse();
-                              if (panelGamesThere) {
-                                await Future.delayed(
-                                    Duration(milliseconds: 200));
-                                setState(() {
-                                  panelGamesThere = false;
-                                });
-                              }
-                            } else {
-                              if (!panelGamesThere) {
-                                setState(() {
-                                  panelGamesThere = true;
-                                });
-                              }
-
-                              _animationRotateController.forward();
-                              _animationGamesController.forward();
+        child: TabBar(
+            controller: _tabMenuController,
+            overlayColor: MaterialStateProperty.all(Colors.transparent),
+            indicatorColor: Colors.transparent,
+            labelColor: Theme.of(context).colorScheme.primary,
+            unselectedLabelColor:
+                Theme.of(context).brightness == Brightness.dark
+                    ? Theme.of(context).colorScheme.primary == cPrimaryPink
+                        ? cInactiveIconPinkDarkTheme
+                        : cInactiveIconPurpleDarkTheme
+                    : Theme.of(context).colorScheme.primary == cPrimaryPink
+                        ? cInactiveIconPinkLightTheme
+                        : cInactiveIconPurpleLightTheme,
+            isScrollable: false,
+            tabs: [
+              Container(
+                width: MediaQuery.of(context).size.width / 2,
+                alignment: Alignment.center,
+                child: currentTabMenuIndex == 0
+                    ? Text(
+                        'Followings',
+                      )
+                    : Text(
+                        'Followings',
+                      ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 2,
+                alignment: Alignment.center,
+                child: currentTabMenuIndex == 1
+                    ? GestureDetector(
+                        onTap: () async {
+                          if (_animationRotateController.isCompleted) {
+                            _animationRotateController.reverse();
+                            _animationGamesController.reverse();
+                            if (panelGamesThere) {
+                              await Future.delayed(Duration(milliseconds: 200));
+                              setState(() {
+                                panelGamesThere = false;
+                              });
                             }
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Games',
-                                  style: Theme.of(context).textTheme.bodySmall),
-                              Padding(
-                                  padding: EdgeInsets.only(top: 1.0),
-                                  child: Transform(
-                                      transform: Matrix4.rotationZ(
-                                          getRadianFromDegree(
-                                              _animationRotate.value)),
-                                      alignment: Alignment.center,
-                                      child: Icon(
-                                        Icons.expand_more,
-                                      ))),
-                            ],
-                          ),
-                        )
-                      : Text(
-                          'Games',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          } else {
+                            if (!panelGamesThere) {
+                              setState(() {
+                                panelGamesThere = true;
+                              });
+                            }
+                            _animationRotateController.forward();
+                            _animationGamesController.forward();
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Games',
+                            ),
+                            Padding(
+                                padding: EdgeInsets.only(top: 1.0),
+                                child: Transform(
+                                    transform: Matrix4.rotationZ(
+                                        getRadianFromDegree(
+                                            _animationRotate.value)),
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.expand_more,
+                                    ))),
+                          ],
                         ),
-                ),
-              ]),
-        ));
+                      )
+                    : Text(
+                        'Games',
+                      ),
+              ),
+            ]));
   }
 
-  Widget bodyHome(Game game) {
+  Widget bodyHome() {
     return TabBarView(
         physics: NeverScrollableScrollPhysics(),
         controller: _tabMenuController,
         children: [
           following,
-          games(gamesList),
+          games(gamesTab),
         ]);
   }
 
@@ -347,32 +316,32 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
       );
 
   Widget tabGames(List<Game> games) {
-    return Consumer(builder: (_, ref, child) {
-      return Padding(
-          padding: EdgeInsets.only(top: 10.0),
-          child: SizeTransition(
-              sizeFactor: _animationGames as Animation<double>,
-              child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(
-                    child: TabBar(
-                        onTap: (index) {
-                          ref
-                              .read(indexGamesNotifierProvider.notifier)
-                              .updateIndex(index);
-                        },
-                        indicatorColor: Colors.transparent,
-                        labelColor: Theme.of(context).colorScheme.primary,
-                        unselectedLabelColor: Colors.grey,
-                        isScrollable: true,
-                        tabs: games.map((game) {
-                          int indexGame = games.indexOf(game);
-                          return Column(
-                            children: [
-                              Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
+    return SizeTransition(
+      sizeFactor: _animationGames as Animation<double>,
+      child: Container(
+        height: 100,
+        child: Center(
+          child: ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: gamesTab.length,
+              itemBuilder: (_, index) {
+                Game game = gamesTab[index];
+                return game.name == "Add"
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: SizedBox(
+                          width: 55,
+                          child: GestureDetector(
+                            onTap: () => gamesBottomSheet(
+                                navMainAuthKey.currentContext!,
+                                gamesController),
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 55,
+                                  width: 55,
+                                  decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
@@ -384,44 +353,122 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                                         ]),
                                     borderRadius: BorderRadius.circular(10.0),
                                     border: Border.all(
-                                        width: 1.5,
-                                        color: indexGames == indexGame
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Colors.grey),
-                                    image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: CachedNetworkImageProvider(
-                                            game.imageUrl))),
-                              ),
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                              Text(
-                                game.name,
-                                style: TextStyle(
-                                  fontSize: 10,
+                                        width: 1.5, color: Colors.grey),
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 33,
+                                    color: Colors.black,
+                                  ),
                                 ),
-                              )
-                            ],
-                          );
-                        }).toList()),
-                  ))));
-    });
+                                SizedBox(
+                                  height: 5.0,
+                                ),
+                                Text(
+                                  game.name,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: SizedBox(
+                          width: 55,
+                          child: GestureDetector(
+                            onTap: () {
+                              ref
+                                  .read(indexGamesNotifierProvider.notifier)
+                                  .updateIndex(index);
+                              gamesController.jumpToPage(index);
+                            },
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 55,
+                                  width: 55,
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .secondary
+                                          ]),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      border: Border.all(
+                                          width: 1.5,
+                                          color: indexGames == index
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Colors.grey),
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: CachedNetworkImageProvider(
+                                              game.imageUrl))),
+                                ),
+                                SizedBox(
+                                  height: 5.0,
+                                ),
+                                Text(
+                                  game.name,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: indexGames == index
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Colors.grey),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+              }),
+        ),
+      ),
+    );
   }
 
   Widget games(List<Game> games) {
-    return TabBarView(
+    return PageView.builder(
+        controller: gamesController,
         physics: NeverScrollableScrollPhysics(),
-        children: games.map((game) {
+        itemCount: gamesTab.length,
+        itemBuilder: (_, int index) {
+          print(index);
+          Game game = games[index];
+          PageController gameController = gamesControllerList[index];
           return GameSection(
             game: game,
             animationGamesController: _animationGamesController,
             animationRotateController: _animationRotateController,
             panelGamesThere: panelGamesThere,
-            pageController: gamesControllerList[indexGames],
+            pageController: gameController,
           );
-        }).toList());
+        });
+
+    // TabBarView(
+    //     physics: NeverScrollableScrollPhysics(),
+    //     children: games.map((game) {
+    //       return GameSection(
+    //         game: game,
+    //         animationGamesController: _animationGamesController,
+    //         animationRotateController: _animationRotateController,
+    //         panelGamesThere: panelGamesThere,
+    //         pageController: gamesControllerList[indexGames],
+    //       );
+    //     }).toList());
   }
 }

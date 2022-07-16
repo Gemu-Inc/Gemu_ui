@@ -51,7 +51,8 @@ Route<dynamic> generateRouteMainAuth(
     case BottomTabNav:
       return MaterialPageRoute(builder: (_) => BottomNavigationController());
     case Games:
-      return MaterialPageRoute(builder: (_) => GamesScreen());
+      return MaterialPageRoute(
+          builder: (_) => GamesScreen(controller: args![0]));
     case PictureEditor:
       return MaterialPageRoute(
           builder: (_) => PictureEditorScreen(file: args![0]));

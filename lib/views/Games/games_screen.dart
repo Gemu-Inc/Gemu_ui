@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
@@ -13,18 +14,21 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:gemu/views/Games/game_screen.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import 'add_game_screen.dart';
 
 class GamesScreen extends ConsumerStatefulWidget {
-  const GamesScreen({Key? key}) : super(key: key);
+  final PageController controller;
+
+  const GamesScreen({Key? key, required this.controller}) : super(key: key);
 
   @override
   _Gamesviewstate createState() => _Gamesviewstate();
 }
 
 class _Gamesviewstate extends ConsumerState<GamesScreen>
-    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
   ScrollController _mainScrollController = ScrollController();
@@ -38,16 +42,36 @@ class _Gamesviewstate extends ConsumerState<GamesScreen>
 
   scrollListener() {}
 
-  unfollowGame(Game game, WidgetRef ref) async {
-    // ref
-    //     .read(indexGamesNotifierProvider.notifier)
-    //     .updateIndexNewGame(widget.games.length - 1);
-    // await FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(me!.uid)
-    //     .collection('games')
-    //     .doc(game.name)
-    //     .delete();
+  unfollowGame(Game game, int index, WidgetRef ref) async {
+    try {
+      if (gamesList.length > 2) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(me!.uid)
+            .collection('games')
+            .doc(game.name)
+            .delete();
+        ref.read(myGamesNotifierProvider.notifier).updateGames(game);
+        ref.read(gamesTabNotifierProvider.notifier).updateGames(game);
+        ref
+            .read(myGamesControllerNotifierProvider.notifier)
+            .deleteGamesController(index);
+        ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
+        navHomeAuthKey.currentState!
+            .pushNamedAndRemoveUntil(Home, (route) => false);
+        // if (indexGames == 0) {
+        //   ref.read(indexGamesNotifierProvider.notifier).resetIndex(1);
+        //   widget.controller.jumpToPage(1);
+        // } else {
+        //   ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
+        //   widget.controller.jumpToPage(0);
+        // }
+      } else {
+        messageUser(context, "Vous devez au moins être abonné à 2 jeux");
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   getCategories() async {
@@ -93,9 +117,6 @@ class _Gamesviewstate extends ConsumerState<GamesScreen>
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   void initState() {
     super.initState();
     _mainScrollController.addListener(scrollListener);
@@ -121,8 +142,7 @@ class _Gamesviewstate extends ConsumerState<GamesScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    gamesList = ref.read(myGamesNotifierProvider);
+    gamesList = ref.watch(myGamesNotifierProvider);
     indexGames = ref.watch(indexGamesNotifierProvider);
 
     return Scaffold(
@@ -137,6 +157,11 @@ class _Gamesviewstate extends ConsumerState<GamesScreen>
                     Theme.of(context).brightness == Brightness.dark
                         ? Brightness.light
                         : Brightness.dark),
+            leading: IconButton(
+                onPressed: () {
+                  navMainAuthKey.currentState!.pop();
+                },
+                icon: Icon(Icons.arrow_back_ios)),
             title: Text(
               'Games',
               style: Theme.of(context).textTheme.bodySmall,
@@ -205,7 +230,7 @@ class _Gamesviewstate extends ConsumerState<GamesScreen>
                             builder: (_) => GameScreen(game: game)),
                       ),
                       onLongPress: () {
-                        alertUnfollowGame(game);
+                        alertUnfollowGame(game, index);
                       },
                       child: Container(
                           margin: EdgeInsets.fromLTRB(11.0, 11.0, 11.0, 11.0),
@@ -235,34 +260,31 @@ class _Gamesviewstate extends ConsumerState<GamesScreen>
     );
   }
 
-  Future alertUnfollowGame(Game game) {
+  Future alertUnfollowGame(Game game, int index) {
     return showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return Consumer(builder: (_, ref, child) {
-            return AlertDialogCustom(context, 'Unfollow game',
-                'Êtes-vous sur de vouloir retirer ce jeu de vos abonnements?', [
-              TextButton(
-                  onPressed: () async {
-                    await unfollowGame(game, ref);
-                    print(gamesList.length);
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'Oui',
-                    style: TextStyle(color: cGreenConfirm),
-                  )),
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'Non',
-                    style: TextStyle(color: cRedCancel),
-                  )),
-            ]);
-          });
+          return AlertDialogCustom(context, 'Unfollow game',
+              'Êtes-vous sur de vouloir retirer ce jeu de vos abonnements?', [
+            TextButton(
+                onPressed: () async {
+                  await unfollowGame(game, index, ref);
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Oui',
+                  style: TextStyle(color: cGreenConfirm),
+                )),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Non',
+                  style: TextStyle(color: cRedCancel),
+                )),
+          ]);
         });
   }
 
