@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 
 import 'package:gemu/components/bottom_share.dart';
@@ -123,6 +124,7 @@ class _BottomNavigationControllerState
   @override
   Widget build(BuildContext context) {
     me = ref.watch(myselfNotifierProvider);
+    final modifGamesTab = ref.watch(modifGamesFollowsNotifierProvider);
 
     return Scaffold(
       backgroundColor: _navController.index == 0
@@ -131,7 +133,7 @@ class _BottomNavigationControllerState
       body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
               statusBarColor: _navController.index == 0
-                  ? Color(0xFF22213C).withOpacity(0.5)
+                  ? Color(0xFF22213C).withOpacity(0.3)
                   : Colors.transparent,
               statusBarIconBrightness: _navController.index == 0
                   ? Brightness.light
@@ -166,7 +168,20 @@ class _BottomNavigationControllerState
                         items: _navBarsItems(),
                         selectedIndex: _navController.index,
                         onItemSelected: (index) {
-                          if (_navController.index == 0 && index == 0) {
+                          if (_navController.index != 0 &&
+                              index == 0 &&
+                              modifGamesTab) {
+                            ref
+                                .read(
+                                    modifGamesFollowsNotifierProvider.notifier)
+                                .update(false);
+                            setState(() {
+                              _navController.index = index;
+                            });
+                            navHomeAuthKey.currentState!
+                                .pushNamedAndRemoveUntil(
+                                    Home, (route) => false);
+                          } else if (_navController.index == 0 && index == 0) {
                             navHomeAuthKey.currentState!
                                 .popUntil((route) => route.isFirst);
                           } else if (_navController.index == 1 && index == 1) {

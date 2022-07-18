@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
 
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
@@ -13,6 +14,8 @@ import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Register/searching_game.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
+
+import '../constants/constants.dart';
 
 class DatabaseService {
   //references des collections de la bdd
@@ -149,38 +152,49 @@ class DatabaseService {
 
 //Partie Home
 
-//Récupérer les 12 premiers jeux de la bdd pour la partie inscription
-  static Future<void> getGamesDiscover(WidgetRef ref) async {
+//Récupérer les 12 premiers jeux de la bdd pour la partie add
+  static Future<void> getGamesDiscover(
+      BuildContext context, WidgetRef ref) async {
     List<Game> gamesFollow =
         ref.read(myGamesNotifierProvider.notifier).getMyGames;
     List<Game> allGames = [];
 
-    await FirebaseFirestore.instance
-        .collection('games')
-        .doc('verified')
-        .collection('games_verified')
-        .orderBy('name')
-        .limit(12)
-        .get()
-        .then((value) {
-      for (var item in value.docs) {
-        Game game = Game.fromMap(item, item.data());
+    try {
+      await FirebaseFirestore.instance
+          .collection('games')
+          .doc('verified')
+          .collection('games_verified')
+          .orderBy('name')
+          .limit(12)
+          .get()
+          .then((value) {
+        for (var item in value.docs) {
+          Game game = Game.fromMap(item, item.data());
 
-        if (!gamesFollow.any((element) => element.name == game.name)) {
-          allGames.add(Game.fromMap(item, item.data()));
+          if (!gamesFollow.any((element) => element.name == game.name)) {
+            allGames.add(Game.fromMap(item, item.data()));
+          }
         }
-      }
-    });
+      });
 
-    ref.read(gamesDiscoverNotifierProvider.notifier).initGames(allGames);
-    ref.read(loadingGamesDiscoverNotifierProvider.notifier).updateLoading(true);
+      ref.read(gamesDiscoverNotifierProvider.notifier).initGames(allGames);
+      ref
+          .read(loadingGamesDiscoverNotifierProvider.notifier)
+          .updateLoading(true);
+    } catch (e) {
+      print(e);
+      messageUser(context, "Oups, un problème est survenu!");
+    }
   }
 
-  //Récupère 12 nouveaux jeux dans la bdd pour la partie inscription
-  static Future<void> loadMoreGamesDiscover(WidgetRef ref, Game game) async {
+  //Récupère 12 nouveaux jeux dans la bdd pour la partie add
+  static Future<void> loadMoreGamesDiscover(
+      BuildContext context, WidgetRef ref, Game game) async {
     List<Game> newGames = [];
     List<Game> gamesFollow =
         ref.read(myGamesNotifierProvider.notifier).getMyGames;
+    List<Game> gamesDiscover =
+        ref.read(gamesDiscoverNotifierProvider.notifier).getGamesDiscover;
 
     await FirebaseFirestore.instance
         .collection('games')
@@ -194,7 +208,8 @@ class DatabaseService {
       for (var item in value.docs) {
         Game game = Game.fromMap(item, item.data());
 
-        if (!gamesFollow.any((element) => element.name == game.name)) {
+        if (!gamesFollow.any((element) => element.name == game.name) &&
+            !gamesDiscover.any((element) => element.name == game.name)) {
           newGames.add(Game.fromMap(item, item.data()));
         }
       }
@@ -202,6 +217,58 @@ class DatabaseService {
 
     ref.read(gamesDiscoverNotifierProvider.notifier).loadMoreGame(newGames);
     ref.read(newGamesDiscoverNotifierProvider.notifier).seeNewGames(newGames);
+  }
+
+  //suivre un nouveau jeu pour son fil d'actualité
+  static Future<void> followGame(
+      BuildContext context, Game game, int index, WidgetRef ref) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(me!.uid)
+          .collection('games')
+          .doc(game.name)
+          .set({"name": game.name, "imageUrl": game.imageUrl});
+      ref.read(myGamesNotifierProvider.notifier).addGame(game);
+      ref.read(gamesTabNotifierProvider.notifier).addGame(game);
+      ref.read(myGamesControllerNotifierProvider.notifier).addGamesController();
+      ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
+      ref.read(gamesDiscoverNotifierProvider.notifier).removeGame(game);
+      ref.read(modifGamesFollowsNotifierProvider.notifier).update(true);
+    } catch (e) {
+      messageUser(context, "Oups, un problème est survenu");
+      print(e);
+    }
+  }
+
+  //ne plus suivre un jeu pour son fil d'actualité
+  static Future<void> unfollowGame(BuildContext context, Game game, int index,
+      WidgetRef ref, List<Game> gamesList, bool stopReached) async {
+    try {
+      if (gamesList.length > 2) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(me!.uid)
+            .collection('games')
+            .doc(game.name)
+            .delete();
+        ref.read(myGamesNotifierProvider.notifier).removeGame(game);
+        ref.read(gamesTabNotifierProvider.notifier).removeGame(game);
+        ref
+            .read(myGamesControllerNotifierProvider.notifier)
+            .deleteGamesController(index);
+        ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
+        ref
+            .read(gamesDiscoverNotifierProvider.notifier)
+            .addGame(game, stopReached);
+        ref.read(modifGamesFollowsNotifierProvider.notifier).update(true);
+      } else {
+        messageUser(context, "Vous devez au moins être abonné à 2 jeux");
+      }
+    } catch (e) {
+      messageUser(context, "Oups, un problème est survenu");
+      print(e);
+    }
   }
 
 //Others parties

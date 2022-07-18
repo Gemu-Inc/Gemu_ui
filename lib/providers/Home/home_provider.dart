@@ -11,12 +11,26 @@ final myGamesControllerNotifierProvider =
 final gamesTabNotifierProvider =
     StateNotifierProvider<GamesTabProvider, List<Game>>(
         (ref) => GamesTabProvider());
+final modifGamesFollowsNotifierProvider =
+    StateNotifierProvider<ModifGamesFollowsProvider, bool>(
+        (ref) => ModifGamesFollowsProvider());
 
 class GamesTabProvider extends StateNotifier<List<Game>> {
   GamesTabProvider() : super([]);
 
+  List<Game> get getGamesTab => state;
+
   initGames(List<Game> gameList) {
     state = [...gameList, Game(name: "Ajouter", imageUrl: "Ajouter")];
+  }
+
+  addGame(Game game) {
+    List<Game> newState = [...state];
+    newState.removeLast();
+    newState.add(game);
+    newState
+        .sort(((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase())));
+    state = [...newState, Game(name: "Ajouter", imageUrl: "Ajouter")];
   }
 
   removeGame(Game game) {
@@ -66,6 +80,12 @@ class MyGamesControllerProvider extends StateNotifier<List<PageController>> {
     state = gamesControllerList;
   }
 
+  addGamesController() {
+    List<PageController> newState = [...state];
+    newState.add(PageController());
+    state = newState;
+  }
+
   deleteGamesController(int index) {
     List<PageController> newState = copyState();
     newState.removeAt(index);
@@ -78,5 +98,13 @@ class MyGamesControllerProvider extends StateNotifier<List<PageController>> {
       list.add(controller);
     }
     return list;
+  }
+}
+
+class ModifGamesFollowsProvider extends StateNotifier<bool> {
+  ModifGamesFollowsProvider() : super(false);
+
+  update(bool newState) {
+    state = newState;
   }
 }

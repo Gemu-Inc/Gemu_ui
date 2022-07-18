@@ -729,19 +729,21 @@ Future getStartedBottomSheet(BuildContext context) {
           });
 }
 
-Future gamesBottomSheet(BuildContext context, PageController controller) {
+Future gamesBottomSheet(BuildContext context) {
   return Platform.isIOS
       ? showCupertinoModalBottomSheet(
           context: context,
           expand: true,
+          enableDrag: false,
           builder: (context) {
-            return AddScreen(controller: controller);
+            return AddScreen();
           })
       : showMaterialModalBottomSheet(
           context: context,
           expand: true,
+          enableDrag: false,
           builder: (context) {
-            return AddScreen(controller: controller);
+            return AddScreen();
           });
 }
 

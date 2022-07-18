@@ -30,6 +30,13 @@ class MyGamesProvider extends StateNotifier<List<Game>> {
     state = gameList;
   }
 
+  addGame(Game game) {
+    List<Game> newState = [...state, game];
+    newState
+        .sort(((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase())));
+    state = newState;
+  }
+
   removeGame(Game game) {
     List<Game> newState = copyState();
     newState.removeWhere((element) => element.name == game.name);

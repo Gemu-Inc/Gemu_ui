@@ -61,8 +61,6 @@ class GameSectionState extends State<GameSection>
 
     posts.shuffle();
 
-    await Future.delayed(Duration(seconds: 5));
-
     if (!dataIsThere && mounted) {
       setState(() {
         dataIsThere = true;

@@ -20,6 +20,8 @@ final newGamesDiscoverNotifierProvider =
 class LoadingGamesDiscoverProvider extends StateNotifier<bool> {
   LoadingGamesDiscoverProvider() : super(false);
 
+  bool get getState => state;
+
   void updateLoading(bool newState) {
     state = newState;
   }
@@ -32,8 +34,31 @@ class GamesDiscoverProvider extends StateNotifier<List<Game>> {
     state = games;
   }
 
+  List<Game> get getGamesDiscover => state;
+
   loadMoreGame(List<Game> newGames) {
-    state = [...state, ...newGames];
+    List<Game> newState = [...state, ...newGames];
+    newState
+        .sort(((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase())));
+    state = newState;
+  }
+
+  addGame(Game game, bool stopReached) {
+    if (!stopReached) {
+      List<Game> newState = [game, ...state];
+      state = newState;
+    } else {
+      List<Game> newState = [...state, game];
+      newState.sort(
+          ((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase())));
+      state = newState;
+    }
+  }
+
+  removeGame(Game game) {
+    List<Game> newState = [...state];
+    newState.removeWhere((element) => element.name == game.name);
+    state = newState;
   }
 
   copyState() {

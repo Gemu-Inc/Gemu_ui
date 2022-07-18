@@ -82,6 +82,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
       accountVerified(me!.uid);
     }
 
+    gamesTab = ref.read(gamesTabNotifierProvider.notifier).getGamesTab;
+
     _tabMenuController = TabController(
         initialIndex: currentTabMenuIndex, length: 2, vsync: this);
     _tabMenuController.addListener(_onTabMenuChanged);
@@ -120,7 +122,6 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    gamesTab = ref.watch(gamesTabNotifierProvider);
     gamesControllerList = ref.watch(myGamesControllerNotifierProvider);
     indexGames = ref.watch(indexGamesNotifierProvider);
 
@@ -330,11 +331,11 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: SizedBox(
-                          width: 55,
+                          width: 60,
                           child: GestureDetector(
                             onTap: () => gamesBottomSheet(
-                                navMainAuthKey.currentContext!,
-                                gamesController),
+                              navMainAuthKey.currentContext!,
+                            ),
                             child: Column(
                               children: [
                                 Container(
@@ -374,7 +375,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                     : Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: SizedBox(
-                          width: 55,
+                          width: 60,
                           child: GestureDetector(
                             onTap: () {
                               ref
@@ -441,11 +442,10 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     return PageView.builder(
         controller: gamesController,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: gamesTab.length,
+        itemCount: games.length,
         itemBuilder: (_, int index) {
-          print(index);
-          Game game = games[index];
-          PageController gameController = gamesControllerList[index];
+          Game game = games[indexGames];
+          PageController gameController = gamesControllerList[indexGames];
           return GameSection(
             game: game,
             animationGamesController: _animationGamesController,

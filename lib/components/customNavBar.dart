@@ -21,8 +21,6 @@ class CustomNavBar extends StatelessWidget {
           color: selectedIndex == 0
               ? cBGDarkTheme
               : Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
           boxShadow: [
             BoxShadow(
                 color: Theme.of(context).brightness == Brightness.dark

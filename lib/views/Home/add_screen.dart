@@ -1,5 +1,8 @@
+import 'dart:io' show Platform;
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/providers/Games/games_discover_provider.dart';
 import 'package:gemu/providers/Home/home_provider.dart';
@@ -14,9 +17,7 @@ import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:gemu/services/database_service.dart';
 
 class AddScreen extends ConsumerStatefulWidget {
-  final PageController controller;
-
-  const AddScreen({Key? key, required this.controller}) : super(key: key);
+  const AddScreen({Key? key}) : super(key: key);
 
   @override
   _AddScreenState createState() => _AddScreenState();
@@ -33,25 +34,30 @@ class _AddScreenState extends ConsumerState<AddScreen>
   List<Game> gamesList = [];
   int indexGames = 0;
 
+  bool loadingDiscover = false;
   late bool isLoadingMoreData;
   late bool stopReached;
+  late bool modifGames;
   List<Game> gamesDiscover = [];
   List<Game> newGamesDiscover = [];
 
   loadMoreData() async {
-    Game game = gamesDiscover.last;
+    try {
+      Game game = gamesDiscover.last;
 
-    print(game.name);
+      ref.read(loadingMoreGamesDiscoverNotifierProvider.notifier).update(true);
 
-    ref.read(loadingMoreGamesDiscoverNotifierProvider.notifier).update(true);
+      DatabaseService.loadMoreGamesDiscover(context, ref, game);
 
-    DatabaseService.loadMoreGamesDiscover(ref, game);
+      await Future.delayed(Duration(seconds: 1));
 
-    await Future.delayed(Duration(seconds: 1));
-
-    ref.read(loadingMoreGamesDiscoverNotifierProvider.notifier).update(false);
-    if (newGamesDiscover.length == 0) {
-      ref.read(stopReachedDiscoverNotifierProvider.notifier).update();
+      ref.read(loadingMoreGamesDiscoverNotifierProvider.notifier).update(false);
+      if (newGamesDiscover.length == 0) {
+        ref.read(stopReachedDiscoverNotifierProvider.notifier).update();
+      }
+    } catch (e) {
+      print(e);
+      messageUser(context, "Oups un problème est survenu!");
     }
   }
 
@@ -60,11 +66,12 @@ class _AddScreenState extends ConsumerState<AddScreen>
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return AlertDialogCustom(context, 'Unfollow game',
+          return AlertDialogCustom(context, 'Ne plus suivre',
               'Veux-tu retirer ce jeu de tes jeux suivis?', [
             TextButton(
                 onPressed: () async {
-                  await unfollowGame(game, index, ref);
+                  await DatabaseService.unfollowGame(
+                      context, game, index, ref, gamesList, stopReached);
                   Navigator.pop(context);
                 },
                 child: Text(
@@ -88,11 +95,11 @@ class _AddScreenState extends ConsumerState<AddScreen>
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return AlertDialogCustom(context, 'Follow game',
-              'Veux-tu ajouter ce jeu à tes jeux suivis?', [
+          return AlertDialogCustom(
+              context, 'Suivre', 'Veux-tu ajouter ce jeu à tes jeux suivis?', [
             TextButton(
                 onPressed: () async {
-                  await followGame(game, index, ref);
+                  await DatabaseService.followGame(context, game, index, ref);
                   Navigator.pop(context);
                 },
                 child: Text(
@@ -111,50 +118,13 @@ class _AddScreenState extends ConsumerState<AddScreen>
         });
   }
 
-  followGame(Game game, int index, WidgetRef ref) async {
-    try {} catch (e) {
-      print(e);
-    }
-  }
-
-  unfollowGame(Game game, int index, WidgetRef ref) async {
-    try {
-      if (gamesList.length > 2) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(me!.uid)
-            .collection('games')
-            .doc(game.name)
-            .delete();
-        ref.read(myGamesNotifierProvider.notifier).removeGame(game);
-        ref.read(gamesTabNotifierProvider.notifier).removeGame(game);
-        ref
-            .read(myGamesControllerNotifierProvider.notifier)
-            .deleteGamesController(index);
-        ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
-        navHomeAuthKey.currentState!
-            .pushNamedAndRemoveUntil(Home, (route) => false);
-        // if (indexGames == 0) {
-        //   ref.read(indexGamesNotifierProvider.notifier).resetIndex(1);
-        //   widget.controller.jumpToPage(1);
-        // } else {
-        //   ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
-        //   widget.controller.jumpToPage(0);
-        // }
-      } else {
-        messageUser(context, "Vous devez au moins être abonné à 2 jeux");
-      }
-    } catch (e) {
-      messageUser(context, "Oups, un problème est survenu");
-      print(e);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
 
-    DatabaseService.getGamesDiscover(ref);
+    if (!ref.read(loadingGamesDiscoverNotifierProvider.notifier).getState) {
+      DatabaseService.getGamesDiscover(context, ref);
+    }
 
     _mainScrollController.addListener(() {
       if (_mainScrollController.offset >=
@@ -190,65 +160,133 @@ class _AddScreenState extends ConsumerState<AddScreen>
     gamesList = ref.watch(myGamesNotifierProvider);
     indexGames = ref.watch(indexGamesNotifierProvider);
 
-    final loadingDiscover = ref.watch(loadingGamesDiscoverNotifierProvider);
+    loadingDiscover = ref.watch(loadingGamesDiscoverNotifierProvider);
     gamesDiscover = ref.watch(gamesDiscoverNotifierProvider);
     newGamesDiscover = ref.watch(newGamesDiscoverNotifierProvider);
     isLoadingMoreData = ref.watch(loadingMoreGamesDiscoverNotifierProvider);
     stopReached = ref.read(stopReachedDiscoverNotifierProvider);
+    modifGames = ref.read(modifGamesFollowsNotifierProvider);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        shadowColor: Colors.transparent,
-        actions: [
-          IconButton(
-              onPressed: () {
-                navMainAuthKey.currentState!.pop();
-                // navHomeAuthKey.currentState!
-                //     .pushNamedAndRemoveUntil(Home, (route) => false);
-              },
-              icon: Icon(Icons.clear))
-        ],
-      ),
-      body: ListView(
-        controller: _mainScrollController,
-        shrinkWrap: true,
-        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(
-              "Jeux suivis",
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          followGames(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(
-              "Jeux à découvrir",
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          loadingDiscover
-              ? discoverGames()
-              : Container(
-                  height: 200,
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    height: 30.0,
-                    width: 30.0,
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary,
-                      strokeWidth: 1.5,
-                    ),
+    return WillPopScope(
+      onWillPop: () async {
+        if (!modifGames) {
+          navMainAuthKey.currentState!.pop();
+        } else {
+          navMainAuthKey.currentState!.pop();
+          navHomeAuthKey.currentState!
+              .pushNamedAndRemoveUntil(Home, (route) => false);
+          ref.read(modifGamesFollowsNotifierProvider.notifier).update(false);
+        }
+        return false;
+      },
+      child: GestureDetector(
+        onHorizontalDragUpdate: (details) {
+          if (Platform.isIOS && details.delta.dx > 0) {
+            if (!modifGames) {
+              navMainAuthKey.currentState!.pop();
+            } else {
+              navMainAuthKey.currentState!.pop();
+              navHomeAuthKey.currentState!
+                  .pushNamedAndRemoveUntil(Home, (route) => false);
+              ref
+                  .read(modifGamesFollowsNotifierProvider.notifier)
+                  .update(false);
+            }
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          extendBodyBehindAppBar: true,
+          appBar: PreferredSize(
+            child: Container(
+              child: ClipRRect(
+                  child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: AppBar(
+                  automaticallyImplyLeading: false,
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                      statusBarColor: Colors.transparent,
+                      statusBarIconBrightness:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Brightness.light
+                              : Brightness.dark,
+                      systemNavigationBarColor:
+                          Theme.of(context).scaffoldBackgroundColor,
+                      systemNavigationBarIconBrightness:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Brightness.light
+                              : Brightness.dark),
+                  title: Text(
+                    "Ajouter",
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                )
-        ],
+                  actions: [
+                    IconButton(
+                        onPressed: () {
+                          if (!modifGames) {
+                            navMainAuthKey.currentState!.pop();
+                          } else {
+                            navMainAuthKey.currentState!.pop();
+                            navHomeAuthKey.currentState!
+                                .pushNamedAndRemoveUntil(
+                                    Home, (route) => false);
+                            ref
+                                .read(
+                                    modifGamesFollowsNotifierProvider.notifier)
+                                .update(false);
+                          }
+                        },
+                        icon: Icon(Icons.clear))
+                  ],
+                ),
+              )),
+            ),
+            preferredSize: Size(MediaQuery.of(context).size.width, 40),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.only(top: 25.0),
+            child: ListView(
+              controller: _mainScrollController,
+              shrinkWrap: true,
+              physics: AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics()),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text(
+                    "Jeux suivis",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                followGames(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text(
+                    "Jeux à découvrir",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                loadingDiscover
+                    ? discoverGames()
+                    : Container(
+                        height: 200,
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          height: 30.0,
+                          width: 30.0,
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.primary,
+                            strokeWidth: 1.5,
+                          ),
+                        ),
+                      )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
