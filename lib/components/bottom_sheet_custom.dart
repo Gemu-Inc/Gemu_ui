@@ -7,8 +7,9 @@ import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/Credentials/credentials_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/translations/app_localizations.dart';
-import 'package:gemu/views/Games/games_screen.dart';
+import 'package:gemu/views/Home/add_screen.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
+import 'package:gemu/views/Home/add_screen.dart';
 import 'package:gemu/views/Share/Post/Picture/picture_editor_screen.dart';
 import 'package:gemu/views/Share/Post/Video/video_editor_screen.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -734,13 +735,13 @@ Future gamesBottomSheet(BuildContext context, PageController controller) {
           context: context,
           expand: true,
           builder: (context) {
-            return GamesScreen(controller: controller);
+            return AddScreen(controller: controller);
           })
       : showMaterialModalBottomSheet(
           context: context,
           expand: true,
           builder: (context) {
-            return GamesScreen(controller: controller);
+            return AddScreen(controller: controller);
           });
 }
 

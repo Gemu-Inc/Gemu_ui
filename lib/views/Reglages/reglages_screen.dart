@@ -72,11 +72,29 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBarCustom(context: context, title: 'Réglages', actions: [
-        IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () => confirmDisconnect(context))
-      ]),
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 6,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary
+                ])),
+          ),
+          leading: IconButton(
+              onPressed: () => navProfileAuthKey.currentState!.pop(),
+              icon: Icon(Icons.arrow_back_ios)),
+          title: Text('Réglages'),
+          centerTitle: false,
+          actions: [
+            IconButton(
+                icon: Icon(Icons.logout),
+                onPressed: () => confirmDisconnect(context))
+          ]),
       body: ListView(
         padding: EdgeInsets.zero,
         children: [

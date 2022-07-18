@@ -124,13 +124,8 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                                 Icons.settings,
                                 size: 25,
                               ),
-                              onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      settings:
-                                          RouteSettings(name: "/Réglages"),
-                                      builder: (BuildContext context) =>
-                                          ReglagesScreen(user: me!)))),
+                              onPressed: () => navProfileAuthKey.currentState!
+                                  .pushNamed(Reglages, arguments: [me!])),
                         ],
                         expandedHeight: 255,
                         flexibleSpace: Container(

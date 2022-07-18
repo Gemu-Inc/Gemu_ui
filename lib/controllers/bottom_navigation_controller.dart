@@ -53,7 +53,7 @@ class _BottomNavigationControllerState
                 generateRouteActivitiesAuth(settings, context),
           ),
           onWillPop: () async {
-            return !(await navProfileAuthKey.currentState!.maybePop());
+            return !(await navActivitiesAuthKey.currentState!.maybePop());
           }),
       WillPopScope(
           child: Navigator(

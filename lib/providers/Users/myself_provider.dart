@@ -24,11 +24,13 @@ class MyselfProvider extends StateNotifier<UserModel?> {
 class MyGamesProvider extends StateNotifier<List<Game>> {
   MyGamesProvider() : super([]);
 
+  List<Game> get getMyGames => state;
+
   initGames(List<Game> gameList) {
     state = gameList;
   }
 
-  updateGames(Game game) {
+  removeGame(Game game) {
     List<Game> newState = copyState();
     newState.removeWhere((element) => element.name == game.name);
     state = newState;

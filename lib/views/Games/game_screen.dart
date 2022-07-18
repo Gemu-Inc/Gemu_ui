@@ -70,28 +70,26 @@ class Gameviewstate extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return gamePostsIsThere
-        ? Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              elevation: 6,
-              leading: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.arrow_back_ios)),
-              title: Text('Games'),
-              bottom: PreferredSize(
-                  child: bottomAppBar(), preferredSize: Size.fromHeight(100.0)),
-            ),
-            body: bodyView(),
-          )
-        : Scaffold(
-            body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 6,
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back_ios)),
+        title: Text('Games'),
+        bottom: PreferredSize(
+            child: bottomAppBar(), preferredSize: Size.fromHeight(100.0)),
+      ),
+      body: gamePostsIsThere
+          ? bodyView()
+          : Center(
               child: CircularProgressIndicator(
                 color: Theme.of(context).colorScheme.primary,
                 strokeWidth: 1.5,
               ),
             ),
-          );
+    );
   }
 
   Widget bottomAppBar() {

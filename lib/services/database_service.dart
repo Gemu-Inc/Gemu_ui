@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
 import 'package:gemu/models/game.dart';
+import 'package:gemu/providers/Games/games_discover_provider.dart';
 import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Register/register_provider.dart';
 import 'package:gemu/providers/Register/searching_game.dart';
@@ -144,6 +145,63 @@ class DatabaseService {
   //Update verify account
   static Future<void> updateVerifyAccount(String uid) async {
     await usersCollectionReference.doc(uid).update({"verified_account": true});
+  }
+
+//Partie Home
+
+//Récupérer les 12 premiers jeux de la bdd pour la partie inscription
+  static Future<void> getGamesDiscover(WidgetRef ref) async {
+    List<Game> gamesFollow =
+        ref.read(myGamesNotifierProvider.notifier).getMyGames;
+    List<Game> allGames = [];
+
+    await FirebaseFirestore.instance
+        .collection('games')
+        .doc('verified')
+        .collection('games_verified')
+        .orderBy('name')
+        .limit(12)
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        Game game = Game.fromMap(item, item.data());
+
+        if (!gamesFollow.any((element) => element.name == game.name)) {
+          allGames.add(Game.fromMap(item, item.data()));
+        }
+      }
+    });
+
+    ref.read(gamesDiscoverNotifierProvider.notifier).initGames(allGames);
+    ref.read(loadingGamesDiscoverNotifierProvider.notifier).updateLoading(true);
+  }
+
+  //Récupère 12 nouveaux jeux dans la bdd pour la partie inscription
+  static Future<void> loadMoreGamesDiscover(WidgetRef ref, Game game) async {
+    List<Game> newGames = [];
+    List<Game> gamesFollow =
+        ref.read(myGamesNotifierProvider.notifier).getMyGames;
+
+    await FirebaseFirestore.instance
+        .collection('games')
+        .doc('verified')
+        .collection('games_verified')
+        .orderBy('name')
+        .startAfterDocument(game.snapshot!)
+        .limit(12)
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        Game game = Game.fromMap(item, item.data());
+
+        if (!gamesFollow.any((element) => element.name == game.name)) {
+          newGames.add(Game.fromMap(item, item.data()));
+        }
+      }
+    });
+
+    ref.read(gamesDiscoverNotifierProvider.notifier).loadMoreGame(newGames);
+    ref.read(newGamesDiscoverNotifierProvider.notifier).seeNewGames(newGames);
   }
 
 //Others parties

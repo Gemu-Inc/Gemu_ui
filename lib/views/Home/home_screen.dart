@@ -7,11 +7,9 @@ import 'package:gemu/components/bottom_sheet_custom.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/Home/home_provider.dart';
-import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 
 import 'game_section.dart';
 import 'following_section.dart';
@@ -160,8 +158,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
               }
             },
             child: Container(
-              height: 55,
-              width: 55,
+              height: 65,
+              width: 45,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(10.0),
@@ -186,8 +184,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
               }
             },
             child: Container(
-              height: 55,
-              width: 55,
+              height: 65,
+              width: 45,
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(10.0),
@@ -206,8 +204,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
           );
         default:
           return Container(
-            height: 55,
-            width: 55,
+            height: 65,
+            width: 45,
             alignment: Alignment.center,
             color: Colors.grey,
             child: CircularProgressIndicator(
@@ -239,16 +237,13 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
             isScrollable: false,
             tabs: [
               Container(
-                width: MediaQuery.of(context).size.width / 2,
-                alignment: Alignment.center,
-                child: currentTabMenuIndex == 0
-                    ? Text(
-                        'Followings',
-                      )
-                    : Text(
-                        'Followings',
-                      ),
-              ),
+                  width: MediaQuery.of(context).size.width / 2,
+                  alignment: Alignment.center,
+                  child: Text('Abonnements',
+                      style: currentTabMenuIndex == 0
+                          ? textStyleCustomBold(
+                              Theme.of(context).colorScheme.primary, 14)
+                          : textStyleCustomBold(Colors.white, 14))),
               Container(
                 width: MediaQuery.of(context).size.width / 2,
                 alignment: Alignment.center,
@@ -278,10 +273,12 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Games',
+                              'Jeux suivis',
+                              style: textStyleCustomBold(
+                                  Theme.of(context).colorScheme.primary, 14),
                             ),
                             Padding(
-                                padding: EdgeInsets.only(top: 1.0),
+                                padding: EdgeInsets.only(top: 3.0),
                                 child: Transform(
                                     transform: Matrix4.rotationZ(
                                         getRadianFromDegree(
@@ -289,12 +286,14 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                                     alignment: Alignment.center,
                                     child: Icon(
                                       Icons.expand_more,
+                                      size: 26,
                                     ))),
                           ],
                         ),
                       )
                     : Text(
-                        'Games',
+                        'Jeux suivis',
+                        style: textStyleCustomBold(Colors.white, 14),
                       ),
               ),
             ]));
@@ -319,7 +318,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     return SizeTransition(
       sizeFactor: _animationGames as Animation<double>,
       child: Container(
-        height: 100,
+        height: 105,
         child: Center(
           child: ListView.builder(
               shrinkWrap: true,
@@ -327,7 +326,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
               itemCount: gamesTab.length,
               itemBuilder: (_, index) {
                 Game game = gamesTab[index];
-                return game.name == "Add"
+                return game.name == "Ajouter"
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: SizedBox(
@@ -339,8 +338,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                             child: Column(
                               children: [
                                 Container(
-                                  height: 55,
-                                  width: 55,
+                                  height: 65,
+                                  width: 45,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                         begin: Alignment.topLeft,
@@ -352,13 +351,11 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                                               .secondary
                                         ]),
                                     borderRadius: BorderRadius.circular(10.0),
-                                    border: Border.all(
-                                        width: 1.5, color: Colors.grey),
                                   ),
                                   child: Icon(
                                     Icons.add,
-                                    size: 33,
-                                    color: Colors.black,
+                                    size: 40,
+                                    color: Colors.white,
                                   ),
                                 ),
                                 SizedBox(
@@ -366,9 +363,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                                 ),
                                 Text(
                                   game.name,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                  ),
+                                  style:
+                                      textStyleCustomRegular(Colors.white, 12),
                                 )
                               ],
                             ),
@@ -389,8 +385,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                             child: Column(
                               children: [
                                 Container(
-                                  height: 55,
-                                  width: 55,
+                                  height: 65,
+                                  width: 45,
                                   decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                           begin: Alignment.topLeft,
@@ -410,7 +406,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                                               ? Theme.of(context)
                                                   .colorScheme
                                                   .primary
-                                              : Colors.grey),
+                                              : Colors.white),
                                       image: DecorationImage(
                                           fit: BoxFit.cover,
                                           image: CachedNetworkImageProvider(
@@ -422,13 +418,13 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                                 Text(
                                   game.name,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: indexGames == index
+                                  style: textStyleCustomRegular(
+                                      indexGames == index
                                           ? Theme.of(context)
                                               .colorScheme
                                               .primary
-                                          : Colors.grey),
+                                          : Colors.white,
+                                      12),
                                 )
                               ],
                             ),
@@ -458,17 +454,5 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
             pageController: gameController,
           );
         });
-
-    // TabBarView(
-    //     physics: NeverScrollableScrollPhysics(),
-    //     children: games.map((game) {
-    //       return GameSection(
-    //         game: game,
-    //         animationGamesController: _animationGamesController,
-    //         animationRotateController: _animationRotateController,
-    //         panelGamesThere: panelGamesThere,
-    //         pageController: gamesControllerList[indexGames],
-    //       );
-    //     }).toList());
   }
 }

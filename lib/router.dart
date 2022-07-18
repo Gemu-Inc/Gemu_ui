@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
-import 'package:gemu/views/Games/games_screen.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/views/Highlights/highlights_screen.dart';
+import 'package:gemu/views/Home/add_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
 import 'package:gemu/views/Profil/profil_screen.dart';
+import 'package:gemu/views/Reglages/reglages_screen.dart';
 import 'package:gemu/views/Share/Post/Picture/picture_editor_screen.dart';
 import 'package:gemu/views/Share/Post/Video/video_editor_screen.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
@@ -50,9 +51,8 @@ Route<dynamic> generateRouteMainAuth(
   switch (settings.name) {
     case BottomTabNav:
       return MaterialPageRoute(builder: (_) => BottomNavigationController());
-    case Games:
-      return MaterialPageRoute(
-          builder: (_) => GamesScreen(controller: args![0]));
+    case Add:
+      return MaterialPageRoute(builder: (_) => AddScreen(controller: args![0]));
     case PictureEditor:
       return MaterialPageRoute(
           builder: (_) => PictureEditorScreen(file: args![0]));
@@ -127,6 +127,8 @@ Route<dynamic> generateRouteProfileAuth(
   switch (settings.name) {
     case Profile:
       return MaterialPageRoute(builder: (_) => MyProfilScreen());
+    case Reglages:
+      return MaterialPageRoute(builder: (_) => ReglagesScreen(user: args![0]));
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

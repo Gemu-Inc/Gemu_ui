@@ -25,13 +25,16 @@ const String Login = "Login";
 //route names for generated routes auth
 const String BottomTabNav = "BottomTabNav";
 const String Home = "Home";
+const String Add = "Add";
 const String Highlights = "Highlights";
 const String Activities = "Activities";
 const String Profile = "Profile";
 const String Games = "Games";
+const String GameProfile = "GameProfile";
 const String MyProfil = "Profil";
 const String PictureEditor = "PictureEditor";
 const String VideoEditor = "VideoEditor";
+const String Reglages = "Reglages";
 
 //Themes
 const appTheme = "Theme";

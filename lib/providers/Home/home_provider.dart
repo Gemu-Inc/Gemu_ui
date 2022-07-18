@@ -16,11 +16,10 @@ class GamesTabProvider extends StateNotifier<List<Game>> {
   GamesTabProvider() : super([]);
 
   initGames(List<Game> gameList) {
-    state = gameList;
-    state = [...state, Game(name: "Add", imageUrl: "Add")];
+    state = [...gameList, Game(name: "Ajouter", imageUrl: "Ajouter")];
   }
 
-  updateGames(Game game) {
+  removeGame(Game game) {
     List<Game> newState = copyState();
     newState.removeWhere((element) => element.name == game.name);
     state = newState;
@@ -68,7 +67,6 @@ class MyGamesControllerProvider extends StateNotifier<List<PageController>> {
   }
 
   deleteGamesController(int index) {
-    print(index);
     List<PageController> newState = copyState();
     newState.removeAt(index);
     state = newState;

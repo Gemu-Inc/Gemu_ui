@@ -28,7 +28,15 @@ class GamesRegisterProvider extends StateNotifier<List<Game>> {
   }
 
   loadMoreGame(List<Game> newGames) {
-    state.addAll(newGames);
+    state = [...state, ...newGames];
+  }
+
+  copyState() {
+    List<Game> games = [];
+    for (var game in state) {
+      games.add(game);
+    }
+    return games;
   }
 }
 
@@ -44,13 +52,21 @@ class GamesFollowRegisterProvider extends StateNotifier<List<Game>> {
   GamesFollowRegisterProvider() : super([]);
 
   addGame(Game game) {
-    state.add(game);
-    print(state.length);
+    state = [...state, game];
   }
 
   removeGame(Game game) {
-    state.removeWhere((element) => element.name == game.name);
-    print(state.length);
+    List<Game> newState = copyState();
+    newState.removeWhere((element) => element.name == game.name);
+    state = newState;
+  }
+
+  copyState() {
+    List<Game> games = [];
+    for (var game in state) {
+      games.add(game);
+    }
+    return games;
   }
 }
 

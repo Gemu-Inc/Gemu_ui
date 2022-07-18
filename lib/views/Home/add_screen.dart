@@ -1,0 +1,428 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/providers/Games/games_discover_provider.dart';
+import 'package:gemu/providers/Home/home_provider.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:gemu/constants/constants.dart';
+
+import 'package:gemu/models/game.dart';
+import 'package:gemu/models/categorie.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
+import 'package:gemu/services/database_service.dart';
+
+class AddScreen extends ConsumerStatefulWidget {
+  final PageController controller;
+
+  const AddScreen({Key? key, required this.controller}) : super(key: key);
+
+  @override
+  _AddScreenState createState() => _AddScreenState();
+}
+
+class _AddScreenState extends ConsumerState<AddScreen>
+    with SingleTickerProviderStateMixin {
+  ScrollController _mainScrollController = ScrollController();
+
+  bool dataIsThere = false;
+  bool loadMoreCategorie = false;
+  List<Categorie> categoriesList = [];
+
+  List<Game> gamesList = [];
+  int indexGames = 0;
+
+  late bool isLoadingMoreData;
+  late bool stopReached;
+  List<Game> gamesDiscover = [];
+  List<Game> newGamesDiscover = [];
+
+  loadMoreData() async {
+    Game game = gamesDiscover.last;
+
+    print(game.name);
+
+    ref.read(loadingMoreGamesDiscoverNotifierProvider.notifier).update(true);
+
+    DatabaseService.loadMoreGamesDiscover(ref, game);
+
+    await Future.delayed(Duration(seconds: 1));
+
+    ref.read(loadingMoreGamesDiscoverNotifierProvider.notifier).update(false);
+    if (newGamesDiscover.length == 0) {
+      ref.read(stopReachedDiscoverNotifierProvider.notifier).update();
+    }
+  }
+
+  Future alertUnfollowGame(Game game, int index) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialogCustom(context, 'Unfollow game',
+              'Veux-tu retirer ce jeu de tes jeux suivis?', [
+            TextButton(
+                onPressed: () async {
+                  await unfollowGame(game, index, ref);
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Oui',
+                  style: TextStyle(color: cGreenConfirm),
+                )),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Non',
+                  style: TextStyle(color: cRedCancel),
+                )),
+          ]);
+        });
+  }
+
+  Future alertFollowGame(Game game, int index) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialogCustom(context, 'Follow game',
+              'Veux-tu ajouter ce jeu à tes jeux suivis?', [
+            TextButton(
+                onPressed: () async {
+                  await followGame(game, index, ref);
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Oui',
+                  style: TextStyle(color: cGreenConfirm),
+                )),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Non',
+                  style: TextStyle(color: cRedCancel),
+                )),
+          ]);
+        });
+  }
+
+  followGame(Game game, int index, WidgetRef ref) async {
+    try {} catch (e) {
+      print(e);
+    }
+  }
+
+  unfollowGame(Game game, int index, WidgetRef ref) async {
+    try {
+      if (gamesList.length > 2) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(me!.uid)
+            .collection('games')
+            .doc(game.name)
+            .delete();
+        ref.read(myGamesNotifierProvider.notifier).removeGame(game);
+        ref.read(gamesTabNotifierProvider.notifier).removeGame(game);
+        ref
+            .read(myGamesControllerNotifierProvider.notifier)
+            .deleteGamesController(index);
+        ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
+        navHomeAuthKey.currentState!
+            .pushNamedAndRemoveUntil(Home, (route) => false);
+        // if (indexGames == 0) {
+        //   ref.read(indexGamesNotifierProvider.notifier).resetIndex(1);
+        //   widget.controller.jumpToPage(1);
+        // } else {
+        //   ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
+        //   widget.controller.jumpToPage(0);
+        // }
+      } else {
+        messageUser(context, "Vous devez au moins être abonné à 2 jeux");
+      }
+    } catch (e) {
+      messageUser(context, "Oups, un problème est survenu");
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    DatabaseService.getGamesDiscover(ref);
+
+    _mainScrollController.addListener(() {
+      if (_mainScrollController.offset >=
+              _mainScrollController.position.maxScrollExtent &&
+          !_mainScrollController.position.outOfRange &&
+          !stopReached) {
+        loadMoreData();
+      }
+    });
+  }
+
+  @override
+  void deactivate() {
+    _mainScrollController.removeListener(() {
+      if (_mainScrollController.offset >=
+              _mainScrollController.position.maxScrollExtent &&
+          !_mainScrollController.position.outOfRange &&
+          !stopReached) {
+        loadMoreData();
+      }
+    });
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _mainScrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    gamesList = ref.watch(myGamesNotifierProvider);
+    indexGames = ref.watch(indexGamesNotifierProvider);
+
+    final loadingDiscover = ref.watch(loadingGamesDiscoverNotifierProvider);
+    gamesDiscover = ref.watch(gamesDiscoverNotifierProvider);
+    newGamesDiscover = ref.watch(newGamesDiscoverNotifierProvider);
+    isLoadingMoreData = ref.watch(loadingMoreGamesDiscoverNotifierProvider);
+    stopReached = ref.read(stopReachedDiscoverNotifierProvider);
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        actions: [
+          IconButton(
+              onPressed: () {
+                navMainAuthKey.currentState!.pop();
+                // navHomeAuthKey.currentState!
+                //     .pushNamedAndRemoveUntil(Home, (route) => false);
+              },
+              icon: Icon(Icons.clear))
+        ],
+      ),
+      body: ListView(
+        controller: _mainScrollController,
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Text(
+              "Jeux suivis",
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+          followGames(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Text(
+              "Jeux à découvrir",
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+          loadingDiscover
+              ? discoverGames()
+              : Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: 30.0,
+                    width: 30.0,
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                      strokeWidth: 1.5,
+                    ),
+                  ),
+                )
+        ],
+      ),
+    );
+  }
+
+  Widget followGames() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+      child: Container(
+        height: 170,
+        width: MediaQuery.of(context).size.width,
+        alignment: Alignment.centerLeft,
+        child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            physics: BouncingScrollPhysics(),
+            itemCount: gamesList.length,
+            itemBuilder: (BuildContext context, int index) {
+              Game game = gamesList[index];
+              return _itemGameFollow(game, index);
+            }),
+      ),
+    );
+  }
+
+  Widget discoverGames() {
+    return Column(
+      children: [
+        GridView.builder(
+            shrinkWrap: true,
+            padding:
+                const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 0.6,
+                crossAxisSpacing: 6,
+                mainAxisSpacing: 6),
+            itemCount: gamesDiscover.length,
+            itemBuilder: (_, index) {
+              Game game = gamesDiscover[index];
+              return _itemGameDiscover(game, index);
+            }),
+        Stack(
+          children: [
+            Container(
+                height: MediaQuery.of(context).size.height / 14,
+                child: stopReached
+                    ? Center(
+                        child: Text(
+                          "C'est tout pour le moment",
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      )
+                    : isLoadingMoreData
+                        ? Center(
+                            child: SizedBox(
+                              height: 30.0,
+                              width: 30.0,
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                                strokeWidth: 1.5,
+                              ),
+                            ),
+                          )
+                        : SizedBox()),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _itemGameFollow(Game game, int index) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 6.0),
+      child: InkWell(
+        onTap: () => alertUnfollowGame(game, index),
+        child: Container(
+          width: 110,
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.secondary
+                        ])),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.3),
+                          Colors.black.withOpacity(0.5)
+                        ])),
+              ),
+              Center(
+                child: Icon(
+                  Icons.videogame_asset,
+                  size: 35,
+                  color: Colors.white,
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                    padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
+                    child: Text(
+                      game.name,
+                      style: textStyleCustomBold(Colors.white, 14),
+                      textAlign: TextAlign.end,
+                    )),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _itemGameDiscover(Game game, int index) {
+    return InkWell(
+      onTap: () => alertFollowGame(game, index),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary
+                    ])),
+          ),
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.3),
+                      Colors.black.withOpacity(0.5)
+                    ])),
+          ),
+          Center(
+            child: Icon(
+              Icons.videogame_asset,
+              size: 35,
+              color: Colors.white,
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Container(
+                padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
+                child: Text(
+                  game.name,
+                  style: textStyleCustomBold(Colors.white, 14),
+                  textAlign: TextAlign.end,
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+}

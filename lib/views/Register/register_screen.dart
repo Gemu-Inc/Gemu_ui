@@ -1286,22 +1286,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     return InkWell(
       onTap: () {
         if (gamesFollow.any((element) => element.name == game.name)) {
-          setState(() {
-            ref
-                .read(gamesFollowRegisterNotifierProvider.notifier)
-                .removeGame(game);
-          });
+          ref
+              .read(gamesFollowRegisterNotifierProvider.notifier)
+              .removeGame(game);
+
           if (gamesFollow.length < 2 && gamesValid) {
             ref
                 .read(gamesValidRegisterNotifierProvider.notifier)
                 .updateValidity(false);
           }
         } else {
-          setState(() {
-            ref
-                .read(gamesFollowRegisterNotifierProvider.notifier)
-                .addGame(game);
-          });
+          ref.read(gamesFollowRegisterNotifierProvider.notifier).addGame(game);
           if (gamesFollow.length >= 2 && !gamesValid) {
             ref
                 .read(gamesValidRegisterNotifierProvider.notifier)
