@@ -1,3 +1,4 @@
+import "dart:io" show Platform;
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +7,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/views/Reglages/reglages_screen.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/services/database_service.dart';
 
@@ -105,7 +105,9 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                             Theme.of(context).scaffoldBackgroundColor,
                         automaticallyImplyLeading: false,
                         elevation: 6.0,
-                        systemOverlayStyle: SystemUiOverlayStyle(
+                        systemOverlayStyle: Platform.isIOS ?
+                        Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark
+                         : SystemUiOverlayStyle(
                             statusBarColor: Colors.transparent,
                             statusBarIconBrightness:
                                 Theme.of(context).brightness == Brightness.dark

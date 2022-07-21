@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,18 +24,22 @@ class _GetStartedBeforeScreenState
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              systemNavigationBarColor:
-                  Theme.of(context).scaffoldBackgroundColor,
-              statusBarIconBrightness:
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark,
-              systemNavigationBarIconBrightness:
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark),
+          value: Platform.isIOS
+                ? Theme.of(context).brightness == Brightness.dark
+                    ? SystemUiOverlayStyle.light
+                    : SystemUiOverlayStyle.dark
+                : SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    systemNavigationBarColor:
+                        Theme.of(context).scaffoldBackgroundColor,
+                    statusBarIconBrightness:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Brightness.light
+                            : Brightness.dark,
+                    systemNavigationBarIconBrightness:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Brightness.light
+                            : Brightness.dark),
           child: SafeArea(
             left: false,
             right: false,
@@ -149,18 +155,22 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                systemNavigationBarColor:
-                    Theme.of(context).scaffoldBackgroundColor,
-                statusBarIconBrightness:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Brightness.light
-                        : Brightness.dark,
-                systemNavigationBarIconBrightness:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Brightness.light
-                        : Brightness.dark),
+            value: Platform.isIOS
+                ? Theme.of(context).brightness == Brightness.dark
+                    ? SystemUiOverlayStyle.light
+                    : SystemUiOverlayStyle.dark
+                : SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    systemNavigationBarColor:
+                        Theme.of(context).scaffoldBackgroundColor,
+                    statusBarIconBrightness:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Brightness.light
+                            : Brightness.dark,
+                    systemNavigationBarIconBrightness:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Brightness.light
+                            : Brightness.dark),
             child: SafeArea(
               left: false,
               right: false,

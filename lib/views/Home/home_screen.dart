@@ -1,6 +1,9 @@
+import 'dart:io' show Platform;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/components/bottom_sheet_custom.dart';
 
@@ -127,15 +130,24 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
 
     return Scaffold(
         backgroundColor: Color(0xFF22213C),
-        body: Stack(
-          children: [
-            bodyHome(),
-            Padding(
-              padding:
-                  EdgeInsets.only(top: MediaQuery.of(context).padding.top + 15),
-              child: topHome(gamesTab[indexGames]),
-            ),
-          ],
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: Platform.isIOS
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle(
+                  statusBarColor: Color(0xFF22213C).withOpacity(0.3),
+                  statusBarIconBrightness: Brightness.light,
+                  systemNavigationBarColor: Color(0xFF22213C),
+                  systemNavigationBarIconBrightness: Brightness.light),
+          child: Stack(
+            children: [
+              bodyHome(),
+              Padding(
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top + 15),
+                child: topHome(gamesTab[indexGames]),
+              ),
+            ],
+          ),
         ));
   }
 

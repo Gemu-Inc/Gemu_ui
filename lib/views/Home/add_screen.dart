@@ -15,6 +15,7 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:gemu/services/database_service.dart';
+import 'package:helpers/helpers.dart';
 
 class AddScreen extends ConsumerStatefulWidget {
   const AddScreen({Key? key}) : super(key: key);
@@ -207,7 +208,9 @@ class _AddScreenState extends ConsumerState<AddScreen>
                   elevation: 0,
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
-                  systemOverlayStyle: SystemUiOverlayStyle(
+                  systemOverlayStyle: Platform.isIOS ?
+                  Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark
+                   : SystemUiOverlayStyle(
                       statusBarColor: Colors.transparent,
                       statusBarIconBrightness:
                           Theme.of(context).brightness == Brightness.dark
@@ -223,6 +226,7 @@ class _AddScreenState extends ConsumerState<AddScreen>
                     "Ajouter",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
+                  centerTitle: true,
                   actions: [
                     IconButton(
                         onPressed: () {
@@ -239,7 +243,7 @@ class _AddScreenState extends ConsumerState<AddScreen>
                                 .update(false);
                           }
                         },
-                        icon: Icon(Icons.clear))
+                        icon: Icon(Icons.clear, color: Theme.of(context).iconTheme.color))
                   ],
                 ),
               )),

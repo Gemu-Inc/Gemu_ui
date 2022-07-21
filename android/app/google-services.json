@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "231323160206-728i57ucf4ribqlm82hgmfn22nbn3q8r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.gemu",
+            "certificate_hash": "8a14bb50b16e9228b63e1a2899b7311f912403b5"
+          }
+        },
+        {
           "client_id": "231323160206-brsr8lntpdi9tqm5ooh68m762gki8eat.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

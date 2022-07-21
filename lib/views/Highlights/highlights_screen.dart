@@ -1,3 +1,4 @@
+import "dart:io" show Platform;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -449,7 +450,9 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
           child: AppBar(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             elevation: 6,
-            systemOverlayStyle: SystemUiOverlayStyle(
+            systemOverlayStyle: Platform.isIOS ? 
+            Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark
+             : SystemUiOverlayStyle(
                 statusBarColor:
                     Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
                 statusBarIconBrightness:

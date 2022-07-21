@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
@@ -130,93 +129,75 @@ class _BottomNavigationControllerState
       backgroundColor: _navController.index == 0
           ? cBGDarkTheme
           : Theme.of(context).scaffoldBackgroundColor,
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-              statusBarColor: _navController.index == 0
-                  ? Color(0xFF22213C).withOpacity(0.3)
-                  : Colors.transparent,
-              statusBarIconBrightness: _navController.index == 0
-                  ? Brightness.light
-                  : Theme.of(context).brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark,
-              systemNavigationBarColor: _navController.index == 0
-                  ? Color(0xFF22213C)
-                  : Theme.of(context).scaffoldBackgroundColor,
-              systemNavigationBarIconBrightness: _navController.index == 0
-                  ? Brightness.light
-                  : Theme.of(context).brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark),
-          child: SafeArea(
-            top: false,
-            left: false,
-            right: false,
-            child: Stack(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
               children: [
-                Column(
-                  children: [
-                    Expanded(
-                      child: TabBarView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          controller: _navController,
-                          children: _buildScreens()),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: CustomNavBar(
-                        items: _navBarsItems(),
-                        selectedIndex: _navController.index,
-                        onItemSelected: (index) {
-                          if (_navController.index != 0 &&
-                              index == 0 &&
-                              modifGamesTab) {
-                            ref
-                                .read(
-                                    modifGamesFollowsNotifierProvider.notifier)
-                                .update(false);
-                            setState(() {
-                              _navController.index = index;
-                            });
-                            navHomeAuthKey.currentState!
-                                .pushNamedAndRemoveUntil(
-                                    Home, (route) => false);
-                          } else if (_navController.index == 0 && index == 0) {
-                            navHomeAuthKey.currentState!
-                                .popUntil((route) => route.isFirst);
-                          } else if (_navController.index == 1 && index == 1) {
-                            navSelectionAuthKey.currentState!
-                                .popUntil((route) => route.isFirst);
-                          } else if (_navController.index == 2 && index == 2) {
-                            navActivitiesAuthKey.currentState!
-                                .popUntil((route) => route.isFirst);
-                          } else if (_navController.index == 3 && index == 3) {
-                            navProfileAuthKey.currentState!
-                                .popUntil((route) => route.isFirst);
-                          } else {
-                            setState(() {
-                              _navController.index = index;
-                            });
-                          }
-                        },
-                      ),
-                    )
-                  ],
+                Expanded(
+                  child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      controller: _navController,
+                      children: _buildScreens()),
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      width: double.infinity,
-                      height: 150,
-                      child: BottomShare(),
-                    ),
+                  child: CustomNavBar(
+                    items: _navBarsItems(),
+                    selectedIndex: _navController.index,
+                    onItemSelected: (index) {
+                      if (_navController.index != 0 &&
+                          index == 0 &&
+                          modifGamesTab) {
+                        ref
+                            .read(
+                                modifGamesFollowsNotifierProvider.notifier)
+                            .update(false);
+                        setState(() {
+                          _navController.index = index;
+                        });
+                        navHomeAuthKey.currentState!
+                            .pushNamedAndRemoveUntil(
+                                Home, (route) => false);
+                      } else if (_navController.index == 0 && index == 0) {
+                        navHomeAuthKey.currentState!
+                            .popUntil((route) => route.isFirst);
+                      } else if (_navController.index == 1 && index == 1) {
+                        navSelectionAuthKey.currentState!
+                            .popUntil((route) => route.isFirst);
+                      } else if (_navController.index == 2 && index == 2) {
+                        navActivitiesAuthKey.currentState!
+                            .popUntil((route) => route.isFirst);
+                      } else if (_navController.index == 3 && index == 3) {
+                        navProfileAuthKey.currentState!
+                            .popUntil((route) => route.isFirst);
+                      } else {
+                        setState(() {
+                          _navController.index = index;
+                        });
+                      }
+                    },
                   ),
                 )
               ],
             ),
-          )),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Container(
+                  width: double.infinity,
+                  height: 150,
+                  child: BottomShare(),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,4 +1,7 @@
+import "dart:io" show Platform;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'Notifications/notifications_screen.dart';
 
@@ -78,6 +81,16 @@ class _ActivitiesMenuDrawerState extends State<ActivitiesMenuDrawer>
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 6,
+          systemOverlayStyle: Platform.isIOS
+              ? Theme.of(context).brightness == Brightness.dark
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark
+              : SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Brightness.light
+                          : Brightness.dark),
           flexibleSpace: Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
