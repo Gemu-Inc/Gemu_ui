@@ -124,6 +124,7 @@ class _BottomNavigationControllerState
   Widget build(BuildContext context) {
     me = ref.watch(myselfNotifierProvider);
     final modifGamesTab = ref.watch(modifGamesFollowsNotifierProvider);
+    final gamesList = ref.watch(myGamesNotifierProvider);
 
     return Scaffold(
       backgroundColor: _navController.index == 0
@@ -153,15 +154,22 @@ class _BottomNavigationControllerState
                           index == 0 &&
                           modifGamesTab) {
                         ref
-                            .read(
-                                modifGamesFollowsNotifierProvider.notifier)
+                            .read(gamesTabNotifierProvider.notifier)
+                            .updateGamesTab(gamesList);
+                        ref
+                            .read(myGamesControllerNotifierProvider.notifier)
+                            .updateGamesController(gamesList.length);
+                        ref
+                            .read(indexGamesNotifierProvider.notifier)
+                            .resetIndex(0);
+                        ref
+                            .read(modifGamesFollowsNotifierProvider.notifier)
                             .update(false);
                         setState(() {
                           _navController.index = index;
                         });
                         navHomeAuthKey.currentState!
-                            .pushNamedAndRemoveUntil(
-                                Home, (route) => false);
+                            .pushNamedAndRemoveUntil(Home, (route) => false);
                       } else if (_navController.index == 0 && index == 0) {
                         navHomeAuthKey.currentState!
                             .popUntil((route) => route.isFirst);

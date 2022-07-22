@@ -126,7 +126,7 @@ class DatabaseService {
     });
 
     ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
-    ref.read(gamesTabNotifierProvider.notifier).initGames(gamesList);
+    ref.read(gamesTabNotifierProvider.notifier).initGamesTab(gamesList);
     ref
         .read(myGamesControllerNotifierProvider.notifier)
         .initGamesController(gamePageController);
@@ -230,9 +230,6 @@ class DatabaseService {
           .doc(game.name)
           .set({"name": game.name, "imageUrl": game.imageUrl});
       ref.read(myGamesNotifierProvider.notifier).addGame(game);
-      ref.read(gamesTabNotifierProvider.notifier).addGame(game);
-      ref.read(myGamesControllerNotifierProvider.notifier).addGamesController();
-      ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
       ref.read(gamesDiscoverNotifierProvider.notifier).removeGame(game);
       ref.read(modifGamesFollowsNotifierProvider.notifier).update(true);
     } catch (e) {
@@ -253,11 +250,6 @@ class DatabaseService {
             .doc(game.name)
             .delete();
         ref.read(myGamesNotifierProvider.notifier).removeGame(game);
-        ref.read(gamesTabNotifierProvider.notifier).removeGame(game);
-        ref
-            .read(myGamesControllerNotifierProvider.notifier)
-            .deleteGamesController(index);
-        ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
         ref
             .read(gamesDiscoverNotifierProvider.notifier)
             .addGame(game, stopReached);

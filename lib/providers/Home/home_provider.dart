@@ -20,23 +20,12 @@ class GamesTabProvider extends StateNotifier<List<Game>> {
 
   List<Game> get getGamesTab => state;
 
-  initGames(List<Game> gameList) {
-    state = [...gameList, Game(name: "Ajouter", imageUrl: "Ajouter")];
+  initGamesTab(List<Game> gamesList) {
+    state = [...gamesList, Game(name: "Ajouter", imageUrl: "Ajouter")];
   }
 
-  addGame(Game game) {
-    List<Game> newState = [...state];
-    newState.removeLast();
-    newState.add(game);
-    newState
-        .sort(((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase())));
-    state = [...newState, Game(name: "Ajouter", imageUrl: "Ajouter")];
-  }
-
-  removeGame(Game game) {
-    List<Game> newState = copyState();
-    newState.removeWhere((element) => element.name == game.name);
-    state = newState;
+  updateGamesTab(List<Game> gamesList) {
+    state = [...gamesList, Game(name: "Ajouter", imageUrl: "Ajouter")];
   }
 
   List<Game> copyState() {
@@ -53,15 +42,6 @@ class IndexGamesProvider extends StateNotifier<int> {
 
   updateIndex(int newIndex) {
     state = newIndex;
-    print(state);
-  }
-
-  updateIndexNewGame(int gamesLength) {
-    int newState = state;
-    if (newState == gamesLength) {
-      newState = newState - 1;
-    }
-    state = newState;
   }
 
   resetIndex(int index) {
@@ -80,16 +60,12 @@ class MyGamesControllerProvider extends StateNotifier<List<PageController>> {
     state = gamesControllerList;
   }
 
-  addGamesController() {
-    List<PageController> newState = [...state];
-    newState.add(PageController());
-    state = newState;
-  }
-
-  deleteGamesController(int index) {
-    List<PageController> newState = copyState();
-    newState.removeAt(index);
-    state = newState;
+  updateGamesController(int nbGamesController) {
+    List<PageController> newState = [];
+    for (var i = 0; i < nbGamesController; i++) {
+      newState.add(PageController());
+    }
+    state = [...newState];
   }
 
   copyState() {

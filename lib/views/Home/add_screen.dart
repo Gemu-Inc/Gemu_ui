@@ -173,6 +173,11 @@ class _AddScreenState extends ConsumerState<AddScreen>
         if (!modifGames) {
           navMainAuthKey.currentState!.pop();
         } else {
+          ref.read(gamesTabNotifierProvider.notifier).updateGamesTab(gamesList);
+          ref
+              .read(myGamesControllerNotifierProvider.notifier)
+              .updateGamesController(gamesList.length);
+          ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
           navMainAuthKey.currentState!.pop();
           navHomeAuthKey.currentState!
               .pushNamedAndRemoveUntil(Home, (route) => false);
@@ -186,6 +191,13 @@ class _AddScreenState extends ConsumerState<AddScreen>
             if (!modifGames) {
               navMainAuthKey.currentState!.pop();
             } else {
+              ref
+                  .read(gamesTabNotifierProvider.notifier)
+                  .updateGamesTab(gamesList);
+              ref
+                  .read(myGamesControllerNotifierProvider.notifier)
+                  .updateGamesController(gamesList.length);
+              ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
               navMainAuthKey.currentState!.pop();
               navHomeAuthKey.currentState!
                   .pushNamedAndRemoveUntil(Home, (route) => false);
@@ -208,20 +220,22 @@ class _AddScreenState extends ConsumerState<AddScreen>
                   elevation: 0,
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
-                  systemOverlayStyle: Platform.isIOS ?
-                  Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark
-                   : SystemUiOverlayStyle(
-                      statusBarColor: Colors.transparent,
-                      statusBarIconBrightness:
-                          Theme.of(context).brightness == Brightness.dark
-                              ? Brightness.light
-                              : Brightness.dark,
-                      systemNavigationBarColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      systemNavigationBarIconBrightness:
-                          Theme.of(context).brightness == Brightness.dark
-                              ? Brightness.light
-                              : Brightness.dark),
+                  systemOverlayStyle: Platform.isIOS
+                      ? Theme.of(context).brightness == Brightness.dark
+                          ? SystemUiOverlayStyle.light
+                          : SystemUiOverlayStyle.dark
+                      : SystemUiOverlayStyle(
+                          statusBarColor: Colors.transparent,
+                          statusBarIconBrightness:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Brightness.light
+                                  : Brightness.dark,
+                          systemNavigationBarColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                          systemNavigationBarIconBrightness:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Brightness.light
+                                  : Brightness.dark),
                   title: Text(
                     "Ajouter",
                     style: Theme.of(context).textTheme.titleLarge,
@@ -233,6 +247,16 @@ class _AddScreenState extends ConsumerState<AddScreen>
                           if (!modifGames) {
                             navMainAuthKey.currentState!.pop();
                           } else {
+                            ref
+                                .read(gamesTabNotifierProvider.notifier)
+                                .updateGamesTab(gamesList);
+                            ref
+                                .read(
+                                    myGamesControllerNotifierProvider.notifier)
+                                .updateGamesController(gamesList.length);
+                            ref
+                                .read(indexGamesNotifierProvider.notifier)
+                                .resetIndex(0);
                             navMainAuthKey.currentState!.pop();
                             navHomeAuthKey.currentState!
                                 .pushNamedAndRemoveUntil(
@@ -243,7 +267,8 @@ class _AddScreenState extends ConsumerState<AddScreen>
                                 .update(false);
                           }
                         },
-                        icon: Icon(Icons.clear, color: Theme.of(context).iconTheme.color))
+                        icon: Icon(Icons.clear,
+                            color: Theme.of(context).iconTheme.color))
                   ],
                 ),
               )),
