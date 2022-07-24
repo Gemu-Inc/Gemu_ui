@@ -130,12 +130,6 @@ class DatabaseService {
     ref
         .read(myGamesControllerNotifierProvider.notifier)
         .initGamesController(gamePageController);
-    ref
-        .read(loadedDataGameProviderNotifier.notifier)
-        .initLoadedDataGames(gamesList.length);
-    ref
-        .read(postsGameNotifierProvider.notifier)
-        .initPostsGame(gamesList.length);
 
     await DatabaseService.getCurrentUser(user.uid, ref);
   }

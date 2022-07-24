@@ -176,12 +176,6 @@ class _AddScreenState extends ConsumerState<AddScreen>
           ref
               .read(myGamesControllerNotifierProvider.notifier)
               .updateGamesController(gamesList.length);
-          ref
-              .read(loadedDataGameProviderNotifier.notifier)
-              .updateLoadedDataGames(gamesList.length);
-          ref
-              .read(postsGameNotifierProvider.notifier)
-              .updatePostsGame(gamesList.length);
           ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
           navMainAuthKey.currentState!.pop();
           navHomeAuthKey.currentState!
@@ -202,12 +196,6 @@ class _AddScreenState extends ConsumerState<AddScreen>
               ref
                   .read(myGamesControllerNotifierProvider.notifier)
                   .updateGamesController(gamesList.length);
-              ref
-                  .read(loadedDataGameProviderNotifier.notifier)
-                  .updateLoadedDataGames(gamesList.length);
-              ref
-                  .read(postsGameNotifierProvider.notifier)
-                  .updatePostsGame(gamesList.length);
               ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
               navMainAuthKey.currentState!.pop();
               navHomeAuthKey.currentState!
@@ -268,12 +256,6 @@ class _AddScreenState extends ConsumerState<AddScreen>
                                 .read(
                                     myGamesControllerNotifierProvider.notifier)
                                 .updateGamesController(gamesList.length);
-                            ref
-                                .read(loadedDataGameProviderNotifier.notifier)
-                                .updateLoadedDataGames(gamesList.length);
-                            ref
-                                .read(postsGameNotifierProvider.notifier)
-                                .updatePostsGame(gamesList.length);
                             navMainAuthKey.currentState!.pop();
                             navHomeAuthKey.currentState!
                                 .pushNamedAndRemoveUntil(

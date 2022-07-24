@@ -108,7 +108,7 @@ class PictureItem extends StatefulWidget {
 }
 
 class PictureItemState extends State<PictureItem>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   static const double ActionWidgetSize = 60.0;
   static const double ActionIconSize = 35.0;
   static const double ShareActionIconSize = 25.0;
@@ -385,6 +385,10 @@ class PictureItemState extends State<PictureItem>
   }
 
   @override
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
     super.initState();
     print("je rentre pour un post");
@@ -544,7 +548,9 @@ class PictureItemState extends State<PictureItem>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     int points = (post.upcount - post.downcount);
+
     return Stack(
       children: [
         contentPostPicture(),

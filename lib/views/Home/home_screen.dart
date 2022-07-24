@@ -30,7 +30,6 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   int currentTabMenuIndex = 1;
 
   late PageController followingsPageController;
-  late PageController gamesController;
 
   late AnimationController _animationRotateController,
       _animationGamesController;
@@ -85,7 +84,6 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     _tabMenuController.addListener(_onTabMenuChanged);
 
     followingsPageController = PageController();
-    gamesController = PageController(initialPage: 0);
 
     _animationGamesController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 100));
@@ -113,7 +111,6 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     _animationGamesController.dispose();
     _animationRotateController.dispose();
     _tabMenuController.dispose();
-    gamesController.dispose();
     super.dispose();
   }
 
@@ -132,15 +129,19 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                   statusBarIconBrightness: Brightness.light,
                   systemNavigationBarColor: Color(0xFF22213C),
                   systemNavigationBarIconBrightness: Brightness.light),
-          child: Stack(
-            children: [
-              bodyHome(),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top + 15),
-                child: topHome(gamesTab[indexGames]),
-              ),
-            ],
+          child: DefaultTabController(
+            initialIndex: indexGames,
+            length: gamesTab.length,
+            child: Stack(
+              children: [
+                bodyHome(),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).padding.top + 15),
+                  child: topHome(gamesTab[indexGames]),
+                ),
+              ],
+            ),
           ),
         ));
   }
@@ -301,7 +302,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
         controller: _tabMenuController,
         children: [
           following,
-          games(gamesTab, gamesControllerList, indexGames),
+          games(gamesTab),
         ]);
   }
 
@@ -314,18 +315,24 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     return SizeTransition(
       sizeFactor: _animationGames as Animation<double>,
       child: Container(
-        height: 105,
-        child: Center(
-          child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: gamesTab.length,
-              itemBuilder: (_, index) {
-                Game game = gamesTab[index];
-                return game.name == "Ajouter"
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: SizedBox(
+          height: 105,
+          child: Center(
+            child: TabBar(
+                onTap: (index) {
+                  if (games[index].name != "Ajouter") {
+                    ref
+                        .read(indexGamesNotifierProvider.notifier)
+                        .updateIndex(index);
+                  }
+                },
+                indicatorColor: Colors.transparent,
+                labelColor: Theme.of(context).colorScheme.primary,
+                unselectedLabelColor: Colors.grey,
+                isScrollable: true,
+                tabs: games.map((game) {
+                  int index = games.indexOf(game);
+                  return game.name == "Ajouter"
+                      ? SizedBox(
                           width: 60,
                           child: GestureDetector(
                             onTap: () => gamesBottomSheet(
@@ -361,98 +368,72 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                                   game.name,
                                   style:
                                       textStyleCustomRegular(Colors.white, 12),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: SizedBox(
-                          width: 60,
-                          child: GestureDetector(
-                            onTap: () {
-                              ref
-                                  .read(indexGamesNotifierProvider.notifier)
-                                  .updateIndex(index);
-                              gamesController.jumpToPage(index);
-                            },
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 65,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .secondary
-                                          ]),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      border: Border.all(
-                                          width: 1.5,
-                                          color: indexGames == index
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                              : Colors.white),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: CachedNetworkImageProvider(
-                                              game.imageUrl))),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  game.name,
                                   textAlign: TextAlign.center,
-                                  style: textStyleCustomRegular(
-                                      indexGames == index
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Colors.white,
-                                      12),
                                 )
                               ],
                             ),
                           ),
-                        ),
-                      );
-              }),
-        ),
-      ),
+                        )
+                      : SizedBox(
+                          width: 60,
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 65,
+                                width: 45,
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Theme.of(context).colorScheme.primary,
+                                          Theme.of(context)
+                                              .colorScheme
+                                              .secondary
+                                        ]),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    border: Border.all(
+                                        width: 1.5,
+                                        color: indexGames == index
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Colors.white),
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: CachedNetworkImageProvider(
+                                            game.imageUrl))),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Text(
+                                game.name,
+                                textAlign: TextAlign.center,
+                                style: textStyleCustomRegular(
+                                    indexGames == index
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Colors.white,
+                                    12),
+                              )
+                            ],
+                          ),
+                        );
+                }).toList()),
+          )),
     );
   }
 
-  Widget games(List<Game> games, List<PageController> gamesControllerList,
-      int indexGames) {
-    final games = ref.watch(gamesTabNotifierProvider);
-    return PageView.builder(
-        controller: gamesController,
+  Widget games(List<Game> games) {
+    return TabBarView(
         physics: NeverScrollableScrollPhysics(),
-        itemCount: games.length,
-        itemBuilder: (_, int index) {
-          if (index != indexGames) {
-            print("je suis dans le if");
-            index = indexGames;
-          }
-          print(index);
+        children: games.map((game) {
           return GameSection(
-            game: games[index],
-            pageController: gamesControllerList[index],
-            indexGames: index,
+            game: game,
+            pageController: gamesControllerList[indexGames],
             animationGamesController: _animationGamesController,
             animationRotateController: _animationRotateController,
           );
-        });
+        }).toList());
   }
 }
