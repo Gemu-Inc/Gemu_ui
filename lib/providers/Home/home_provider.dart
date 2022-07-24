@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import 'package:gemu/models/game.dart';
-import 'package:gemu/models/post.dart';
 
 final indexGamesNotifierProvider =
     StateNotifierProvider<IndexGamesProvider, int>(

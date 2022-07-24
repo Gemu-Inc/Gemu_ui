@@ -112,6 +112,7 @@ class DatabaseService {
   static Future<void> getUserData(User user, WidgetRef ref) async {
     List<Game> gamesList = [];
     List<PageController> gamePageController = [];
+    List<UserModel> followings = [];
 
     await FirebaseFirestore.instance
         .collection('users')
@@ -125,11 +126,27 @@ class DatabaseService {
       }
     });
 
+    QuerySnapshot<Map<String, dynamic>> userIDList = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('following')
+        .get();
+    for (var element in userIDList.docs) {
+      var user = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(element.id)
+          .get();
+      followings
+          .add(UserModel.fromMap(user, user.data() as Map<String, dynamic>));
+    }
+
     ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
     ref.read(gamesTabNotifierProvider.notifier).initGamesTab(gamesList);
     ref
         .read(myGamesControllerNotifierProvider.notifier)
         .initGamesController(gamePageController);
+    ref.read(myFollowingsNotifierProvider.notifier).initFollowings(followings);
 
     await DatabaseService.getCurrentUser(user.uid, ref);
   }

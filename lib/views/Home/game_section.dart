@@ -57,8 +57,6 @@ class GameSectionState extends ConsumerState<GameSection>
       }
     }
 
-    posts.shuffle();
-
     setState(() {
       loadedPosts = true;
     });
@@ -83,8 +81,6 @@ class GameSectionState extends ConsumerState<GameSection>
         posts.add(Post.fromMap(item, item.data()));
       }
     }
-
-    posts.shuffle();
 
     setState(() {
       loadedPosts = true;

@@ -1,25 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/components/post_tile.dart';
+import 'package:gemu/models/user.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 
-class FollowingSection extends StatefulWidget {
-  final List followings;
+class FollowingSection extends ConsumerStatefulWidget {
   final PageController pageController;
 
-  FollowingSection({required this.followings, required this.pageController});
+  FollowingSection({required this.pageController});
 
   @override
   FollowingSectionState createState() => FollowingSectionState();
 }
 
-class FollowingSectionState extends State<FollowingSection>
+class FollowingSectionState extends ConsumerState<FollowingSection>
     with AutomaticKeepAliveClientMixin {
-  bool dataIsThere = false;
-
-  List followings = [];
+  bool loadedPosts = false;
   List<Post> posts = [];
 
   @override
@@ -28,7 +28,6 @@ class FollowingSectionState extends State<FollowingSection>
   @override
   void initState() {
     super.initState();
-    followings = widget.followings;
     getPostsFollowing();
   }
 
@@ -38,13 +37,13 @@ class FollowingSectionState extends State<FollowingSection>
   }
 
   getPostsFollowing() async {
-    print('followings: ${followings.length}');
+    List<UserModel> followings = ref.read(myFollowingsNotifierProvider);
 
     if (followings.length != 0) {
       for (var i = 0; i < followings.length; i++) {
         await FirebaseFirestore.instance
             .collection('posts')
-            .where('uid', isEqualTo: followings[i])
+            .where('uid', isEqualTo: followings[i].uid)
             .orderBy('date', descending: true)
             .get()
             .then((data) {
@@ -55,16 +54,16 @@ class FollowingSectionState extends State<FollowingSection>
       }
     }
 
-    if (!dataIsThere) {
-      setState(() {
-        dataIsThere = true;
-      });
-    }
+    setState(() {
+      loadedPosts = true;
+    });
   }
 
   Future refreshData() async {
+    List<UserModel> followings = ref.read(myFollowingsNotifierProvider);
+
     setState(() {
-      dataIsThere = false;
+      loadedPosts = false;
     });
 
     await Future.delayed(Duration(seconds: 2));
@@ -75,7 +74,7 @@ class FollowingSectionState extends State<FollowingSection>
       for (var i = 0; i < followings.length; i++) {
         await FirebaseFirestore.instance
             .collection('posts')
-            .where('uid', isEqualTo: followings[i])
+            .where('uid', isEqualTo: followings[i].uid)
             .orderBy('date', descending: true)
             .get()
             .then((data) {
@@ -86,19 +85,21 @@ class FollowingSectionState extends State<FollowingSection>
       }
     }
     setState(() {
-      print('${posts.length}');
-      dataIsThere = true;
+      loadedPosts = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return dataIsThere
+    return loadedPosts
         ? posts.length == 0
             ? Center(
-                child: Text('No following/posts at the moment',
-                    style: Theme.of(context).textTheme.bodySmall),
+                child: Text(
+                  'Pas de posts actuellement dans vos abonnements',
+                  style: textStyleCustomRegular(Colors.white, 14),
+                  textAlign: TextAlign.center,
+                ),
               )
             : PageView.builder(
                 controller: widget.pageController,
@@ -120,6 +121,7 @@ class FollowingSectionState extends State<FollowingSection>
         : Center(
             child: CircularProgressIndicator(
               color: Theme.of(context).colorScheme.primary,
+              strokeWidth: 1.0,
             ),
           );
   }

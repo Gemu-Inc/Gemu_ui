@@ -15,7 +15,7 @@ import 'package:gemu/services/database_service.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
 
 import 'game_section.dart';
-import 'following_section.dart';
+import 'followings_section.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -38,7 +38,6 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   List<Game> gamesTab = [];
   List<PageController> gamesControllerList = [];
   int indexGames = 0;
-  List followings = [];
 
   //Vérifie si l'email de l'utilisateur est vérifié ou non
   Future<void> accountVerified(String uid) async {
@@ -86,12 +85,12 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     followingsPageController = PageController();
 
     _animationGamesController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
     _animationGames = CurvedAnimation(
         parent: _animationGamesController, curve: Curves.easeOut);
 
     _animationRotateController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
     _animationRotate = Tween<double>(begin: 0.0, end: 180.0).animate(
         CurvedAnimation(
             parent: _animationRotateController, curve: Curves.easeOut));
@@ -250,7 +249,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                   child: Text('Abonnements',
                       style: currentTabMenuIndex == 0
                           ? textStyleCustomBold(
-                              Theme.of(context).colorScheme.primary, 14)
+                              Theme.of(context).colorScheme.primary, 17)
                           : textStyleCustomBold(Colors.white, 14))),
               Container(
                 width: MediaQuery.of(context).size.width / 2,
@@ -272,7 +271,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                             Text(
                               'Jeux suivis',
                               style: textStyleCustomBold(
-                                  Theme.of(context).colorScheme.primary, 14),
+                                  Theme.of(context).colorScheme.primary, 17),
                             ),
                             Padding(
                                 padding: EdgeInsets.only(top: 3.0),
@@ -307,7 +306,6 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   }
 
   Widget get following => FollowingSection(
-        followings: followings,
         pageController: followingsPageController,
       );
 

@@ -8,6 +8,9 @@ final myselfNotifierProvider =
 final myGamesNotifierProvider =
     StateNotifierProvider<MyGamesProvider, List<Game>>(
         (ref) => MyGamesProvider());
+final myFollowingsNotifierProvider =
+    StateNotifierProvider<MyFollowingsProvider, List<UserModel>>(
+        (ref) => MyFollowingsProvider());
 
 class MyselfProvider extends StateNotifier<UserModel?> {
   MyselfProvider() : super(null);
@@ -49,5 +52,13 @@ class MyGamesProvider extends StateNotifier<List<Game>> {
       games.add(game.copy());
     }
     return games;
+  }
+}
+
+class MyFollowingsProvider extends StateNotifier<List<UserModel>> {
+  MyFollowingsProvider() : super([]);
+
+  initFollowings(List<UserModel> usersList) {
+    state = usersList;
   }
 }
