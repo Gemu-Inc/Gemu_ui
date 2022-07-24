@@ -15,7 +15,6 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:helpers/helpers.dart';
 
 class AddScreen extends ConsumerStatefulWidget {
   const AddScreen({Key? key}) : super(key: key);
@@ -177,6 +176,12 @@ class _AddScreenState extends ConsumerState<AddScreen>
           ref
               .read(myGamesControllerNotifierProvider.notifier)
               .updateGamesController(gamesList.length);
+          ref
+              .read(loadedDataGameProviderNotifier.notifier)
+              .updateLoadedDataGames(gamesList.length);
+          ref
+              .read(postsGameNotifierProvider.notifier)
+              .updatePostsGame(gamesList.length);
           ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
           navMainAuthKey.currentState!.pop();
           navHomeAuthKey.currentState!
@@ -197,6 +202,12 @@ class _AddScreenState extends ConsumerState<AddScreen>
               ref
                   .read(myGamesControllerNotifierProvider.notifier)
                   .updateGamesController(gamesList.length);
+              ref
+                  .read(loadedDataGameProviderNotifier.notifier)
+                  .updateLoadedDataGames(gamesList.length);
+              ref
+                  .read(postsGameNotifierProvider.notifier)
+                  .updatePostsGame(gamesList.length);
               ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
               navMainAuthKey.currentState!.pop();
               navHomeAuthKey.currentState!
@@ -243,10 +254,13 @@ class _AddScreenState extends ConsumerState<AddScreen>
                   centerTitle: true,
                   actions: [
                     IconButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (!modifGames) {
                             navMainAuthKey.currentState!.pop();
                           } else {
+                            ref
+                                .read(indexGamesNotifierProvider.notifier)
+                                .resetIndex(0);
                             ref
                                 .read(gamesTabNotifierProvider.notifier)
                                 .updateGamesTab(gamesList);
@@ -255,8 +269,11 @@ class _AddScreenState extends ConsumerState<AddScreen>
                                     myGamesControllerNotifierProvider.notifier)
                                 .updateGamesController(gamesList.length);
                             ref
-                                .read(indexGamesNotifierProvider.notifier)
-                                .resetIndex(0);
+                                .read(loadedDataGameProviderNotifier.notifier)
+                                .updateLoadedDataGames(gamesList.length);
+                            ref
+                                .read(postsGameNotifierProvider.notifier)
+                                .updatePostsGame(gamesList.length);
                             navMainAuthKey.currentState!.pop();
                             navHomeAuthKey.currentState!
                                 .pushNamedAndRemoveUntil(

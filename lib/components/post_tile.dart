@@ -54,23 +54,7 @@ class PostTileState extends State<PostTile> with TickerProviderStateMixin {
           stream: DefaultCacheManager().getFileStream(widget.post.postUrl),
           builder: (context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              );
-              /*(widget.post.type == 'picture')
-                  ? PictureItem(
-                      postUrl: widget.post.postUrl,
-                      idUserActual: widget.idUserActual,
-                      post: widget.post)
-                  : VideoItem(
-                      videoPlayerController: VideoPlayerController.network(
-                          widget.post.postUrl,
-                          videoPlayerOptions:
-                              VideoPlayerOptions(mixWithOthers: true)),
-                      idUserActual: widget.idUserActual,
-                      post: widget.post);*/
+              return const SizedBox();
             }
             return (widget.post.type == 'picture')
                 ? PictureItem(
@@ -403,10 +387,11 @@ class PictureItemState extends State<PictureItem>
   @override
   void initState() {
     super.initState();
+    print("je rentre pour un post");
+
     post = widget.post;
 
     tagHeroPost = 'post' + post.id + generateRandomString(6);
-    print('tagHero: $tagHeroPost');
 
     //écoute sur les changements du post
     postListener = FirebaseFirestore.instance

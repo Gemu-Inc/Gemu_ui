@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/components/post_tile.dart';
+import 'package:gemu/providers/Home/home_provider.dart';
 
-// ignore: must_be_immutable
-class GameSection extends StatefulWidget {
+class GameSection extends ConsumerStatefulWidget {
   final Game game;
-  final AnimationController animationRotateController, animationGamesController;
-  bool panelGamesThere;
   final PageController pageController;
+  final int indexGames;
+  final AnimationController animationRotateController, animationGamesController;
 
-  GameSection(
-      {required this.game,
-      required this.animationGamesController,
-      required this.animationRotateController,
-      required this.panelGamesThere,
-      required this.pageController});
+  GameSection({
+    required this.game,
+    required this.pageController,
+    required this.indexGames,
+    required this.animationGamesController,
+    required this.animationRotateController,
+  });
 
   @override
   GameSectionState createState() => GameSectionState();
 }
 
-class GameSectionState extends State<GameSection>
+class GameSectionState extends ConsumerState<GameSection>
     with AutomaticKeepAliveClientMixin {
-  bool dataIsThere = false;
-
-  List<Post> posts = [];
+  List<bool> loadedDataGame = [];
+  List<List<Post>> posts = [];
 
   @override
   bool get wantKeepAlive => true;
@@ -44,71 +45,75 @@ class GameSectionState extends State<GameSection>
     super.dispose();
   }
 
-  getPostsGame() async {
-    await FirebaseFirestore.instance
+  Future<void> getPostsGame() async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
         .where('gameName', isEqualTo: widget.game.name)
         .where('privacy', isEqualTo: 'Public')
         .orderBy('date', descending: true)
-        .get()
-        .then((data) {
-      for (var item in data.docs) {
-        if (item.data()['uid'] != me!.uid) {
-          posts.add(Post.fromMap(item, item.data()));
-        }
+        .get();
+
+    for (var item in data.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        posts.add(Post.fromMap(item, item.data()));
       }
-    });
-
-    posts.shuffle();
-
-    if (!dataIsThere && mounted) {
-      setState(() {
-        dataIsThere = true;
-      });
     }
-  }
-
-  Future refreshData() async {
-    setState(() {
-      dataIsThere = false;
-    });
-
-    posts.clear();
-
-    await Future.delayed(Duration(seconds: 2));
-
-    await FirebaseFirestore.instance
-        .collection('posts')
-        .where('gameName', isEqualTo: widget.game.name)
-        .where('privacy', isEqualTo: 'Public')
-        .orderBy('date', descending: true)
-        .get()
-        .then((data) {
-      for (var item in data.docs) {
-        if (item.data()['uid'] != me!.uid) {
-          posts.add(Post.fromMap(item, item.data()));
-        }
-      }
-    });
 
     posts.shuffle();
 
-    setState(() {
-      dataIsThere = true;
-    });
+    ref
+        .read(postsGameNotifierProvider.notifier)
+        .updatePostGameAtIndex(widget.indexGames, posts);
+
+    ref
+        .read(loadedDataGameProviderNotifier.notifier)
+        .updateLoadedDataGamesAtIndex(widget.indexGames, true);
   }
+
+  // Future<void> refreshPostsGame() async {
+  //   ref
+  //       .read(loadedDataGameProviderNotifier.notifier)
+  //       .updateLoadedDataGamesAtIndex(widget.indexGames, false);
+
+  //   posts.clear();
+
+  //   QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
+  //       .collection('posts')
+  //       .where('gameName', isEqualTo: widget.game.name)
+  //       .where('privacy', isEqualTo: 'Public')
+  //       .orderBy('date', descending: true)
+  //       .get();
+
+  //   for (var item in data.docs) {
+  //     if (item.data()['uid'] != me!.uid) {
+  //       posts.add(Post.fromMap(item, item.data()));
+  //     }
+  //   }
+
+  //   posts.shuffle();
+
+  //   ref
+  //       .read(loadedDataGameProviderNotifier.notifier)
+  //       .updateLoadedDataGamesAtIndex(widget.indexGames, true);
+  // }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    loadedDataGame = ref.watch(loadedDataGameProviderNotifier);
+    posts = ref.watch(postsGameNotifierProvider);
+
     return Stack(
       children: [
-        dataIsThere
-            ? posts.length == 0
+        loadedDataGame[widget.indexGames]
+            ? posts[widget.indexGames].length == 0
                 ? Center(
                     child: Text(
-                      'No posts at the moment ${widget.game.name}',
-                      style: Theme.of(context).textTheme.bodySmall,
+                      'Pas de posts actuellement sur ${widget.game.name}',
+                      style: textStyleCustomRegular(Colors.white, 14),
+                      textAlign: TextAlign.center,
                     ),
                   )
                 : PageView.builder(
@@ -116,9 +121,9 @@ class GameSectionState extends State<GameSection>
                     physics: AlwaysScrollableScrollPhysics(
                         parent: BouncingScrollPhysics()),
                     scrollDirection: Axis.vertical,
-                    itemCount: posts.length,
+                    itemCount: posts[widget.indexGames].length,
                     itemBuilder: (context, index) {
-                      Post post = posts[index];
+                      Post post = posts[widget.indexGames][index];
                       return PostTile(
                         idUserActual: me!.uid,
                         post: post,

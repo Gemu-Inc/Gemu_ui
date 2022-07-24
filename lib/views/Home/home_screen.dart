@@ -35,7 +35,6 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   late AnimationController _animationRotateController,
       _animationGamesController;
   late Animation _animationRotate, _animationGames;
-  bool panelGamesThere = false;
 
   List<Game> gamesTab = [];
   List<PageController> gamesControllerList = [];
@@ -58,12 +57,6 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     if (_animationRotateController.isCompleted) {
       _animationRotateController.reverse();
       _animationGamesController.reverse();
-      if (panelGamesThere) {
-        await Future.delayed(Duration(milliseconds: 200));
-        setState(() {
-          panelGamesThere = false;
-        });
-      }
     }
     if (!_tabMenuController.indexIsChanging) {
       setState(() {
@@ -92,7 +85,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     _tabMenuController.addListener(_onTabMenuChanged);
 
     followingsPageController = PageController();
-    gamesController = PageController();
+    gamesController = PageController(initialPage: 0);
 
     _animationGamesController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 100));
@@ -120,6 +113,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     _animationGamesController.dispose();
     _animationRotateController.dispose();
     _tabMenuController.dispose();
+    gamesController.dispose();
     super.dispose();
   }
 
@@ -266,18 +260,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                           if (_animationRotateController.isCompleted) {
                             _animationRotateController.reverse();
                             _animationGamesController.reverse();
-                            if (panelGamesThere) {
-                              await Future.delayed(Duration(milliseconds: 200));
-                              setState(() {
-                                panelGamesThere = false;
-                              });
-                            }
                           } else {
-                            if (!panelGamesThere) {
-                              setState(() {
-                                panelGamesThere = true;
-                              });
-                            }
                             _animationRotateController.forward();
                             _animationGamesController.forward();
                           }
@@ -318,7 +301,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
         controller: _tabMenuController,
         children: [
           following,
-          games(gamesTab),
+          games(gamesTab, gamesControllerList, indexGames),
         ]);
   }
 
@@ -450,20 +433,25 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget games(List<Game> games) {
+  Widget games(List<Game> games, List<PageController> gamesControllerList,
+      int indexGames) {
+    final games = ref.watch(gamesTabNotifierProvider);
     return PageView.builder(
         controller: gamesController,
         physics: NeverScrollableScrollPhysics(),
         itemCount: games.length,
         itemBuilder: (_, int index) {
-          Game game = games[indexGames];
-          PageController gameController = gamesControllerList[indexGames];
+          if (index != indexGames) {
+            print("je suis dans le if");
+            index = indexGames;
+          }
+          print(index);
           return GameSection(
-            game: game,
+            game: games[index],
+            pageController: gamesControllerList[index],
+            indexGames: index,
             animationGamesController: _animationGamesController,
             animationRotateController: _animationRotateController,
-            panelGamesThere: panelGamesThere,
-            pageController: gameController,
           );
         });
   }
