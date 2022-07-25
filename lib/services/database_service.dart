@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/models/post.dart';
 
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
@@ -22,7 +23,7 @@ class DatabaseService {
   static final CollectionReference usersCollectionReference =
       FirebaseFirestore.instance.collection('users');
 
-//Partie register
+  ///Partie register/login
 
   //Récupérer les 12 premiers jeux de la bdd pour la partie inscription
   static Future<void> getGamesRegister(WidgetRef ref) async {
@@ -167,9 +168,9 @@ class DatabaseService {
     await usersCollectionReference.doc(uid).update({"verified_account": true});
   }
 
-//Partie Home
+  ///Partie Home
 
-//Récupérer les 12 premiers jeux de la bdd pour la partie add
+  //Récupérer les 12 premiers jeux de la bdd pour la partie add
   static Future<void> getGamesDiscover(
       BuildContext context, WidgetRef ref) async {
     List<Game> gamesFollow =
@@ -278,6 +279,71 @@ class DatabaseService {
       messageUser(context, "Oups, un problème est survenu");
       print(e);
     }
+  }
+
+  //get posts on follow game by current user
+  static Future<List<Post>> getPostsGame(String gameName) async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
+        .collection('posts')
+        .where('gameName', isEqualTo: gameName)
+        .where('privacy', isEqualTo: 'Public')
+        .orderBy('date', descending: true)
+        .limit(6)
+        .get();
+
+    for (var item in data.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        posts.add(Post.fromMap(item, item.data()));
+      }
+    }
+
+    return posts;
+  }
+
+  //get more posts on follow game by current user
+  static Future<List<Post>> getMorePostsGame(
+      String gameName, Post lastPost) async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
+        .collection('posts')
+        .where('gameName', isEqualTo: gameName)
+        .where('privacy', isEqualTo: 'Public')
+        .orderBy('date', descending: true)
+        .startAfterDocument(lastPost.snapshot!)
+        .limit(3)
+        .get();
+
+    for (var item in data.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        posts.add(Post.fromMap(item, item.data()));
+      }
+    }
+
+    return posts;
+  }
+
+  //refresh posts on follow game by current user
+  static Future<List<Post>> refreshPostsGame(String gameName) async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
+        .collection('posts')
+        .where('gameName', isEqualTo: gameName)
+        .where('privacy', isEqualTo: 'Public')
+        .orderBy('date', descending: true)
+        .limit(6)
+        .get();
+
+    for (var item in data.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        posts.add(Post.fromMap(item, item.data()));
+      }
+    }
+
+    return posts;
   }
 
 //Others parties

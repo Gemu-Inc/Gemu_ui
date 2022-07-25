@@ -7,6 +7,7 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/components/post_tile.dart';
 import 'package:gemu/providers/Home/home_provider.dart';
+import 'package:gemu/services/database_service.dart';
 
 class GameSection extends ConsumerStatefulWidget {
   final Game game;
@@ -35,7 +36,7 @@ class GameSectionState extends ConsumerState<GameSection>
   @override
   void initState() {
     super.initState();
-    getPostsGame();
+    getPosts();
   }
 
   @override
@@ -43,48 +44,40 @@ class GameSectionState extends ConsumerState<GameSection>
     super.dispose();
   }
 
-  Future<void> getPostsGame() async {
-    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
-        .collection('posts')
-        .where('gameName', isEqualTo: widget.game.name)
-        .where('privacy', isEqualTo: 'Public')
-        .orderBy('date', descending: true)
-        .get();
-
-    for (var item in data.docs) {
-      if (item.data()['uid'] != me!.uid) {
-        posts.add(Post.fromMap(item, item.data()));
-      }
+  Future<void> getPosts() async {
+    try {
+      posts = await DatabaseService.getPostsGame(widget.game.name);
+      setState(() {
+        loadedPosts = true;
+      });
+    } catch (e) {
+      print(e);
     }
-
-    setState(() {
-      loadedPosts = true;
-    });
   }
 
-  Future<void> refreshPostsGame() async {
-    setState(() {
+  Future<void> getMorePosts() async {
+    try {
+      Post lastPost = posts.last;
+      List<Post> newPosts =
+          await DatabaseService.getMorePostsGame(widget.game.name, lastPost);
+      posts = [...posts, ...newPosts];
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> refreshPosts() async {
+    try {
+      setState(() {
       loadedPosts = false;
     });
-
-    posts.clear();
-
-    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
-        .collection('posts')
-        .where('gameName', isEqualTo: widget.game.name)
-        .where('privacy', isEqualTo: 'Public')
-        .orderBy('date', descending: true)
-        .get();
-
-    for (var item in data.docs) {
-      if (item.data()['uid'] != me!.uid) {
-        posts.add(Post.fromMap(item, item.data()));
-      }
-    }
-
+    posts = await DatabaseService.refreshPostsGame(widget.game.name);
     setState(() {
       loadedPosts = true;
     });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
