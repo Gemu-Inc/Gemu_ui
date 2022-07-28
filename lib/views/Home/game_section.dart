@@ -60,7 +60,9 @@ class GameSectionState extends ConsumerState<GameSection>
       Post lastPost = posts.last;
       List<Post> newPosts =
           await DatabaseService.getMorePostsGame(widget.game.name, lastPost);
-      posts = [...posts, ...newPosts];
+      if (newPosts.length != 0) {
+        posts = [...posts, ...newPosts];
+      }
     } catch (e) {
       print(e);
     }
@@ -69,12 +71,12 @@ class GameSectionState extends ConsumerState<GameSection>
   Future<void> refreshPosts() async {
     try {
       setState(() {
-      loadedPosts = false;
-    });
-    posts = await DatabaseService.refreshPostsGame(widget.game.name);
-    setState(() {
-      loadedPosts = true;
-    });
+        loadedPosts = false;
+      });
+      posts = await DatabaseService.getPostsGame(widget.game.name);
+      setState(() {
+        loadedPosts = true;
+      });
     } catch (e) {
       print(e);
     }

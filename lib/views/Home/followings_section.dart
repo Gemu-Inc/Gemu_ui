@@ -7,6 +7,7 @@ import 'package:gemu/models/post.dart';
 import 'package:gemu/components/post_tile.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
+import 'package:gemu/services/database_service.dart';
 
 class FollowingSection extends ConsumerStatefulWidget {
   final PageController pageController;
@@ -28,7 +29,7 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
   @override
   void initState() {
     super.initState();
-    getPostsFollowing();
+    getPosts();
   }
 
   @override
@@ -36,27 +37,19 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
     super.dispose();
   }
 
-  getPostsFollowing() async {
+  getPosts() async {
     List<UserModel> followings = ref.read(myFollowingsNotifierProvider);
 
-    if (followings.length != 0) {
-      for (var i = 0; i < followings.length; i++) {
-        await FirebaseFirestore.instance
-            .collection('posts')
-            .where('uid', isEqualTo: followings[i].uid)
-            .orderBy('date', descending: true)
-            .get()
-            .then((data) {
-          for (var item in data.docs) {
-            posts.add(Post.fromMap(item, item.data()));
-          }
-        });
+    try {
+      if (followings.length != 0) {
+        posts = await DatabaseService.getPostsFollowings(followings);
       }
+      setState(() {
+        loadedPosts = true;
+      });
+    } catch (e) {
+      print(e);
     }
-
-    setState(() {
-      loadedPosts = true;
-    });
   }
 
   Future refreshData() async {

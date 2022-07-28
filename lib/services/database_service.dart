@@ -325,23 +325,35 @@ class DatabaseService {
     return posts;
   }
 
-  //refresh posts on follow game by current user
-  static Future<List<Post>> refreshPostsGame(String gameName) async {
+  //get posts curent user's followings
+  static Future<List<Post>> getPostsFollowings(
+      List<UserModel> followings) async {
     List<Post> posts = [];
+    List<String> uidFollowings = [];
+
+    for (var i = 0; i < followings.length; i++) {
+      uidFollowings.add(followings[i].uid);
+    }
 
     QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
-        .where('gameName', isEqualTo: gameName)
-        .where('privacy', isEqualTo: 'Public')
+        .where('uid', whereIn: uidFollowings)
         .orderBy('date', descending: true)
         .limit(6)
         .get();
 
     for (var item in data.docs) {
-      if (item.data()['uid'] != me!.uid) {
-        posts.add(Post.fromMap(item, item.data()));
-      }
+      posts.add(Post.fromMap(item, item.data()));
     }
+
+    posts.sort(((a, b) => b.date.compareTo(a.date)));
+
+    return posts;
+  }
+
+  //get more posts current user's followings
+  static Future<List<Post>> getMorePostsFollowings() async {
+    List<Post> posts = [];
 
     return posts;
   }
