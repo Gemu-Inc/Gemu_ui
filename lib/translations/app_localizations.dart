@@ -30,7 +30,11 @@ class AppLocalization {
 
   String translate(String parentKey, String childKey) {
     // Returns a localized text
-    return _localizedValues[parentKey][childKey];
+    if (parentKey == "") {
+      return _localizedValues[childKey];
+    } else {
+      return _localizedValues[parentKey][childKey];
+    }
   }
 }
 
