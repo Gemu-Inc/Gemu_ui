@@ -48,7 +48,7 @@ const themeLightPurple = "ThemeLightPurple";
 textStyleCustomBold(Color color, double fontSize,
     [FontWeight? fontWeight, FontStyle? fontStyle]) {
   return TextStyle(
-      fontFamily: 'Fredoka',
+      fontFamily: 'FredokaBold',
       fontSize: fontSize,
       color: color,
       fontWeight: fontWeight ?? FontWeight.bold,
@@ -58,7 +58,7 @@ textStyleCustomBold(Color color, double fontSize,
 textStyleCustomRegular(Color color, double fontSize,
     [FontWeight? fontWeight, FontStyle? fontStyle]) {
   return TextStyle(
-      fontFamily: 'Fredoka',
+      fontFamily: 'FredokaRegular',
       fontSize: fontSize,
       color: color,
       fontWeight: fontWeight ?? FontWeight.w500,

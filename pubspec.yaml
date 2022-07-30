@@ -96,12 +96,20 @@ flutter:
   uses-material-design: true
 
   fonts:
-    - family: Fredoka
+    - family: FredokaBold
       fonts:
         - asset: assets/fonts/Fredoka-Bold.ttf
+    - family: FredokaLight
+      fonts:
         - asset: assets/fonts/Fredoka-Light.ttf
+    - family: FredokaMedium
+      fonts:
         - asset: assets/fonts/Fredoka-Medium.ttf
+    - family: FredokaRegular
+      fonts:
         - asset: assets/fonts/Fredoka-Regular.ttf
+    - family: FredokaSemiBold
+      fonts:
         - asset: assets/fonts/Fredoka-SemiBold.ttf
 
   # To add assets to your application, add an assets section, like this:
