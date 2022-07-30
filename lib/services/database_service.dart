@@ -346,14 +346,32 @@ class DatabaseService {
       posts.add(Post.fromMap(item, item.data()));
     }
 
-    posts.sort(((a, b) => b.date.compareTo(a.date)));
-
     return posts;
   }
 
   //get more posts current user's followings
-  static Future<List<Post>> getMorePostsFollowings() async {
+  static Future<List<Post>> getMorePostsFollowings(
+      List<UserModel> followings, Post lastPost) async {
     List<Post> posts = [];
+    List<String> uidFollowings = [];
+
+    for (var i = 0; i < followings.length; i++) {
+      uidFollowings.add(followings[i].uid);
+    }
+
+    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
+        .collection('posts')
+        .where('uid', whereIn: uidFollowings)
+        .orderBy('date', descending: true)
+        .startAfterDocument(lastPost.snapshot!)
+        .limit(3)
+        .get();
+
+    for (var item in data.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        posts.add(Post.fromMap(item, item.data()));
+      }
+    }
 
     return posts;
   }

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,6 +20,7 @@ class FollowingSection extends ConsumerStatefulWidget {
 class FollowingSectionState extends ConsumerState<FollowingSection>
     with AutomaticKeepAliveClientMixin {
   bool loadedPosts = false;
+  int indexPageMoreData = 0;
   List<Post> posts = [];
 
   @override
@@ -30,6 +30,30 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
   void initState() {
     super.initState();
     getPosts();
+
+    widget.pageController.addListener(() async {
+      if (widget.pageController.page!.toInt() != 0 &&
+          widget.pageController.page!.toInt() % 2 == 0) {
+        if (indexPageMoreData != widget.pageController.page!.toInt() &&
+            indexPageMoreData < widget.pageController.page!.toInt()) {
+          await getMorePosts();
+        }
+      }
+    });
+  }
+
+  @override
+  void deactivate() {
+    widget.pageController.removeListener(() async {
+      if (widget.pageController.page!.toInt() != 0 &&
+          widget.pageController.page!.toInt() % 2 == 0) {
+        if (indexPageMoreData != widget.pageController.page!.toInt() &&
+            indexPageMoreData < widget.pageController.page!.toInt()) {
+          await getMorePosts();
+        }
+      }
+    });
+    super.deactivate();
   }
 
   @override
@@ -37,7 +61,7 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
     super.dispose();
   }
 
-  getPosts() async {
+  Future<void> getPosts() async {
     List<UserModel> followings = ref.read(myFollowingsNotifierProvider);
 
     try {
@@ -52,34 +76,41 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
     }
   }
 
-  Future refreshData() async {
+  Future<void> getMorePosts() async {
     List<UserModel> followings = ref.read(myFollowingsNotifierProvider);
 
-    setState(() {
-      loadedPosts = false;
-    });
-
-    await Future.delayed(Duration(seconds: 2));
-
-    if (followings.length != 0) {
-      posts.clear();
-      print('posts clear: ${posts.length}');
-      for (var i = 0; i < followings.length; i++) {
-        await FirebaseFirestore.instance
-            .collection('posts')
-            .where('uid', isEqualTo: followings[i].uid)
-            .orderBy('date', descending: true)
-            .get()
-            .then((data) {
-          for (var item in data.docs) {
-            posts.add(Post.fromMap(item, item.data()));
-          }
-        });
+    try {
+      Post lastPost = posts.last;
+      List<Post> newPosts =
+          await DatabaseService.getMorePostsFollowings(followings, lastPost);
+      if (newPosts.length != 0) {
+        posts = [...posts, ...newPosts];
       }
+      setState(() {
+        indexPageMoreData = widget.pageController.page!.toInt();
+      });
+    } catch (e) {
+      print(e);
     }
-    setState(() {
-      loadedPosts = true;
-    });
+  }
+
+  Future refreshPosts() async {
+    List<UserModel> followings = ref.read(myFollowingsNotifierProvider);
+
+    try {
+      setState(() {
+        loadedPosts = false;
+      });
+      if (followings.length != 0) {
+        posts = await DatabaseService.getPostsFollowings(followings);
+      }
+      widget.pageController.jumpToPage(0);
+      setState(() {
+        loadedPosts = true;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override

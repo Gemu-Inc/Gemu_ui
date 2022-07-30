@@ -29,6 +29,7 @@ class GameSectionState extends ConsumerState<GameSection>
     with AutomaticKeepAliveClientMixin {
   List<Post> posts = [];
   bool loadedPosts = false;
+  int indexPageMoreData = 0;
 
   @override
   bool get wantKeepAlive => true;
@@ -37,6 +38,30 @@ class GameSectionState extends ConsumerState<GameSection>
   void initState() {
     super.initState();
     getPosts();
+
+    widget.pageController.addListener(() async {
+      if (widget.pageController.page!.toInt() != 0 &&
+          widget.pageController.page!.toInt() % 2 == 0) {
+        if (indexPageMoreData != widget.pageController.page!.toInt() &&
+            indexPageMoreData < widget.pageController.page!.toInt()) {
+          await getMorePosts();
+        }
+      }
+    });
+  }
+
+  @override
+  void deactivate() {
+    widget.pageController.removeListener(() async {
+      if (widget.pageController.page!.toInt() != 0 &&
+          widget.pageController.page!.toInt() % 2 == 0) {
+        if (indexPageMoreData != widget.pageController.page!.toInt() &&
+            indexPageMoreData < widget.pageController.page!.toInt()) {
+          await getMorePosts();
+        }
+      }
+    });
+    super.deactivate();
   }
 
   @override
@@ -63,6 +88,9 @@ class GameSectionState extends ConsumerState<GameSection>
       if (newPosts.length != 0) {
         posts = [...posts, ...newPosts];
       }
+      setState(() {
+        indexPageMoreData = widget.pageController.page!.toInt();
+      });
     } catch (e) {
       print(e);
     }
@@ -74,6 +102,7 @@ class GameSectionState extends ConsumerState<GameSection>
         loadedPosts = false;
       });
       posts = await DatabaseService.getPostsGame(widget.game.name);
+      widget.pageController.jumpToPage(0);
       setState(() {
         loadedPosts = true;
       });
