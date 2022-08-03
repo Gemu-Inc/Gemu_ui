@@ -30,6 +30,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   int currentTabMenuIndex = 1;
 
   late PageController followingsPageController;
+  late PageController currentGamePageController;
 
   late AnimationController _animationRotateController,
       _animationGamesController;
@@ -117,6 +118,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     gamesControllerList = ref.watch(myGamesControllerNotifierProvider);
     indexGames = ref.watch(indexGamesNotifierProvider);
+    currentGamePageController =
+        ref.watch(currentGameControllerNotifierProvider);
 
     return Scaffold(
         backgroundColor: Color(0xFF22213C),
@@ -185,9 +188,9 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
           return GestureDetector(
             onTap: () {
               //voir comment faire pour dire qu'on ne rentre pas dans cette condition si 0 posts dans la section
-              if (gamesControllerList[indexGames].positions.isNotEmpty &&
-                  gamesControllerList[indexGames].page != 0) {
-                gamesControllerList[indexGames].jumpToPage(0);
+              if (currentGamePageController.positions.isNotEmpty &&
+                  currentGamePageController.page != 0) {
+                currentGamePageController.jumpToPage(0);
               }
             },
             child: Container(
@@ -321,6 +324,10 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                     ref
                         .read(indexGamesNotifierProvider.notifier)
                         .updateIndex(index);
+                    ref
+                        .read(currentGameControllerNotifierProvider.notifier)
+                        .updateCurrentGameController(
+                            gamesControllerList[indexGames]);
                   }
                 },
                 indicatorColor: Colors.transparent,
@@ -428,7 +435,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
         children: games.map((game) {
           return GameSection(
             game: game,
-            pageController: gamesControllerList[indexGames],
+            pageController: currentGamePageController,
             animationGamesController: _animationGamesController,
             animationRotateController: _animationRotateController,
           );

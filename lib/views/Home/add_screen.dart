@@ -177,6 +177,10 @@ class _AddScreenState extends ConsumerState<AddScreen>
               .read(myGamesControllerNotifierProvider.notifier)
               .updateGamesController(gamesList.length);
           ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
+          ref
+              .read(currentGameControllerNotifierProvider.notifier)
+              .updateCurrentGameController(
+                  ref.read(myGamesControllerNotifierProvider)[indexGames]);
           navMainAuthKey.currentState!.pop();
           navHomeAuthKey.currentState!
               .pushNamedAndRemoveUntil(Home, (route) => false);
@@ -197,6 +201,10 @@ class _AddScreenState extends ConsumerState<AddScreen>
                   .read(myGamesControllerNotifierProvider.notifier)
                   .updateGamesController(gamesList.length);
               ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
+              ref
+                  .read(currentGameControllerNotifierProvider.notifier)
+                  .updateCurrentGameController(
+                      ref.read(myGamesControllerNotifierProvider)[indexGames]);
               navMainAuthKey.currentState!.pop();
               navHomeAuthKey.currentState!
                   .pushNamedAndRemoveUntil(Home, (route) => false);

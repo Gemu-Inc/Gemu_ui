@@ -5,6 +5,9 @@ import 'package:gemu/models/game.dart';
 final indexGamesNotifierProvider =
     StateNotifierProvider<IndexGamesProvider, int>(
         (ref) => IndexGamesProvider());
+final currentGameControllerNotifierProvider =
+    StateNotifierProvider<CurrentGameControllerProvider, PageController>(
+        (ref) => CurrentGameControllerProvider());
 final myGamesControllerNotifierProvider =
     StateNotifierProvider<MyGamesControllerProvider, List<PageController>>(
         (ref) => MyGamesControllerProvider());
@@ -37,22 +40,6 @@ class GamesTabProvider extends StateNotifier<List<Game>> {
   }
 }
 
-class IndexGamesProvider extends StateNotifier<int> {
-  IndexGamesProvider() : super(0);
-
-  updateIndex(int newIndex) {
-    state = newIndex;
-  }
-
-  resetIndex(int index) {
-    state = index;
-  }
-
-  clearIndex() {
-    state = 0;
-  }
-}
-
 class MyGamesControllerProvider extends StateNotifier<List<PageController>> {
   MyGamesControllerProvider() : super([]);
 
@@ -74,6 +61,34 @@ class MyGamesControllerProvider extends StateNotifier<List<PageController>> {
       list.add(controller);
     }
     return list;
+  }
+}
+
+class IndexGamesProvider extends StateNotifier<int> {
+  IndexGamesProvider() : super(0);
+
+  updateIndex(int newIndex) {
+    state = newIndex;
+  }
+
+  resetIndex(int index) {
+    state = index;
+  }
+
+  clearIndex() {
+    state = 0;
+  }
+}
+
+class CurrentGameControllerProvider extends StateNotifier<PageController> {
+  CurrentGameControllerProvider() : super(PageController());
+
+  updateCurrentGameController(PageController newState) {
+    state = newState;
+  }
+
+  clearCurrentGameController() {
+    state = PageController();
   }
 }
 

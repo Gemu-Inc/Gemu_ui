@@ -23,44 +23,6 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
   int indexPageMoreData = 0;
   List<Post> posts = [];
 
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    getPosts();
-
-    widget.pageController.addListener(() async {
-      if (widget.pageController.page!.toInt() != 0 &&
-          widget.pageController.page!.toInt() % 2 == 0) {
-        if (indexPageMoreData != widget.pageController.page!.toInt() &&
-            indexPageMoreData < widget.pageController.page!.toInt()) {
-          await getMorePosts();
-        }
-      }
-    });
-  }
-
-  @override
-  void deactivate() {
-    widget.pageController.removeListener(() async {
-      if (widget.pageController.page!.toInt() != 0 &&
-          widget.pageController.page!.toInt() % 2 == 0) {
-        if (indexPageMoreData != widget.pageController.page!.toInt() &&
-            indexPageMoreData < widget.pageController.page!.toInt()) {
-          await getMorePosts();
-        }
-      }
-    });
-    super.deactivate();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> getPosts() async {
     List<UserModel> followings = ref.read(myFollowingsNotifierProvider);
 
@@ -111,6 +73,44 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
     } catch (e) {
       print(e);
     }
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    getPosts();
+
+    widget.pageController.addListener(() async {
+      if (widget.pageController.page!.toInt() != 0 &&
+          widget.pageController.page!.toInt() % 2 == 0) {
+        if (indexPageMoreData != widget.pageController.page!.toInt() &&
+            indexPageMoreData < widget.pageController.page!.toInt()) {
+          await getMorePosts();
+        }
+      }
+    });
+  }
+
+  @override
+  void deactivate() {
+    widget.pageController.removeListener(() async {
+      if (widget.pageController.page!.toInt() != 0 &&
+          widget.pageController.page!.toInt() % 2 == 0) {
+        if (indexPageMoreData != widget.pageController.page!.toInt() &&
+            indexPageMoreData < widget.pageController.page!.toInt()) {
+          await getMorePosts();
+        }
+      }
+    });
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
