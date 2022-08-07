@@ -1,22 +1,9 @@
-import 'package:flutter/material.dart';
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import 'package:gemu/models/game.dart';
 
-final indexGamesNotifierProvider =
-    StateNotifierProvider<IndexGamesProvider, int>(
-        (ref) => IndexGamesProvider());
-final currentGameControllerNotifierProvider =
-    StateNotifierProvider<CurrentGameControllerProvider, PageController>(
-        (ref) => CurrentGameControllerProvider());
-final myGamesControllerNotifierProvider =
-    StateNotifierProvider<MyGamesControllerProvider, List<PageController>>(
-        (ref) => MyGamesControllerProvider());
 final gamesTabNotifierProvider =
     StateNotifierProvider<GamesTabProvider, List<Game>>(
         (ref) => GamesTabProvider());
-final modifGamesFollowsNotifierProvider =
-    StateNotifierProvider<ModifGamesFollowsProvider, bool>(
-        (ref) => ModifGamesFollowsProvider());
 
 class GamesTabProvider extends StateNotifier<List<Game>> {
   GamesTabProvider() : super([]);
@@ -27,75 +14,17 @@ class GamesTabProvider extends StateNotifier<List<Game>> {
     state = [...gamesList, Game(name: "Ajouter", imageUrl: "Ajouter")];
   }
 
-  updateGamesTab(List<Game> gamesList) {
-    state = [...gamesList, Game(name: "Ajouter", imageUrl: "Ajouter")];
+  addGameTab(Game game) {
+    List<Game> newState = [...state, game];
+    newState.removeWhere((element) => element.name == "Ajouter");
+    newState
+        .sort(((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase())));
+    state = [...newState, Game(name: "Ajouter", imageUrl: "Ajouter")];
   }
 
-  List<Game> copyState() {
-    List<Game> games = [];
-    for (Game game in state) {
-      games.add(game.copy());
-    }
-    return games;
-  }
-}
-
-class MyGamesControllerProvider extends StateNotifier<List<PageController>> {
-  MyGamesControllerProvider() : super([]);
-
-  initGamesController(List<PageController> gamesControllerList) {
-    state = gamesControllerList;
-  }
-
-  updateGamesController(int nbGamesController) {
-    List<PageController> newState = [];
-    for (var i = 0; i < nbGamesController; i++) {
-      newState.add(PageController());
-    }
-    state = [...newState];
-  }
-
-  copyState() {
-    List<PageController> list = [];
-    for (var controller in state) {
-      list.add(controller);
-    }
-    return list;
-  }
-}
-
-class IndexGamesProvider extends StateNotifier<int> {
-  IndexGamesProvider() : super(0);
-
-  updateIndex(int newIndex) {
-    state = newIndex;
-  }
-
-  resetIndex(int index) {
-    state = index;
-  }
-
-  clearIndex() {
-    state = 0;
-  }
-}
-
-class CurrentGameControllerProvider extends StateNotifier<PageController> {
-  CurrentGameControllerProvider() : super(PageController());
-
-  updateCurrentGameController(PageController newState) {
-    state = newState;
-  }
-
-  clearCurrentGameController() {
-    state = PageController();
-  }
-}
-
-class ModifGamesFollowsProvider extends StateNotifier<bool> {
-  ModifGamesFollowsProvider() : super(false);
-
-  update(bool newState) {
+  removeGameTab(Game game) {
+    List<Game> newState = [...state];
+    newState.removeWhere((element) => element.name == game.name);
     state = newState;
   }
 }

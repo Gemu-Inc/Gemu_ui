@@ -1,8 +1,8 @@
 import 'dart:io' show Platform;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/components/bottom_sheet_custom.dart';
@@ -29,16 +29,13 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
   late TabController _tabMenuController;
   int currentTabMenuIndex = 1;
 
-  late PageController followingsPageController;
-  late PageController currentGamePageController;
+  late PageController gamesFollowingsController, usersFollowingsController;
 
   late AnimationController _animationRotateController,
       _animationGamesController;
   late Animation _animationRotate, _animationGames;
 
   List<Game> gamesTab = [];
-  List<PageController> gamesControllerList = [];
-  int indexGames = 0;
 
   //Vérifie si l'email de l'utilisateur est vérifié ou non
   Future<void> accountVerified(String uid) async {
@@ -77,21 +74,20 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
       accountVerified(me!.uid);
     }
 
-    gamesTab = ref.read(gamesTabNotifierProvider.notifier).getGamesTab;
-
     _tabMenuController = TabController(
         initialIndex: currentTabMenuIndex, length: 2, vsync: this);
     _tabMenuController.addListener(_onTabMenuChanged);
 
-    followingsPageController = PageController();
+    gamesFollowingsController = PageController();
+    usersFollowingsController = PageController();
 
     _animationGamesController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     _animationGames = CurvedAnimation(
         parent: _animationGamesController, curve: Curves.easeOut);
 
     _animationRotateController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     _animationRotate = Tween<double>(begin: 0.0, end: 180.0).animate(
         CurvedAnimation(
             parent: _animationRotateController, curve: Curves.easeOut));
@@ -111,15 +107,14 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     _animationGamesController.dispose();
     _animationRotateController.dispose();
     _tabMenuController.dispose();
+    gamesFollowingsController.dispose();
+    usersFollowingsController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    gamesControllerList = ref.watch(myGamesControllerNotifierProvider);
-    indexGames = ref.watch(indexGamesNotifierProvider);
-    currentGamePageController =
-        ref.watch(currentGameControllerNotifierProvider);
+    gamesTab = ref.watch(gamesTabNotifierProvider);
 
     return Scaffold(
         backgroundColor: Color(0xFF22213C),
@@ -131,27 +126,23 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                   statusBarIconBrightness: Brightness.light,
                   systemNavigationBarColor: Color(0xFF22213C),
                   systemNavigationBarIconBrightness: Brightness.light),
-          child: DefaultTabController(
-            initialIndex: indexGames,
-            length: gamesTab.length,
-            child: Stack(
-              children: [
-                bodyHome(),
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).padding.top + 15),
-                  child: topHome(gamesTab[indexGames]),
-                ),
-              ],
-            ),
+          child: Stack(
+            children: [
+              bodyHome(),
+              Padding(
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top + 15),
+                child: topHome(),
+              ),
+            ],
           ),
         ));
   }
 
-  Widget topHome(Game game) {
+  Widget topHome() {
     return Container(
       child: Column(
-        children: [topAppBar(), bottomAppBar(), tabGames(gamesTab)],
+        children: [topAppBar(), bottomAppBar(), listGamesFollowings()],
       ),
     );
   }
@@ -162,9 +153,9 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
         case 0:
           return GestureDetector(
             onTap: () {
-              if (followingsPageController.positions.isNotEmpty &&
-                  followingsPageController.page != 0) {
-                followingsPageController.jumpToPage(0);
+              if (usersFollowingsController.positions.isNotEmpty &&
+                  usersFollowingsController.page != 0) {
+                usersFollowingsController.jumpToPage(0);
               }
             },
             child: Container(
@@ -188,28 +179,26 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
           return GestureDetector(
             onTap: () {
               //voir comment faire pour dire qu'on ne rentre pas dans cette condition si 0 posts dans la section
-              if (currentGamePageController.positions.isNotEmpty &&
-                  currentGamePageController.page != 0) {
-                currentGamePageController.jumpToPage(0);
+              if (gamesFollowingsController.positions.isNotEmpty &&
+                  gamesFollowingsController.page != 0) {
+                gamesFollowingsController.jumpToPage(0);
               }
             },
             child: Container(
               height: 65,
               width: 45,
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(10.0),
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.secondary
-                      ]),
-                  image: DecorationImage(
-                      image: CachedNetworkImageProvider(
-                          gamesTab[indexGames].imageUrl),
-                      fit: BoxFit.cover)),
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(10.0),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary
+                    ]),
+              ),
+              child: Icon(Icons.videogame_asset, size: 30, color: Colors.black),
             ),
           );
         default:
@@ -298,147 +287,138 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
             ]));
   }
 
+  Widget listGamesFollowings() {
+    return SizeTransition(
+      sizeFactor: _animationGames as Animation<double>,
+      child: Container(
+          height: 110,
+          child: Center(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  itemCount: gamesTab.length,
+                  itemBuilder: (_, index) {
+                    Game game = gamesTab[index];
+
+                    return game.name == "Ajouter"
+                        ? Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: SizedBox(
+                              width: 60,
+                              child: GestureDetector(
+                                onTap: () => gamesBottomSheet(
+                                  navMainAuthKey.currentContext!,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 65,
+                                      width: 45,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary
+                                            ]),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 40,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text(
+                                      game.name,
+                                      style: textStyleCustomRegular(
+                                          Colors.white, 12),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        : Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: SizedBox(
+                              width: 60,
+                              child: GestureDetector(
+                                onTap: () => navHomeAuthKey.currentState!
+                                    .pushNamed(GameProfile, arguments: [game]),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 65,
+                                      width: 45,
+                                      decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary
+                                              ]),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          border: Border.all(
+                                              width: 1.5, color: Colors.white),
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: CachedNetworkImageProvider(
+                                                  game.imageUrl))),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text(
+                                      game.name,
+                                      textAlign: TextAlign.center,
+                                      style: textStyleCustomRegular(
+                                          Colors.white, 12),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                  }))),
+    );
+  }
+
   Widget bodyHome() {
     return TabBarView(
         physics: NeverScrollableScrollPhysics(),
         controller: _tabMenuController,
         children: [
           following,
-          games(gamesTab),
+          games,
         ]);
   }
 
   Widget get following => FollowingSection(
-        pageController: followingsPageController,
+        pageController: usersFollowingsController,
       );
 
-  Widget tabGames(List<Game> games) {
-    return SizeTransition(
-      sizeFactor: _animationGames as Animation<double>,
-      child: Container(
-          height: 105,
-          child: Center(
-            child: TabBar(
-                onTap: (index) {
-                  if (games[index].name != "Ajouter") {
-                    ref
-                        .read(indexGamesNotifierProvider.notifier)
-                        .updateIndex(index);
-                    ref
-                        .read(currentGameControllerNotifierProvider.notifier)
-                        .updateCurrentGameController(
-                            gamesControllerList[indexGames]);
-                  }
-                },
-                indicatorColor: Colors.transparent,
-                labelColor: Theme.of(context).colorScheme.primary,
-                unselectedLabelColor: Colors.grey,
-                isScrollable: true,
-                tabs: games.map((game) {
-                  int index = games.indexOf(game);
-                  return game.name == "Ajouter"
-                      ? SizedBox(
-                          width: 60,
-                          child: GestureDetector(
-                            onTap: () => gamesBottomSheet(
-                              navMainAuthKey.currentContext!,
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 65,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Theme.of(context).colorScheme.primary,
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .secondary
-                                        ]),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 40,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  game.name,
-                                  style:
-                                      textStyleCustomRegular(Colors.white, 12),
-                                  textAlign: TextAlign.center,
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      : SizedBox(
-                          width: 60,
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 65,
-                                width: 45,
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Theme.of(context).colorScheme.primary,
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .secondary
-                                        ]),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    border: Border.all(
-                                        width: 1.5,
-                                        color: indexGames == index
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Colors.white),
-                                    image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: CachedNetworkImageProvider(
-                                            game.imageUrl))),
-                              ),
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                              Text(
-                                game.name,
-                                textAlign: TextAlign.center,
-                                style: textStyleCustomRegular(
-                                    indexGames == index
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Colors.white,
-                                    12),
-                              )
-                            ],
-                          ),
-                        );
-                }).toList()),
-          )),
-    );
-  }
-
-  Widget games(List<Game> games) {
-    return TabBarView(
-        physics: NeverScrollableScrollPhysics(),
-        children: games.map((game) {
-          return GameSection(
-            game: game,
-            pageController: currentGamePageController,
-            animationGamesController: _animationGamesController,
-            animationRotateController: _animationRotateController,
-          );
-        }).toList());
-  }
+  Widget get games => GameSection(
+      pageController: gamesFollowingsController,
+      animationGamesController: _animationGamesController,
+      animationRotateController: _animationRotateController);
 }

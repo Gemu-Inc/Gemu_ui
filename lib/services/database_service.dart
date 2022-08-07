@@ -144,9 +144,6 @@ class DatabaseService {
 
     ref.read(myGamesNotifierProvider.notifier).initGames(gamesList);
     ref.read(gamesTabNotifierProvider.notifier).initGamesTab(gamesList);
-    ref
-        .read(myGamesControllerNotifierProvider.notifier)
-        .initGamesController(gamePageController);
     ref.read(myFollowingsNotifierProvider.notifier).initFollowings(followings);
 
     await DatabaseService.getCurrentUser(user.uid, ref);
@@ -249,7 +246,7 @@ class DatabaseService {
           .set({"name": game.name, "imageUrl": game.imageUrl});
       ref.read(myGamesNotifierProvider.notifier).addGame(game);
       ref.read(gamesDiscoverNotifierProvider.notifier).removeGame(game);
-      ref.read(modifGamesFollowsNotifierProvider.notifier).update(true);
+      ref.read(gamesTabNotifierProvider.notifier).addGameTab(game);
     } catch (e) {
       messageUser(context, "Oups, un problème est survenu");
       print(e);
@@ -271,7 +268,7 @@ class DatabaseService {
         ref
             .read(gamesDiscoverNotifierProvider.notifier)
             .addGame(game, stopReached);
-        ref.read(modifGamesFollowsNotifierProvider.notifier).update(true);
+        ref.read(gamesTabNotifierProvider.notifier).removeGameTab(game);
       } else {
         messageUser(context, "Vous devez au moins être abonné à 2 jeux");
       }
@@ -281,13 +278,18 @@ class DatabaseService {
     }
   }
 
-  //get posts on follow game by current user
-  static Future<List<Post>> getPostsGame(String gameName) async {
+  //get posts current user's games followings
+  static Future<List<Post>> getPostsGame(List<Game> games) async {
     List<Post> posts = [];
+    List<String> gamesNames = [];
+
+    for (var i = 0; i < games.length; i++) {
+      gamesNames.add(games[i].name);
+    }
 
     QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
-        .where('gameName', isEqualTo: gameName)
+        .where('gameName', whereIn: gamesNames)
         .where('privacy', isEqualTo: 'Public')
         .orderBy('date', descending: true)
         .limit(6)
@@ -302,14 +304,19 @@ class DatabaseService {
     return posts;
   }
 
-  //get more posts on follow game by current user
+  //get more posts current user's games followings
   static Future<List<Post>> getMorePostsGame(
-      String gameName, Post lastPost) async {
+      List<Game> games, Post lastPost) async {
     List<Post> posts = [];
+    List<String> gamesNames = [];
+
+    for (var i = 0; i < games.length; i++) {
+      gamesNames.add(games[i].name);
+    }
 
     QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
-        .where('gameName', isEqualTo: gameName)
+        .where('gameName', whereIn: gamesNames)
         .where('privacy', isEqualTo: 'Public')
         .orderBy('date', descending: true)
         .startAfterDocument(lastPost.snapshot!)

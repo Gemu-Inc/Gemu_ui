@@ -17,8 +17,7 @@ class FollowingSection extends ConsumerStatefulWidget {
   FollowingSectionState createState() => FollowingSectionState();
 }
 
-class FollowingSectionState extends ConsumerState<FollowingSection>
-    with AutomaticKeepAliveClientMixin {
+class FollowingSectionState extends ConsumerState<FollowingSection> {
   bool loadedPosts = false;
   int indexPageMoreData = 0;
   List<Post> posts = [];
@@ -63,10 +62,12 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
       setState(() {
         loadedPosts = false;
       });
+      if (posts.length != 0) {
+        widget.pageController.jumpToPage(0);
+      }
       if (followings.length != 0) {
         posts = await DatabaseService.getPostsFollowings(followings);
       }
-      widget.pageController.jumpToPage(0);
       setState(() {
         loadedPosts = true;
       });
@@ -74,9 +75,6 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
       print(e);
     }
   }
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -115,7 +113,10 @@ class FollowingSectionState extends ConsumerState<FollowingSection>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    ref.listen(myFollowingsNotifierProvider, (previousState, nexState) {
+      refreshPosts();
+    });
+
     return loadedPosts
         ? posts.length == 0
             ? Center(

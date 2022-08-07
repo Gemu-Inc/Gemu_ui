@@ -29,10 +29,6 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
     await prefs.remove("token");
     await AuthService.signOut().then((value) {
       ref.read(myselfNotifierProvider.notifier).cleanUser();
-      ref.read(indexGamesNotifierProvider.notifier).clearIndex();
-      ref
-          .read(currentGameControllerNotifierProvider.notifier)
-          .clearCurrentGameController();
     });
   }
 

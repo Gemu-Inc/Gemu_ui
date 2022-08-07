@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemu/providers/Home/home_provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/game.dart';
@@ -10,12 +9,10 @@ import 'package:gemu/components/post_tile.dart';
 import 'package:gemu/services/database_service.dart';
 
 class GameSection extends ConsumerStatefulWidget {
-  final Game game;
   final PageController pageController;
   final AnimationController animationRotateController, animationGamesController;
 
   GameSection({
-    required this.game,
     required this.pageController,
     required this.animationGamesController,
     required this.animationRotateController,
@@ -26,16 +23,15 @@ class GameSection extends ConsumerStatefulWidget {
 }
 
 class GameSectionState extends ConsumerState<GameSection> {
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
-
   List<Post> posts = [];
   bool loadedPosts = false;
   int indexPageMoreData = 0;
 
   Future<void> getPosts() async {
+    List<Game> gamesFollowings = ref.read(myGamesNotifierProvider);
+
     try {
-      posts = await DatabaseService.getPostsGame(widget.game.name);
+      posts = await DatabaseService.getPostsGame(gamesFollowings);
       setState(() {
         loadedPosts = true;
       });
@@ -45,10 +41,12 @@ class GameSectionState extends ConsumerState<GameSection> {
   }
 
   Future<void> getMorePosts() async {
+    List<Game> gamesFollowings = ref.read(myGamesNotifierProvider);
+
     try {
       Post lastPost = posts.last;
       List<Post> newPosts =
-          await DatabaseService.getMorePostsGame(widget.game.name, lastPost);
+          await DatabaseService.getMorePostsGame(gamesFollowings, lastPost);
       if (newPosts.length != 0) {
         posts = [...posts, ...newPosts];
       }
@@ -61,21 +59,21 @@ class GameSectionState extends ConsumerState<GameSection> {
   }
 
   Future<void> refreshPosts() async {
+    List<Game> gamesFollowings = ref.read(myGamesNotifierProvider);
+
     try {
       setState(() {
         loadedPosts = false;
       });
-      posts = await DatabaseService.getPostsGame(widget.game.name);
       if (posts.length != 0) {
         widget.pageController.jumpToPage(0);
       }
+      posts = await DatabaseService.getPostsGame(gamesFollowings);
       setState(() {
         loadedPosts = true;
       });
-      _refreshController.refreshCompleted();
     } catch (e) {
       print(e);
-      _refreshController.refreshFailed();
     }
   }
 
@@ -112,11 +110,15 @@ class GameSectionState extends ConsumerState<GameSection> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(myGamesNotifierProvider, (previousState, nexState) {
+      refreshPosts();
+    });
+
     return loadedPosts
         ? posts.length == 0
             ? Center(
                 child: Text(
-                  'Pas de posts actuellement sur ${widget.game.name}',
+                  'Pas de posts actuellement dans vos jeux suivis',
                   style: textStyleCustomRegular(Colors.white, 14),
                   textAlign: TextAlign.center,
                 ),

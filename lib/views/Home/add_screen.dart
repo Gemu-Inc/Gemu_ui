@@ -32,12 +32,10 @@ class _AddScreenState extends ConsumerState<AddScreen>
   List<Categorie> categoriesList = [];
 
   List<Game> gamesList = [];
-  int indexGames = 0;
 
   bool loadingDiscover = false;
   late bool isLoadingMoreData;
   late bool stopReached;
-  late bool modifGames;
   List<Game> gamesDiscover = [];
   List<Game> newGamesDiscover = [];
 
@@ -158,60 +156,22 @@ class _AddScreenState extends ConsumerState<AddScreen>
   @override
   Widget build(BuildContext context) {
     gamesList = ref.watch(myGamesNotifierProvider);
-    indexGames = ref.watch(indexGamesNotifierProvider);
 
     loadingDiscover = ref.watch(loadingGamesDiscoverNotifierProvider);
     gamesDiscover = ref.watch(gamesDiscoverNotifierProvider);
     newGamesDiscover = ref.watch(newGamesDiscoverNotifierProvider);
     isLoadingMoreData = ref.watch(loadingMoreGamesDiscoverNotifierProvider);
     stopReached = ref.read(stopReachedDiscoverNotifierProvider);
-    modifGames = ref.read(modifGamesFollowsNotifierProvider);
 
     return WillPopScope(
       onWillPop: () async {
-        if (!modifGames) {
-          navMainAuthKey.currentState!.pop();
-        } else {
-          ref.read(gamesTabNotifierProvider.notifier).updateGamesTab(gamesList);
-          ref
-              .read(myGamesControllerNotifierProvider.notifier)
-              .updateGamesController(gamesList.length);
-          ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
-          ref
-              .read(currentGameControllerNotifierProvider.notifier)
-              .updateCurrentGameController(
-                  ref.read(myGamesControllerNotifierProvider)[indexGames]);
-          navMainAuthKey.currentState!.pop();
-          navHomeAuthKey.currentState!
-              .pushNamedAndRemoveUntil(Home, (route) => false);
-          ref.read(modifGamesFollowsNotifierProvider.notifier).update(false);
-        }
+        navMainAuthKey.currentState!.pop();
         return false;
       },
       child: GestureDetector(
         onHorizontalDragUpdate: (details) {
           if (Platform.isIOS && details.delta.dx > 0) {
-            if (!modifGames) {
-              navMainAuthKey.currentState!.pop();
-            } else {
-              ref
-                  .read(gamesTabNotifierProvider.notifier)
-                  .updateGamesTab(gamesList);
-              ref
-                  .read(myGamesControllerNotifierProvider.notifier)
-                  .updateGamesController(gamesList.length);
-              ref.read(indexGamesNotifierProvider.notifier).resetIndex(0);
-              ref
-                  .read(currentGameControllerNotifierProvider.notifier)
-                  .updateCurrentGameController(
-                      ref.read(myGamesControllerNotifierProvider)[indexGames]);
-              navMainAuthKey.currentState!.pop();
-              navHomeAuthKey.currentState!
-                  .pushNamedAndRemoveUntil(Home, (route) => false);
-              ref
-                  .read(modifGamesFollowsNotifierProvider.notifier)
-                  .update(false);
-            }
+            navMainAuthKey.currentState!.pop();
           }
         },
         child: Scaffold(
@@ -251,28 +211,7 @@ class _AddScreenState extends ConsumerState<AddScreen>
                   actions: [
                     IconButton(
                         onPressed: () async {
-                          if (!modifGames) {
-                            navMainAuthKey.currentState!.pop();
-                          } else {
-                            ref
-                                .read(indexGamesNotifierProvider.notifier)
-                                .resetIndex(0);
-                            ref
-                                .read(gamesTabNotifierProvider.notifier)
-                                .updateGamesTab(gamesList);
-                            ref
-                                .read(
-                                    myGamesControllerNotifierProvider.notifier)
-                                .updateGamesController(gamesList.length);
-                            navMainAuthKey.currentState!.pop();
-                            navHomeAuthKey.currentState!
-                                .pushNamedAndRemoveUntil(
-                                    Home, (route) => false);
-                            ref
-                                .read(
-                                    modifGamesFollowsNotifierProvider.notifier)
-                                .update(false);
-                          }
+                          navMainAuthKey.currentState!.pop();
                         },
                         icon: Icon(Icons.clear,
                             color: Theme.of(context).iconTheme.color))
