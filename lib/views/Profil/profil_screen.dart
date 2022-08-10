@@ -105,14 +105,17 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                             Theme.of(context).scaffoldBackgroundColor,
                         automaticallyImplyLeading: false,
                         elevation: 6.0,
-                        systemOverlayStyle: Platform.isIOS ?
-                        Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark
-                         : SystemUiOverlayStyle(
-                            statusBarColor: Colors.transparent,
-                            statusBarIconBrightness:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Brightness.light
-                                    : Brightness.dark),
+                        systemOverlayStyle: Platform.isIOS
+                            ? Theme.of(context).brightness == Brightness.dark
+                                ? SystemUiOverlayStyle.light
+                                : SystemUiOverlayStyle.dark
+                            : SystemUiOverlayStyle(
+                                statusBarColor: Colors.transparent,
+                                statusBarIconBrightness:
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Brightness.light
+                                        : Brightness.dark),
                         forceElevated: true,
                         pinned: true,
                         centerTitle: true,

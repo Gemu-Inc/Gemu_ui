@@ -36,6 +36,9 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
     return showDialog(
         context: context,
         barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(
               context,

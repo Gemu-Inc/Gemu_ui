@@ -44,6 +44,9 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
     return showDialog(
         context: context,
         barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (context) => AlertDialog(
                 backgroundColor: Theme.of(context).canvasColor,
                 shape: RoundedRectangleBorder(
@@ -87,6 +90,9 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
   Future alertUpdateMail(String title, String content) {
     return showDialog(
         context: context,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
@@ -107,6 +113,9 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
     return showDialog(
         context: context,
         barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Sauvegarder',
               'Voulez-vous sauvegarder vos changements?', [

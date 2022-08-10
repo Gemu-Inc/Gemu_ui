@@ -63,6 +63,9 @@ class _AddScreenState extends ConsumerState<AddScreen>
     return showDialog(
         context: context,
         barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (context) {
           return AlertDialogCustom(context, 'Ne plus suivre',
               'Veux-tu retirer ce jeu de tes jeux suivis?', [
@@ -92,6 +95,9 @@ class _AddScreenState extends ConsumerState<AddScreen>
     return showDialog(
         context: context,
         barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (context) {
           return AlertDialogCustom(
               context, 'Suivre', 'Veux-tu ajouter ce jeu à tes jeux suivis?', [

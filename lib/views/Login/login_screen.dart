@@ -321,6 +321,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     showDialog(
                         context: navNonAuthKey.currentContext!,
                         barrierDismissible: false,
+                        barrierColor:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white24
+                                : Colors.black54,
                         builder: (BuildContext context) => Container(
                               child: GestureDetector(
                                 onTap: () {

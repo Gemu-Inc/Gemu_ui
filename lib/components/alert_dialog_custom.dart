@@ -8,7 +8,7 @@ class AlertDialogCustom extends AlertDialog {
       : super(
             backgroundColor: Theme.of(context).canvasColor,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0)),
+                borderRadius: BorderRadius.circular(10.0)),
             title: Text(
               title,
               style: Theme.of(context).textTheme.titleSmall,
@@ -24,7 +24,7 @@ class AlertDialogResetPassword extends AlertDialog {
       : super(
             backgroundColor: Theme.of(context).canvasColor,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0)),
+                borderRadius: BorderRadius.circular(10.0)),
             title: Text(
               title,
               style: Theme.of(context).textTheme.titleSmall,
@@ -33,13 +33,18 @@ class AlertDialogResetPassword extends AlertDialog {
             actions: actions);
 }
 
-Future verifyAccount() {
+Future verifyAccount(BuildContext context) {
   return showDialog(
       context: navMainAuthKey.currentContext!,
       barrierDismissible: false,
+      barrierColor: Theme.of(context).brightness == Brightness.dark
+          ? Colors.white24
+          : Colors.black54,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.primary,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           elevation: 0,
           title: Row(
             children: [

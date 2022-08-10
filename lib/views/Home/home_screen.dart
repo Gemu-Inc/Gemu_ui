@@ -43,7 +43,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     await user!.reload();
     user = await AuthService.getUser();
     if (!user!.emailVerified) {
-      verifyAccount();
+      verifyAccount(context);
     } else {
       DatabaseService.updateVerifyAccount(me!.uid);
     }

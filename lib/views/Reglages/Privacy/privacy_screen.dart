@@ -27,6 +27,9 @@ class Privacyviewstate extends State<PrivacyScreen> {
     return showDialog(
         context: context,
         barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Change privacy',
               'Voulez-vous modifier la confidentialité de votre compte?', [

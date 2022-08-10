@@ -37,6 +37,9 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
     return showDialog(
         context: context,
         barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -56,6 +59,9 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
     return showDialog(
         context: context,
         barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Sauvegarder',
               'Voulez-vous sauvegarder vos changements?', [

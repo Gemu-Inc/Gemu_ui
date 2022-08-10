@@ -399,6 +399,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         showDialog(
             context: navNonAuthKey.currentContext!,
             barrierDismissible: false,
+            barrierColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white24
+                : Colors.black54,
             builder: (BuildContext context) {
               return AlertDialogCustom(
                   context,
@@ -441,6 +444,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 showDialog(
                     context: navNonAuthKey.currentContext!,
                     barrierDismissible: false,
+                    barrierColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white24
+                            : Colors.black54,
                     builder: (BuildContext context) {
                       return AlertDialogCustom(
                           context,
@@ -530,6 +537,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               showDialog(
                   context: navNonAuthKey.currentContext!,
                   barrierDismissible: false,
+                  barrierColor: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white24
+                      : Colors.black54,
                   builder: (BuildContext context) {
                     return AlertDialogCustom(
                         context,

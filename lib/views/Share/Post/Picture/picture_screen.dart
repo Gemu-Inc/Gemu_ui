@@ -300,6 +300,10 @@ class Pictureviewstate extends State<PictureScreen>
                           await showDialog(
                               context: context,
                               barrierDismissible: false,
+                              barrierColor: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white24
+                                  : Colors.black54,
                               builder: (context) {
                                 return AlertDialogCustom(
                                     context,
