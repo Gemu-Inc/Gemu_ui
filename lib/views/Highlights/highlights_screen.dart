@@ -450,15 +450,18 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
           child: AppBar(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             elevation: 6,
-            systemOverlayStyle: Platform.isIOS ? 
-            Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark
-             : SystemUiOverlayStyle(
-                statusBarColor:
-                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
-                statusBarIconBrightness:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Brightness.light
-                        : Brightness.dark),
+            systemOverlayStyle: Platform.isIOS
+                ? Theme.of(context).brightness == Brightness.dark
+                    ? SystemUiOverlayStyle.light
+                    : SystemUiOverlayStyle.dark
+                : SystemUiOverlayStyle(
+                    statusBarColor: Theme.of(context)
+                        .scaffoldBackgroundColor
+                        .withOpacity(0.5),
+                    statusBarIconBrightness:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Brightness.light
+                            : Brightness.dark),
             title: Text(
               'Highlights',
               style: Theme.of(context).textTheme.bodySmall,

@@ -1,20 +1,22 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemu/components/alert_dialog_custom.dart';
-import 'package:gemu/constants/constants.dart';
 
+import 'package:gemu/components/alert_dialog_custom.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/constants/constants.dart';
+import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/providers/Games/games_discover_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/views/Games/game_focus_screen.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 
 class ProfileGameScreen extends ConsumerStatefulWidget {
   final Game game;
@@ -25,12 +27,16 @@ class ProfileGameScreen extends ConsumerStatefulWidget {
   _ProfileGameScreenState createState() => _ProfileGameScreenState();
 }
 
-class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen> {
+class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
+    with TickerProviderStateMixin {
   late ScrollController _scrollController;
+  late TabController _tabController;
 
-  bool _gamePostsIsThere = false;
+  bool _loadingPosts = false;
   bool _isFollowByUser = false;
   bool _setTitleAppBar = false;
+  bool _stopReached = false;
+  bool _loadingMorePosts = false;
 
   List<Post> posts = [];
 
@@ -48,22 +54,40 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen> {
   }
 
   getPostsGame() async {
-    await FirebaseFirestore.instance
-        .collection('posts')
-        .where('gameName', isEqualTo: widget.game.name)
-        .orderBy('date', descending: true)
-        .limit(20)
-        .get()
-        .then((post) {
-      for (var item in post.docs) {
-        posts.add(Post.fromMap(item, item.data()));
-      }
-    });
-
-    if (!_gamePostsIsThere) {
+    try {
+      posts = await DatabaseService.getPostSpecificGame(widget.game);
       setState(() {
-        _gamePostsIsThere = true;
+        _loadingPosts = true;
       });
+    } catch (e) {
+      print(e);
+      messageUser(context, "Oups, un problème est survenu");
+    }
+  }
+
+  loadMorePostsGame() async {
+    List<Post> newPosts = [];
+    Post lastPost = posts.last;
+
+    try {
+      setState(() {
+        _loadingMorePosts = true;
+      });
+      newPosts =
+          await DatabaseService.getMorePostsSpecificGame(widget.game, lastPost);
+      if (newPosts.length == 0) {
+        setState(() {
+          _stopReached = true;
+        });
+      } else {
+        posts = [...posts, ...newPosts];
+      }
+      setState(() {
+        _loadingMorePosts = false;
+      });
+    } catch (e) {
+      print(e);
+      messageUser(context, "Oups, un problème est survenu");
     }
   }
 
@@ -164,6 +188,13 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen> {
 
     _scrollController = ScrollController();
     _scrollController.addListener(() {
+      if (_scrollController.offset >=
+              _scrollController.position.maxScrollExtent &&
+          !_scrollController.position.outOfRange &&
+          !_stopReached) {
+        loadMorePostsGame();
+      }
+
       if (_scrollController.position.pixels >= heightContainer &&
           !_setTitleAppBar) {
         setState(() {
@@ -176,11 +207,20 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen> {
         });
       }
     });
+
+    _tabController = TabController(length: 1, vsync: this);
   }
 
   @override
   void deactivate() {
     _scrollController.removeListener(() {
+      if (_scrollController.offset >=
+              _scrollController.position.maxScrollExtent &&
+          !_scrollController.position.outOfRange &&
+          !_stopReached) {
+        loadMorePostsGame();
+      }
+
       if (_scrollController.position.pixels >= heightContainer &&
           !_setTitleAppBar) {
         setState(() {
@@ -199,13 +239,13 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBodyBehindAppBar: true,
         appBar: PreferredSize(
             child: ClipRRect(
               child: BackdropFilter(
@@ -279,33 +319,10 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen> {
       controller: _scrollController,
       children: [
         topBody(),
-        const SizedBox(
-          height: 25.0,
-        ),
-        _gamePostsIsThere
-            ? posts.length == 0
-                ? Container(
-                    height: 100,
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Pas de posts pour ${widget.game.name} actuellement",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : listPosts()
-            : Container(
-                height: 100,
-                alignment: Alignment.center,
-                child: SizedBox(
-                  height: 30.0,
-                  width: 30.0,
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.primary,
-                    strokeWidth: 1.0,
-                  ),
-                ),
-              )
+        StickyHeader(
+            controller: _scrollController,
+            header: stickyHeader(),
+            content: tabBarViewCustom()),
       ],
     );
   }
@@ -337,7 +354,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
-                    "24,6 millions followers",
+                    "${Helpers.numberFormat(24600000)} followers",
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(
@@ -413,34 +430,135 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen> {
     );
   }
 
+  Widget stickyHeader() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: ClipRRect(
+          child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: tabBarCustom())),
+    );
+  }
+
+  Widget tabBarCustom() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+      child: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          indicatorSize: TabBarIndicatorSize.tab,
+          labelColor: Theme.of(context).colorScheme.primary,
+          unselectedLabelColor: Colors.grey,
+          indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).canvasColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.primary,
+                  offset: Offset(1.0, 1.0),
+                ),
+              ]),
+          tabs: [
+            Tab(
+              text: 'Les plus récents',
+            ),
+          ]),
+    );
+  }
+
+  Widget tabBarViewCustom() {
+    return IndexedStack(index: _tabController.index, children: [
+      Visibility(
+        child: _loadingPosts
+            ? posts.length == 0
+                ? Container(
+                    height: 100,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Pas de posts pour ${widget.game.name} actuellement",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : listPosts()
+            : Container(
+                height: 100,
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: 30.0,
+                  width: 30.0,
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.primary,
+                    strokeWidth: 1.0,
+                  ),
+                ),
+              ),
+        maintainState: true,
+        visible: _tabController.index == 0,
+      ),
+    ]);
+  }
+
   Widget listPosts() {
-    return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            childAspectRatio: 0.6,
-            crossAxisSpacing: 6,
-            mainAxisSpacing: 6),
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-        itemCount: posts.length,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (_, index) {
-          Post post = posts[index];
-          return post.type == "picture"
-              ? picture(context, post, index)
-              : video(context, post, index);
-        });
+    return Column(
+      children: [
+        GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 0.6,
+                crossAxisSpacing: 6,
+                mainAxisSpacing: 6),
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+            itemCount: 20,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (_, index) {
+              // Post post = posts[index];
+              // return post.type == "picture"
+              //     ? picture(context, post, index)
+              //     : video(context, post, index);
+              return Container(
+                color: Colors.purple,
+              );
+            }),
+        Stack(
+          children: [
+            Container(
+                height: MediaQuery.of(context).size.height / 14,
+                child: _stopReached
+                    ? Center(
+                        child: Text(
+                          "C'est tout pour le moment",
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      )
+                    : _loadingMorePosts
+                        ? Center(
+                            child: SizedBox(
+                              height: 30.0,
+                              width: 30.0,
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                                strokeWidth: 1.5,
+                              ),
+                            ),
+                          )
+                        : SizedBox()),
+          ],
+        )
+      ],
+    );
   }
 
   Widget picture(BuildContext context, Post post, int index) {
     return Ink(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(5.0),
           image: DecorationImage(
               image: CachedNetworkImageProvider(post.postUrl),
               fit: BoxFit.cover)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(5.0),
         splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
         onTap: () => Navigator.push(
             context,
@@ -495,12 +613,12 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen> {
   Widget video(BuildContext context, Post post, int index) {
     return Ink(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(5.0),
           image: DecorationImage(
               image: CachedNetworkImageProvider(post.previewImage!),
               fit: BoxFit.cover)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(5.0),
         splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
         onTap: () => Navigator.push(
             context,

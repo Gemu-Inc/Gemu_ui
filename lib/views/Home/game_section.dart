@@ -31,7 +31,7 @@ class GameSectionState extends ConsumerState<GameSection> {
     List<Game> gamesFollowings = ref.read(myGamesNotifierProvider);
 
     try {
-      posts = await DatabaseService.getPostsGame(gamesFollowings);
+      posts = await DatabaseService.getPostsGamesFollows(gamesFollowings);
       setState(() {
         loadedPosts = true;
       });
@@ -45,8 +45,8 @@ class GameSectionState extends ConsumerState<GameSection> {
 
     try {
       Post lastPost = posts.last;
-      List<Post> newPosts =
-          await DatabaseService.getMorePostsGame(gamesFollowings, lastPost);
+      List<Post> newPosts = await DatabaseService.getMorePostsGamesFollows(
+          gamesFollowings, lastPost);
       if (newPosts.length != 0) {
         posts = [...posts, ...newPosts];
       }
@@ -68,7 +68,7 @@ class GameSectionState extends ConsumerState<GameSection> {
       if (posts.length != 0) {
         widget.pageController.jumpToPage(0);
       }
-      posts = await DatabaseService.getPostsGame(gamesFollowings);
+      posts = await DatabaseService.getPostsGamesFollows(gamesFollowings);
       setState(() {
         loadedPosts = true;
       });

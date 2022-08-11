@@ -167,7 +167,7 @@ class DatabaseService {
     await usersCollectionReference.doc(uid).update({"verified_account": true});
   }
 
-  ///Partie Home
+  //Partie Home
 
   //Récupérer les 12 premiers jeux de la bdd pour la partie add
   static Future<void> getGamesDiscover(
@@ -286,7 +286,7 @@ class DatabaseService {
   }
 
   //get posts current user's games followings
-  static Future<List<Post>> getPostsGame(List<Game> games) async {
+  static Future<List<Post>> getPostsGamesFollows(List<Game> games) async {
     List<Post> posts = [];
     List<String> gamesNames = [];
 
@@ -312,7 +312,7 @@ class DatabaseService {
   }
 
   //get more posts current user's games followings
-  static Future<List<Post>> getMorePostsGame(
+  static Future<List<Post>> getMorePostsGamesFollows(
       List<Game> games, Post lastPost) async {
     List<Post> posts = [];
     List<String> gamesNames = [];
@@ -379,6 +379,50 @@ class DatabaseService {
         .orderBy('date', descending: true)
         .startAfterDocument(lastPost.snapshot!)
         .limit(3)
+        .get();
+
+    for (var item in data.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        posts.add(Post.fromMap(item, item.data()));
+      }
+    }
+
+    return posts;
+  }
+
+//Partie Games
+
+  //get posts for specific game
+  static Future<List<Post>> getPostSpecificGame(Game game) async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
+        .collection('posts')
+        .where('gameName', isEqualTo: game.name)
+        .orderBy('date', descending: true)
+        .limit(20)
+        .get();
+
+    for (var item in data.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        posts.add(Post.fromMap(item, item.data()));
+      }
+    }
+
+    return posts;
+  }
+
+  //load more posts for specific game
+  static Future<List<Post>> getMorePostsSpecificGame(
+      Game game, Post lastPost) async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
+        .collection('posts')
+        .where('gameName', isEqualTo: game.name)
+        .orderBy('date', descending: true)
+        .startAfterDocument(lastPost.snapshot!)
+        .limit(20)
         .get();
 
     for (var item in data.docs) {
