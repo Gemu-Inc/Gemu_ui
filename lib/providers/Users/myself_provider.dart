@@ -41,17 +41,9 @@ class MyGamesProvider extends StateNotifier<List<Game>> {
   }
 
   removeGame(Game game) {
-    List<Game> newState = copyState();
+    List<Game> newState = [...state];
     newState.removeWhere((element) => element.name == game.name);
     state = newState;
-  }
-
-  List<Game> copyState() {
-    List<Game> games = [];
-    for (Game game in state) {
-      games.add(game.copy());
-    }
-    return games;
   }
 }
 

@@ -5,12 +5,11 @@ class Game {
   final DocumentSnapshot<Map<String, dynamic>>? snapshot;
   final String name;
   final String imageUrl;
-  final List? categories;
-  final String? documentId;
+  final List categories;
+  final String documentId;
   final DocumentReference? reference;
   final AlgoliaObjectReference? referenceAlgolia;
   final String? type;
-  final String? idDemandeur;
 
   Game(
       {this.snapshot,
@@ -18,10 +17,9 @@ class Game {
       this.referenceAlgolia,
       required this.name,
       required this.imageUrl,
-      this.categories,
-      this.documentId,
-      this.type,
-      this.idDemandeur});
+      required this.categories,
+      required this.documentId,
+      this.type});
 
   factory Game.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot,
       Map<String, dynamic> data) {
@@ -31,8 +29,7 @@ class Game {
         documentId: snapshot.id,
         name: data['name'],
         imageUrl: data['imageUrl'],
-        categories: data['categories'],
-        idDemandeur: data['idDemandeur']);
+        categories: data['categories']);
   }
 
   factory Game.fromMapAlgolia(
@@ -42,14 +39,16 @@ class Game {
         documentId: data['objectID'],
         name: data['name'],
         imageUrl: data['imageUrl'],
+        categories: data['categories'],
         type: data["type"]);
   }
 
   Map<String, dynamic> toMap() {
-    return {'name': name, 'imageUrl': imageUrl};
-  }
-
-  Game copy() {
-    return Game(name: name, imageUrl: imageUrl);
+    return {
+      'name': name,
+      'imageUrl': imageUrl,
+      'id': documentId,
+      'categories': categories
+    };
   }
 }

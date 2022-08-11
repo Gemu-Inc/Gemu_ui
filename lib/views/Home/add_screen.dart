@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/providers/Games/games_discover_provider.dart';
 import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
@@ -59,7 +60,8 @@ class _AddScreenState extends ConsumerState<AddScreen>
     }
   }
 
-  Future alertUnfollowGame(Game game, int index) {
+  Future alertUnfollowGame(Game game, BuildContext context, WidgetRef ref,
+      List<Game> gamesList, bool stopReached) {
     return showDialog(
         context: context,
         barrierDismissible: false,
@@ -72,7 +74,7 @@ class _AddScreenState extends ConsumerState<AddScreen>
             TextButton(
                 onPressed: () async {
                   await DatabaseService.unfollowGame(
-                      context, game, index, ref, gamesList, stopReached);
+                      context, game, ref, gamesList, stopReached);
                   Navigator.pop(context);
                 },
                 child: Text(
@@ -91,7 +93,7 @@ class _AddScreenState extends ConsumerState<AddScreen>
         });
   }
 
-  Future alertFollowGame(Game game, int index) {
+  Future alertFollowGame(Game game, BuildContext context, WidgetRef ref) {
     return showDialog(
         context: context,
         barrierDismissible: false,
@@ -103,7 +105,7 @@ class _AddScreenState extends ConsumerState<AddScreen>
               context, 'Suivre', 'Veux-tu ajouter ce jeu à tes jeux suivis?', [
             TextButton(
                 onPressed: () async {
-                  await DatabaseService.followGame(context, game, index, ref);
+                  await DatabaseService.followGame(context, game, ref);
                   Navigator.pop(context);
                 },
                 child: Text(
@@ -184,48 +186,46 @@ class _AddScreenState extends ConsumerState<AddScreen>
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
-            child: Container(
-              child: ClipRRect(
-                  child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: AppBar(
-                  automaticallyImplyLeading: false,
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  systemOverlayStyle: Platform.isIOS
-                      ? Theme.of(context).brightness == Brightness.dark
-                          ? SystemUiOverlayStyle.light
-                          : SystemUiOverlayStyle.dark
-                      : SystemUiOverlayStyle(
-                          statusBarColor: Colors.transparent,
-                          statusBarIconBrightness:
-                              Theme.of(context).brightness == Brightness.dark
-                                  ? Brightness.light
-                                  : Brightness.dark,
-                          systemNavigationBarColor:
-                              Theme.of(context).scaffoldBackgroundColor,
-                          systemNavigationBarIconBrightness:
-                              Theme.of(context).brightness == Brightness.dark
-                                  ? Brightness.light
-                                  : Brightness.dark),
-                  title: Text(
-                    "Ajouter",
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  centerTitle: true,
-                  actions: [
-                    IconButton(
-                        onPressed: () async {
-                          navMainAuthKey.currentState!.pop();
-                        },
-                        icon: Icon(Icons.clear,
-                            color: Theme.of(context).iconTheme.color))
-                  ],
+            child: ClipRRect(
+                child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: AppBar(
+                automaticallyImplyLeading: false,
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                systemOverlayStyle: Platform.isIOS
+                    ? Theme.of(context).brightness == Brightness.dark
+                        ? SystemUiOverlayStyle.light
+                        : SystemUiOverlayStyle.dark
+                    : SystemUiOverlayStyle(
+                        statusBarColor: Colors.transparent,
+                        statusBarIconBrightness:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Brightness.light
+                                : Brightness.dark,
+                        systemNavigationBarColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        systemNavigationBarIconBrightness:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Brightness.light
+                                : Brightness.dark),
+                title: Text(
+                  "Ajouter",
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-              )),
-            ),
-            preferredSize: Size(MediaQuery.of(context).size.width, 40),
+                centerTitle: true,
+                actions: [
+                  IconButton(
+                      onPressed: () async {
+                        navMainAuthKey.currentState!.pop();
+                      },
+                      icon: Icon(Icons.clear,
+                          color: Theme.of(context).iconTheme.color))
+                ],
+              ),
+            )),
+            preferredSize: Size(MediaQuery.of(context).size.width, 60),
           ),
           body: Padding(
             padding: const EdgeInsets.only(top: 25.0),
@@ -343,7 +343,8 @@ class _AddScreenState extends ConsumerState<AddScreen>
     return Padding(
       padding: const EdgeInsets.only(right: 6.0),
       child: InkWell(
-        onTap: () => alertUnfollowGame(game, index),
+        onTap: () =>
+            alertUnfollowGame(game, context, ref, gamesList, stopReached),
         child: Container(
           width: 110,
           child: Stack(
@@ -397,7 +398,7 @@ class _AddScreenState extends ConsumerState<AddScreen>
 
   Widget _itemGameDiscover(Game game, int index) {
     return InkWell(
-      onTap: () => alertFollowGame(game, index),
+      onTap: () => alertFollowGame(game, context, ref),
       child: Stack(
         children: [
           Container(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
-import 'package:gemu/views/Games/game_screen.dart';
+import 'package:gemu/views/Games/profile_game_screen.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/views/Highlights/highlights_screen.dart';
 import 'package:gemu/views/Home/add_screen.dart';
@@ -78,7 +78,8 @@ Route<dynamic> generateRouteHomeAuth(
     case Home:
       return MaterialPageRoute(builder: (_) => HomeScreen());
     case GameProfile:
-      return MaterialPageRoute(builder: (_) => GameScreen(game: args![0]));
+      return MaterialPageRoute(
+          builder: (_) => ProfileGameScreen(game: args![0]));
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

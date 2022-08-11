@@ -84,10 +84,12 @@ class DatabaseService {
           .doc(uid)
           .collection('games')
           .doc(gamesFollow[i].name)
-          .set({
-        'name': gamesFollow[i].name,
-        'imageUrl': gamesFollow[i].imageUrl
-      });
+          .set(Game(
+                  name: gamesFollow[i].name,
+                  imageUrl: gamesFollow[i].imageUrl,
+                  categories: gamesFollow[i].categories,
+                  documentId: gamesFollow[i].documentId)
+              .toMap());
     }
   }
 
@@ -236,14 +238,19 @@ class DatabaseService {
 
   //suivre un nouveau jeu pour son fil d'actualité
   static Future<void> followGame(
-      BuildContext context, Game game, int index, WidgetRef ref) async {
+      BuildContext context, Game game, WidgetRef ref) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(me!.uid)
           .collection('games')
           .doc(game.name)
-          .set({"name": game.name, "imageUrl": game.imageUrl});
+          .set(Game(
+                  name: game.name,
+                  imageUrl: game.imageUrl,
+                  categories: game.categories,
+                  documentId: game.documentId)
+              .toMap());
       ref.read(myGamesNotifierProvider.notifier).addGame(game);
       ref.read(gamesDiscoverNotifierProvider.notifier).removeGame(game);
       ref.read(gamesTabNotifierProvider.notifier).addGameTab(game);
@@ -254,7 +261,7 @@ class DatabaseService {
   }
 
   //ne plus suivre un jeu pour son fil d'actualité
-  static Future<void> unfollowGame(BuildContext context, Game game, int index,
+  static Future<void> unfollowGame(BuildContext context, Game game,
       WidgetRef ref, List<Game> gamesList, bool stopReached) async {
     try {
       if (gamesList.length > 2) {

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gemu/models/hashtag.dart';
-import 'package:gemu/views/Games/game_screen.dart';
+import 'package:gemu/views/Games/profile_game_screen.dart';
 import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
 import 'package:marquee/marquee.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -684,7 +684,7 @@ class PictureItemState extends State<PictureItem>
                                       context,
                                       MaterialPageRoute(
                                           builder: (_) =>
-                                              GameScreen(game: game))),
+                                              ProfileGameScreen(game: game))),
                                   child: Container(
                                     height: 30,
                                     width: 30,
@@ -1048,7 +1048,7 @@ class PictureItemState extends State<PictureItem>
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => GameScreen(game: game))),
+                          builder: (_) => ProfileGameScreen(game: game))),
                 ),
               )
             ],
@@ -1717,7 +1717,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => GameScreen(game: game))),
+                          builder: (_) => ProfileGameScreen(game: game))),
                   child: Container(
                     height: 30.0,
                     width: 30.0,
@@ -2118,7 +2118,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => GameScreen(game: game))),
+                          builder: (_) => ProfileGameScreen(game: game))),
                 ),
               )
             ],

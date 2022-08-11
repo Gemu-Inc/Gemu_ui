@@ -8,7 +8,7 @@ import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/views/Profil/profil_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/hashtag.dart';
-import 'package:gemu/views/Games/game_screen.dart';
+import 'package:gemu/views/Games/profile_game_screen.dart';
 import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -554,11 +554,12 @@ class Searchviewstate extends State<SearchScreen>
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (_) => GameScreen(
-                                                      game: Game.fromMap(
-                                                          recentSearch,
-                                                          recentSearch
-                                                              .data()!))));
+                                                  builder: (_) =>
+                                                      ProfileGameScreen(
+                                                          game: Game.fromMap(
+                                                              recentSearch,
+                                                              recentSearch
+                                                                  .data()!))));
                                         },
                                         leading: Container(
                                           height: 45,
@@ -766,7 +767,7 @@ class Searchviewstate extends State<SearchScreen>
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => GameScreen(
+                                        builder: (_) => ProfileGameScreen(
                                             game: Game.fromMap(recentSearch,
                                                 recentSearch.data()!))));
                               },
@@ -1038,7 +1039,7 @@ class Searchviewstate extends State<SearchScreen>
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (_) => GameScreen(
+                                              builder: (_) => ProfileGameScreen(
                                                   game: Game.fromMapAlgolia(
                                                       snap, snap.data))));
                                     },
@@ -1209,7 +1210,7 @@ class Searchviewstate extends State<SearchScreen>
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => GameScreen(
+                                      builder: (_) => ProfileGameScreen(
                                           game: Game.fromMapAlgolia(
                                               snap, snap.data))));
                             },

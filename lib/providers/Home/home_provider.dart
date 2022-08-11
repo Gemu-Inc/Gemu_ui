@@ -11,7 +11,14 @@ class GamesTabProvider extends StateNotifier<List<Game>> {
   List<Game> get getGamesTab => state;
 
   initGamesTab(List<Game> gamesList) {
-    state = [...gamesList, Game(name: "Ajouter", imageUrl: "Ajouter")];
+    state = [
+      ...gamesList,
+      Game(
+          name: "Ajouter",
+          imageUrl: "Ajouter",
+          categories: [],
+          documentId: "Ajouter")
+    ];
   }
 
   addGameTab(Game game) {
@@ -19,7 +26,14 @@ class GamesTabProvider extends StateNotifier<List<Game>> {
     newState.removeWhere((element) => element.name == "Ajouter");
     newState
         .sort(((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase())));
-    state = [...newState, Game(name: "Ajouter", imageUrl: "Ajouter")];
+    state = [
+      ...newState,
+      Game(
+          name: "Ajouter",
+          imageUrl: "Ajouter",
+          categories: [],
+          documentId: "Ajouter")
+    ];
   }
 
   removeGameTab(Game game) {
