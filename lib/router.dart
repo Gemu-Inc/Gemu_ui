@@ -7,6 +7,7 @@ import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/views/Highlights/highlights_screen.dart';
 import 'package:gemu/views/Home/add_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
+import 'package:gemu/views/Post/posts_feed_screen.dart';
 import 'package:gemu/views/Profil/profil_screen.dart';
 import 'package:gemu/views/Reglages/reglages_screen.dart';
 import 'package:gemu/views/Share/Post/Picture/picture_editor_screen.dart';
@@ -79,7 +80,17 @@ Route<dynamic> generateRouteHomeAuth(
       return MaterialPageRoute(builder: (_) => HomeScreen());
     case GameProfile:
       return MaterialPageRoute(
-          builder: (_) => ProfileGameScreen(game: args![0]));
+          builder: (_) => ProfileGameScreen(
+                game: args![0],
+                navKey: args[1],
+              ));
+    case PostsFeed:
+      return MaterialPageRoute(
+          builder: (_) => PostsFeedScreen(
+              title: args![0],
+              navKey: args[1],
+              index: args[2],
+              posts: args[3]));
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

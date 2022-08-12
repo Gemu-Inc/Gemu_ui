@@ -358,7 +358,8 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
                               width: 60,
                               child: GestureDetector(
                                 onTap: () => navHomeAuthKey.currentState!
-                                    .pushNamed(GameProfile, arguments: [game]),
+                                    .pushNamed(GameProfile,
+                                        arguments: [game, navHomeAuthKey]),
                                 child: Column(
                                   children: [
                                     Container(

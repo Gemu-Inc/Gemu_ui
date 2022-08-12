@@ -15,7 +15,7 @@ import 'package:gemu/models/post.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
 
-import '../Search/search_screen.dart';
+import 'search_screen.dart';
 import 'highlights_posts_view.dart';
 
 class HighlightsScreen extends ConsumerStatefulWidget {

@@ -15,13 +15,14 @@ import 'package:gemu/models/post.dart';
 import 'package:gemu/providers/Games/games_discover_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/views/Games/game_focus_screen.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
 class ProfileGameScreen extends ConsumerStatefulWidget {
   final Game game;
+  final GlobalKey<NavigatorState> navKey;
 
-  const ProfileGameScreen({Key? key, required this.game}) : super(key: key);
+  const ProfileGameScreen({Key? key, required this.game, required this.navKey})
+      : super(key: key);
 
   @override
   _ProfileGameScreenState createState() => _ProfileGameScreenState();
@@ -272,7 +273,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                                     ? Brightness.light
                                     : Brightness.dark),
                     leading: IconButton(
-                        onPressed: () => navHomeAuthKey.currentState!.pop(),
+                        onPressed: () => widget.navKey.currentState!.pop(),
                         icon: Icon(Icons.arrow_back_ios)),
                     title: _setTitleAppBar
                         ? Text(
@@ -446,7 +447,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
 
   Widget tabBarCustom() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       child: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -561,14 +562,8 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
       child: InkWell(
         borderRadius: BorderRadius.circular(5.0),
         splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-        onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) => GameFocusScreen(
-                      game: widget.game,
-                      index: index,
-                      posts: posts,
-                    ))),
+        onTap: () => widget.navKey.currentState!.pushNamed(PostsFeed,
+            arguments: [widget.game.name, widget.navKey, index, posts]),
         child: Stack(
           children: [
             Align(
@@ -621,14 +616,8 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
       child: InkWell(
         borderRadius: BorderRadius.circular(5.0),
         splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-        onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) => GameFocusScreen(
-                      game: widget.game,
-                      index: index,
-                      posts: posts,
-                    ))),
+        onTap: () => widget.navKey.currentState!.pushNamed(PostsFeed,
+            arguments: [widget.game.name, widget.navKey, index, posts]),
         child: Stack(
           children: [
             Align(

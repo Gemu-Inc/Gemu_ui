@@ -48,37 +48,40 @@ class PostTile extends StatefulWidget {
 class PostTileState extends State<PostTile> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: StreamBuilder(
-          stream: DefaultCacheManager().getFileStream(widget.post.postUrl),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData) {
-              return const SizedBox();
-            }
-            return (widget.post.type == 'picture')
-                ? PictureItem(
-                    file: snapshot.data.file,
-                    idUserActual: widget.idUserActual,
-                    post: widget.post,
-                    positionDescriptionBar: widget.positionDescriptionBar,
-                    positionActionsBar: widget.positionActionsBar,
-                    isGameBar: widget.isGameBar,
-                    isFollowingsSection: widget.isFollowingsSection,
-                  )
-                : VideoItem(
-                    videoPlayerController: VideoPlayerController.file(
-                        snapshot.data.file,
-                        videoPlayerOptions:
-                            VideoPlayerOptions(mixWithOthers: true)),
-                    idUserActual: widget.idUserActual,
-                    post: widget.post,
-                    positionDescriptionBar: widget.positionDescriptionBar,
-                    positionActionsBar: widget.positionActionsBar,
-                    isGameBar: widget.isGameBar,
-                    isFollowingsSection: widget.isFollowingsSection,
-                  );
-          }),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 1.0),
+      child: Container(
+        color: Colors.black,
+        child: StreamBuilder(
+            stream: DefaultCacheManager().getFileStream(widget.post.postUrl),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return const SizedBox();
+              }
+              return (widget.post.type == 'picture')
+                  ? PictureItem(
+                      file: snapshot.data.file,
+                      idUserActual: widget.idUserActual,
+                      post: widget.post,
+                      positionDescriptionBar: widget.positionDescriptionBar,
+                      positionActionsBar: widget.positionActionsBar,
+                      isGameBar: widget.isGameBar,
+                      isFollowingsSection: widget.isFollowingsSection,
+                    )
+                  : VideoItem(
+                      videoPlayerController: VideoPlayerController.file(
+                          snapshot.data.file,
+                          videoPlayerOptions:
+                              VideoPlayerOptions(mixWithOthers: true)),
+                      idUserActual: widget.idUserActual,
+                      post: widget.post,
+                      positionDescriptionBar: widget.positionDescriptionBar,
+                      positionActionsBar: widget.positionActionsBar,
+                      isGameBar: widget.isGameBar,
+                      isFollowingsSection: widget.isFollowingsSection,
+                    );
+            }),
+      ),
     );
   }
 }
@@ -683,8 +686,10 @@ class PictureItemState extends State<PictureItem>
                                   onTap: () => Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (_) =>
-                                              ProfileGameScreen(game: game))),
+                                          builder: (_) => ProfileGameScreen(
+                                                game: game,
+                                                navKey: navHomeAuthKey,
+                                              ))),
                                   child: Container(
                                     height: 30,
                                     width: 30,
@@ -1048,7 +1053,10 @@ class PictureItemState extends State<PictureItem>
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => ProfileGameScreen(game: game))),
+                          builder: (_) => ProfileGameScreen(
+                                game: game,
+                                navKey: navHomeAuthKey,
+                              ))),
                 ),
               )
             ],
@@ -1717,7 +1725,10 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => ProfileGameScreen(game: game))),
+                          builder: (_) => ProfileGameScreen(
+                                game: game,
+                                navKey: navHomeAuthKey,
+                              ))),
                   child: Container(
                     height: 30.0,
                     width: 30.0,
@@ -2118,7 +2129,10 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => ProfileGameScreen(game: game))),
+                          builder: (_) => ProfileGameScreen(
+                                game: game,
+                                navKey: navHomeAuthKey,
+                              ))),
                 ),
               )
             ],

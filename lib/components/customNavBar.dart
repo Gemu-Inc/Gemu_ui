@@ -23,10 +23,9 @@ class CustomNavBar extends StatelessWidget {
               : Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [
             BoxShadow(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.black38
-                    : Colors.black26,
-                offset: Offset(0, -1.5))
+                color: Theme.of(context).colorScheme.primary,
+                blurRadius: 1,
+                spreadRadius: 1)
           ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

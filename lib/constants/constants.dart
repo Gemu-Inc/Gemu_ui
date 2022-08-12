@@ -35,6 +35,7 @@ const String MyProfil = "Profil";
 const String PictureEditor = "PictureEditor";
 const String VideoEditor = "VideoEditor";
 const String Reglages = "Reglages";
+const String PostsFeed = "PostsFeed";
 
 //Themes
 const appTheme = "Theme";

@@ -556,10 +556,13 @@ class Searchviewstate extends State<SearchScreen>
                                               MaterialPageRoute(
                                                   builder: (_) =>
                                                       ProfileGameScreen(
-                                                          game: Game.fromMap(
-                                                              recentSearch,
-                                                              recentSearch
-                                                                  .data()!))));
+                                                        game: Game.fromMap(
+                                                            recentSearch,
+                                                            recentSearch
+                                                                .data()!),
+                                                        navKey:
+                                                            navSelectionAuthKey,
+                                                      )));
                                         },
                                         leading: Container(
                                           height: 45,
@@ -769,7 +772,8 @@ class Searchviewstate extends State<SearchScreen>
                                     MaterialPageRoute(
                                         builder: (_) => ProfileGameScreen(
                                             game: Game.fromMap(recentSearch,
-                                                recentSearch.data()!))));
+                                                recentSearch.data()!),
+                                            navKey: navSelectionAuthKey)));
                               },
                               leading: Container(
                                 height: 45,
@@ -1041,7 +1045,9 @@ class Searchviewstate extends State<SearchScreen>
                                           MaterialPageRoute(
                                               builder: (_) => ProfileGameScreen(
                                                   game: Game.fromMapAlgolia(
-                                                      snap, snap.data))));
+                                                      snap, snap.data),
+                                                  navKey:
+                                                      navSelectionAuthKey)));
                                     },
                                     leading: snap.data["imageUrl"] == null
                                         ? Container(
@@ -1212,7 +1218,8 @@ class Searchviewstate extends State<SearchScreen>
                                   MaterialPageRoute(
                                       builder: (_) => ProfileGameScreen(
                                           game: Game.fromMapAlgolia(
-                                              snap, snap.data))));
+                                              snap, snap.data),
+                                          navKey: navSelectionAuthKey)));
                             },
                             leading: Container(
                               height: 45,
