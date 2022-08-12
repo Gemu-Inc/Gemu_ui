@@ -91,12 +91,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
     ref.read(loadingMoreGamesRegisterNotifierProvider.notifier).update(true);
 
-    DatabaseService.loadMoreGamesRegister(ref, game);
-
-    await Future.delayed(Duration(seconds: 1));
+    await DatabaseService.loadMoreGamesRegister(ref, game);
 
     ref.read(loadingMoreGamesRegisterNotifierProvider.notifier).update(false);
-    if (newGames.length == 0) {
+    if (ref.read(newGamesRegisterNotifierProvider).length == 0) {
       ref.read(stopReachedRegisterNotifierProvider.notifier).update();
     }
   }
@@ -1322,7 +1320,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                 gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: isDayMood ? lightBgColors : darkBgColors)),
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary
+                    ])),
           ),
           Container(
             decoration: BoxDecoration(

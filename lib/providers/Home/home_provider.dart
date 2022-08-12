@@ -14,10 +14,10 @@ class GamesTabProvider extends StateNotifier<List<Game>> {
     state = [
       ...gamesList,
       Game(
+          documentId: "Ajouter",
           name: "Ajouter",
           imageUrl: "Ajouter",
-          categories: [],
-          documentId: "Ajouter")
+          categories: [])
     ];
   }
 
@@ -29,10 +29,10 @@ class GamesTabProvider extends StateNotifier<List<Game>> {
     state = [
       ...newState,
       Game(
+          documentId: "Ajouter",
           name: "Ajouter",
           imageUrl: "Ajouter",
-          categories: [],
-          documentId: "Ajouter")
+          categories: [])
     ];
   }
 

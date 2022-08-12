@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +34,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
     with TickerProviderStateMixin {
   late ScrollController _scrollController;
   late TabController _tabController;
+  late StreamSubscription gameListener;
 
   bool _loadingPosts = false;
   bool _isFollowByUser = false;
@@ -39,19 +42,17 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
   bool _stopReached = false;
   bool _loadingMorePosts = false;
 
+  int followersGame = 0;
   List<Post> posts = [];
 
   GlobalKey _keyContainer = GlobalKey();
   double heightContainer = 0;
 
   _getSizeContainer() {
-    Future.microtask(() {
-      final RenderBox renderBox =
-          _keyContainer.currentContext!.findRenderObject() as RenderBox;
-      final Size size = renderBox.size;
-      heightContainer = size.height;
-      print(heightContainer);
-    });
+    final RenderBox renderBox =
+        _keyContainer.currentContext!.findRenderObject() as RenderBox;
+    final Size size = renderBox.size;
+    heightContainer = size.height;
   }
 
   getPostsGame() async {
@@ -105,14 +106,12 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
               'Veux-tu retirer ce jeu de tes jeux suivis?', [
             TextButton(
                 onPressed: () async {
-                  try {
-                    await DatabaseService.unfollowGame(
-                        context, game, ref, gamesList, stopReached);
+                  bool valid = await DatabaseService.unfollowGame(
+                      context, game, ref, gamesList, stopReached);
+                  if (valid) {
                     setState(() {
                       _isFollowByUser = false;
                     });
-                  } catch (e) {
-                    print(e);
                   }
                   Navigator.pop(context);
                 },
@@ -145,10 +144,13 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
             TextButton(
                 onPressed: () async {
                   try {
-                    await DatabaseService.followGame(context, game, ref);
-                    setState(() {
-                      _isFollowByUser = true;
-                    });
+                    bool valid =
+                        await DatabaseService.followGame(context, game, ref);
+                    if (valid) {
+                      setState(() {
+                        _isFollowByUser = true;
+                      });
+                    }
                   } catch (e) {
                     print(e);
                   }
@@ -178,6 +180,18 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
           const Duration(milliseconds: 100), () => _getSizeContainer());
     });
 
+    gameListener = FirebaseFirestore.instance
+        .collection('games')
+        .doc("verified")
+        .collection("games_verified")
+        .doc(widget.game.name)
+        .collection("followers")
+        .snapshots()
+        .listen((data) {
+      setState(() {
+        followersGame = data.docs.length;
+      });
+    });
     getPostsGame();
 
     List<Game> gamesFollowsByUser = ref.read(myGamesNotifierProvider);
@@ -239,6 +253,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
 
   @override
   void dispose() {
+    gameListener.cancel();
     _scrollController.dispose();
     _tabController.dispose();
     super.dispose();
@@ -359,7 +374,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
-                    "${Helpers.numberFormat(24600000)} followers",
+                    "${Helpers.numberFormat(followersGame)} followers",
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(
@@ -555,6 +570,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
   Widget picture(BuildContext context, Post post, int index) {
     return Ink(
       decoration: BoxDecoration(
+          color: Theme.of(context).shadowColor,
           borderRadius: BorderRadius.circular(5.0),
           image: DecorationImage(
               image: CachedNetworkImageProvider(post.postUrl),
@@ -582,14 +598,14 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                             backgroundColor: Theme.of(context).shadowColor,
                             child: Icon(
                               Icons.person,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                           ),
                     const SizedBox(
                       width: 5.0,
                     ),
                     Text(
-                      post.username,
+                      post.userName,
                       style: textStyleCustomRegular(Colors.white, 12),
                     )
                   ],
@@ -609,9 +625,10 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
   Widget video(BuildContext context, Post post, int index) {
     return Ink(
       decoration: BoxDecoration(
+          color: Theme.of(context).shadowColor,
           borderRadius: BorderRadius.circular(5.0),
           image: DecorationImage(
-              image: CachedNetworkImageProvider(post.previewImage!),
+              image: CachedNetworkImageProvider(post.previewImage),
               fit: BoxFit.cover)),
       child: InkWell(
         borderRadius: BorderRadius.circular(5.0),
@@ -653,7 +670,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                       width: 5.0,
                     ),
                     Text(
-                      post.username,
+                      post.userName,
                       style: textStyleCustomRegular(Colors.white, 12),
                     )
                   ],

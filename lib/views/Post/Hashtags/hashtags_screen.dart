@@ -216,7 +216,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(5.0),
                 image: DecorationImage(
-                  image: CachedNetworkImageProvider(post.previewImage!),
+                  image: CachedNetworkImageProvider(post.previewImage),
                   fit: BoxFit.cover,
                 )),
             child: Stack(

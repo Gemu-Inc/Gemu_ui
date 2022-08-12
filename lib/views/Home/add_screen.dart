@@ -4,9 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
-import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/providers/Games/games_discover_provider.dart';
-import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -46,12 +44,10 @@ class _AddScreenState extends ConsumerState<AddScreen>
 
       ref.read(loadingMoreGamesDiscoverNotifierProvider.notifier).update(true);
 
-      DatabaseService.loadMoreGamesDiscover(context, ref, game);
-
-      await Future.delayed(Duration(seconds: 1));
+      await DatabaseService.loadMoreGamesDiscover(context, ref, game);
 
       ref.read(loadingMoreGamesDiscoverNotifierProvider.notifier).update(false);
-      if (newGamesDiscover.length == 0) {
+      if (ref.read(newGamesDiscoverNotifierProvider).length == 0) {
         ref.read(stopReachedDiscoverNotifierProvider.notifier).update();
       }
     } catch (e) {

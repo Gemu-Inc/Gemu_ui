@@ -74,7 +74,7 @@ class NewGamesDiscoverProvider extends StateNotifier<List<Game>> {
   NewGamesDiscoverProvider() : super([]);
 
   seeNewGames(List<Game> newGames) {
-    state = newGames;
+    state = [...newGames];
   }
 }
 

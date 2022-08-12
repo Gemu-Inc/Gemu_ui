@@ -723,7 +723,7 @@ class PictureItemState extends State<PictureItem>
                                               )));
                                 },
                                 child: Text(
-                                  post.username,
+                                  post.userName,
                                 )),
                           ),
                           SizedBox(
@@ -1662,7 +1662,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                       }
                     })
                 : CachedNetworkImage(
-                    imageUrl: post.previewImage!,
+                    imageUrl: post.previewImage,
                     fit: BoxFit.cover,
                   ),
           ),
@@ -1796,7 +1796,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                                               )));
                                 },
                                 child: Text(
-                                  post.username,
+                                  post.userName,
                                 )),
                           ),
                           SizedBox(

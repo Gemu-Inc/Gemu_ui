@@ -4,7 +4,8 @@ class Post {
   DocumentSnapshot<Map<String, dynamic>>? snapshot;
   DocumentReference reference;
   String id;
-  String uid, username;
+  String uid;
+  String userName;
   String? imageUrl;
   int commentcount;
   int date;
@@ -17,14 +18,15 @@ class Post {
   String postUrl;
   String type;
   int viewcount;
-  String? previewImage;
+  String previewImage;
+  String privacy;
 
   Post(
       {this.snapshot,
       required this.reference,
       required this.id,
       required this.uid,
-      required this.username,
+      required this.userName,
       required this.imageUrl,
       required this.commentcount,
       required this.date,
@@ -37,7 +39,8 @@ class Post {
       required this.downcount,
       required this.upcount,
       required this.viewcount,
-      this.previewImage});
+      required this.previewImage,
+      required this.privacy});
 
   factory Post.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot,
       Map<String, dynamic> data) {
@@ -46,7 +49,7 @@ class Post {
         reference: snapshot.reference,
         id: data['id'],
         uid: data['uid'],
-        username: data['username'],
+        userName: data['username'],
         imageUrl: data['imageUrl'],
         commentcount: data['commentcount'],
         date: data['date'],
@@ -59,6 +62,29 @@ class Post {
         downcount: data['downcount'],
         upcount: data['upcount'],
         viewcount: data['viewcount'],
-        previewImage: data['previewImage']);
+        previewImage: data['previewImage'],
+        privacy: data['privacy']);
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'uid': uid,
+      'username': userName,
+      'imageUrl': imageUrl,
+      'type': type,
+      'id': id,
+      'gameName': gameName,
+      'gameImage': gameImage,
+      'upcount': upcount,
+      'downcount': downcount,
+      'commentcount': commentcount,
+      'description': description,
+      'hashtags': hashtags,
+      'postUrl': postUrl,
+      'privacy': privacy,
+      'viewcount': viewcount,
+      'date': date,
+      'previewImage': previewImage
+    };
   }
 }

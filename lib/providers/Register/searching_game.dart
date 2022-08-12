@@ -44,7 +44,7 @@ class NewGamesRegisterProvider extends StateNotifier<List<Game>> {
   NewGamesRegisterProvider() : super([]);
 
   seeNewGames(List<Game> newGames) {
-    state = newGames;
+    state = [...newGames];
   }
 }
 
