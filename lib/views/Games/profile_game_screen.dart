@@ -246,6 +246,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: PreferredSize(
             child: ClipRRect(
               child: BackdropFilter(
@@ -322,7 +323,10 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
         StickyHeader(
             controller: _scrollController,
             header: stickyHeader(),
-            content: tabBarViewCustom()),
+            content: Padding(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: tabBarViewCustom(),
+            )),
       ],
     );
   }
@@ -442,7 +446,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
 
   Widget tabBarCustom() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
       child: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -509,17 +513,14 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                 crossAxisSpacing: 6,
                 mainAxisSpacing: 6),
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-            itemCount: 20,
+            itemCount: posts.length,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (_, index) {
-              // Post post = posts[index];
-              // return post.type == "picture"
-              //     ? picture(context, post, index)
-              //     : video(context, post, index);
-              return Container(
-                color: Colors.purple,
-              );
+              Post post = posts[index];
+              return post.type == "picture"
+                  ? picture(context, post, index)
+                  : video(context, post, index);
             }),
         Stack(
           children: [
