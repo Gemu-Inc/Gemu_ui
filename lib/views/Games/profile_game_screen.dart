@@ -351,7 +351,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
     return Container(
       key: _keyContainer,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
+        padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -462,7 +462,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
 
   Widget tabBarCustom() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
       child: TabBar(
           controller: _tabController,
           isScrollable: true,
