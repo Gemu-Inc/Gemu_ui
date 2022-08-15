@@ -11,7 +11,9 @@ import 'package:gemu/views/Post/posts_feed_screen.dart';
 import 'package:gemu/views/Profil/profil_screen.dart';
 import 'package:gemu/views/Reglages/reglages_screen.dart';
 import 'package:gemu/views/Share/Post/Picture/picture_editor_screen.dart';
+import 'package:gemu/views/Share/Post/Picture/picture_screen.dart';
 import 'package:gemu/views/Share/Post/Video/video_editor_screen.dart';
+import 'package:gemu/views/Share/Post/Video/video_screen.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/views/Login/login_screen.dart';
 import 'package:gemu/views/Register/register_screen.dart';
@@ -58,9 +60,27 @@ Route<dynamic> generateRouteMainAuth(
     case PictureEditor:
       return MaterialPageRoute(
           builder: (_) => PictureEditorScreen(file: args![0]));
+    case PostNewPicture:
+      return MaterialPageRoute(
+          builder: (_) => PictureScreen(
+              file: args![0],
+              public: args[1],
+              caption: args[2],
+              hashtags: args[3],
+              followsGames: args[4],
+              selectedGame: args[5]));
     case VideoEditor:
       return MaterialPageRoute(
           builder: (_) => VideoEditorScreen(file: args![0]));
+    case PostNewVideo:
+      return MaterialPageRoute(
+          builder: (_) => VideoScreen(
+              file: args![0],
+              public: args[1],
+              caption: args[2],
+              hashtags: args[3],
+              followsGames: args[4],
+              selectedGame: args[5]));
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

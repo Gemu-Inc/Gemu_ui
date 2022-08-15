@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:gemu/models/game.dart';
+import 'package:gemu/models/post.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -18,18 +20,18 @@ import 'package:gemu/components/alert_dialog_custom.dart';
 class VideoScreen extends StatefulWidget {
   final File file;
   final bool public;
-  final String nameGame, imageGame;
   final String caption;
   final List<String> hashtags;
   final List followsGames;
+  final Game selectedGame;
+
   VideoScreen(
       {required this.file,
       required this.public,
-      required this.nameGame,
-      required this.imageGame,
       required this.caption,
       required this.hashtags,
-      required this.followsGames});
+      required this.followsGames,
+      required this.selectedGame});
   @override
   Videoviewstate createState() => Videoviewstate();
 }
@@ -51,7 +53,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
 
   late String saveCaption;
   late bool public;
-  late String gameName, gameImage;
+  late Game game;
 
   List<String> hashtagsSelected = [];
   List _allResults = [];
@@ -139,25 +141,21 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
       String previewImage =
           await uploadImagePreviewToStorage(videoPath, postName, nameGame);
       String video = await uploadVideoToStorage(videoPath, postName, nameGame);
-      FirebaseFirestore.instance.collection('posts').doc(postName).set({
-        'uid': me!.uid,
-        'username': me!.username,
-        'imageUrl': me!.imageUrl,
-        'type': 'video',
-        'id': postName,
-        'gameName': gameName,
-        'gameImage': gameImage,
-        'upcount': 0,
-        'downcount': 0,
-        'commentcount': 0,
-        'description': _captionController.text,
-        'hashtags': hashtagsSelected,
-        'postUrl': video,
-        'previewImage': previewImage,
-        'privacy': privacy,
-        'viewcount': 0,
-        'date': date,
-      });
+      FirebaseFirestore.instance.collection('posts').doc(postName).set(Post(
+              id: postName,
+              description: _captionController.text,
+              downCount: 0,
+              upCount: 0,
+              averageUpDown: 0,
+              commentCount: 0,
+              date: date,
+              postUrl: video,
+              type: "video",
+              previewPictureUrl: previewImage,
+              privacy: privacy,
+              uid: me!.uid,
+              idGame: game.documentId)
+          .toMap());
 
       if (hashtagsSelected.length != 0) {
         FirebaseFirestore.instance.collection('hashtags').get();
@@ -206,7 +204,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
           .collection('games')
           .doc('verified')
           .collection('games_verified')
-          .doc(gameName)
+          .doc(game.name)
           .collection('posts')
           .doc(postName)
           .set({'date': date});
@@ -217,11 +215,9 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
           .doc(postName)
           .set({'date': date});
 
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => BottomNavigationController()),
-          (route) => false);
+      navMainAuthKey.currentState!.popUntil((route) => false);
+      await Future.delayed(const Duration(milliseconds: 500));
+      navMainAuthKey.currentState!.pushNamed(BottomTabNav);
     } catch (e) {
       print(e);
     }
@@ -251,8 +247,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
     _focusNodeCaption = FocusNode();
     _focusNodeHashtags = FocusNode();
 
-    gameName = widget.nameGame;
-    gameImage = widget.imageGame;
+    game = widget.selectedGame;
     hashtagsSelected = widget.hashtags;
 
     public = widget.public;
@@ -388,14 +383,20 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                                               'Voulez-vous abandonner la création de ce post?',
                                               [
                                                 TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pushAndRemoveUntil(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  BottomNavigationController()),
-                                                          (route) => false);
+                                                    onPressed: () async {
+                                                      Navigator.pop(context);
+                                                      navMainAuthKey
+                                                          .currentState!
+                                                          .popUntil(
+                                                              (route) => false);
+                                                      await Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  500));
+                                                      navMainAuthKey
+                                                          .currentState!
+                                                          .pushNamed(
+                                                              BottomTabNav);
                                                     },
                                                     child: Text(
                                                       'Oui',
@@ -435,14 +436,14 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
         padding: EdgeInsets.only(right: 10.0, bottom: 10.0),
         child: GestureDetector(
             onTap: () {
-              if (gameName == 'No game') {
+              if (game.name == 'No game') {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
                   context: context,
                   error: 'Choississez un jeu pour votre post',
                 ));
               } else {
                 File file = widget.file;
-                uploadVideo(file.path, gameName);
+                uploadVideo(file.path, game.name);
               }
             },
             child: Container(
@@ -765,7 +766,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                   Container(
                       height: 100.0,
                       width: MediaQuery.of(context).size.width,
-                      child: gameName == 'No game'
+                      child: game.name == 'No game'
                           ? Column(
                               children: [
                                 Container(
@@ -779,7 +780,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                                 SizedBox(
                                   height: 5.0,
                                 ),
-                                Text(gameName)
+                                Text(game.name)
                               ],
                             )
                           : Column(
@@ -793,12 +794,12 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                                       image: DecorationImage(
                                           fit: BoxFit.cover,
                                           image: CachedNetworkImageProvider(
-                                              gameImage))),
+                                              game.imageUrl))),
                                 ),
                                 SizedBox(
                                   height: 5.0,
                                 ),
-                                Text(gameName)
+                                Text(game.name)
                               ],
                             )),
                   SizedBox(
@@ -815,9 +816,8 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                             return ListTile(
                               onTap: () {
                                 setState(() {
-                                  gameName = _documentSnapshot.data()!['name'];
-                                  gameImage =
-                                      _documentSnapshot.data()!['imageUrl'];
+                                  game = Game.fromMap(_documentSnapshot,
+                                      _documentSnapshot.data()!);
                                   isGame = !isGame;
                                 });
                                 Navigator.pop(context);

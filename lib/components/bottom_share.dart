@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gemu/components/bottom_sheet_custom.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/constants/constants.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BottomShare extends StatefulWidget {
@@ -45,7 +46,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                 topRight: Radius.circular(10.0))),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 6,
-        builder: (context) {
+        builder: (BuildContext context) {
           return Container(
             height: 175,
             child: Column(
@@ -59,7 +60,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                 ListTile(
                   onTap: () => pickImage(ImageSource.gallery),
                   leading: Icon(Icons.photo),
-                  title: Text('Gallerie',
+                  title: Text('Galerie',
                       style: Theme.of(context).textTheme.titleSmall),
                 ),
                 ListTile(
@@ -97,7 +98,7 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
                 ListTile(
                   onTap: () => pickVideo(ImageSource.gallery),
                   leading: Icon(Icons.photo),
-                  title: Text('Gallerie',
+                  title: Text('Galerie',
                       style: Theme.of(context).textTheme.titleSmall),
                 ),
                 ListTile(
@@ -118,12 +119,13 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
           await ImagePicker().getImage(source: src, imageQuality: 100);
       if (image != null) {
         Navigator.pop(context);
-        pictureEditorBottomSheet(context, File(image.path));
+        pictureEditorBottomSheet(
+            navMainAuthKey.currentContext!, File(image.path));
       } else {
         Navigator.pop(context);
       }
     } catch (e) {
-      messageUser(context, "Oups un prblème est survenu");
+      messageUser(context, "Oups un problème est survenu");
     }
   }
 
@@ -133,7 +135,8 @@ class _BottomShare extends State<BottomShare> with TickerProviderStateMixin {
           .getVideo(source: src, maxDuration: Duration(seconds: 10));
       if (video != null) {
         Navigator.pop(context);
-        videoEditorBottomSheet(context, File(video.path));
+        videoEditorBottomSheet(
+            navMainAuthKey.currentContext!, File(video.path));
       } else {
         Navigator.pop(context);
       }

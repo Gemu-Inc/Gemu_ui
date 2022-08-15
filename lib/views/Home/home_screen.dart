@@ -25,7 +25,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _Homeviewstate extends ConsumerState<HomeScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController _tabMenuController;
   int currentTabMenuIndex = 1;
 
@@ -65,6 +65,9 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
     double unitRadian = 57.295779513;
     return degree / unitRadian;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -114,6 +117,7 @@ class _Homeviewstate extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     gamesTab = ref.watch(gamesTabNotifierProvider);
 
     return Scaffold(

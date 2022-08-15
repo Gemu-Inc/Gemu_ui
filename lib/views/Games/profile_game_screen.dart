@@ -589,10 +589,10 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                     const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
                 child: Row(
                   children: [
-                    post.imageUrl != null
+                    post.userPost!["imageUrl"] != null
                         ? CircleAvatar(
-                            backgroundImage:
-                                CachedNetworkImageProvider(post.imageUrl!),
+                            backgroundImage: CachedNetworkImageProvider(
+                                post.userPost!["imageUrl"]),
                           )
                         : CircleAvatar(
                             backgroundColor: Theme.of(context).shadowColor,
@@ -605,7 +605,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                       width: 5.0,
                     ),
                     Text(
-                      post.userName,
+                      post.userPost!["username"],
                       style: textStyleCustomRegular(Colors.white, 12),
                     )
                   ],
@@ -628,7 +628,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
           color: Theme.of(context).shadowColor,
           borderRadius: BorderRadius.circular(5.0),
           image: DecorationImage(
-              image: CachedNetworkImageProvider(post.previewImage),
+              image: CachedNetworkImageProvider(post.previewPictureUrl),
               fit: BoxFit.cover)),
       child: InkWell(
         borderRadius: BorderRadius.circular(5.0),
@@ -654,10 +654,10 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                     const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
                 child: Row(
                   children: [
-                    post.imageUrl != null
+                    post.userPost!["imageUrl"] != null
                         ? CircleAvatar(
-                            backgroundImage:
-                                CachedNetworkImageProvider(post.imageUrl!),
+                            backgroundImage: CachedNetworkImageProvider(
+                                post.userPost!["imageUrl"]!),
                           )
                         : CircleAvatar(
                             backgroundColor: Theme.of(context).shadowColor,
@@ -670,7 +670,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                       width: 5.0,
                     ),
                     Text(
-                      post.userName,
+                      post.userPost!["username"],
                       style: textStyleCustomRegular(Colors.white, 12),
                     )
                   ],

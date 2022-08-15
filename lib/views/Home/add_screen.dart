@@ -1,4 +1,4 @@
-import 'dart:io' show Platform;
+import 'dart:io' show File, Platform;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -270,7 +270,7 @@ class _AddScreenState extends ConsumerState<AddScreen>
 
   Widget followGames() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+      padding: const EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 45.0),
       child: Container(
         height: 170,
         width: MediaQuery.of(context).size.width,

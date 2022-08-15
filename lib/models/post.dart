@@ -2,89 +2,82 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Post {
   DocumentSnapshot<Map<String, dynamic>>? snapshot;
-  DocumentReference reference;
+  DocumentReference? reference;
   String id;
-  String uid;
-  String userName;
-  String? imageUrl;
-  int commentcount;
-  int date;
   String description;
-  String gameName;
-  String gameImage;
-  List hashtags;
-  int upcount;
-  int downcount;
+  int upCount;
+  int downCount;
+  int commentCount;
+  int averageUpDown;
+  int date;
+  String privacy;
+  String previewPictureUrl;
   String postUrl;
   String type;
-  int viewcount;
-  String previewImage;
-  String privacy;
+  String uid;
+  String idGame;
+  Map<String, dynamic>? userPost;
+  Map<String, dynamic>? gamePost;
 
   Post(
       {this.snapshot,
-      required this.reference,
+      this.reference,
       required this.id,
-      required this.uid,
-      required this.userName,
-      required this.imageUrl,
-      required this.commentcount,
-      required this.date,
       required this.description,
-      required this.gameName,
-      required this.gameImage,
-      required this.hashtags,
+      required this.downCount,
+      required this.upCount,
+      required this.averageUpDown,
+      required this.commentCount,
+      required this.date,
       required this.postUrl,
       required this.type,
-      required this.downcount,
-      required this.upcount,
-      required this.viewcount,
-      required this.previewImage,
-      required this.privacy});
+      required this.previewPictureUrl,
+      required this.privacy,
+      required this.uid,
+      required this.idGame,
+      this.userPost,
+      this.gamePost});
 
-  factory Post.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot,
-      Map<String, dynamic> data) {
+  factory Post.fromMap(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      Map<String, dynamic> dataPost,
+      Map<String, dynamic> dataUser,
+      Map<String, dynamic> dataGame) {
     return Post(
         snapshot: snapshot,
         reference: snapshot.reference,
-        id: data['id'],
-        uid: data['uid'],
-        userName: data['username'],
-        imageUrl: data['imageUrl'],
-        commentcount: data['commentcount'],
-        date: data['date'],
-        description: data['description'],
-        gameName: data['gameName'],
-        gameImage: data['gameImage'],
-        hashtags: data['hashtags'],
-        postUrl: data['postUrl'],
-        type: data['type'],
-        downcount: data['downcount'],
-        upcount: data['upcount'],
-        viewcount: data['viewcount'],
-        previewImage: data['previewImage'],
-        privacy: data['privacy']);
+        id: dataPost['id'],
+        commentCount: dataPost['commentCount'],
+        date: dataPost['date'],
+        description: dataPost['description'],
+        postUrl: dataPost['postUrl'],
+        type: dataPost['type'],
+        downCount: dataPost['downCount'],
+        upCount: dataPost['upCount'],
+        averageUpDown: dataPost['averageUpDown'],
+        previewPictureUrl: dataPost['previewPictureUrl'],
+        privacy: dataPost['privacy'],
+        uid: dataPost['uid'],
+        idGame: dataPost['idGame'],
+        userPost: dataUser,
+        gamePost: dataGame);
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'uid': uid,
-      'username': userName,
-      'imageUrl': imageUrl,
-      'type': type,
       'id': id,
-      'gameName': gameName,
-      'gameImage': gameImage,
-      'upcount': upcount,
-      'downcount': downcount,
-      'commentcount': commentcount,
+      'upCount': upCount,
+      'downCount': downCount,
+      "averageUpDown": averageUpDown,
+      'commentCount': commentCount,
       'description': description,
-      'hashtags': hashtags,
       'postUrl': postUrl,
       'privacy': privacy,
-      'viewcount': viewcount,
       'date': date,
-      'previewImage': previewImage
+      'previewPictureUrl': previewPictureUrl,
+      'type': type,
+      'uid': uid,
+      'idGame': idGame
     };
   }
 }

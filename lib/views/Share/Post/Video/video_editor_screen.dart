@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gemu/constants/constants.dart';
+import 'package:gemu/models/game.dart';
 import 'package:video_player/video_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +13,7 @@ import 'package:gemu/views/Share/Post/Video/video_screen.dart';
 class VideoEditorScreen extends StatefulWidget {
   final File? file;
 
-  VideoEditorScreen({@required this.file});
+  VideoEditorScreen({required this.file});
 
   @override
   VideoEditorviewstate createState() => VideoEditorviewstate();
@@ -32,8 +34,8 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
 
   bool public = true;
 
-  String selectedNameGame = 'No game';
-  String selectedImageUrlGame = '';
+  Game selectedGame = Game(
+      documentId: "0", name: "No game", imageUrl: "No game", categories: []);
 
   List<String> hashtagsSelected = [];
   List _allResults = [];
@@ -150,10 +152,20 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
             height: 50,
             width: MediaQuery.of(context).size.width,
             child: Center(
-              child: Text(
-                'Edit vidéo',
-              ),
-            ),
+                child: Row(
+              children: [
+                IconButton(
+                    onPressed: () async {
+                      navMainAuthKey.currentState!.popUntil((route) => false);
+                      await Future.delayed(const Duration(milliseconds: 500));
+                      navMainAuthKey.currentState!.pushNamed(BottomTabNav);
+                    },
+                    icon: Icon(Icons.clear)),
+                Text(
+                  'Edit video',
+                ),
+              ],
+            )),
           ),
           Expanded(
               child: Stack(
@@ -197,7 +209,7 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                selectedNameGame == 'No game'
+                selectedGame.name == 'No game'
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -240,12 +252,12 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
                                 image: DecorationImage(
                                     fit: BoxFit.cover,
                                     image: CachedNetworkImageProvider(
-                                        selectedImageUrlGame))),
+                                        selectedGame.imageUrl))),
                           ),
                           SizedBox(
                             height: 5.0,
                           ),
-                          Text(selectedNameGame)
+                          Text(selectedGame.name)
                         ],
                       ),
                 Column(
@@ -284,9 +296,8 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
                   return ListTile(
                     onTap: () {
                       setState(() {
-                        selectedNameGame = _documentSnapshot.data()!['name'];
-                        selectedImageUrlGame =
-                            _documentSnapshot.data()!['imageUrl'];
+                        selectedGame = Game.fromMap(
+                            _documentSnapshot, _documentSnapshot.data()!);
                       });
                     },
                     leading: Container(
@@ -568,18 +579,15 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
               : Padding(
                   padding: EdgeInsets.only(right: 10.0),
                   child: GestureDetector(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => VideoScreen(
-                                  file: widget.file!,
-                                  public: public,
-                                  nameGame: selectedNameGame,
-                                  imageGame: selectedImageUrlGame,
-                                  caption: _captionController.text,
-                                  hashtags: hashtagsSelected,
-                                  followsGames: _allResultsGames,
-                                ))),
+                    onTap: () => navMainAuthKey.currentState!
+                        .pushNamed(PostNewVideo, arguments: [
+                      widget.file,
+                      public,
+                      _captionController.text,
+                      hashtagsSelected,
+                      _allResultsGames,
+                      selectedGame,
+                    ]),
                     child: Container(
                       height: 30,
                       width: 60,

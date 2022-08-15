@@ -714,51 +714,37 @@ Future connexionBottomSheet(
 
 Future getStartedBottomSheet(BuildContext context) {
   return showMaterialModalBottomSheet(
-          context: context,
-          expand: true,
-          builder: (context) {
-            return GetStartedScreen();
-          });
+      context: context,
+      expand: true,
+      builder: (context) {
+        return GetStartedScreen();
+      });
 }
 
 Future gamesBottomSheet(BuildContext context) {
   return showMaterialModalBottomSheet(
-          context: context,
-          expand: true,
-          enableDrag: false,
-          builder: (context) {
-            return AddScreen();
-          });
+      context: context,
+      expand: true,
+      enableDrag: false,
+      builder: (context) {
+        return AddScreen();
+      });
 }
 
 Future pictureEditorBottomSheet(BuildContext context, File file) {
-  return Platform.isIOS
-      ? showCupertinoModalBottomSheet(
-          context: context,
-          expand: true,
-          builder: (context) {
-            return PictureEditorScreen(file: file);
-          })
-      : showMaterialModalBottomSheet(
-          context: context,
-          expand: true,
-          builder: (context) {
-            return PictureEditorScreen(file: file);
-          });
+  return showMaterialModalBottomSheet(
+      context: context,
+      expand: true,
+      builder: (context) {
+        return PictureEditorScreen(file: file);
+      });
 }
 
 Future videoEditorBottomSheet(BuildContext context, File file) {
-  return Platform.isIOS
-      ? showCupertinoModalBottomSheet(
-          context: context,
-          expand: true,
-          builder: (context) {
-            return VideoEditorScreen(file: file);
-          })
-      : showMaterialModalBottomSheet(
-          context: context,
-          expand: true,
-          builder: (context) {
-            return VideoEditorScreen(file: file);
-          });
+  return showMaterialModalBottomSheet(
+      context: context,
+      expand: true,
+      builder: (context) {
+        return VideoEditorScreen(file: file);
+      });
 }

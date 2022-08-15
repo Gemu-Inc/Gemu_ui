@@ -308,15 +308,15 @@ class DatabaseService {
   //get posts current user's games followings
   static Future<List<Post>> getPostsGamesFollows(List<Game> games) async {
     List<Post> posts = [];
-    List<String> gamesNames = [];
+    List<String> gamesID = [];
 
     for (var i = 0; i < games.length; i++) {
-      gamesNames.add(games[i].name);
+      gamesID.add(games[i].documentId);
     }
 
     QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
-        .where('gameName', whereIn: gamesNames)
+        .where('idGame', whereIn: gamesID)
         .where('privacy', isEqualTo: 'Public')
         .orderBy('date', descending: true)
         .limit(6)
@@ -324,7 +324,20 @@ class DatabaseService {
 
     for (var item in data.docs) {
       if (item.data()['uid'] != me!.uid) {
-        posts.add(Post.fromMap(item, item.data()));
+        DocumentSnapshot<Map<String, dynamic>> dataUser =
+            await FirebaseFirestore.instance
+                .collection("users")
+                .doc(item.data()['uid'])
+                .get();
+        DocumentSnapshot<Map<String, dynamic>> dataGame =
+            await FirebaseFirestore.instance
+                .collection("games")
+                .doc("verified")
+                .collection("games_verified")
+                .doc(item.data()["idGame"])
+                .get();
+        posts.add(Post.fromMap(
+            item, item.data(), dataUser.data()!, dataGame.data()!));
       }
     }
 
@@ -335,15 +348,15 @@ class DatabaseService {
   static Future<List<Post>> getMorePostsGamesFollows(
       List<Game> games, Post lastPost) async {
     List<Post> posts = [];
-    List<String> gamesNames = [];
+    List<String> gamesID = [];
 
     for (var i = 0; i < games.length; i++) {
-      gamesNames.add(games[i].name);
+      gamesID.add(games[i].documentId);
     }
 
     QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
-        .where('gameName', whereIn: gamesNames)
+        .where('idGame', whereIn: gamesID)
         .where('privacy', isEqualTo: 'Public')
         .orderBy('date', descending: true)
         .startAfterDocument(lastPost.snapshot!)
@@ -352,7 +365,20 @@ class DatabaseService {
 
     for (var item in data.docs) {
       if (item.data()['uid'] != me!.uid) {
-        posts.add(Post.fromMap(item, item.data()));
+        DocumentSnapshot<Map<String, dynamic>> dataUser =
+            await FirebaseFirestore.instance
+                .collection("users")
+                .doc(item.data()['uid'])
+                .get();
+        DocumentSnapshot<Map<String, dynamic>> dataGame =
+            await FirebaseFirestore.instance
+                .collection("games")
+                .doc("verified")
+                .collection("games_verified")
+                .doc(item.data()["idGame"])
+                .get();
+        posts.add(Post.fromMap(
+            item, item.data(), dataUser.data()!, dataGame.data()!));
       }
     }
 
@@ -377,7 +403,20 @@ class DatabaseService {
         .get();
 
     for (var item in data.docs) {
-      posts.add(Post.fromMap(item, item.data()));
+      DocumentSnapshot<Map<String, dynamic>> dataUser = await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(item.data()['uid'])
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataGame = await FirebaseFirestore
+          .instance
+          .collection("games")
+          .doc("verified")
+          .collection("games_verified")
+          .doc(item.data()["idGame"])
+          .get();
+      posts.add(
+          Post.fromMap(item, item.data(), dataUser.data()!, dataGame.data()!));
     }
 
     return posts;
@@ -402,9 +441,20 @@ class DatabaseService {
         .get();
 
     for (var item in data.docs) {
-      if (item.data()['uid'] != me!.uid) {
-        posts.add(Post.fromMap(item, item.data()));
-      }
+      DocumentSnapshot<Map<String, dynamic>> dataUser = await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(item.data()['uid'])
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataGame = await FirebaseFirestore
+          .instance
+          .collection("games")
+          .doc("verified")
+          .collection("games_verified")
+          .doc(item.data()["idGame"])
+          .get();
+      posts.add(
+          Post.fromMap(item, item.data(), dataUser.data()!, dataGame.data()!));
     }
 
     return posts;
@@ -438,14 +488,27 @@ class DatabaseService {
 
     QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
-        .where('gameName', isEqualTo: game.name)
+        .where('idGame', isEqualTo: game.documentId)
         .orderBy('date', descending: true)
         .limit(20)
         .get();
 
     for (var item in data.docs) {
       if (item.data()['uid'] != me!.uid) {
-        posts.add(Post.fromMap(item, item.data()));
+        DocumentSnapshot<Map<String, dynamic>> dataUser =
+            await FirebaseFirestore.instance
+                .collection("users")
+                .doc(item.data()['uid'])
+                .get();
+        DocumentSnapshot<Map<String, dynamic>> dataGame =
+            await FirebaseFirestore.instance
+                .collection("games")
+                .doc("verified")
+                .collection("games_verified")
+                .doc(item.data()["idGame"])
+                .get();
+        posts.add(Post.fromMap(
+            item, item.data(), dataUser.data()!, dataGame.data()!));
       }
     }
 
@@ -459,7 +522,7 @@ class DatabaseService {
 
     QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
-        .where('gameName', isEqualTo: game.name)
+        .where('idGame', isEqualTo: game.documentId)
         .orderBy('date', descending: true)
         .startAfterDocument(lastPost.snapshot!)
         .limit(20)
@@ -467,7 +530,20 @@ class DatabaseService {
 
     for (var item in data.docs) {
       if (item.data()['uid'] != me!.uid) {
-        posts.add(Post.fromMap(item, item.data()));
+        DocumentSnapshot<Map<String, dynamic>> dataUser =
+            await FirebaseFirestore.instance
+                .collection("users")
+                .doc(item.data()['uid'])
+                .get();
+        DocumentSnapshot<Map<String, dynamic>> dataGame =
+            await FirebaseFirestore.instance
+                .collection("games")
+                .doc("verified")
+                .collection("games_verified")
+                .doc(item.data()["idGame"])
+                .get();
+        posts.add(Post.fromMap(
+            item, item.data(), dataUser.data()!, dataGame.data()!));
       }
     }
 

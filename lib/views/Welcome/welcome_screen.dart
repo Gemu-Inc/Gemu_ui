@@ -96,7 +96,7 @@ class WelcomeviewState extends ConsumerState<WelcomeScreen> {
             padding: const EdgeInsets.only(right: 25.0, top: 15.0),
             child: GestureDetector(
                 onTap: () {
-                  getStartedBottomSheet(context);
+                  getStartedBottomSheet(navNonAuthKey.currentContext!);
                 },
                 child: Icon(Icons.info_outline,
                     size: 28, color: Theme.of(context).iconTheme.color)),

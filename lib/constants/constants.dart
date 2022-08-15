@@ -6,14 +6,12 @@ import 'package:gemu/models/user.dart';
 UserModel? me;
 
 //Navigator global keys
-final GlobalKey<NavigatorState> navNonAuthKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> navMainAuthKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> navHomeAuthKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> navSelectionAuthKey =
-    GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> navActivitiesAuthKey =
-    GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> navProfileAuthKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> navNonAuthKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> navMainAuthKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> navHomeAuthKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> navSelectionAuthKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> navActivitiesAuthKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> navProfileAuthKey = GlobalKey<NavigatorState>();
 
 //route names for generated routes non auth
 const String GetStartedBefore = "GetStartedBefore";
@@ -33,7 +31,9 @@ const String Games = "Games";
 const String GameProfile = "GameProfile";
 const String MyProfil = "Profil";
 const String PictureEditor = "PictureEditor";
+const String PostNewPicture = "PostNewPicture";
 const String VideoEditor = "VideoEditor";
+const String PostNewVideo = "PostNewVideo";
 const String Reglages = "Reglages";
 const String PostsFeed = "PostsFeed";
 

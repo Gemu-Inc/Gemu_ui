@@ -85,7 +85,7 @@ class CommentsViewState extends State<CommentsView>
 
     int date = DateTime.now().millisecondsSinceEpoch.toInt();
 
-    widget.post.reference
+    widget.post.reference!
         .collection('comments')
         .doc('Comment${userdoc.id}$date')
         .set({
@@ -99,7 +99,7 @@ class CommentsViewState extends State<CommentsView>
     });
     _commentController.clear();
 
-    await widget.post.reference.update({'commentcount': commentCount + 1});
+    await widget.post.reference!.update({'commentcount': commentCount + 1});
 
     DatabaseService.addNotification(
         me!.uid, widget.post.uid, "a ajouté un commentaire", "comment");
@@ -153,7 +153,7 @@ class CommentsViewState extends State<CommentsView>
     });
 
     int responseCount = 0;
-    await widget.post.reference
+    await widget.post.reference!
         .collection('comments')
         .doc(commentResponsesWillDelete[0])
         .get()
@@ -163,7 +163,7 @@ class CommentsViewState extends State<CommentsView>
 
     int _responseCount = responseCount;
     for (var i = 0; i < responsesWillDelete.length; i++) {
-      await widget.post.reference
+      await widget.post.reference!
           .collection('comments')
           .doc(commentResponsesWillDelete[0])
           .collection('responses')
@@ -171,7 +171,7 @@ class CommentsViewState extends State<CommentsView>
           .delete();
 
       _responseCount = _responseCount - 1;
-      await widget.post.reference
+      await widget.post.reference!
           .collection('comments')
           .doc(commentResponsesWillDelete[0])
           .update({'responsescount': _responseCount});

@@ -25,21 +25,21 @@ class _GetStartedBeforeScreenState
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: Platform.isIOS
-                ? Theme.of(context).brightness == Brightness.dark
-                    ? SystemUiOverlayStyle.light
-                    : SystemUiOverlayStyle.dark
-                : SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    systemNavigationBarColor:
-                        Theme.of(context).scaffoldBackgroundColor,
-                    statusBarIconBrightness:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Brightness.light
-                            : Brightness.dark,
-                    systemNavigationBarIconBrightness:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Brightness.light
-                            : Brightness.dark),
+              ? Theme.of(context).brightness == Brightness.dark
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark
+              : SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  systemNavigationBarColor:
+                      Theme.of(context).scaffoldBackgroundColor,
+                  statusBarIconBrightness:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Brightness.light
+                          : Brightness.dark,
+                  systemNavigationBarIconBrightness:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Brightness.light
+                          : Brightness.dark),
           child: SafeArea(
             left: false,
             right: false,
@@ -448,7 +448,7 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen>
                           .updateSeenGetStarted();
                     } else {
                       navNonAuthKey.currentState!
-                          .pushNamedAndRemoveUntil(Welcome, (route) => false);
+                          .popUntil((route) => route.isFirst);
                     }
                   }
                 },

@@ -84,20 +84,6 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
       print('en bas hashtags');
       loadMoreHashtags();
     }
-
-    if (currentTabIndex == 1 &&
-        _mainScrollController.offset <=
-            (_mainScrollController.position.minScrollExtent - 50.0) &&
-        !isReloadDiscover) {
-      print('en haut discover');
-      reloadDiscoverWithoutGamesUser();
-    } else if (currentTabIndex == 1 &&
-        _mainScrollController.offset >=
-            (_mainScrollController.position.maxScrollExtent + 50.0) &&
-        !isLoadingMoreDiscover) {
-      print('en bas discover');
-      loadMoreDiscoverWithoutGamesUser();
-    }
   }
 
   //Fonctions Hashtags
@@ -205,211 +191,6 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
     });
   }
 
-  //Fonctions Discover
-
-  getDiscoverWithoutGamesUser() async {
-    //Charge tous les jeux qui ne suit pas l'utilisateur
-    await FirebaseFirestore.instance
-        .collection('games')
-        .doc('verified')
-        .collection('games_verified')
-        .get()
-        .then((value) {
-      for (var item in value.docs) {
-        discoverGames.add(Game.fromMap(item, item.data()));
-      }
-    });
-
-    for (var i = 0; i < gamesList.length; i++) {
-      for (var j = 0; j < discoverGames.length; j++) {
-        if (discoverGames[j].name == gamesList[i].name) {
-          discoverGames.remove(discoverGames[j]);
-        }
-      }
-    }
-
-    for (var i = 0; i < discoverGames.length; i++) {
-      await FirebaseFirestore.instance
-          .collection('games')
-          .doc('verified')
-          .collection('games_verified')
-          .doc(discoverGames[i].name)
-          .collection('posts')
-          .orderBy('date', descending: true)
-          .limit(3)
-          .get()
-          .then((value) async {
-        print('value: ${value.docs.length}');
-        if (value.docs.length != 0) {
-          for (var item in value.docs) {
-            print(item.id);
-            await FirebaseFirestore.instance
-                .collection('posts')
-                .doc(item.id)
-                .get()
-                .then((value) {
-              posts.add(Post.fromMap(value, value.data()!));
-            });
-          }
-        }
-      });
-    }
-
-    posts.sort((a, b) => b.date.compareTo(a.date));
-
-    if (!dataDiscoverIsThere && mounted) {
-      setState(() {
-        dataDiscoverIsThere = true;
-      });
-    }
-  }
-
-  loadMoreDiscoverWithoutGamesUser() async {
-    bool add;
-
-    if (newPosts.length != 0) {
-      newPosts.clear();
-    }
-
-    setState(() {
-      isLoadingMoreDiscover = true;
-      if (isResultsDiscover) {
-        isResultsDiscover = false;
-      }
-    });
-
-    for (var i = 0; i < discoverGames.length; i++) {
-      List<Post> postsGame = [];
-      Post lastPost;
-
-      for (var j = 0; j < posts.length; j++) {
-        if (posts[j].gameName == discoverGames[i].name) {
-          postsGame.add(posts[j]);
-        }
-      }
-
-      if (postsGame.length != 0) {
-        lastPost = postsGame.last;
-
-        await FirebaseFirestore.instance
-            .collection('games')
-            .doc('verified')
-            .collection('games_verified')
-            .doc(discoverGames[i].name)
-            .collection('posts')
-            .orderBy('date', descending: true)
-            .startAfterDocument(lastPost.snapshot!)
-            .limit(3)
-            .get()
-            .then((value) async {
-          for (var item in value.docs) {
-            await FirebaseFirestore.instance
-                .collection('posts')
-                .doc(item.id)
-                .get()
-                .then((value) {
-              newPosts.add(Post.fromMap(value, value.data()!));
-            });
-          }
-        });
-      }
-    }
-
-    newPosts.sort((a, b) => b.date.compareTo(a.date));
-
-    for (var i = 0; i < newPosts.length; i++) {
-      if (posts.any((element) => element.id == newPosts[i].id)) {
-        add = false;
-      } else {
-        add = true;
-      }
-
-      if (add) {
-        posts.add(newPosts[i]);
-      }
-    }
-
-    setState(() {
-      isLoadingMoreDiscover = false;
-      if (newPosts.length == 0) {
-        isResultsDiscover = true;
-      }
-    });
-  }
-
-  reloadDiscoverWithoutGamesUser() async {
-    setState(() {
-      isReloadDiscover = true;
-      if (isResultsDiscover) {
-        isResultsDiscover = false;
-      }
-    });
-
-    await Future.delayed(Duration(seconds: 1));
-
-    discoverGames.clear();
-    posts.clear();
-
-    await FirebaseFirestore.instance
-        .collection('games')
-        .doc('verified')
-        .collection('games_verified')
-        .get()
-        .then((value) {
-      for (var item in value.docs) {
-        discoverGames.add(Game.fromMap(item, item.data()));
-      }
-    });
-
-    for (var i = 0; i < gamesList.length; i++) {
-      for (var j = 0; j < discoverGames.length; j++) {
-        if (discoverGames[j].name == gamesList[i].name) {
-          discoverGames.remove(discoverGames[j]);
-        }
-      }
-    }
-
-    for (var i = 0; i < discoverGames.length; i++) {
-      await FirebaseFirestore.instance
-          .collection('games')
-          .doc('verified')
-          .collection('games_verified')
-          .doc(discoverGames[i].name)
-          .collection('posts')
-          .orderBy('date', descending: true)
-          .limit(3)
-          .get()
-          .then((value) async {
-        print('value: ${value.docs.length}');
-        if (value.docs.length != 0) {
-          for (var item in value.docs) {
-            print(item.id);
-            await FirebaseFirestore.instance
-                .collection('posts')
-                .doc(item.id)
-                .get()
-                .then((value) {
-              posts.add(Post.fromMap(value, value.data()!));
-            });
-          }
-        }
-      });
-    }
-
-    posts.sort((a, b) => b.date.compareTo(a.date));
-
-    setState(() {
-      isReloadDiscover = false;
-      dataDiscoverIsThere = false;
-    });
-
-    await Future.delayed(Duration(seconds: 1));
-
-    setState(() {
-      dataDiscoverIsThere = true;
-    });
-  }
-
   @override
   bool get wantKeepAlive => true;
 
@@ -420,7 +201,7 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
     _mainScrollController.addListener(scrollListener);
 
     _tabController =
-        TabController(initialIndex: currentTabIndex, length: 2, vsync: this);
+        TabController(initialIndex: currentTabIndex, length: 1, vsync: this);
     _tabController.addListener(_onTabChanged);
 
     getHashtags();
@@ -584,9 +365,6 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
             Tab(
               text: 'Hashtags',
             ),
-            Tab(
-              text: 'Discover',
-            )
           ]),
     );
   }
@@ -597,11 +375,6 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
         child: hashtagsView(),
         maintainState: true,
         visible: currentTabIndex == 0,
-      ),
-      Visibility(
-        child: discoverView(),
-        maintainState: true,
-        visible: currentTabIndex == 1,
       ),
     ]);
   }
@@ -734,78 +507,6 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
           );
   }
 
-  Widget discoverView() {
-    return dataDiscoverIsThere
-        ? posts.length != 0
-            ? Container(
-                padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0,
-                    (MediaQuery.of(context).size.height / 11) + 5.0),
-                child: Column(
-                  children: [
-                    GridView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        physics: NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 1.0,
-                            crossAxisSpacing: 1.0),
-                        itemCount: posts.length,
-                        itemBuilder: (_, index) {
-                          Post post = posts[index];
-                          return post.type == 'picture'
-                              ? picture(post, index)
-                              : video(post, index);
-                        }),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: Stack(children: [
-                        Container(
-                          height: isLoadingMoreDiscover ? 50.0 : 0.0,
-                          child: Center(
-                            child: SizedBox(
-                              height: 30.0,
-                              width: 30.0,
-                              child: CircularProgressIndicator(
-                                color: Theme.of(context).colorScheme.primary,
-                                strokeWidth: 1.5,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: isResultsDiscover ? 50.0 : 0.0,
-                          child: Center(
-                            child: Text('C\'est tout pour le moment'),
-                          ),
-                        )
-                      ]),
-                    )
-                  ],
-                ),
-              )
-            : Container(
-                height: MediaQuery.of(context).size.height / 1.5,
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: Text(
-                    'Pas encore de posts pour cette section',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-              )
-        : Container(
-            height: 150,
-            width: MediaQuery.of(context).size.width,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primary,
-                strokeWidth: 1.5,
-              ),
-            ),
-          );
-  }
-
   Widget picture(Post post, int index) {
     return Material(
       color: Theme.of(context).canvasColor,
@@ -830,17 +531,6 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
                 splashColor:
                     Theme.of(context).colorScheme.primary.withOpacity(0.5),
               ),
-              Positioned(
-                bottom: 5.0,
-                right: 5.0,
-                child: Column(
-                  children: [
-                    Icon(Icons.remove_red_eye, color: Colors.white),
-                    Text(post.viewcount.toString(),
-                        style: Theme.of(context).textTheme.bodySmall)
-                  ],
-                ),
-              )
             ],
           )),
     );
@@ -855,7 +545,7 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
               border: Border.all(color: Colors.black),
               borderRadius: BorderRadius.circular(5.0),
               image: DecorationImage(
-                  image: CachedNetworkImageProvider(post.previewImage),
+                  image: CachedNetworkImageProvider(post.previewPictureUrl),
                   fit: BoxFit.cover)),
           child: Stack(
             children: [
@@ -878,17 +568,6 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
                   color: Colors.white,
                 ),
               ),
-              Positioned(
-                bottom: 5.0,
-                right: 5.0,
-                child: Column(
-                  children: [
-                    Icon(Icons.remove_red_eye, color: Colors.white),
-                    Text(post.viewcount.toString(),
-                        style: Theme.of(context).textTheme.bodySmall)
-                  ],
-                ),
-              )
             ],
           )),
     );
@@ -917,31 +596,44 @@ class PostsByHashtagsState extends State<PostsByHashtags>
   List<Post> newPosts = [];
 
   getPostsHashtag(Hashtag hahstag) async {
-    await hashtag.reference!
-        .collection('posts')
-        .orderBy('date', descending: true)
-        .limit(3)
-        .get()
-        .then((data) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> data = await hashtag.reference!
+          .collection('posts')
+          .orderBy('date', descending: true)
+          .limit(3)
+          .get();
+
       for (var item in data.docs) {
-        try {
-          await FirebaseFirestore.instance
-              .collection('posts')
-              .doc(item.id)
-              .get()
-              .then((value) => posts.add(Post.fromMap(value, value.data()!)));
-        } catch (e) {
-          print(e);
-        }
+        DocumentSnapshot<Map<String, dynamic>> dataPost =
+            await FirebaseFirestore.instance
+                .collection('posts')
+                .doc(item.id)
+                .get();
+        DocumentSnapshot<Map<String, dynamic>> dataUser =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(dataPost.data()!['uid'])
+                .get();
+        DocumentSnapshot<Map<String, dynamic>> dataGame =
+            await FirebaseFirestore.instance
+                .collection("games")
+                .doc("verified")
+                .collection("games_verified")
+                .doc(dataPost.data()!["idGame"])
+                .get();
+        posts.add(Post.fromMap(
+            dataPost, dataPost.data()!, dataUser.data()!, dataGame.data()!));
       }
-    });
 
-    lastPost = posts.last;
+      lastPost = posts.last;
 
-    if (!dataIsThere && mounted) {
-      setState(() {
-        dataIsThere = true;
-      });
+      if (!dataIsThere && mounted) {
+        setState(() {
+          dataIsThere = true;
+        });
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -955,26 +647,34 @@ class PostsByHashtagsState extends State<PostsByHashtags>
       isLoadingMorePosts = true;
     });
 
-    await hashtag.reference!
+    QuerySnapshot<Map<String, dynamic>> data = await hashtag.reference!
         .collection('posts')
         .orderBy('date', descending: true)
         .startAfterDocument(lastPost.snapshot!)
         .limit(3)
-        .get()
-        .then((data) async {
-      for (var item in data.docs) {
-        try {
-          await FirebaseFirestore.instance
-              .collection('posts')
-              .doc(item.id)
-              .get()
-              .then(
-                  (value) => newPosts.add(Post.fromMap(value, value.data()!)));
-        } catch (e) {
-          print(e);
-        }
-      }
-    });
+        .get();
+
+    for (var item in data.docs) {
+      DocumentSnapshot<Map<String, dynamic>> dataPost = await FirebaseFirestore
+          .instance
+          .collection('posts')
+          .doc(item.id)
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataUser = await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(dataPost.data()!["uid"])
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataGame = await FirebaseFirestore
+          .instance
+          .collection("games")
+          .doc("verified")
+          .collection("games_verified")
+          .doc(dataPost.data()!["idGame"])
+          .get();
+      newPosts.add(Post.fromMap(
+          dataPost, dataPost.data()!, dataUser.data()!, dataGame.data()!));
+    }
 
     if (newPosts.length != 0) {
       print(newPosts.length);
@@ -1122,18 +822,6 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                               posts: posts,
                             ))),
               ),
-              Positioned(
-                  bottom: 5.0,
-                  right: 5.0,
-                  child: Column(
-                    children: [
-                      Icon(Icons.remove_red_eye, color: Colors.white),
-                      Text(
-                        post.viewcount.toString(),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      )
-                    ],
-                  ))
             ],
           ),
         ),
@@ -1153,7 +841,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
               border: Border.all(color: Colors.black),
               borderRadius: BorderRadius.circular(5.0),
               image: DecorationImage(
-                  image: CachedNetworkImageProvider(post.previewImage),
+                  image: CachedNetworkImageProvider(post.previewPictureUrl),
                   fit: BoxFit.cover)),
           child: Stack(
             children: [
@@ -1178,18 +866,6 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                 left: 5.0,
                 child: Icon(Icons.play_arrow, color: Colors.white),
               ),
-              Positioned(
-                  bottom: 5.0,
-                  right: 5.0,
-                  child: Column(
-                    children: [
-                      Icon(Icons.remove_red_eye, color: Colors.white),
-                      Text(
-                        post.viewcount.toString(),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      )
-                    ],
-                  ))
             ],
           ),
         ),

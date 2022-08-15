@@ -4,11 +4,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:gemu/models/game.dart';
+import 'package:gemu/models/post.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/controllers/bottom_navigation_controller.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
@@ -16,18 +17,18 @@ import 'package:gemu/components/alert_dialog_custom.dart';
 class PictureScreen extends StatefulWidget {
   final File file;
   final bool public;
-  final String nameGame, imageGame;
   final String caption;
   final List<String> hashtags;
   final List followsGames;
+  final Game selectedGame;
   PictureScreen(
       {required this.file,
       required this.public,
-      required this.nameGame,
-      required this.imageGame,
       required this.caption,
       required this.hashtags,
-      required this.followsGames});
+      required this.followsGames,
+      required this.selectedGame});
+
   @override
   Pictureviewstate createState() => Pictureviewstate();
 }
@@ -42,8 +43,7 @@ class Pictureviewstate extends State<PictureScreen>
   bool isGame = false;
   late bool public;
 
-  late String gameImage;
-  late String gameName;
+  late Game game;
   late String saveCaption;
 
   late TextEditingController _captionController;
@@ -73,8 +73,7 @@ class Pictureviewstate extends State<PictureScreen>
 
     public = widget.public;
 
-    gameName = widget.nameGame;
-    gameImage = widget.imageGame;
+    game = widget.selectedGame;
     hashtagsSelected = widget.hashtags;
 
     _hashtagsController.addListener(_onSearchChanged);
@@ -173,24 +172,21 @@ class Pictureviewstate extends State<PictureScreen>
 
       String picture =
           await uploadPictureToStorage(imagePath, postName, gameName);
-      FirebaseFirestore.instance.collection('posts').doc(postName).set({
-        'uid': me!.uid,
-        'username': me!.username,
-        'imageUrl': me!.imageUrl,
-        'type': 'picture',
-        'id': postName,
-        'gameName': gameName,
-        'gameImage': gameImage,
-        'upcount': 0,
-        'downcount': 0,
-        'commentcount': 0,
-        'description': _captionController.text,
-        'hashtags': hashtagsSelected,
-        'postUrl': picture,
-        'privacy': privacy,
-        'viewcount': 0,
-        'date': date,
-      });
+      FirebaseFirestore.instance.collection('posts').doc(postName).set(Post(
+              id: postName,
+              description: _captionController.text,
+              downCount: 0,
+              upCount: 0,
+              averageUpDown: 0,
+              commentCount: 0,
+              date: date,
+              postUrl: picture,
+              type: "picture",
+              previewPictureUrl: picture,
+              privacy: privacy,
+              uid: me!.uid,
+              idGame: game.documentId)
+          .toMap());
 
       if (hashtagsSelected.length != 0) {
         for (int i = 0; i < hashtagsSelected.length; i++) {
@@ -246,11 +242,9 @@ class Pictureviewstate extends State<PictureScreen>
           .doc(postName)
           .set({'date': date});
 
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => BottomNavigationController()),
-          (route) => false);
+      navMainAuthKey.currentState!.popUntil((route) => false);
+      await Future.delayed(const Duration(milliseconds: 500));
+      navMainAuthKey.currentState!.pushNamed(BottomTabNav);
     } catch (e) {
       print(e);
     }
@@ -304,21 +298,21 @@ class Pictureviewstate extends State<PictureScreen>
                                       Brightness.dark
                                   ? Colors.white24
                                   : Colors.black54,
-                              builder: (context) {
+                              builder: (BuildContext context) {
                                 return AlertDialogCustom(
                                     context,
                                     'Abandon',
                                     'Voulez-vous abandonner la création de ce post?',
                                     [
                                       TextButton(
-                                          onPressed: () {
-                                            Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        BottomNavigationController()),
-                                                (route) => false);
+                                          onPressed: () async {
+                                            Navigator.pop(context);
+                                            navMainAuthKey.currentState!
+                                                .popUntil((route) => false);
+                                            await Future.delayed(const Duration(
+                                                milliseconds: 500));
+                                            navMainAuthKey.currentState!
+                                                .pushNamed(BottomTabNav);
                                           },
                                           child: Text(
                                             'Oui',
@@ -554,13 +548,13 @@ class Pictureviewstate extends State<PictureScreen>
         padding: EdgeInsets.only(right: 10.0, bottom: 10.0),
         child: GestureDetector(
             onTap: () {
-              if (gameName == 'No game') {
+              if (game.name == 'No game') {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
                   context: context,
                   error: 'Choississez un jeu pour votre post',
                 ));
               } else {
-                uploadPicture(widget.file.path, gameName);
+                uploadPicture(widget.file.path, game.name);
               }
             },
             child: Container(
@@ -624,7 +618,7 @@ class Pictureviewstate extends State<PictureScreen>
                   Container(
                       height: 100.0,
                       width: MediaQuery.of(context).size.width,
-                      child: gameName == 'No game'
+                      child: game.name == 'No game'
                           ? Column(
                               children: [
                                 Container(
@@ -638,7 +632,7 @@ class Pictureviewstate extends State<PictureScreen>
                                 SizedBox(
                                   height: 5.0,
                                 ),
-                                Text(gameName)
+                                Text(game.name)
                               ],
                             )
                           : Column(
@@ -652,12 +646,12 @@ class Pictureviewstate extends State<PictureScreen>
                                       image: DecorationImage(
                                           fit: BoxFit.cover,
                                           image: CachedNetworkImageProvider(
-                                              gameImage))),
+                                              game.imageUrl))),
                                 ),
                                 SizedBox(
                                   height: 5.0,
                                 ),
-                                Text(gameName)
+                                Text(game.name)
                               ],
                             )),
                   SizedBox(
@@ -674,9 +668,8 @@ class Pictureviewstate extends State<PictureScreen>
                             return ListTile(
                               onTap: () {
                                 setState(() {
-                                  gameName = _documentSnapshot.data()!['name'];
-                                  gameImage =
-                                      _documentSnapshot.data()!['imageUrl'];
+                                  game = Game.fromMap(_documentSnapshot,
+                                      _documentSnapshot.data()!);
                                   isGame = !isGame;
                                 });
                                 Navigator.pop(context);

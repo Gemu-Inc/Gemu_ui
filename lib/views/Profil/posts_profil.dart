@@ -7,18 +7,51 @@ import 'package:gemu/models/user.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/components/post_tile.dart';
 
-class PostsPublic extends StatefulWidget {
+class PostsPublicProfile extends StatefulWidget {
   final UserModel user;
 
-  PostsPublic({required this.user});
+  PostsPublicProfile({required this.user});
 
   @override
-  PostsPublicState createState() => PostsPublicState();
+  _PostsPublicProfileState createState() => _PostsPublicProfileState();
 }
 
-class PostsPublicState extends State<PostsPublic>
+class _PostsPublicProfileState extends State<PostsPublicProfile>
     with AutomaticKeepAliveClientMixin {
+  bool _loadingPosts = false;
+
   List<Post> posts = [];
+
+  Future<void> getPostsPublic() async {
+    QuerySnapshot<Map<String, dynamic>> dataPosts = await FirebaseFirestore
+        .instance
+        .collection('posts')
+        .where('uid', isEqualTo: widget.user.uid)
+        .where('privacy', isEqualTo: "Public")
+        .orderBy('date', descending: true)
+        .get();
+
+    for (var item in dataPosts.docs) {
+      DocumentSnapshot<Map<String, dynamic>> dataUser = await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(item.data()["uid"])
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataGame = await FirebaseFirestore
+          .instance
+          .collection("games")
+          .doc("verified")
+          .collection("games_verified")
+          .doc(item.data()["idGame"])
+          .get();
+      posts.add(
+          Post.fromMap(item, item.data(), dataUser.data()!, dataGame.data()!));
+    }
+
+    setState(() {
+      _loadingPosts = true;
+    });
+  }
 
   @override
   bool get wantKeepAlive => true;
@@ -26,6 +59,7 @@ class PostsPublicState extends State<PostsPublic>
   @override
   void initState() {
     super.initState();
+    getPostsPublic();
   }
 
   @override
@@ -42,54 +76,36 @@ class PostsPublicState extends State<PostsPublic>
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.0),
-      child: FutureBuilder(
-          future: FirebaseFirestore.instance
-              .collection('posts')
-              .where('uid', isEqualTo: widget.user.uid)
-              .where('privacy', isEqualTo: "Public")
-              .orderBy('date', descending: true)
-              .get(),
-          builder: (context,
-              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                  child: CircularProgressIndicator(
+        padding: EdgeInsets.symmetric(horizontal: 5.0),
+        child: _loadingPosts
+            ? posts.length == 0
+                ? Center(
+                    child: Text(
+                      'Pas encore de publications publiques',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  )
+                : GridView.builder(
+                    scrollDirection: Axis.vertical,
+                    physics: AlwaysScrollableScrollPhysics(
+                        parent: BouncingScrollPhysics()),
+                    shrinkWrap: true,
+                    itemCount: posts.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 1.0,
+                        mainAxisSpacing: 1.0),
+                    itemBuilder: (BuildContext context, int index) {
+                      Post post = posts[index];
+                      return post.type == 'picture'
+                          ? picture(post, index)
+                          : video(post, index);
+                    })
+            : Center(
+                child: CircularProgressIndicator(
                 color: Theme.of(context).colorScheme.primary,
-              ));
-            }
-            if (snapshot.data!.docs.length == 0) {
-              return Center(
-                child: Text(
-                  'Pas encore de publications publiques',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              );
-            }
-            if (posts.length != 0) {
-              posts.clear();
-            }
-            for (var item in snapshot.data!.docs) {
-              posts.add(Post.fromMap(item, item.data()));
-            }
-            return GridView.builder(
-                scrollDirection: Axis.vertical,
-                physics: AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics()),
-                shrinkWrap: true,
-                itemCount: posts.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 1.0,
-                    mainAxisSpacing: 1.0),
-                itemBuilder: (BuildContext context, int index) {
-                  Post post = posts[index];
-                  return post.type == 'picture'
-                      ? picture(post, index)
-                      : video(post, index);
-                });
-          }),
-    );
+                strokeWidth: 1.0,
+              )));
   }
 
   Widget picture(Post post, int index) {
@@ -120,16 +136,6 @@ class PostsPublicState extends State<PostsPublic>
               borderRadius: BorderRadius.circular(5.0),
               splashColor: Theme.of(context).colorScheme.primary,
             ),
-            Positioned(
-                bottom: 5.0,
-                right: 5.0,
-                child: Column(
-                  children: [
-                    Icon(Icons.remove_red_eye, color: Colors.white),
-                    Text(post.viewcount.toString(),
-                        style: Theme.of(context).textTheme.bodySmall)
-                  ],
-                ))
           ],
         ),
       ),
@@ -145,7 +151,7 @@ class PostsPublicState extends State<PostsPublic>
             border: Border.all(color: Colors.black),
             borderRadius: BorderRadius.circular(5.0),
             image: DecorationImage(
-                image: CachedNetworkImageProvider(post.previewImage),
+                image: CachedNetworkImageProvider(post.previewPictureUrl),
                 fit: BoxFit.cover)),
         child: Stack(
           children: [
@@ -171,16 +177,6 @@ class PostsPublicState extends State<PostsPublic>
                   Icons.play_arrow,
                   color: Colors.white,
                 )),
-            Positioned(
-                bottom: 5.0,
-                right: 5.0,
-                child: Column(
-                  children: [
-                    Icon(Icons.remove_red_eye, color: Colors.white),
-                    Text(post.viewcount.toString(),
-                        style: Theme.of(context).textTheme.bodySmall)
-                  ],
-                ))
           ],
         ),
       ),
@@ -199,7 +195,40 @@ class PostsPrivate extends StatefulWidget {
 
 class PostsPrivateState extends State<PostsPrivate>
     with AutomaticKeepAliveClientMixin {
+  bool _loadingPosts = false;
+
   List<Post> posts = [];
+
+  Future<void> getPostsPrivate() async {
+    QuerySnapshot<Map<String, dynamic>> dataPosts = await FirebaseFirestore
+        .instance
+        .collection('posts')
+        .where('uid', isEqualTo: widget.user.uid)
+        .where('privacy', isEqualTo: 'Private')
+        .orderBy('date', descending: true)
+        .get();
+
+    for (var item in dataPosts.docs) {
+      DocumentSnapshot<Map<String, dynamic>> dataUser = await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(item.data()["uid"])
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataGame = await FirebaseFirestore
+          .instance
+          .collection("games")
+          .doc("verified")
+          .collection("games_verified")
+          .doc(item.data()["idGame"])
+          .get();
+      posts.add(
+          Post.fromMap(item, item.data(), dataUser.data()!, dataGame.data()!));
+    }
+
+    setState(() {
+      _loadingPosts = true;
+    });
+  }
 
   @override
   bool get wantKeepAlive => true;
@@ -207,6 +236,8 @@ class PostsPrivateState extends State<PostsPrivate>
   @override
   void initState() {
     super.initState();
+
+    getPostsPrivate();
   }
 
   @override
@@ -223,55 +254,36 @@ class PostsPrivateState extends State<PostsPrivate>
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.0),
-      child: FutureBuilder(
-          future: FirebaseFirestore.instance
-              .collection('posts')
-              .where('uid', isEqualTo: widget.user.uid)
-              .where('privacy', isEqualTo: 'Private')
-              .orderBy('date', descending: true)
-              .get(),
-          builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
+        padding: EdgeInsets.symmetric(horizontal: 5.0),
+        child: _loadingPosts
+            ? posts.length == 0
+                ? Center(
+                    child: Text(
+                      'Pas encore de publications privées',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  )
+                : GridView.builder(
+                    scrollDirection: Axis.vertical,
+                    physics: AlwaysScrollableScrollPhysics(
+                        parent: BouncingScrollPhysics()),
+                    shrinkWrap: true,
+                    itemCount: posts.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 1.0,
+                        mainAxisSpacing: 1.0),
+                    itemBuilder: (BuildContext context, int index) {
+                      Post post = posts[index];
+                      return post.type == 'picture'
+                          ? picture(post, index)
+                          : video(post, index);
+                    })
+            : Center(
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              );
-            }
-            if (snapshot.data!.docs.length == 0) {
-              return Center(
-                child: Text(
-                  'Pas encore de publications privées',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              );
-            }
-            if (posts.length != 0) {
-              posts.clear();
-            }
-            for (var item in snapshot.data!.docs) {
-              posts.add(Post.fromMap(item, item.data()));
-            }
-            return GridView.builder(
-                scrollDirection: Axis.vertical,
-                physics: AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics()),
-                shrinkWrap: true,
-                itemCount: posts.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 1.0,
-                    mainAxisSpacing: 1.0),
-                itemBuilder: (BuildContext context, int index) {
-                  Post post = posts[index];
-                  return post.type == 'picture'
-                      ? picture(post, index)
-                      : video(post, index);
-                });
-          }),
-    );
+                color: Theme.of(context).colorScheme.primary,
+                strokeWidth: 1.0,
+              )));
   }
 
   Widget picture(Post post, int index) {
@@ -302,16 +314,6 @@ class PostsPrivateState extends State<PostsPrivate>
               borderRadius: BorderRadius.circular(5.0),
               splashColor: Theme.of(context).colorScheme.primary,
             ),
-            Positioned(
-                bottom: 5.0,
-                right: 5.0,
-                child: Column(
-                  children: [
-                    Icon(Icons.remove_red_eye, color: Colors.white),
-                    Text(post.viewcount.toString(),
-                        style: Theme.of(context).textTheme.bodySmall)
-                  ],
-                ))
           ],
         ),
       ),
@@ -327,7 +329,7 @@ class PostsPrivateState extends State<PostsPrivate>
             border: Border.all(color: Colors.black),
             borderRadius: BorderRadius.circular(5.0),
             image: DecorationImage(
-                image: CachedNetworkImageProvider(post.previewImage),
+                image: CachedNetworkImageProvider(post.previewPictureUrl),
                 fit: BoxFit.cover)),
         child: Stack(
           children: [
@@ -353,16 +355,6 @@ class PostsPrivateState extends State<PostsPrivate>
                   Icons.play_arrow,
                   color: Colors.white,
                 )),
-            Positioned(
-                bottom: 5.0,
-                right: 5.0,
-                child: Column(
-                  children: [
-                    Icon(Icons.remove_red_eye, color: Colors.white),
-                    Text(post.viewcount.toString(),
-                        style: Theme.of(context).textTheme.bodySmall)
-                  ],
-                ))
           ],
         ),
       ),

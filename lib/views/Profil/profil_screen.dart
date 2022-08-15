@@ -60,7 +60,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
         .snapshots()
         .listen((data) {
       for (var item in data.docs) {
-        points = (item.data()['upcount'] - item.data()['downcount']) + points;
+        points = (item.data()['upCount'] - item.data()['downCount']) + points;
       }
     });
 
@@ -318,7 +318,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                             parent: BouncingScrollPhysics()),
                         controller: _tabController,
                         children: [
-                          PostsPublic(user: me!),
+                          PostsPublicProfile(user: me!),
                           PostsPrivate(user: me!)
                         ]),
                   ],
@@ -420,7 +420,7 @@ class ProfilUserState extends State<ProfilUser>
         .get()
         .then((data) {
       for (var item in data.docs) {
-        points = (item.data()['upcount'] - item.data()['downcount']) + points;
+        points = (item.data()['upCount'] - item.data()['downCount']) + points;
       }
     });
 
@@ -901,9 +901,9 @@ class ProfilUserState extends State<ProfilUser>
 
   List<Widget> accountPublic() {
     return userPost!.uid == me!.uid
-        ? [PostsPublic(user: userPost!), PostsPrivate(user: userPost!)]
+        ? [PostsPublicProfile(user: userPost!), PostsPrivate(user: userPost!)]
         : [
-            PostsPublic(user: userPost!),
+            PostsPublicProfile(user: userPost!),
             followers.contains(me!.uid)
                 ? PostsPrivate(user: userPost!)
                 : Column(
@@ -922,7 +922,7 @@ class ProfilUserState extends State<ProfilUser>
 
   List<Widget> accountPrivate() {
     return (userPost!.uid == me!.uid || followers.contains(me!.uid))
-        ? [PostsPublic(user: userPost!), PostsPrivate(user: userPost!)]
+        ? [PostsPublicProfile(user: userPost!), PostsPrivate(user: userPost!)]
         : [
             Column(
               mainAxisAlignment: MainAxisAlignment.center,

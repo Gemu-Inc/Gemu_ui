@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:gemu/controllers/auth_controller.dart';
 import 'package:gemu/providers/GetStarted/getStarted_provider.dart';
 import 'package:gemu/providers/Connectivity/connectivity_provider.dart';
 import 'package:gemu/providers/Langue/device_language_provider.dart';
@@ -168,15 +169,6 @@ class _LogControllerState extends ConsumerState<LogController> {
                             generateRouteNonAuth(settings, context),
                       ),
                     ))
-                : WillPopScope(
-                    onWillPop: () async {
-                      return !(await navMainAuthKey.currentState!.maybePop());
-                    },
-                    child: Navigator(
-                      key: navMainAuthKey,
-                      initialRoute: BottomTabNav,
-                      onGenerateRoute: (settings) =>
-                          generateRouteMainAuth(settings, context),
-                    )));
+                : AuthController());
   }
 }

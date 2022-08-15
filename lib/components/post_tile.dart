@@ -22,7 +22,6 @@ import 'package:gemu/views/Post/Comments/comments_screen.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/views/Profil/profil_screen.dart';
 import 'package:gemu/models/game.dart';
-import 'package:gemu/views/Post/Viewers/viewers_screen.dart';
 import 'package:gemu/models/user.dart';
 
 class PostTile extends StatefulWidget {
@@ -121,11 +120,8 @@ class PictureItemState extends State<PictureItem>
   late AnimationController _upController, _downController;
   late Animation _upAnimation, _downAnimation;
 
-  late UserModel userPost;
   late Post post;
   late StreamSubscription postListener;
-
-  late Game game;
 
   late String hashtags;
   late String descriptionFinal;
@@ -153,32 +149,36 @@ class PictureItemState extends State<PictureItem>
     return concatString;
   }
 
-  getUserPost() async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.post.uid)
-        .get()
-        .then((userData) {
-      userPost = UserModel.fromMap(userData, userData.data()!);
-    });
-  }
+  // getUserPost() async {
+  //   await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(widget.post.uid)
+  //       .get()
+  //       .then((userData) {
+  //     userPost = UserModel.fromMap(userData, userData.data()!);
+  //   });
+  // }
 
   upPost() async {
-    post.reference.collection('up').doc(widget.idUserActual).get().then((uper) {
+    post.reference!
+        .collection('up')
+        .doc(widget.idUserActual)
+        .get()
+        .then((uper) {
       if (!uper.exists) {
         uper.reference.set({});
-        post.reference.update({'upcount': post.upcount + 1});
+        post.reference!.update({'upCount': post.upCount + 1});
       }
     });
 
-    post.reference
+    post.reference!
         .collection('down')
         .doc(widget.idUserActual)
         .get()
         .then((downer) {
       if (downer.exists) {
         downer.reference.delete();
-        post.reference.update({'downcount': post.downcount - 1});
+        post.reference!.update({'downCount': post.downCount - 1});
       }
     });
 
@@ -187,25 +187,25 @@ class PictureItemState extends State<PictureItem>
   }
 
   downPost() async {
-    post.reference
+    post.reference!
         .collection('down')
         .doc(widget.idUserActual)
         .get()
         .then((downer) {
       if (!downer.exists) {
         downer.reference.set({});
-        post.reference.update({'downcount': post.downcount + 1});
+        post.reference!.update({'downCount': post.downCount + 1});
       }
     });
 
-    post.reference
+    post.reference!
         .collection('up')
         .doc(widget.idUserActual)
         .get()
         .then((upper) {
       if (upper.exists) {
         upper.reference.delete();
-        post.reference.update({'upcount': post.upcount - 1});
+        post.reference!.update({'upCount': post.upCount - 1});
       }
     });
 
@@ -239,50 +239,18 @@ class PictureItemState extends State<PictureItem>
     });
   }
 
-  followPrivateUser() async {
-    userPost.ref!.collection('followers').doc(me!.uid).get().then((user) {
-      if (!user.exists) {
-        DatabaseService.addNotification(
-            me!.uid, userPost.uid, "voudrait vous suivre", "follow");
+  // followPrivateUser() async {
+  //   userPost.ref!.collection('followers').doc(me!.uid).get().then((user) {
+  //     if (!user.exists) {
+  //       DatabaseService.addNotification(
+  //           me!.uid, userPost.uid, "voudrait vous suivre", "follow");
 
-        setState(() {
-          isFollowing = true;
-        });
-      }
-    });
-  }
-
-  updateView() async {
-    post.reference.update({'viewcount': post.viewcount + 1});
-
-    post.reference
-        .collection('viewers')
-        .doc(widget.idUserActual)
-        .get()
-        .then((viewer) {
-      if (!viewer.exists) {
-        viewer.reference.set({});
-      }
-    });
-  }
-
-  showViewersPostBottomSheet() {
-    return showMaterialModalBottomSheet(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0))),
-        context: context,
-        builder: (_) {
-          return Container(
-            height: MediaQuery.of(context).size.height / 2,
-            child: ViewersScreen(
-              post: post,
-            ),
-          );
-        });
-  }
+  //       setState(() {
+  //         isFollowing = true;
+  //       });
+  //     }
+  //   });
+  // }
 
   showMorePostBottomSheet() {
     return showMaterialModalBottomSheet(
@@ -388,14 +356,11 @@ class PictureItemState extends State<PictureItem>
   }
 
   @override
-  @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    print("je rentre pour un post");
-
     post = widget.post;
 
     tagHeroPost = 'post' + post.id + generateRandomString(6);
@@ -405,80 +370,93 @@ class PictureItemState extends State<PictureItem>
         .collection('posts')
         .doc(post.id)
         .snapshots()
-        .listen((data) {
+        .listen((data) async {
       print('post listen');
+      DocumentSnapshot<Map<String, dynamic>> dataUser = await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(data.data()!["uid"])
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataGame = await FirebaseFirestore
+          .instance
+          .collection("games")
+          .doc("verified")
+          .collection("games_verified")
+          .doc(data.data()!["idGame"])
+          .get();
       setState(() {
-        post = Post.fromMap(data, data.data()!);
+        post = Post.fromMap(
+            data, data.data()!, dataUser.data()!, dataGame.data()!);
       });
     });
 
     //Prendre les infos du user du post
-    if (post.uid != widget.idUserActual) {
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(post.uid)
-          .collection('followers')
-          .doc(widget.idUserActual)
-          .get()
-          .then((follower) async {
-        if (post.uid != me!.uid) {
-          getUserPost();
-        } else {
-          userPost = me!;
-        }
-        await Future.delayed(Duration(milliseconds: 500));
-        if (!follower.exists) {
-          if (userPost.privacy == 'private') {
-            await FirebaseFirestore.instance
-                .collection('notifications')
-                .doc(userPost.uid)
-                .collection('singleNotif')
-                .where('from', isEqualTo: me!.uid)
-                .where('type', isEqualTo: 'follow')
-                .where('seen', isEqualTo: false)
-                .limit(1)
-                .get()
-                .then((data) {
-              if (data.docs.length == 0) {
-                setState(() {
-                  isFollowing = false;
-                });
-              } else {
-                setState(() {
-                  isFollowing = true;
-                });
-              }
-            });
-          } else {
-            setState(() {
-              isFollowing = false;
-            });
-          }
-        } else {
-          setState(() {
-            isFollowing = true;
-          });
-        }
-      });
-
-      updateView();
-    }
+    // if (post.uid != widget.idUserActual) {
+    //   print("je rentre");
+    //   FirebaseFirestore.instance
+    //       .collection('users')
+    //       .doc(post.uid)
+    //       .collection('followers')
+    //       .doc(widget.idUserActual)
+    //       .get()
+    //       .then((follower) async {
+    //     if (post.uid != me!.uid) {
+    //       // getUserPost();
+    //     } else {
+    //       // userPost = me!;
+    //     }
+    //     await Future.delayed(Duration(milliseconds: 500));
+    //     if (!follower.exists) {
+    //       if (userPost.privacy == 'private') {
+    //         await FirebaseFirestore.instance
+    //             .collection('notifications')
+    //             .doc(userPost.uid)
+    //             .collection('singleNotif')
+    //             .where('from', isEqualTo: me!.uid)
+    //             .where('type', isEqualTo: 'follow')
+    //             .where('seen', isEqualTo: false)
+    //             .limit(1)
+    //             .get()
+    //             .then((data) {
+    //           if (data.docs.length == 0) {
+    //             setState(() {
+    //               isFollowing = false;
+    //             });
+    //           } else {
+    //             setState(() {
+    //               isFollowing = true;
+    //             });
+    //           }
+    //         });
+    //       } else {
+    //         setState(() {
+    //           isFollowing = false;
+    //         });
+    //       }
+    //     } else {
+    //       setState(() {
+    //         isFollowing = true;
+    //       });
+    //     }
+    //   });
+    // }
 
     //concatène les list et les différents string afin de créer une bonne description
-    hashtags = concatListHashtags(post.hashtags);
+    // hashtags = concatListHashtags(post.hashtags);
+    hashtags = "";
     descriptionFinal = concatDescriptionHastags(post.description, hashtags);
 
     //game du post
-    FirebaseFirestore.instance
-        .collection('games')
-        .doc('verified')
-        .collection('games_verified')
-        .doc(post.gameName)
-        .get()
-        .then((gameDoc) => game = Game.fromMap(gameDoc, gameDoc.data()!));
+    // FirebaseFirestore.instance
+    //     .collection('games')
+    //     .doc('verified')
+    //     .collection('games_verified')
+    //     .doc(post.idGame)
+    //     .get()
+    //     .then((gameDoc) => game = Game.fromMap(gameDoc, gameDoc.data()!));
 
     //Listener sur les up&down du post
-    upListener = post.reference.collection('up').snapshots().listen((data) {
+    upListener = post.reference!.collection('up').snapshots().listen((data) {
       if (up.length != 0) {
         up.clear();
       }
@@ -488,7 +466,8 @@ class PictureItemState extends State<PictureItem>
         });
       }
     });
-    downListener = post.reference.collection('down').snapshots().listen((data) {
+    downListener =
+        post.reference!.collection('down').snapshots().listen((data) {
       if (down.length != 0) {
         down.clear();
       }
@@ -552,7 +531,7 @@ class PictureItemState extends State<PictureItem>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    int points = (post.upcount - post.downcount);
+    int points = (post.upCount - post.downCount);
 
     return Stack(
       children: [
@@ -678,18 +657,18 @@ class PictureItemState extends State<PictureItem>
                                     color: Colors.white, size: 18),
                                 Expanded(
                                     child: Marquee(
-                                  text: post.gameName,
+                                  text: post.gamePost!["name"],
                                   blankSpace: 50.0,
                                   velocity: 30.0,
                                 )),
                                 GestureDetector(
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => ProfileGameScreen(
-                                                game: game,
-                                                navKey: navHomeAuthKey,
-                                              ))),
+                                  // onTap: () => Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (_) => ProfileGameScreen(
+                                  //               game: Game.fromMap(, data),
+                                  //               navKey: navHomeAuthKey,
+                                  //             ))),
                                   child: Container(
                                     height: 30,
                                     width: 30,
@@ -700,7 +679,7 @@ class PictureItemState extends State<PictureItem>
                                             BorderRadius.circular(5.0),
                                         image: DecorationImage(
                                             image: CachedNetworkImageProvider(
-                                                post.gameImage),
+                                                post.gamePost!["imageUrl"]),
                                             fit: BoxFit.cover)),
                                   ),
                                 )
@@ -723,7 +702,7 @@ class PictureItemState extends State<PictureItem>
                                               )));
                                 },
                                 child: Text(
-                                  post.userName,
+                                  post.userPost!["username"],
                                 )),
                           ),
                           SizedBox(
@@ -790,12 +769,8 @@ class PictureItemState extends State<PictureItem>
           ),
           _getSocialAction(
               icon: Icons.insert_comment_outlined,
-              title: post.commentcount.toString(),
+              title: post.commentCount.toString(),
               context: context),
-          SizedBox(
-            height: 35.0,
-          ),
-          _getViewersAction(),
           SizedBox(
             height: 35.0,
           ),
@@ -891,32 +866,6 @@ class PictureItemState extends State<PictureItem>
     ]);
   }
 
-  Widget _getViewersAction() {
-    return Column(
-      children: [
-        Card(
-          color: Colors.transparent,
-          shadowColor: Colors.transparent,
-          child: InkWell(
-            onTap: () => showViewersPostBottomSheet(),
-            child: Icon(
-              Icons.remove_red_eye_outlined,
-              color: Colors.white,
-              size: 28,
-            ),
-          ),
-        ),
-        Card(
-          color: Colors.transparent,
-          shadowColor: Colors.transparent,
-          child: Text(
-            post.viewcount.toString(),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _getMore() {
     return Card(
       color: Colors.transparent,
@@ -955,7 +904,7 @@ class PictureItemState extends State<PictureItem>
                         userPostID: post.uid,
                       )));
         },
-        child: post.imageUrl == null
+        child: post.userPost!["imageUrl"] == null
             ? Container(
                 width: ProfileImageSize,
                 height: ProfileImageSize,
@@ -977,7 +926,8 @@ class PictureItemState extends State<PictureItem>
                     border: Border.all(color: Colors.black),
                     image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(post.imageUrl!))),
+                        image: CachedNetworkImageProvider(
+                            post.userPost!["imageUrl"]))),
               ),
       ),
     );
@@ -988,11 +938,11 @@ class PictureItemState extends State<PictureItem>
       alignment: Alignment.bottomCenter,
       child: GestureDetector(
         onTap: () {
-          if (userPost.privacy == 'public') {
-            followPublicUser();
-          } else {
-            followPrivateUser();
-          }
+          // if (userPost.privacy == 'public') {
+          //   followPublicUser();
+          // } else {
+          //   followPrivateUser();
+          // }
         },
         child: Container(
             width: PlusIconSize,
@@ -1034,7 +984,7 @@ class PictureItemState extends State<PictureItem>
                   padding: EdgeInsets.zero,
                   width: MediaQuery.of(context).size.width / 4,
                   child: Marquee(
-                    text: post.gameName,
+                    text: post.gamePost!["name"],
                     textDirection: TextDirection.ltr,
                     blankSpace: 50,
                     velocity: 30,
@@ -1047,17 +997,18 @@ class PictureItemState extends State<PictureItem>
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(5.0),
                     image: DecorationImage(
-                        image: CachedNetworkImageProvider(post.gameImage),
+                        image: CachedNetworkImageProvider(
+                            post.gamePost!["imageUrl"]),
                         fit: BoxFit.cover)),
                 child: GestureDetector(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => ProfileGameScreen(
-                                game: game,
-                                navKey: navHomeAuthKey,
-                              ))),
-                ),
+                    // onTap: () => Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (_) => ProfileGameScreen(
+                    //               game: game,
+                    //               navKey: navHomeAuthKey,
+                    //             ))),
+                    ),
               )
             ],
           )),
@@ -1145,21 +1096,25 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   }
 
   upPost() async {
-    post.reference.collection('up').doc(widget.idUserActual).get().then((uper) {
+    post.reference!
+        .collection('up')
+        .doc(widget.idUserActual)
+        .get()
+        .then((uper) {
       if (!uper.exists) {
         uper.reference.set({});
-        post.reference.update({'upcount': post.upcount + 1});
+        post.reference!.update({'upCount': post.upCount + 1});
       }
     });
 
-    post.reference
+    post.reference!
         .collection('down')
         .doc(widget.idUserActual)
         .get()
         .then((downer) {
       if (downer.exists) {
         downer.reference.delete();
-        post.reference.update({'downcount': post.downcount - 1});
+        post.reference!.update({'downCount': post.downCount - 1});
       }
     });
 
@@ -1168,25 +1123,25 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
   }
 
   downPost() async {
-    post.reference
+    post.reference!
         .collection('down')
         .doc(widget.idUserActual)
         .get()
         .then((downer) {
       if (!downer.exists) {
         downer.reference.set({});
-        post.reference.update({'downcount': post.downcount + 1});
+        post.reference!.update({'downCount': post.downCount + 1});
       }
     });
 
-    post.reference
+    post.reference!
         .collection('up')
         .doc(widget.idUserActual)
         .get()
         .then((upper) {
       if (upper.exists) {
         upper.reference.delete();
-        post.reference.update({'upcount': post.upcount - 1});
+        post.reference!.update({'upCount': post.upCount - 1});
       }
     });
 
@@ -1231,38 +1186,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
         });
       }
     });
-  }
-
-  updateView() async {
-    post.reference.update({'viewcount': post.viewcount + 1});
-
-    post.reference
-        .collection('viewers')
-        .doc(widget.idUserActual)
-        .get()
-        .then((viewer) {
-      if (!viewer.exists) {
-        viewer.reference.set({});
-      }
-    });
-  }
-
-  showViewersPostBottomSheet() {
-    return showMaterialModalBottomSheet(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0))),
-        context: context,
-        builder: (_) {
-          return Container(
-            height: MediaQuery.of(context).size.height / 2,
-            child: ViewersScreen(
-              post: post,
-            ),
-          );
-        });
   }
 
   showMorePostBottomSheet() {
@@ -1388,10 +1311,23 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
         .collection('posts')
         .doc(post.id)
         .snapshots()
-        .listen((data) {
+        .listen((data) async {
       print('post listen');
+      DocumentSnapshot<Map<String, dynamic>> dataUser = await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(data.data()!["uid"])
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataGame = await FirebaseFirestore
+          .instance
+          .collection("games")
+          .doc("verified")
+          .collection("games_verified")
+          .doc(data.data()!["idGame"])
+          .get();
       setState(() {
-        post = Post.fromMap(data, data.data()!);
+        post = Post.fromMap(
+            data, data.data()!, dataUser.data()!, dataGame.data()!);
       });
     });
 
@@ -1443,23 +1379,22 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
           });
         }
       });
-
-      updateView();
     }
 
     //concatène les list et les différents string afin de créer une bonne description
-    hashtags = concatListHashtags(post.hashtags);
+    // hashtags = concatListHashtags(post.hashtags);
+    hashtags = "";
     descriptionFinal = concatDescriptionHastags(post.description, hashtags);
 
     //Game du post
     FirebaseFirestore.instance
         .collection('games')
-        .doc(post.gameName)
+        .doc(post.idGame)
         .get()
         .then((gameDoc) => game = Game.fromMap(gameDoc, gameDoc.data()!));
 
     //Listener sur les up&down du post
-    upListener = post.reference.collection('up').snapshots().listen((data) {
+    upListener = post.reference!.collection('up').snapshots().listen((data) {
       if (up.length != 0) {
         up.clear();
       }
@@ -1469,7 +1404,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
         });
       }
     });
-    downListener = post.reference.collection('down').snapshots().listen((data) {
+    downListener =
+        post.reference!.collection('down').snapshots().listen((data) {
       if (down.length != 0) {
         down.clear();
       }
@@ -1533,7 +1469,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    int points = (post.upcount - post.downcount);
+    int points = (post.upCount - post.downCount);
     return Stack(
       children: [
         contentPostVideo(),
@@ -1662,7 +1598,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                       }
                     })
                 : CachedNetworkImage(
-                    imageUrl: post.previewImage,
+                    imageUrl: post.previewPictureUrl,
                     fit: BoxFit.cover,
                   ),
           ),
@@ -1737,7 +1673,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                         border: Border.all(color: Colors.black),
                         borderRadius: BorderRadius.circular(5.0),
                         image: DecorationImage(
-                            image: CachedNetworkImageProvider(post.gameImage),
+                            image: CachedNetworkImageProvider(game.imageUrl),
                             fit: BoxFit.cover)),
                   ),
                 )
@@ -1796,7 +1732,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                                               )));
                                 },
                                 child: Text(
-                                  post.userName,
+                                  userPost.username,
                                 )),
                           ),
                           SizedBox(
@@ -1863,12 +1799,8 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
           ),
           _getSocialAction(
               icon: Icons.insert_comment_outlined,
-              title: post.commentcount.toString(),
+              title: post.commentCount.toString(),
               context: context),
-          SizedBox(
-            height: 35.0,
-          ),
-          _getViewersAction(),
           SizedBox(
             height: 35.0,
           ),
@@ -1969,32 +1901,6 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
     ]);
   }
 
-  Widget _getViewersAction() {
-    return Column(
-      children: [
-        Card(
-          color: Colors.transparent,
-          shadowColor: Colors.transparent,
-          child: InkWell(
-            onTap: () => showViewersPostBottomSheet(),
-            child: Icon(
-              Icons.remove_red_eye_outlined,
-              color: Colors.white,
-              size: 28,
-            ),
-          ),
-        ),
-        Card(
-          color: Colors.transparent,
-          shadowColor: Colors.transparent,
-          child: Text(
-            post.viewcount.toString(),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _getMore() {
     return Card(
       color: Colors.transparent,
@@ -2032,7 +1938,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                         userPostID: post.uid,
                       )));
         },
-        child: post.imageUrl == null
+        child: userPost.imageUrl == null
             ? Container(
                 height: ProfileImageSize,
                 width: ProfileImageSize,
@@ -2054,7 +1960,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                     border: Border.all(color: Colors.black),
                     image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(post.imageUrl!))),
+                        image: CachedNetworkImageProvider(userPost.imageUrl!))),
               ),
       ),
     );
@@ -2110,7 +2016,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                   padding: EdgeInsets.zero,
                   width: MediaQuery.of(context).size.width / 4,
                   child: Marquee(
-                    text: post.gameName,
+                    text: game.name,
                     textDirection: TextDirection.ltr,
                     blankSpace: 50,
                     velocity: 30,
@@ -2123,7 +2029,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(5.0),
                     image: DecorationImage(
-                        image: CachedNetworkImageProvider(post.gameImage),
+                        image: CachedNetworkImageProvider(game.imageUrl),
                         fit: BoxFit.cover)),
                 child: GestureDetector(
                   onTap: () => Navigator.push(

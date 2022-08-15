@@ -22,21 +22,34 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
   List<Post> posts = [];
 
   getPostsHahstags() async {
-    await FirebaseFirestore.instance
+    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('hashtags')
         .doc(widget.hashtag.name)
         .collection('posts')
         .limit(20)
-        .get()
-        .then((post) async {
-      for (var item in post.docs) {
-        await FirebaseFirestore.instance
-            .collection('posts')
-            .doc(item.id)
-            .get()
-            .then((value) => posts.add(Post.fromMap(value, value.data()!)));
-      }
-    });
+        .get();
+
+    for (var item in data.docs) {
+      DocumentSnapshot<Map<String, dynamic>> dataPost = await FirebaseFirestore
+          .instance
+          .collection('posts')
+          .doc(item.id)
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataUser = await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(dataPost.data()!["uid"])
+          .get();
+      DocumentSnapshot<Map<String, dynamic>> dataGame = await FirebaseFirestore
+          .instance
+          .collection("games")
+          .doc("verified")
+          .collection("games_verified")
+          .doc(dataPost.data()!["idGame"])
+          .get();
+      posts.add(Post.fromMap(
+          dataPost, dataPost.data()!, dataUser.data()!, dataGame.data()!));
+    }
 
     posts.sort((a, b) => b.date.compareTo(a.date));
 
@@ -188,21 +201,6 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                   splashColor:
                       Theme.of(context).colorScheme.primary.withOpacity(0.5),
                 ),
-                Positioned(
-                    bottom: 5,
-                    right: 5,
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.remove_red_eye,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          post.viewcount.toString(),
-                          style: Theme.of(context).textTheme.bodySmall,
-                        )
-                      ],
-                    )),
               ],
             )));
   }
@@ -216,7 +214,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(5.0),
                 image: DecorationImage(
-                  image: CachedNetworkImageProvider(post.previewImage),
+                  image: CachedNetworkImageProvider(post.previewPictureUrl),
                   fit: BoxFit.cover,
                 )),
             child: Stack(
@@ -242,21 +240,6 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                     child: Icon(
                       Icons.play_arrow,
                       color: Colors.white,
-                    )),
-                Positioned(
-                    bottom: 5,
-                    right: 5,
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.remove_red_eye,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          post.viewcount.toString(),
-                          style: Theme.of(context).textTheme.bodySmall,
-                        )
-                      ],
                     )),
               ],
             )));
