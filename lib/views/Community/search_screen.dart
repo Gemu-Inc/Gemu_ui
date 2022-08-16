@@ -561,7 +561,7 @@ class Searchviewstate extends State<SearchScreen>
                                                             recentSearch
                                                                 .data()!),
                                                         navKey:
-                                                            navSelectionAuthKey,
+                                                            navCommunityAuthKey,
                                                       )));
                                         },
                                         leading: Container(
@@ -773,7 +773,7 @@ class Searchviewstate extends State<SearchScreen>
                                         builder: (_) => ProfileGameScreen(
                                             game: Game.fromMap(recentSearch,
                                                 recentSearch.data()!),
-                                            navKey: navSelectionAuthKey)));
+                                            navKey: navCommunityAuthKey)));
                               },
                               leading: Container(
                                 height: 45,
@@ -1047,7 +1047,7 @@ class Searchviewstate extends State<SearchScreen>
                                                   game: Game.fromMapAlgolia(
                                                       snap, snap.data),
                                                   navKey:
-                                                      navSelectionAuthKey)));
+                                                      navCommunityAuthKey)));
                                     },
                                     leading: snap.data["imageUrl"] == null
                                         ? Container(
@@ -1219,7 +1219,7 @@ class Searchviewstate extends State<SearchScreen>
                                       builder: (_) => ProfileGameScreen(
                                           game: Game.fromMapAlgolia(
                                               snap, snap.data),
-                                          navKey: navSelectionAuthKey)));
+                                          navKey: navCommunityAuthKey)));
                             },
                             leading: Container(
                               height: 45,

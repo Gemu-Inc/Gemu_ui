@@ -47,7 +47,7 @@ class CustomNavBar extends StatelessWidget {
               : EdgeInsets.zero,
       child: Container(
         height: 50,
-        width: 60,
+        width: 70,
         alignment: Alignment.center,
         child: InkWell(
           onTap: () {

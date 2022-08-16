@@ -578,7 +578,7 @@ class DatabaseService {
     return await usersCollectionReference.doc(uid).update({'email': email});
   }
 
-  //Partie Highlights
+  //Partie Community
 
   //Partie messagerie
 

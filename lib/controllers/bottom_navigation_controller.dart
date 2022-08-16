@@ -36,13 +36,13 @@ class _BottomNavigationControllerState
           }),
       WillPopScope(
           child: Navigator(
-            key: navSelectionAuthKey,
-            initialRoute: Highlights,
+            key: navCommunityAuthKey,
+            initialRoute: Community,
             onGenerateRoute: (settings) =>
-                generateRouteSelectionAuth(settings, context),
+                generateRouteCommunityAuth(settings, context),
           ),
           onWillPop: () async {
-            return !(await navSelectionAuthKey.currentState!.maybePop());
+            return !(await navCommunityAuthKey.currentState!.maybePop());
           }),
       WillPopScope(
           child: Navigator(
@@ -77,7 +77,7 @@ class _BottomNavigationControllerState
       BottomNavigationBarItem(
         icon: Icon(Icons.highlight_outlined),
         activeIcon: Icon(Icons.highlight),
-        label: ("Sélection"),
+        label: ("Communauté"),
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.notifications_active_outlined),
@@ -151,7 +151,7 @@ class _BottomNavigationControllerState
                         navHomeAuthKey.currentState!
                             .popUntil((route) => route.isFirst);
                       } else if (_navController.index == 1 && index == 1) {
-                        navSelectionAuthKey.currentState!
+                        navCommunityAuthKey.currentState!
                             .popUntil((route) => route.isFirst);
                       } else if (_navController.index == 2 && index == 2) {
                         navActivitiesAuthKey.currentState!

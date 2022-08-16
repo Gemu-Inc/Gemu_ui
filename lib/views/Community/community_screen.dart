@@ -1,12 +1,13 @@
-import "dart:io" show Platform;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/constants/constants.dart';
+import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
+import 'package:gemu/views/Post/posts_feed_screen.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import 'package:gemu/components/bouncing_button.dart';
@@ -16,19 +17,15 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
 
 import 'search_screen.dart';
-import 'highlights_posts_view.dart';
 
-class HighlightsScreen extends ConsumerStatefulWidget {
-  const HighlightsScreen({Key? key}) : super(key: key);
+class CommunityScreen extends ConsumerStatefulWidget {
+  const CommunityScreen({Key? key}) : super(key: key);
 
-  Highlightsviewstate createState() => Highlightsviewstate();
+  Communityviewstate createState() => Communityviewstate();
 }
 
-class Highlightsviewstate extends ConsumerState<HighlightsScreen>
-    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  int currentTabIndex = 0;
-
+class Communityviewstate extends ConsumerState<CommunityScreen>
+    with AutomaticKeepAliveClientMixin {
   ScrollController _mainScrollController = ScrollController();
   double positionScroll = 0.0;
 
@@ -53,46 +50,25 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
   List<Post> posts = [];
   List<Post> newPosts = [];
 
-//Listener tab controller
-  void _onTabChanged() {
-    if (!_tabController.indexIsChanging) {
-      setState(() {
-        currentTabIndex = _tabController.index;
-        print(currentTabIndex);
-      });
-
-      if (positionScroll != 0.0) {
-        _mainScrollController.jumpTo(0.0);
-      }
-    }
-  }
-
 //Listener scroll controller
   void scrollListener() {
-    positionScroll = _mainScrollController.position.pixels;
-
-    if (currentTabIndex == 0 &&
-        _mainScrollController.offset <=
+    if (_mainScrollController.offset <=
             (_mainScrollController.position.minScrollExtent - 50.0) &&
         !isReloadHashtags) {
-      print('en haut hashtags');
       reloadHashtags();
-    } else if (currentTabIndex == 0 &&
-        _mainScrollController.offset >=
-            (_mainScrollController.position.maxScrollExtent + 50) &&
+    } else if (_mainScrollController.offset >=
+            (_mainScrollController.position.maxScrollExtent + 50.0) &&
         !isLoadingMoreHashtags) {
-      print('en bas hashtags');
       loadMoreHashtags();
     }
   }
 
   //Fonctions Hashtags
-
   getHashtags() async {
     await FirebaseFirestore.instance
         .collection('hashtags')
         .orderBy('postsCount', descending: true)
-        .limit(3)
+        .limit(12)
         .get()
         .then((data) {
       for (var item in data.docs) {
@@ -121,13 +97,11 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
     Hashtag hashtag = hashtags.last;
     bool add;
 
-    await Future.delayed(Duration(seconds: 2));
-
     await FirebaseFirestore.instance
         .collection('hashtags')
         .orderBy('postsCount', descending: true)
         .startAfterDocument(hashtag.snapshot!)
-        .limit(3)
+        .limit(12)
         .get()
         .then((data) {
       for (var item in data.docs) {
@@ -169,7 +143,7 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
     await FirebaseFirestore.instance
         .collection('hashtags')
         .orderBy('postsCount', descending: true)
-        .limit(3)
+        .limit(12)
         .get()
         .then((data) {
       for (var item in data.docs) {
@@ -184,8 +158,6 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
       dataHashtagsIsThere = false;
     });
 
-    await Future.delayed(Duration(seconds: 1));
-
     setState(() {
       dataHashtagsIsThere = true;
     });
@@ -197,27 +169,19 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
   @override
   void initState() {
     super.initState();
+    getHashtags();
 
     _mainScrollController.addListener(scrollListener);
-
-    _tabController =
-        TabController(initialIndex: currentTabIndex, length: 1, vsync: this);
-    _tabController.addListener(_onTabChanged);
-
-    getHashtags();
-    //getDiscoverWithoutGamesUser();
   }
 
   @override
   void deactivate() {
     _mainScrollController.removeListener(scrollListener);
-    _tabController.removeListener(_onTabChanged);
     super.deactivate();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _mainScrollController.dispose();
     super.dispose();
   }
@@ -226,103 +190,69 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
   Widget build(BuildContext context) {
     super.build(context);
     gamesList = ref.watch(myGamesNotifierProvider);
-    return Scaffold(
-      appBar: PreferredSize(
-          child: AppBar(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            elevation: 6,
-            systemOverlayStyle: Platform.isIOS
-                ? Theme.of(context).brightness == Brightness.dark
-                    ? SystemUiOverlayStyle.light
-                    : SystemUiOverlayStyle.dark
-                : SystemUiOverlayStyle(
-                    statusBarColor: Theme.of(context)
-                        .scaffoldBackgroundColor
-                        .withOpacity(0.5),
-                    statusBarIconBrightness:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Brightness.light
-                            : Brightness.dark),
-            title: Text(
-              'Highlights',
-              style: Theme.of(context).textTheme.bodySmall,
+
+    return SafeArea(
+      left: false,
+      right: false,
+      bottom: false,
+      child: Scaffold(
+        body: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          controller: _mainScrollController,
+          physics:
+              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          shrinkWrap: true,
+          children: [
+            Container(
+              height: isReloadHashtags ? 50.0 : 0.0,
+              child: Center(
+                child: SizedBox(
+                  height: 30.0,
+                  width: 30.0,
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.primary,
+                    strokeWidth: 1.5,
+                  ),
+                ),
+              ),
             ),
-            bottom: PreferredSize(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
-                  child: Container(
-                    child: search(),
-                  ),
-                ),
-                preferredSize: Size.fromHeight(100)),
-          ),
-          preferredSize:
-              Size.fromHeight(MediaQuery.of(context).size.height / 6)),
-      body: ListView(
-        controller: _mainScrollController,
-        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-        shrinkWrap: true,
-        children: [
-          currentTabIndex == 0
-              ? Padding(
-                  padding: EdgeInsets.only(top: 20.0),
-                  child: Container(
-                    height: isReloadHashtags ? 50.0 : 0.0,
-                    child: Center(
-                      child: SizedBox(
-                        height: 30.0,
-                        width: 30.0,
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.primary,
-                          strokeWidth: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : Padding(
-                  padding: EdgeInsets.only(top: 20.0),
-                  child: Container(
-                    height: isReloadDiscover ? 50.0 : 0.0,
-                    child: Center(
-                      child: SizedBox(
-                        height: 30.0,
-                        width: 30.0,
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.primary,
-                          strokeWidth: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-          StickyHeader(
-              controller: _mainScrollController,
-              header: stickyHeader(),
-              content: tabBarView())
-        ],
+            const SizedBox(
+              height: 25.0,
+            ),
+            Text(
+              "Communauté",
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(
+              height: 15.0,
+            ),
+            StickyHeader(
+                header: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    height: 75,
+                    alignment: Alignment.center,
+                    child: search()),
+                content: hashtagsView())
+          ],
+        ),
       ),
     );
   }
 
   Widget search() {
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        padding: EdgeInsets.symmetric(horizontal: 5.0),
         child: BouncingButton(
           content: Row(
             children: [
               SizedBox(width: 15.0),
-              Icon(Icons.search,
-                  size: 23.0,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black),
+              Icon(Icons.search, size: 26.0),
               SizedBox(
                 width: 15.0,
               ),
               Text(
-                'Recherche user, game, hashtag',
-                style: Theme.of(context).textTheme.bodySmall,
+                'Rechercher',
+                style: Theme.of(context).textTheme.titleSmall,
               )
             ],
           ),
@@ -335,57 +265,11 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
         ));
   }
 
-  Widget stickyHeader() {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      width: MediaQuery.of(context).size.width,
-      child: tabBar(),
-    );
-  }
-
-  Widget tabBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
-      child: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          indicatorSize: TabBarIndicatorSize.tab,
-          labelColor: Theme.of(context).colorScheme.primary,
-          unselectedLabelColor: Colors.grey,
-          indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).canvasColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.primary,
-                  offset: Offset(1.0, 1.0),
-                ),
-              ]),
-          tabs: [
-            Tab(
-              text: 'Hashtags',
-            ),
-          ]),
-    );
-  }
-
-  Widget tabBarView() {
-    return IndexedStack(index: currentTabIndex, children: [
-      Visibility(
-        child: hashtagsView(),
-        maintainState: true,
-        visible: currentTabIndex == 0,
-      ),
-    ]);
-  }
-
   Widget hashtagsView() {
     return dataHashtagsIsThere
         ? hashtags.length != 0
-            ? Container(
-                padding: EdgeInsets.only(
-                    top: 10.0,
-                    bottom: (MediaQuery.of(context).size.height / 11) + 10.0),
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Column(
                   children: [
                     ListView.builder(
@@ -394,67 +278,77 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
                         itemCount: hashtags.length,
                         itemBuilder: (BuildContext context, int index) {
                           Hashtag hashtag = hashtags[index];
-                          return Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width / 4,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (_) => HashtagsScreen(
-                                                    hashtag: hashtag))),
-                                        child: Container(
-                                          height: 50,
-                                          width: 50,
-                                          decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                  colors: [
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary
-                                                  ]),
-                                              shape: BoxShape.circle,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    color: Theme.of(context)
-                                                        .canvasColor,
-                                                    spreadRadius: 3)
-                                              ]),
-                                          child: Icon(Icons.tag),
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 15.0),
+                                  child: Container(
+                                    width: 100,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      HashtagsScreen(
+                                                          hashtag: hashtag))),
+                                          child: Container(
+                                            height: 55,
+                                            width: 55,
+                                            decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .secondary
+                                                    ]),
+                                                shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      color: Theme.of(context)
+                                                          .canvasColor,
+                                                      spreadRadius: 3)
+                                                ]),
+                                            child: Icon(
+                                              Icons.tag,
+                                              size: 25,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: 2.0,
-                                      ),
-                                      Text(hashtag.name,
+                                        SizedBox(
+                                          height: 5.0,
+                                        ),
+                                        Text(hashtag.name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall),
+                                        Text(
+                                          "${Helpers.numberFormat(hashtag.postsCount)} publications",
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodySmall),
-                                      Text(
-                                          '${hashtag.postsCount.toString()} publications',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall)
-                                    ],
+                                              .titleSmall,
+                                          textAlign: TextAlign.center,
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                  child: PostsByHashtags(
-                                hashtag: hashtag,
-                              ))
-                            ],
+                                Expanded(
+                                    child: PostsByHashtags(
+                                  hashtag: hashtag,
+                                ))
+                              ],
+                            ),
                           );
                         }),
                     Padding(
@@ -488,12 +382,10 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
               )
             : Container(
                 height: MediaQuery.of(context).size.height / 1.5,
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                    child: Text(
+                child: Text(
                   'Pas encore d\'hashtags',
                   style: Theme.of(context).textTheme.bodySmall,
-                )),
+                ),
               )
         : Container(
             height: 150.0,
@@ -505,72 +397,6 @@ class Highlightsviewstate extends ConsumerState<HighlightsScreen>
               ),
             ),
           );
-  }
-
-  Widget picture(Post post, int index) {
-    return Material(
-      color: Theme.of(context).canvasColor,
-      borderRadius: BorderRadius.circular(5.0),
-      child: Ink(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(5.0),
-              image: DecorationImage(
-                  image: CachedNetworkImageProvider(post.postUrl),
-                  fit: BoxFit.cover)),
-          child: Stack(
-            children: [
-              Container(color: Colors.black.withOpacity(0.2)),
-              InkWell(
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) =>
-                            DiscoverPostsView(indexPost: index, posts: posts))),
-                borderRadius: BorderRadius.circular(5.0),
-                splashColor:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.5),
-              ),
-            ],
-          )),
-    );
-  }
-
-  Widget video(Post post, int index) {
-    return Material(
-      color: Theme.of(context).canvasColor,
-      borderRadius: BorderRadius.circular(5.0),
-      child: Ink(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(5.0),
-              image: DecorationImage(
-                  image: CachedNetworkImageProvider(post.previewPictureUrl),
-                  fit: BoxFit.cover)),
-          child: Stack(
-            children: [
-              Container(color: Colors.black.withOpacity(0.2)),
-              InkWell(
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) =>
-                            DiscoverPostsView(indexPost: index, posts: posts))),
-                borderRadius: BorderRadius.circular(5.0),
-                splashColor:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.5),
-              ),
-              Positioned(
-                top: 5.0,
-                left: 5.0,
-                child: Icon(
-                  Icons.play_arrow,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          )),
-    );
   }
 }
 
@@ -798,10 +624,10 @@ class PostsByHashtagsState extends State<PostsByHashtags>
         borderRadius: BorderRadius.circular(5.0),
         color: Theme.of(context).canvasColor,
         child: Ink(
+          height: 200,
           width: 110,
           decoration: BoxDecoration(
               color: Theme.of(context).canvasColor,
-              border: Border.all(color: Colors.black),
               borderRadius: BorderRadius.circular(5.0),
               image: DecorationImage(
                   image: CachedNetworkImageProvider(post.postUrl),
@@ -816,11 +642,11 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => HashtagPostsView(
-                              hashtag: hashtag,
-                              index: indexPost,
-                              posts: posts,
-                            ))),
+                        builder: (context) => PostsFeedScreen(
+                            title: "#${widget.hashtag.name}",
+                            navKey: navCommunityAuthKey,
+                            index: indexPost,
+                            posts: posts))),
               ),
             ],
           ),
@@ -838,7 +664,6 @@ class PostsByHashtagsState extends State<PostsByHashtags>
         child: Ink(
           width: 110,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
               borderRadius: BorderRadius.circular(5.0),
               image: DecorationImage(
                   image: CachedNetworkImageProvider(post.previewPictureUrl),
@@ -855,11 +680,11 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => HashtagPostsView(
-                              hashtag: hashtag,
-                              index: indexPost,
-                              posts: posts,
-                            ))),
+                        builder: (context) => PostsFeedScreen(
+                            title: "#${widget.hashtag.name}",
+                            navKey: navCommunityAuthKey,
+                            index: indexPost,
+                            posts: posts))),
               ),
               Positioned(
                 top: 5.0,

@@ -4,7 +4,7 @@ import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
 import 'package:gemu/views/Games/profile_game_screen.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
-import 'package:gemu/views/Highlights/highlights_screen.dart';
+import 'package:gemu/views/Community/community_screen.dart';
 import 'package:gemu/views/Home/add_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
 import 'package:gemu/views/Post/posts_feed_screen.dart';
@@ -122,12 +122,12 @@ Route<dynamic> generateRouteHomeAuth(
 }
 
 //router auth selection part
-Route<dynamic> generateRouteSelectionAuth(
+Route<dynamic> generateRouteCommunityAuth(
     RouteSettings settings, BuildContext context) {
   final List<dynamic>? args = settings.arguments as List<dynamic>?;
   switch (settings.name) {
-    case Highlights:
-      return MaterialPageRoute(builder: (_) => HighlightsScreen());
+    case Community:
+      return MaterialPageRoute(builder: (_) => CommunityScreen());
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

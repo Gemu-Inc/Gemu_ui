@@ -1,9 +1,8 @@
-import 'dart:io' show File, Platform;
+import 'dart:io' show Platform;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gemu/components/loader_data_custom.dart';
 import 'package:gemu/components/loader_overlay_custom.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/providers/Games/games_discover_provider.dart';
@@ -16,7 +15,6 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/models/categorie.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 
 class AddScreen extends ConsumerStatefulWidget {
   const AddScreen({Key? key}) : super(key: key);
@@ -40,9 +38,6 @@ class _AddScreenState extends ConsumerState<AddScreen>
   late bool stopReached;
   List<Game> gamesDiscover = [];
   List<Game> newGamesDiscover = [];
-
-  bool _alreadyLoadingNewFollow = false;
-  bool _alreadyLoadingNewUnfollow = false;
 
   loadMoreData() async {
     try {

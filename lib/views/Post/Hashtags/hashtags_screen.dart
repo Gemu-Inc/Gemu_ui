@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gemu/constants/constants.dart';
 
 import 'package:gemu/models/post.dart';
 import 'package:gemu/models/hashtag.dart';
-import 'package:gemu/views/Highlights/highlights_posts_view.dart';
+import 'package:gemu/views/Post/posts_feed_screen.dart';
 
 class HashtagsScreen extends StatefulWidget {
   final Hashtag hashtag;
@@ -178,7 +179,6 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
         borderRadius: BorderRadius.circular(5.0),
         child: Ink(
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(5.0),
                 image: DecorationImage(
                   image: CachedNetworkImageProvider(post.postUrl),
@@ -193,8 +193,9 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => HashtagPostsView(
-                              hashtag: widget.hashtag,
+                          builder: (_) => PostsFeedScreen(
+                              title: "#${widget.hashtag.name}",
+                              navKey: navCommunityAuthKey,
                               index: index,
                               posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),
@@ -211,7 +212,6 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
         borderRadius: BorderRadius.circular(5.0),
         child: Ink(
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(5.0),
                 image: DecorationImage(
                   image: CachedNetworkImageProvider(post.previewPictureUrl),
@@ -226,8 +226,9 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => HashtagPostsView(
-                              hashtag: widget.hashtag,
+                          builder: (_) => PostsFeedScreen(
+                              title: "#${widget.hashtag.name}",
+                              navKey: navCommunityAuthKey,
                               index: index,
                               posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),
