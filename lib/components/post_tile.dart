@@ -384,10 +384,12 @@ class PictureItemState extends State<PictureItem>
           .collection("games_verified")
           .doc(data.data()!["idGame"])
           .get();
-      setState(() {
-        post = Post.fromMap(
-            data, data.data()!, dataUser.data()!, dataGame.data()!);
-      });
+      if (mounted) {
+        setState(() {
+          post = Post.fromMap(
+              data, data.data()!, dataUser.data()!, dataGame.data()!);
+        });
+      }
     });
 
     //Prendre les infos du user du post

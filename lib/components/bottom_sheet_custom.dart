@@ -2,6 +2,7 @@ import 'dart:io' show File, Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/components/loader_overlay_custom.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/Credentials/credentials_provider.dart';
@@ -110,7 +111,7 @@ Future inscriptionBottomSheet(
                                 child: ElevatedButton(
                                     onPressed: () async {
                                       if (!loadingGoogle) {
-                                        context.loaderOverlay.show();
+                                        LoaderOverlayCustom.showLoader(context);
                                         ref
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
@@ -128,7 +129,7 @@ Future inscriptionBottomSheet(
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
                                             .updateLoading(false);
-                                        context.loaderOverlay.hide();
+                                        LoaderOverlayCustom.hideLoader();
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -306,7 +307,7 @@ Future inscriptionBottomSheet(
                                 child: ElevatedButton(
                                     onPressed: () async {
                                       if (!loadingGoogle) {
-                                        context.loaderOverlay.show();
+                                        LoaderOverlayCustom.showLoader(context);
                                         ref
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
@@ -324,7 +325,7 @@ Future inscriptionBottomSheet(
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
                                             .updateLoading(false);
-                                        context.loaderOverlay.hide();
+                                        LoaderOverlayCustom.hideLoader();
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -459,7 +460,7 @@ Future connexionBottomSheet(
                                 child: ElevatedButton(
                                     onPressed: () async {
                                       if (!loadingGoogle) {
-                                        context.loaderOverlay.show();
+                                        LoaderOverlayCustom.showLoader(context);
                                         ref
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
@@ -477,7 +478,7 @@ Future connexionBottomSheet(
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
                                             .updateLoading(false);
-                                        context.loaderOverlay.hide();
+                                        LoaderOverlayCustom.hideLoader();
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -653,7 +654,7 @@ Future connexionBottomSheet(
                                 child: ElevatedButton(
                                     onPressed: () async {
                                       if (!loadingGoogle) {
-                                        context.loaderOverlay.show();
+                                        LoaderOverlayCustom.showLoader(context);
                                         ref
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
@@ -671,7 +672,7 @@ Future connexionBottomSheet(
                                             .read(loadingSignGoogleProvider
                                                 .notifier)
                                             .updateLoading(false);
-                                        context.loaderOverlay.hide();
+                                        LoaderOverlayCustom.hideLoader();
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(

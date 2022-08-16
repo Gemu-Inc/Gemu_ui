@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 
 class LoaderOverlayCustom {
-  final Widget widgetProgressIndicator;
+  const LoaderOverlayCustom({Key? key});
 
-  const LoaderOverlayCustom({required this.widgetProgressIndicator});
-
-  void showLoader(BuildContext context) {
+  static void showLoader(BuildContext context) {
     Loader.show(context,
-        overlayColor: Colors.black38.withOpacity(0.5),
+        overlayColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         progressIndicator: Center(
-          child: widgetProgressIndicator,
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.primary,
+            strokeWidth: 1.0,
+          ),
         ));
   }
 
-  void dispose() {
+  static void hideLoader() {
     Loader.hide();
   }
 }

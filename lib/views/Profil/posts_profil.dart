@@ -48,9 +48,11 @@ class _PostsPublicProfileState extends State<PostsPublicProfile>
           Post.fromMap(item, item.data(), dataUser.data()!, dataGame.data()!));
     }
 
-    setState(() {
-      _loadingPosts = true;
-    });
+    if (mounted) {
+      setState(() {
+        _loadingPosts = true;
+      });
+    }
   }
 
   @override
@@ -225,9 +227,11 @@ class PostsPrivateState extends State<PostsPrivate>
           Post.fromMap(item, item.data(), dataUser.data()!, dataGame.data()!));
     }
 
-    setState(() {
-      _loadingPosts = true;
-    });
+    if (mounted) {
+      setState(() {
+        _loadingPosts = true;
+      });
+    }
   }
 
   @override
