@@ -195,7 +195,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                       MaterialPageRoute(
                           builder: (_) => PostsFeedScreen(
                               title: "#${widget.hashtag.name}",
-                              navKey: navCommunityAuthKey,
+                              navKey: navCommunityAuthKey!,
                               index: index,
                               posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),
@@ -228,7 +228,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                       MaterialPageRoute(
                           builder: (_) => PostsFeedScreen(
                               title: "#${widget.hashtag.name}",
-                              navKey: navCommunityAuthKey,
+                              navKey: navCommunityAuthKey!,
                               index: index,
                               posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),

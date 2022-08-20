@@ -88,7 +88,7 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
                 ])),
           ),
           leading: IconButton(
-              onPressed: () => navProfileAuthKey.currentState!.pop(),
+              onPressed: () => navProfileAuthKey!.currentState!.pop(),
               icon: Icon(Icons.arrow_back_ios)),
           title: Text('Réglages'),
           centerTitle: false,

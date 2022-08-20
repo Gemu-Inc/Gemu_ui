@@ -8,8 +8,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:gemu/views/Share/Post/Video/video_screen.dart';
-
 class VideoEditorScreen extends StatefulWidget {
   final File? file;
 
@@ -156,9 +154,8 @@ class VideoEditorviewstate extends State<VideoEditorScreen> {
               children: [
                 IconButton(
                     onPressed: () async {
-                      navMainAuthKey.currentState!.popUntil((route) => false);
-                      await Future.delayed(const Duration(milliseconds: 500));
-                      navMainAuthKey.currentState!.pushNamed(BottomTabNav);
+                      navMainAuthKey.currentState!.pushNamedAndRemoveUntil(
+                          BottomTabNav, (route) => false);
                     },
                     icon: Icon(Icons.clear)),
                 Text(

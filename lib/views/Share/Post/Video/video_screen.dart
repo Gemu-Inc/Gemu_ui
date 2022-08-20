@@ -13,7 +13,6 @@ import 'package:video_player/video_player.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/controllers/bottom_navigation_controller.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
 
@@ -215,9 +214,8 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
           .doc(postName)
           .set({'date': date});
 
-      navMainAuthKey.currentState!.popUntil((route) => false);
-      await Future.delayed(const Duration(milliseconds: 500));
-      navMainAuthKey.currentState!.pushNamed(BottomTabNav);
+      navMainAuthKey.currentState!
+          .pushNamedAndRemoveUntil(BottomTabNav, (route) => false);
     } catch (e) {
       print(e);
     }
@@ -387,16 +385,9 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                                                       Navigator.pop(context);
                                                       navMainAuthKey
                                                           .currentState!
-                                                          .popUntil(
+                                                          .pushNamedAndRemoveUntil(
+                                                              BottomTabNav,
                                                               (route) => false);
-                                                      await Future.delayed(
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  500));
-                                                      navMainAuthKey
-                                                          .currentState!
-                                                          .pushNamed(
-                                                              BottomTabNav);
                                                     },
                                                     child: Text(
                                                       'Oui',

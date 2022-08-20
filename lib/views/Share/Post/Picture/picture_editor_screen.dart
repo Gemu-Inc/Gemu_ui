@@ -7,8 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/game.dart';
 
-import 'package:gemu/views/Share/Post/Picture/picture_screen.dart';
-
 class PictureEditorScreen extends StatefulWidget {
   final File file;
 
@@ -144,9 +142,8 @@ class PictureEditorviewstate extends State<PictureEditorScreen> {
               children: [
                 IconButton(
                     onPressed: () async {
-                      navMainAuthKey.currentState!.popUntil((route) => false);
-                      await Future.delayed(const Duration(milliseconds: 500));
-                      navMainAuthKey.currentState!.pushNamed(BottomTabNav);
+                      navMainAuthKey.currentState!.pushNamedAndRemoveUntil(
+                          BottomTabNav, (route) => false);
                     },
                     icon: Icon(Icons.clear)),
                 Text(

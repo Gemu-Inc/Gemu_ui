@@ -32,7 +32,7 @@ class _BottomNavigationControllerState
                 generateRouteHomeAuth(settings, context),
           ),
           onWillPop: () async {
-            return !(await navHomeAuthKey.currentState!.maybePop());
+            return !(await navHomeAuthKey!.currentState!.maybePop());
           }),
       WillPopScope(
           child: Navigator(
@@ -42,7 +42,7 @@ class _BottomNavigationControllerState
                 generateRouteCommunityAuth(settings, context),
           ),
           onWillPop: () async {
-            return !(await navCommunityAuthKey.currentState!.maybePop());
+            return !(await navCommunityAuthKey!.currentState!.maybePop());
           }),
       WillPopScope(
           child: Navigator(
@@ -52,7 +52,7 @@ class _BottomNavigationControllerState
                 generateRouteActivitiesAuth(settings, context),
           ),
           onWillPop: () async {
-            return !(await navActivitiesAuthKey.currentState!.maybePop());
+            return !(await navActivitiesAuthKey!.currentState!.maybePop());
           }),
       WillPopScope(
           child: Navigator(
@@ -62,7 +62,7 @@ class _BottomNavigationControllerState
                 generateRouteProfileAuth(settings, context),
           ),
           onWillPop: () async {
-            return !(await navProfileAuthKey.currentState!.maybePop());
+            return !(await navProfileAuthKey!.currentState!.maybePop());
           })
     ];
   }
@@ -95,6 +95,11 @@ class _BottomNavigationControllerState
   @override
   void initState() {
     super.initState();
+    navHomeAuthKey = GlobalKey<NavigatorState>();
+    navCommunityAuthKey = GlobalKey<NavigatorState>();
+    navActivitiesAuthKey = GlobalKey<NavigatorState>();
+    navProfileAuthKey = GlobalKey<NavigatorState>();
+
     _navController = TabController(
         initialIndex: 0,
         length: 4,
@@ -148,16 +153,16 @@ class _BottomNavigationControllerState
                     selectedIndex: _navController.index,
                     onItemSelected: (index) {
                       if (_navController.index == 0 && index == 0) {
-                        navHomeAuthKey.currentState!
+                        navHomeAuthKey!.currentState!
                             .popUntil((route) => route.isFirst);
                       } else if (_navController.index == 1 && index == 1) {
-                        navCommunityAuthKey.currentState!
+                        navCommunityAuthKey!.currentState!
                             .popUntil((route) => route.isFirst);
                       } else if (_navController.index == 2 && index == 2) {
-                        navActivitiesAuthKey.currentState!
+                        navActivitiesAuthKey!.currentState!
                             .popUntil((route) => route.isFirst);
                       } else if (_navController.index == 3 && index == 3) {
-                        navProfileAuthKey.currentState!
+                        navProfileAuthKey!.currentState!
                             .popUntil((route) => route.isFirst);
                       } else {
                         setState(() {

@@ -129,7 +129,7 @@ class _MyProfilviewstate extends State<MyProfilScreen>
                                 Icons.settings,
                                 size: 25,
                               ),
-                              onPressed: () => navProfileAuthKey.currentState!
+                              onPressed: () => navProfileAuthKey!.currentState!
                                   .pushNamed(Reglages, arguments: [me!])),
                         ],
                         expandedHeight: 255,

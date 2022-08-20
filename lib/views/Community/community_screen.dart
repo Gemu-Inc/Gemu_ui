@@ -644,7 +644,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                     MaterialPageRoute(
                         builder: (context) => PostsFeedScreen(
                             title: "#${widget.hashtag.name}",
-                            navKey: navCommunityAuthKey,
+                            navKey: navCommunityAuthKey!,
                             index: indexPost,
                             posts: posts))),
               ),
@@ -682,7 +682,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                     MaterialPageRoute(
                         builder: (context) => PostsFeedScreen(
                             title: "#${widget.hashtag.name}",
-                            navKey: navCommunityAuthKey,
+                            navKey: navCommunityAuthKey!,
                             index: indexPost,
                             posts: posts))),
               ),

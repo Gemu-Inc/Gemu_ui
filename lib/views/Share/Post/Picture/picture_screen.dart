@@ -242,9 +242,8 @@ class Pictureviewstate extends State<PictureScreen>
           .doc(postName)
           .set({'date': date});
 
-      navMainAuthKey.currentState!.popUntil((route) => false);
-      await Future.delayed(const Duration(milliseconds: 500));
-      navMainAuthKey.currentState!.pushNamed(BottomTabNav);
+      navMainAuthKey.currentState!
+          .pushNamedAndRemoveUntil(BottomTabNav, (route) => false);
     } catch (e) {
       print(e);
     }
@@ -308,11 +307,9 @@ class Pictureviewstate extends State<PictureScreen>
                                           onPressed: () async {
                                             Navigator.pop(context);
                                             navMainAuthKey.currentState!
-                                                .popUntil((route) => false);
-                                            await Future.delayed(const Duration(
-                                                milliseconds: 500));
-                                            navMainAuthKey.currentState!
-                                                .pushNamed(BottomTabNav);
+                                                .pushNamedAndRemoveUntil(
+                                                    BottomTabNav,
+                                                    (route) => false);
                                           },
                                           child: Text(
                                             'Oui',

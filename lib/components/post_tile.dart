@@ -1665,7 +1665,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                       MaterialPageRoute(
                           builder: (_) => ProfileGameScreen(
                                 game: game,
-                                navKey: navHomeAuthKey,
+                                navKey: navHomeAuthKey!,
                               ))),
                   child: Container(
                     height: 30.0,
@@ -2039,7 +2039,7 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                       MaterialPageRoute(
                           builder: (_) => ProfileGameScreen(
                                 game: game,
-                                navKey: navHomeAuthKey,
+                                navKey: navHomeAuthKey!,
                               ))),
                 ),
               )

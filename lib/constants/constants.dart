@@ -6,12 +6,12 @@ import 'package:gemu/models/user.dart';
 UserModel? me;
 
 //Navigator global keys
-GlobalKey<NavigatorState> navNonAuthKey = GlobalKey<NavigatorState>();
-GlobalKey<NavigatorState> navMainAuthKey = GlobalKey<NavigatorState>();
-GlobalKey<NavigatorState> navHomeAuthKey = GlobalKey<NavigatorState>();
-GlobalKey<NavigatorState> navCommunityAuthKey = GlobalKey<NavigatorState>();
-GlobalKey<NavigatorState> navActivitiesAuthKey = GlobalKey<NavigatorState>();
-GlobalKey<NavigatorState> navProfileAuthKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navNonAuthKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navMainAuthKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState>? navHomeAuthKey;
+GlobalKey<NavigatorState>? navCommunityAuthKey;
+GlobalKey<NavigatorState>? navActivitiesAuthKey;
+GlobalKey<NavigatorState>? navProfileAuthKey;
 
 //route names for generated routes non auth
 const String GetStartedBefore = "GetStartedBefore";
