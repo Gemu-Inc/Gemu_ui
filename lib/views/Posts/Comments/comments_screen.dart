@@ -11,7 +11,7 @@ import 'package:gemu/models/post.dart';
 import 'package:gemu/models/commentaire.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:gemu/views/Profil/profil_screen.dart';
+import 'package:gemu/views/Profile/profile_user_screen.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/models/response.dart';
 

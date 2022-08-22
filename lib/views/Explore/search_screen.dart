@@ -5,11 +5,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/services/algolia_service.dart';
-import 'package:gemu/views/Profil/profil_screen.dart';
+import 'package:gemu/views/Profile/profile_user_screen.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/views/Games/profile_game_screen.dart';
-import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
+import 'package:gemu/views/Hashtags/hashtags_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -561,7 +561,7 @@ class Searchviewstate extends State<SearchScreen>
                                                             recentSearch
                                                                 .data()!),
                                                         navKey:
-                                                            navCommunityAuthKey!,
+                                                            navExploreAuthKey!,
                                                       )));
                                         },
                                         leading: Container(
@@ -773,7 +773,7 @@ class Searchviewstate extends State<SearchScreen>
                                         builder: (_) => ProfileGameScreen(
                                             game: Game.fromMap(recentSearch,
                                                 recentSearch.data()!),
-                                            navKey: navCommunityAuthKey!)));
+                                            navKey: navExploreAuthKey!)));
                               },
                               leading: Container(
                                 height: 45,
@@ -1046,8 +1046,7 @@ class Searchviewstate extends State<SearchScreen>
                                               builder: (_) => ProfileGameScreen(
                                                   game: Game.fromMapAlgolia(
                                                       snap, snap.data),
-                                                  navKey:
-                                                      navCommunityAuthKey!)));
+                                                  navKey: navExploreAuthKey!)));
                                     },
                                     leading: snap.data["imageUrl"] == null
                                         ? Container(
@@ -1219,7 +1218,7 @@ class Searchviewstate extends State<SearchScreen>
                                       builder: (_) => ProfileGameScreen(
                                           game: Game.fromMapAlgolia(
                                               snap, snap.data),
-                                          navKey: navCommunityAuthKey!)));
+                                          navKey: navExploreAuthKey!)));
                             },
                             leading: Container(
                               height: 45,

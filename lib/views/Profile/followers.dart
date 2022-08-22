@@ -3,19 +3,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/models/user.dart';
-import 'package:gemu/views/Profil/profil_screen.dart';
+import 'package:gemu/views/Profile/profile_user_screen.dart';
 import 'package:gemu/components/app_bar_custom.dart';
 
-class Follows extends StatefulWidget {
+class Followers extends StatefulWidget {
   final String idUser;
 
-  Follows({required this.idUser});
+  Followers({required this.idUser});
 
   @override
-  FollowsState createState() => FollowsState();
+  FollowersState createState() => FollowersState();
 }
 
-class FollowsState extends State<Follows> {
+class FollowersState extends State<Followers> {
   bool dataIsThere = false;
 
   List result = [];
@@ -27,7 +27,7 @@ class FollowsState extends State<Follows> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    getFollows();
+    getFollowers();
   }
 
   @override
@@ -36,11 +36,11 @@ class FollowsState extends State<Follows> {
     super.dispose();
   }
 
-  getFollows() async {
+  getFollowers() async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.idUser)
-        .collection('following')
+        .collection('followers')
         .get()
         .then((data) => result = data.docs);
 
@@ -65,14 +65,14 @@ class FollowsState extends State<Follows> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBarCustom(
         context: context,
-        title: 'Follows',
+        title: 'Followers',
         actions: [],
       ),
       body: dataIsThere
           ? resultFinal.length == 0
               ? Center(
                   child: Text(
-                    'Pas encore de follows',
+                    'Pas encore de followers',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 )
@@ -108,13 +108,13 @@ class FollowsState extends State<Follows> {
                                 height: 50,
                                 width: 50,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black),
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: CachedNetworkImageProvider(
-                                          user.imageUrl!)),
-                                )),
+                                    border: Border.all(color: Colors.black),
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: CachedNetworkImageProvider(
+                                            user.imageUrl!))),
+                              ),
                         title: Text(user.username),
                       ),
                     );

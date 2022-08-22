@@ -9,7 +9,7 @@ UserModel? me;
 final GlobalKey<NavigatorState> navNonAuthKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> navMainAuthKey = GlobalKey<NavigatorState>();
 GlobalKey<NavigatorState>? navHomeAuthKey;
-GlobalKey<NavigatorState>? navCommunityAuthKey;
+GlobalKey<NavigatorState>? navExploreAuthKey;
 GlobalKey<NavigatorState>? navActivitiesAuthKey;
 GlobalKey<NavigatorState>? navProfileAuthKey;
 
@@ -24,7 +24,7 @@ const String Login = "Login";
 const String BottomTabNav = "BottomTabNav";
 const String Home = "Home";
 const String Add = "Add";
-const String Community = "Community";
+const String Explore = "Explore";
 const String Activities = "Activities";
 const String Profile = "Profile";
 const String Games = "Games";

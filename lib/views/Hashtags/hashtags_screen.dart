@@ -5,7 +5,7 @@ import 'package:gemu/constants/constants.dart';
 
 import 'package:gemu/models/post.dart';
 import 'package:gemu/models/hashtag.dart';
-import 'package:gemu/views/Post/posts_feed_screen.dart';
+import 'package:gemu/views/Posts/posts_feed_screen.dart';
 
 class HashtagsScreen extends StatefulWidget {
   final Hashtag hashtag;
@@ -195,7 +195,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                       MaterialPageRoute(
                           builder: (_) => PostsFeedScreen(
                               title: "#${widget.hashtag.name}",
-                              navKey: navCommunityAuthKey!,
+                              navKey: navExploreAuthKey!,
                               index: index,
                               posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),
@@ -228,7 +228,7 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
                       MaterialPageRoute(
                           builder: (_) => PostsFeedScreen(
                               title: "#${widget.hashtag.name}",
-                              navKey: navCommunityAuthKey!,
+                              navKey: navExploreAuthKey!,
                               index: index,
                               posts: posts))),
                   borderRadius: BorderRadius.circular(5.0),

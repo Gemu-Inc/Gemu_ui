@@ -4,11 +4,11 @@ import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
 import 'package:gemu/views/Games/profile_game_screen.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
-import 'package:gemu/views/Community/community_screen.dart';
+import 'package:gemu/views/Explore/explore_screen.dart';
 import 'package:gemu/views/Home/add_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
-import 'package:gemu/views/Post/posts_feed_screen.dart';
-import 'package:gemu/views/Profil/profil_screen.dart';
+import 'package:gemu/views/Posts/posts_feed_screen.dart';
+import 'package:gemu/views/Profile/myself_profile_screen.dart';
 import 'package:gemu/views/Reglages/reglages_screen.dart';
 import 'package:gemu/views/Share/Post/Picture/picture_editor_screen.dart';
 import 'package:gemu/views/Share/Post/Picture/picture_screen.dart';
@@ -126,8 +126,8 @@ Route<dynamic> generateRouteCommunityAuth(
     RouteSettings settings, BuildContext context) {
   final List<dynamic>? args = settings.arguments as List<dynamic>?;
   switch (settings.name) {
-    case Community:
-      return MaterialPageRoute(builder: (_) => CommunityScreen());
+    case Explore:
+      return MaterialPageRoute(builder: (_) => ExploreScreen());
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(
@@ -161,7 +161,7 @@ Route<dynamic> generateRouteProfileAuth(
   final List<dynamic>? args = settings.arguments as List<dynamic>?;
   switch (settings.name) {
     case Profile:
-      return MaterialPageRoute(builder: (_) => MyProfilScreen());
+      return MaterialPageRoute(builder: (_) => MyselfProfileScreen());
     case Reglages:
       return MaterialPageRoute(builder: (_) => ReglagesScreen(user: args![0]));
     default:

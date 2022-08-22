@@ -6,6 +6,7 @@ import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/components/post_tile.dart';
+import 'package:gemu/views/Posts/posts_feed_screen.dart';
 
 class PostsPublicProfile extends StatefulWidget {
   final UserModel user;
@@ -130,11 +131,11 @@ class _PostsPublicProfileState extends State<PostsPublicProfile>
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => PostsView(
-                            postIndex: index,
-                            actualUser: widget.user,
-                            posts: posts,
-                          ))),
+                      builder: (_) => PostsFeedScreen(
+                          title: "Mes posts publiques",
+                          navKey: navProfileAuthKey!,
+                          index: index,
+                          posts: posts))),
               borderRadius: BorderRadius.circular(5.0),
               splashColor: Theme.of(context).colorScheme.primary,
             ),
@@ -164,11 +165,11 @@ class _PostsPublicProfileState extends State<PostsPublicProfile>
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => PostsView(
-                            postIndex: index,
-                            actualUser: widget.user,
-                            posts: posts,
-                          ))),
+                      builder: (_) => PostsFeedScreen(
+                          title: "Mes posts publiques",
+                          navKey: navProfileAuthKey!,
+                          index: index,
+                          posts: posts))),
               borderRadius: BorderRadius.circular(5.0),
               splashColor: Theme.of(context).colorScheme.primary,
             ),
@@ -310,11 +311,11 @@ class PostsPrivateState extends State<PostsPrivate>
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => PostsView(
-                            postIndex: index,
-                            actualUser: widget.user,
-                            posts: posts,
-                          ))),
+                      builder: (_) => PostsFeedScreen(
+                          title: "Mes posts privés",
+                          navKey: navProfileAuthKey!,
+                          index: index,
+                          posts: posts))),
               borderRadius: BorderRadius.circular(5.0),
               splashColor: Theme.of(context).colorScheme.primary,
             ),
@@ -344,11 +345,11 @@ class PostsPrivateState extends State<PostsPrivate>
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => PostsView(
-                            postIndex: index,
-                            actualUser: widget.user,
-                            posts: posts,
-                          ))),
+                      builder: (_) => PostsFeedScreen(
+                          title: "Mes posts privés",
+                          navKey: navProfileAuthKey!,
+                          index: index,
+                          posts: posts))),
               borderRadius: BorderRadius.circular(5.0),
               splashColor: Theme.of(context).colorScheme.primary,
             ),
@@ -362,79 +363,6 @@ class PostsPrivateState extends State<PostsPrivate>
           ],
         ),
       ),
-    );
-  }
-}
-
-class PostsView extends StatefulWidget {
-  final int postIndex;
-  final UserModel actualUser;
-  final List<Post> posts;
-
-  PostsView({
-    required this.postIndex,
-    required this.actualUser,
-    required this.posts,
-  });
-
-  @override
-  PostsViewState createState() => PostsViewState();
-}
-
-class PostsViewState extends State<PostsView> {
-  late PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(initialPage: widget.postIndex);
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      left: false,
-      right: false,
-      child: Scaffold(
-          backgroundColor: Colors.black,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            elevation: 0,
-            leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                )),
-            title: Text(
-              widget.actualUser.uid == me!.uid
-                  ? 'Mes posts'
-                  : '${widget.actualUser.username}\'s posts',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-          body: PageView.builder(
-              controller: _pageController,
-              physics: AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics()),
-              scrollDirection: Axis.vertical,
-              itemCount: widget.posts.length,
-              itemBuilder: (_, int index) {
-                return PostTile(
-                  idUserActual: widget.actualUser.uid,
-                  post: widget.posts[index],
-                  positionDescriptionBar: 5.0,
-                  positionActionsBar: 5.0,
-                  isGameBar: true,
-                  isFollowingsSection: false,
-                );
-              })),
     );
   }
 }

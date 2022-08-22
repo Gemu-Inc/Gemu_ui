@@ -36,13 +36,13 @@ class _BottomNavigationControllerState
           }),
       WillPopScope(
           child: Navigator(
-            key: navCommunityAuthKey,
-            initialRoute: Community,
+            key: navExploreAuthKey,
+            initialRoute: Explore,
             onGenerateRoute: (settings) =>
                 generateRouteCommunityAuth(settings, context),
           ),
           onWillPop: () async {
-            return !(await navCommunityAuthKey!.currentState!.maybePop());
+            return !(await navExploreAuthKey!.currentState!.maybePop());
           }),
       WillPopScope(
           child: Navigator(
@@ -77,7 +77,7 @@ class _BottomNavigationControllerState
       BottomNavigationBarItem(
         icon: Icon(Icons.highlight_outlined),
         activeIcon: Icon(Icons.highlight),
-        label: ("Communauté"),
+        label: ("Explorer"),
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.notifications_active_outlined),
@@ -96,7 +96,7 @@ class _BottomNavigationControllerState
   void initState() {
     super.initState();
     navHomeAuthKey = GlobalKey<NavigatorState>();
-    navCommunityAuthKey = GlobalKey<NavigatorState>();
+    navExploreAuthKey = GlobalKey<NavigatorState>();
     navActivitiesAuthKey = GlobalKey<NavigatorState>();
     navProfileAuthKey = GlobalKey<NavigatorState>();
 
@@ -156,7 +156,7 @@ class _BottomNavigationControllerState
                         navHomeAuthKey!.currentState!
                             .popUntil((route) => route.isFirst);
                       } else if (_navController.index == 1 && index == 1) {
-                        navCommunityAuthKey!.currentState!
+                        navExploreAuthKey!.currentState!
                             .popUntil((route) => route.isFirst);
                       } else if (_navController.index == 2 && index == 2) {
                         navActivitiesAuthKey!.currentState!

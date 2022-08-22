@@ -10,7 +10,7 @@ import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:gemu/views/Profil/profil_screen.dart';
+import 'package:gemu/views/Profile/profile_user_screen.dart';
 import 'package:gemu/models/response.dart';
 
 class ResponseCommentScreen extends StatefulWidget {

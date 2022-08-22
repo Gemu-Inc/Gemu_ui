@@ -1,30 +1,32 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
-import 'package:gemu/views/Post/posts_feed_screen.dart';
+import 'package:gemu/views/Posts/posts_feed_screen.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import 'package:gemu/components/bouncing_button.dart';
 import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/models/post.dart';
 import 'package:gemu/models/game.dart';
-import 'package:gemu/views/Post/Hashtags/hashtags_screen.dart';
+import 'package:gemu/views/Hashtags/hashtags_screen.dart';
 
 import 'search_screen.dart';
 
-class CommunityScreen extends ConsumerStatefulWidget {
-  const CommunityScreen({Key? key}) : super(key: key);
+class ExploreScreen extends ConsumerStatefulWidget {
+  const ExploreScreen({Key? key}) : super(key: key);
 
-  Communityviewstate createState() => Communityviewstate();
+  _ExploreScreenState createState() => _ExploreScreenState();
 }
 
-class Communityviewstate extends ConsumerState<CommunityScreen>
+class _ExploreScreenState extends ConsumerState<ExploreScreen>
     with AutomaticKeepAliveClientMixin {
   ScrollController _mainScrollController = ScrollController();
   double positionScroll = 0.0;
@@ -191,49 +193,58 @@ class Communityviewstate extends ConsumerState<CommunityScreen>
     super.build(context);
     gamesList = ref.watch(myGamesNotifierProvider);
 
-    return SafeArea(
-      left: false,
-      right: false,
-      bottom: false,
-      child: Scaffold(
-        body: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          controller: _mainScrollController,
-          physics:
-              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-          shrinkWrap: true,
-          children: [
-            Container(
-              height: isReloadHashtags ? 50.0 : 0.0,
-              child: Center(
-                child: SizedBox(
-                  height: 30.0,
-                  width: 30.0,
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.primary,
-                    strokeWidth: 1.5,
+    return Scaffold(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: Platform.isIOS
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle(
+                statusBarColor: Color(0xFF22213C).withOpacity(0.3),
+                statusBarIconBrightness: Brightness.light,
+                systemNavigationBarColor: Color(0xFF22213C),
+                systemNavigationBarIconBrightness: Brightness.light),
+        child: SafeArea(
+          left: false,
+          right: false,
+          bottom: false,
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            controller: _mainScrollController,
+            physics:
+                AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+            shrinkWrap: true,
+            children: [
+              Container(
+                height: isReloadHashtags ? 50.0 : 0.0,
+                child: Center(
+                  child: SizedBox(
+                    height: 30.0,
+                    width: 30.0,
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                      strokeWidth: 1.5,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 25.0,
-            ),
-            Text(
-              "Communauté",
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(
-              height: 15.0,
-            ),
-            StickyHeader(
-                header: Container(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    height: 75,
-                    alignment: Alignment.center,
-                    child: search()),
-                content: hashtagsView())
-          ],
+              const SizedBox(
+                height: 25.0,
+              ),
+              Text(
+                "Explorer",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(
+                height: 15.0,
+              ),
+              StickyHeader(
+                  header: Container(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      height: 75,
+                      alignment: Alignment.center,
+                      child: search()),
+                  content: hashtagsView())
+            ],
+          ),
         ),
       ),
     );
@@ -381,7 +392,7 @@ class Communityviewstate extends ConsumerState<CommunityScreen>
                 ),
               )
             : Container(
-                height: MediaQuery.of(context).size.height / 1.5,
+                height: 110,
                 child: Text(
                   'Pas encore d\'hashtags',
                   style: Theme.of(context).textTheme.bodySmall,
@@ -563,7 +574,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      height: 125,
+      height: 170,
       child: dataIsThere
           ? SingleChildScrollView(
               controller: _postsScrollController,
@@ -624,7 +635,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
         borderRadius: BorderRadius.circular(5.0),
         color: Theme.of(context).canvasColor,
         child: Ink(
-          height: 200,
+          height: 220,
           width: 110,
           decoration: BoxDecoration(
               color: Theme.of(context).canvasColor,
@@ -644,7 +655,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                     MaterialPageRoute(
                         builder: (context) => PostsFeedScreen(
                             title: "#${widget.hashtag.name}",
-                            navKey: navCommunityAuthKey!,
+                            navKey: navExploreAuthKey!,
                             index: indexPost,
                             posts: posts))),
               ),
@@ -682,7 +693,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                     MaterialPageRoute(
                         builder: (context) => PostsFeedScreen(
                             title: "#${widget.hashtag.name}",
-                            navKey: navCommunityAuthKey!,
+                            navKey: navExploreAuthKey!,
                             index: indexPost,
                             posts: posts))),
               ),

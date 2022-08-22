@@ -3,19 +3,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:gemu/models/user.dart';
-import 'package:gemu/views/Profil/profil_screen.dart';
+import 'package:gemu/views/Profile/profile_user_screen.dart';
 import 'package:gemu/components/app_bar_custom.dart';
 
-class Followers extends StatefulWidget {
+class Follows extends StatefulWidget {
   final String idUser;
 
-  Followers({required this.idUser});
+  Follows({required this.idUser});
 
   @override
-  FollowersState createState() => FollowersState();
+  FollowsState createState() => FollowsState();
 }
 
-class FollowersState extends State<Followers> {
+class FollowsState extends State<Follows> {
   bool dataIsThere = false;
 
   List result = [];
@@ -27,7 +27,7 @@ class FollowersState extends State<Followers> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    getFollowers();
+    getFollows();
   }
 
   @override
@@ -36,11 +36,11 @@ class FollowersState extends State<Followers> {
     super.dispose();
   }
 
-  getFollowers() async {
+  getFollows() async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.idUser)
-        .collection('followers')
+        .collection('following')
         .get()
         .then((data) => result = data.docs);
 
@@ -65,14 +65,14 @@ class FollowersState extends State<Followers> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBarCustom(
         context: context,
-        title: 'Followers',
+        title: 'Follows',
         actions: [],
       ),
       body: dataIsThere
           ? resultFinal.length == 0
               ? Center(
                   child: Text(
-                    'Pas encore de followers',
+                    'Pas encore de follows',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 )
@@ -108,13 +108,13 @@ class FollowersState extends State<Followers> {
                                 height: 50,
                                 width: 50,
                                 decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black),
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: CachedNetworkImageProvider(
-                                            user.imageUrl!))),
-                              ),
+                                  border: Border.all(color: Colors.black),
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: CachedNetworkImageProvider(
+                                          user.imageUrl!)),
+                                )),
                         title: Text(user.username),
                       ),
                     );

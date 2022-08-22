@@ -263,6 +263,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        extendBodyBehindAppBar: true,
         appBar: PreferredSize(
             child: ClipRRect(
               child: BackdropFilter(
@@ -336,13 +337,30 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
       controller: _scrollController,
       children: [
         topBody(),
-        StickyHeader(
-            controller: _scrollController,
-            header: stickyHeader(),
-            content: Padding(
-              padding: const EdgeInsets.only(top: 5.0),
-              child: tabBarViewCustom(),
-            )),
+        _loadingPosts
+            ? posts.length == 0
+                ? Container(
+                    height: 100,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Pas de posts pour ${widget.game.name} actuellement",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : listPosts()
+            : Container(
+                height: 100,
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: 30.0,
+                  width: 30.0,
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.primary,
+                    strokeWidth: 1.0,
+                  ),
+                ),
+              ),
       ],
     );
   }
@@ -450,125 +468,60 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
     );
   }
 
-  Widget stickyHeader() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: ClipRRect(
-          child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: tabBarCustom())),
-    );
-  }
-
-  Widget tabBarCustom() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-      child: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          indicatorSize: TabBarIndicatorSize.tab,
-          labelColor: Theme.of(context).colorScheme.primary,
-          unselectedLabelColor: Colors.grey,
-          indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).canvasColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.primary,
-                  offset: Offset(1.0, 1.0),
-                ),
-              ]),
-          tabs: [
-            Tab(
-              text: 'Les plus récents',
-            ),
-          ]),
-    );
-  }
-
-  Widget tabBarViewCustom() {
-    return IndexedStack(index: _tabController.index, children: [
-      Visibility(
-        child: _loadingPosts
-            ? posts.length == 0
-                ? Container(
-                    height: 100,
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Pas de posts pour ${widget.game.name} actuellement",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : listPosts()
-            : Container(
-                height: 100,
-                alignment: Alignment.center,
-                child: SizedBox(
-                  height: 30.0,
-                  width: 30.0,
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.primary,
-                    strokeWidth: 1.0,
-                  ),
-                ),
-              ),
-        maintainState: true,
-        visible: _tabController.index == 0,
-      ),
-    ]);
-  }
-
   Widget listPosts() {
-    return Column(
-      children: [
-        GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 0.6,
-                crossAxisSpacing: 6,
-                mainAxisSpacing: 6),
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-            itemCount: posts.length,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (_, index) {
-              Post post = posts[index];
-              return post.type == "picture"
-                  ? picture(context, post, index)
-                  : video(context, post, index);
-            }),
-        Stack(
-          children: [
-            Container(
-                height: MediaQuery.of(context).size.height / 14,
-                child: _stopReached
-                    ? Center(
-                        child: Text(
-                          "C'est tout pour le moment",
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      )
-                    : _loadingMorePosts
-                        ? Center(
-                            child: SizedBox(
-                              height: 30.0,
-                              width: 30.0,
-                              child: CircularProgressIndicator(
-                                color: Theme.of(context).colorScheme.primary,
-                                strokeWidth: 1.5,
+    return Padding(
+      padding: const EdgeInsets.only(top: 15.0),
+      child: Column(
+        children: [
+          GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 0.6,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6),
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+              itemCount: posts.length,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (_, index) {
+                Post post = posts[index];
+                return post.type == "picture"
+                    ? picture(context, post, index)
+                    : video(context, post, index);
+              }),
+          Stack(
+            children: [
+              Container(
+                  height: 60,
+                  child: _stopReached
+                      ? Center(
+                          child: Text(
+                            "C'est tout pour le moment",
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        )
+                      : _loadingMorePosts
+                          ? Center(
+                              child: SizedBox(
+                                height: 30.0,
+                                width: 30.0,
+                                child: CircularProgressIndicator(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  strokeWidth: 1.5,
+                                ),
                               ),
-                            ),
-                          )
-                        : SizedBox()),
-          ],
-        )
-      ],
+                            )
+                          : SizedBox()),
+            ],
+          )
+        ],
+      ),
     );
   }
 
   Widget picture(BuildContext context, Post post, int index) {
     return Ink(
+      height: 110,
       decoration: BoxDecoration(
           color: Theme.of(context).shadowColor,
           borderRadius: BorderRadius.circular(5.0),
@@ -615,7 +568,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
             Container(
                 decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10.0))),
+                    borderRadius: BorderRadius.circular(5.0))),
           ],
         ),
       ),
@@ -624,6 +577,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
 
   Widget video(BuildContext context, Post post, int index) {
     return Ink(
+      height: 110,
       decoration: BoxDecoration(
           color: Theme.of(context).shadowColor,
           borderRadius: BorderRadius.circular(5.0),
@@ -680,10 +634,79 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
             Container(
                 decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10.0))),
+                    borderRadius: BorderRadius.circular(5.0))),
           ],
         ),
       ),
     );
   }
+
+  // Widget stickyHeader() {
+  //   return Container(
+  //     width: MediaQuery.of(context).size.width,
+  //     child: ClipRRect(
+  //         child: BackdropFilter(
+  //             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+  //             child: tabBarCustom())),
+  //   );
+  // }
+
+  // Widget tabBarCustom() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+  //     child: TabBar(
+  //         controller: _tabController,
+  //         isScrollable: true,
+  //         indicatorSize: TabBarIndicatorSize.tab,
+  //         labelColor: Theme.of(context).colorScheme.primary,
+  //         unselectedLabelColor: Colors.grey,
+  //         indicator: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(10),
+  //             color: Theme.of(context).canvasColor,
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: Theme.of(context).colorScheme.primary,
+  //                 offset: Offset(1.0, 1.0),
+  //               ),
+  //             ]),
+  //         tabs: [
+  //           Tab(
+  //             text: 'Les plus récents',
+  //           ),
+  //         ]),
+  //   );
+  // }
+
+  // Widget tabBarViewCustom() {
+  //   return IndexedStack(index: _tabController.index, children: [
+  //     Visibility(
+  //       child: _loadingPosts
+  //           ? posts.length == 0
+  //               ? Container(
+  //                   height: 100,
+  //                   alignment: Alignment.center,
+  //                   child: Text(
+  //                     "Pas de posts pour ${widget.game.name} actuellement",
+  //                     style: Theme.of(context).textTheme.bodyLarge,
+  //                     textAlign: TextAlign.center,
+  //                   ),
+  //                 )
+  //               : listPosts()
+  //           : Container(
+  //               height: 100,
+  //               alignment: Alignment.center,
+  //               child: SizedBox(
+  //                 height: 30.0,
+  //                 width: 30.0,
+  //                 child: CircularProgressIndicator(
+  //                   color: Theme.of(context).colorScheme.primary,
+  //                   strokeWidth: 1.0,
+  //                 ),
+  //               ),
+  //             ),
+  //       maintainState: true,
+  //       visible: _tabController.index == 0,
+  //     ),
+  //   ]);
+  // }
 }
