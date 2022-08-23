@@ -76,29 +76,27 @@ class Hashtagsviewstate extends State<HashtagsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return hashtagsIsThere
-        ? Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              elevation: 6,
-              leading: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.arrow_back_ios)),
-              title: Text('Hashtags'),
-              bottom: PreferredSize(
-                  child: topView(context), preferredSize: Size.fromHeight(100)),
-            ),
-            body: bodyView(context))
-        : Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            body: Center(
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 6,
+        leading: IconButton(
+            onPressed: () => navExploreAuthKey!.currentState!.pop(),
+            icon: Icon(Icons.arrow_back_ios)),
+        title: Text('Hashtags'),
+        bottom: PreferredSize(
+            child: topView(context), preferredSize: Size.fromHeight(100)),
+      ),
+      body: hashtagsIsThere
+          ? bodyView(context)
+          : Center(
               child: CircularProgressIndicator(
                 color: Theme.of(context).colorScheme.primary,
-                strokeWidth: 1.5,
+                strokeWidth: 1.0,
               ),
             ),
-          );
+    );
   }
 
   Widget topView(BuildContext context) {

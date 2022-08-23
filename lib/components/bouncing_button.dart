@@ -60,13 +60,10 @@ class BouncingButtonState extends State<BouncingButton>
             height: widget.height,
             width: widget.width,
             decoration: BoxDecoration(
-                color: Theme.of(context).canvasColor,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                      color: Theme.of(context).colorScheme.primary,
-                      blurRadius: 3)
-                ]),
+              color: Theme.of(context).canvasColor,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Theme.of(context).colorScheme.primary),
+            ),
             child: widget.content),
       ),
     );

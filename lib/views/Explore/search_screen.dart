@@ -278,13 +278,15 @@ class Searchviewstate extends State<SearchScreen>
         resizeToAvoidBottomInset: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor:
-              Theme.of(context).scaffoldBackgroundColor == Color(0xFF1A1C25)
-                  ? Colors.black
-                  : Colors.white,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
           elevation: 6,
           leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios),
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: Theme.of(context).iconTheme.color,
+              ),
               onPressed: () => Navigator.pop(context)),
           title: TextFormField(
             controller: _searchController,

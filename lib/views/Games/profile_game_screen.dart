@@ -17,7 +17,6 @@ import 'package:gemu/models/post.dart';
 import 'package:gemu/providers/Games/games_discover_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 import 'package:gemu/services/database_service.dart';
-import 'package:sticky_headers/sticky_headers.dart';
 
 class ProfileGameScreen extends ConsumerStatefulWidget {
   final Game game;
@@ -489,153 +488,157 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                     ? picture(context, post, index)
                     : video(context, post, index);
               }),
-          Stack(
-            children: [
-              Container(
-                  height: 60,
-                  child: _stopReached
+          Container(
+              height: 60,
+              child: _stopReached
+                  ? Center(
+                      child: Text(
+                        "C'est tout pour le moment",
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    )
+                  : _loadingMorePosts
                       ? Center(
-                          child: Text(
-                            "C'est tout pour le moment",
-                            style: Theme.of(context).textTheme.titleSmall,
+                          child: SizedBox(
+                            height: 30.0,
+                            width: 30.0,
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).colorScheme.primary,
+                              strokeWidth: 1.5,
+                            ),
                           ),
                         )
-                      : _loadingMorePosts
-                          ? Center(
-                              child: SizedBox(
-                                height: 30.0,
-                                width: 30.0,
-                                child: CircularProgressIndicator(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  strokeWidth: 1.5,
-                                ),
-                              ),
-                            )
-                          : SizedBox()),
-            ],
-          )
+                      : SizedBox()),
         ],
       ),
     );
   }
 
   Widget picture(BuildContext context, Post post, int index) {
-    return Ink(
-      height: 110,
-      decoration: BoxDecoration(
-          color: Theme.of(context).shadowColor,
+    return Material(
+      borderRadius: BorderRadius.circular(5.0),
+      child: Ink(
+        decoration: BoxDecoration(
+            color: Theme.of(context).shadowColor,
+            borderRadius: BorderRadius.circular(5.0),
+            image: DecorationImage(
+                image: CachedNetworkImageProvider(post.previewPictureUrl),
+                fit: BoxFit.cover)),
+        child: InkWell(
           borderRadius: BorderRadius.circular(5.0),
-          image: DecorationImage(
-              image: CachedNetworkImageProvider(post.postUrl),
-              fit: BoxFit.cover)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(5.0),
-        splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-        onTap: () => widget.navKey.currentState!.pushNamed(PostsFeed,
-            arguments: [widget.game.name, widget.navKey, index, posts]),
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding:
-                    const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
-                child: Row(
-                  children: [
-                    post.userPost!["imageUrl"] != null
-                        ? CircleAvatar(
-                            backgroundImage: CachedNetworkImageProvider(
-                                post.userPost!["imageUrl"]),
-                          )
-                        : CircleAvatar(
-                            backgroundColor: Theme.of(context).shadowColor,
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.white,
+          splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+          onTap: () => widget.navKey.currentState!.pushNamed(PostsFeed,
+              arguments: [widget.game.name, widget.navKey, index, posts]),
+          child: Stack(
+            children: [
+              Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(5.0))),
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
+                  child: Row(
+                    children: [
+                      post.userPost!["imageUrl"] != null
+                          ? CircleAvatar(
+                              backgroundImage: CachedNetworkImageProvider(
+                                  post.userPost!["imageUrl"]),
+                            )
+                          : CircleAvatar(
+                              backgroundColor: Theme.of(context).shadowColor,
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                    const SizedBox(
-                      width: 5.0,
-                    ),
-                    Text(
-                      post.userPost!["username"],
-                      style: textStyleCustomRegular(Colors.white, 12),
-                    )
-                  ],
+                      const SizedBox(
+                        width: 5.0,
+                      ),
+                      Text(
+                        post.userPost!["username"],
+                        style: textStyleCustomRegular(Colors.white, 12),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Container(
-                decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(5.0))),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget video(BuildContext context, Post post, int index) {
-    return Ink(
-      height: 110,
-      decoration: BoxDecoration(
-          color: Theme.of(context).shadowColor,
+    return Material(
+      borderRadius: BorderRadius.circular(5.0),
+      child: Ink(
+        height: 110,
+        decoration: BoxDecoration(
+            color: Theme.of(context).shadowColor,
+            borderRadius: BorderRadius.circular(5.0),
+            image: DecorationImage(
+                image: CachedNetworkImageProvider(post.previewPictureUrl),
+                fit: BoxFit.cover)),
+        child: InkWell(
           borderRadius: BorderRadius.circular(5.0),
-          image: DecorationImage(
-              image: CachedNetworkImageProvider(post.previewPictureUrl),
-              fit: BoxFit.cover)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(5.0),
-        splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-        onTap: () => widget.navKey.currentState!.pushNamed(PostsFeed,
-            arguments: [widget.game.name, widget.navKey, index, posts]),
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
-                child: Icon(
-                  Icons.play_arrow,
-                  color: Colors.white,
+          splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+          onTap: () => widget.navKey.currentState!.pushNamed(PostsFeed,
+              arguments: [widget.game.name, widget.navKey, index, posts]),
+          child: Stack(
+            children: [
+              Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(5.0))),
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
+                  child: Icon(
+                    Icons.play_arrow,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding:
-                    const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
-                child: Row(
-                  children: [
-                    post.userPost!["imageUrl"] != null
-                        ? CircleAvatar(
-                            backgroundImage: CachedNetworkImageProvider(
-                                post.userPost!["imageUrl"]!),
-                          )
-                        : CircleAvatar(
-                            backgroundColor: Theme.of(context).shadowColor,
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.black,
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
+                  child: Row(
+                    children: [
+                      post.userPost!["imageUrl"] != null
+                          ? CircleAvatar(
+                              backgroundImage: CachedNetworkImageProvider(
+                                  post.userPost!["imageUrl"]!),
+                            )
+                          : CircleAvatar(
+                              backgroundColor: Theme.of(context).shadowColor,
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                    const SizedBox(
-                      width: 5.0,
-                    ),
-                    Text(
-                      post.userPost!["username"],
-                      style: textStyleCustomRegular(Colors.white, 12),
-                    )
-                  ],
+                      const SizedBox(
+                        width: 5.0,
+                      ),
+                      Text(
+                        post.userPost!["username"],
+                        style: textStyleCustomRegular(Colors.white, 12),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Container(
-                decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(5.0))),
-          ],
+            ],
+          ),
         ),
       ),
     );

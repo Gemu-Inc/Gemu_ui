@@ -39,7 +39,7 @@ class _BottomNavigationControllerState
             key: navExploreAuthKey,
             initialRoute: Explore,
             onGenerateRoute: (settings) =>
-                generateRouteCommunityAuth(settings, context),
+                generateRouteExploreAuth(settings, context),
           ),
           onWillPop: () async {
             return !(await navExploreAuthKey!.currentState!.maybePop());

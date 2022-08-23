@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,19 +5,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:gemu/providers/Users/myself_provider.dart';
-import 'package:gemu/views/Posts/posts_feed_screen.dart';
+import 'package:gemu/services/database_service.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import 'package:gemu/components/bouncing_button.dart';
 import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/models/game.dart';
-import 'package:gemu/views/Hashtags/hashtags_screen.dart';
-
-import 'search_screen.dart';
 
 class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({Key? key}) : super(key: key);
@@ -31,138 +26,89 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
   ScrollController _mainScrollController = ScrollController();
   double positionScroll = 0.0;
 
-  List<Game> gamesList = [];
-
 //Variables Hashtags
-  bool dataHashtagsIsThere = false;
-  bool isLoadingMoreHashtags = false;
-  bool isReloadHashtags = false;
-  bool isResultHashtags = false;
+  bool _reloadingExplore = false;
+  bool _loadingHashtags = false;
+  bool _loadingMoreHashtags = false;
+  bool _stopReached = false;
 
   List<Hashtag> hashtags = [];
-  List<Hashtag> newHashtags = [];
-
-//Variables Discover
-  bool dataDiscoverIsThere = false;
-  bool isLoadingMoreDiscover = false;
-  bool isReloadDiscover = false;
-  bool isResultsDiscover = false;
-
-  List discoverGames = [];
-  List<Post> posts = [];
-  List<Post> newPosts = [];
 
 //Listener scroll controller
   void scrollListener() {
     if (_mainScrollController.offset <=
             (_mainScrollController.position.minScrollExtent - 50.0) &&
-        !isReloadHashtags) {
+        !_reloadingExplore) {
       reloadHashtags();
     } else if (_mainScrollController.offset >=
-            (_mainScrollController.position.maxScrollExtent + 50.0) &&
-        !isLoadingMoreHashtags) {
+            (_mainScrollController.position.maxScrollExtent + 10.0) &&
+        !_loadingMoreHashtags &&
+        !_stopReached) {
       loadMoreHashtags();
     }
   }
 
   //Fonctions Hashtags
   getHashtags() async {
-    await FirebaseFirestore.instance
-        .collection('hashtags')
-        .orderBy('postsCount', descending: true)
-        .limit(12)
-        .get()
-        .then((data) {
-      for (var item in data.docs) {
-        hashtags.add(Hashtag.fromMap(item, item.data()));
-      }
-    });
+    try {
+      hashtags = await DatabaseService.getHashtagsExplore();
 
-    if (!dataHashtagsIsThere) {
       setState(() {
-        dataHashtagsIsThere = true;
+        _loadingHashtags = true;
       });
+    } catch (e) {
+      print(e);
+      messageUser(context, "Oups, un problème est survenu");
     }
   }
 
   loadMoreHashtags() async {
-    setState(() {
-      if (newHashtags.length != 0) {
-        newHashtags.clear();
-      }
-      if (isResultHashtags) {
-        isResultHashtags = false;
-      }
-      isLoadingMoreHashtags = true;
-    });
-
+    List<Hashtag> newHashtags = [];
     Hashtag hashtag = hashtags.last;
-    bool add;
-
-    await FirebaseFirestore.instance
-        .collection('hashtags')
-        .orderBy('postsCount', descending: true)
-        .startAfterDocument(hashtag.snapshot!)
-        .limit(12)
-        .get()
-        .then((data) {
-      for (var item in data.docs) {
-        newHashtags.add(Hashtag.fromMap(item, item.data()));
-      }
-    });
-
-    for (var i = 0; i < newHashtags.length; i++) {
-      if (hashtags.any((element) => element.name == newHashtags[i].name)) {
-        add = false;
-      } else {
-        add = true;
-      }
-      if (add) {
-        hashtags.add(newHashtags[i]);
-      }
-    }
 
     setState(() {
-      isLoadingMoreHashtags = false;
-      if (newHashtags.length == 0) {
-        isResultHashtags = true;
-      }
+      _loadingMoreHashtags = true;
     });
+
+    try {
+      newHashtags = await DatabaseService.getMoreHashtagsExplore(hashtag);
+
+      if (newHashtags.length == 0) {
+        setState(() {
+          _stopReached = true;
+        });
+      } else {
+        hashtags = [...hashtags, ...newHashtags];
+      }
+
+      setState(() {
+        _loadingMoreHashtags = false;
+      });
+    } catch (e) {
+      print(e);
+      messageUser(context, "Oups, un problème est survenu");
+    }
   }
 
   reloadHashtags() async {
     setState(() {
-      if (isReloadHashtags) {
-        isResultHashtags = false;
-      }
-      isReloadHashtags = true;
+      _reloadingExplore = true;
+      _loadingHashtags = false;
+      _stopReached = false;
     });
 
-    await Future.delayed(Duration(seconds: 1));
+    try {
+      hashtags.clear();
+      hashtags = await DatabaseService.reloadHashtagsExplore();
 
-    hashtags.clear();
-
-    await FirebaseFirestore.instance
-        .collection('hashtags')
-        .orderBy('postsCount', descending: true)
-        .limit(12)
-        .get()
-        .then((data) {
-      for (var item in data.docs) {
-        hashtags.add(Hashtag.fromMap(item, item.data()));
-      }
-    });
-
-    print('${hashtags.length}');
-
-    setState(() {
-      isReloadHashtags = false;
-      dataHashtagsIsThere = false;
-    });
-
-    setState(() {
-      dataHashtagsIsThere = true;
-    });
+      setState(() {
+        _reloadingExplore = false;
+        _loadingHashtags = true;
+      });
+    } catch (e) {
+      print(e);
+      messageUser(context, "Oups, un problème est survenu");
+    }
   }
 
   @override
@@ -191,7 +137,6 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    gamesList = ref.watch(myGamesNotifierProvider);
 
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -214,7 +159,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
             shrinkWrap: true,
             children: [
               Container(
-                height: isReloadHashtags ? 50.0 : 0.0,
+                height: _reloadingExplore ? 50.0 : 0.0,
                 child: Center(
                   child: SizedBox(
                     height: 30.0,
@@ -239,7 +184,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
               StickyHeader(
                   header: Container(
                       color: Theme.of(context).scaffoldBackgroundColor,
-                      height: 75,
+                      height: 55,
                       alignment: Alignment.center,
                       child: search()),
                   content: hashtagsView())
@@ -269,18 +214,15 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           ),
           height: 45,
           width: MediaQuery.of(context).size.width,
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SearchScreen()));
-          },
+          onPressed: () => navExploreAuthKey!.currentState!.pushNamed(Search),
         ));
   }
 
   Widget hashtagsView() {
-    return dataHashtagsIsThere
+    return _loadingHashtags
         ? hashtags.length != 0
             ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                padding: const EdgeInsets.only(top: 15.0),
                 child: Column(
                   children: [
                     ListView.builder(
@@ -290,7 +232,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                         itemBuilder: (BuildContext context, int index) {
                           Hashtag hashtag = hashtags[index];
                           return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            padding: const EdgeInsets.symmetric(vertical: 5.0),
                             child: Row(
                               children: [
                                 Padding(
@@ -302,12 +244,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                                           MainAxisAlignment.center,
                                       children: [
                                         GestureDetector(
-                                          onTap: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      HashtagsScreen(
-                                                          hashtag: hashtag))),
+                                          onTap: () => navExploreAuthKey!
+                                              .currentState!
+                                              .pushNamed(HashtagProfile,
+                                                  arguments: [hashtag]),
                                           child: Container(
                                             height: 55,
                                             width: 55,
@@ -328,7 +268,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                                                   BoxShadow(
                                                       color: Theme.of(context)
                                                           .canvasColor,
-                                                      spreadRadius: 3)
+                                                      spreadRadius: 6)
                                                 ]),
                                             child: Icon(
                                               Icons.tag,
@@ -364,38 +304,41 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                         }),
                     Padding(
                       padding: EdgeInsets.only(top: 10.0),
-                      child: Stack(
-                        children: [
-                          Container(
-                            height: isLoadingMoreHashtags ? 50.0 : 0.0,
-                            child: Center(
-                              child: SizedBox(
-                                height: 30.0,
-                                width: 30.0,
-                                child: CircularProgressIndicator(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  strokeWidth: 1.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: isResultHashtags ? 50.0 : 0.0,
-                            child: Center(
-                              child: Text('C\'est tout pour le moment'),
-                            ),
-                          )
-                        ],
-                      ),
+                      child: Container(
+                          height: 60,
+                          child: _stopReached
+                              ? Center(
+                                  child: Text(
+                                    "C'est tout pour le moment",
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
+                                  ),
+                                )
+                              : _loadingMoreHashtags
+                                  ? Center(
+                                      child: SizedBox(
+                                        height: 30.0,
+                                        width: 30.0,
+                                        child: CircularProgressIndicator(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          strokeWidth: 1.5,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox()),
                     )
                   ],
                 ),
               )
             : Container(
-                height: 110,
+                height: 150,
+                alignment: Alignment.center,
                 child: Text(
-                  'Pas encore d\'hashtags',
-                  style: Theme.of(context).textTheme.bodySmall,
+                  "Pas encore d'hashtags à explorer",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
                 ),
               )
         : Container(
@@ -422,51 +365,22 @@ class PostsByHashtags extends StatefulWidget {
 
 class PostsByHashtagsState extends State<PostsByHashtags>
     with AutomaticKeepAliveClientMixin {
-  bool dataIsThere = false;
-  bool isLoadingMorePosts = false;
+  bool _loadingPosts = false;
+  bool _loadingMorePosts = false;
+  bool _stopReached = false;
 
   ScrollController _postsScrollController = ScrollController();
 
   late Hashtag hashtag;
-  late Post lastPost;
   List<Post> posts = [];
-  List<Post> newPosts = [];
 
-  getPostsHashtag(Hashtag hahstag) async {
+  getPostsHashtag(Hashtag hashtag) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> data = await hashtag.reference!
-          .collection('posts')
-          .orderBy('date', descending: true)
-          .limit(3)
-          .get();
+      posts = await DatabaseService.getPostsHashtagExplore(hashtag);
 
-      for (var item in data.docs) {
-        DocumentSnapshot<Map<String, dynamic>> dataPost =
-            await FirebaseFirestore.instance
-                .collection('posts')
-                .doc(item.id)
-                .get();
-        DocumentSnapshot<Map<String, dynamic>> dataUser =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(dataPost.data()!['uid'])
-                .get();
-        DocumentSnapshot<Map<String, dynamic>> dataGame =
-            await FirebaseFirestore.instance
-                .collection("games")
-                .doc("verified")
-                .collection("games_verified")
-                .doc(dataPost.data()!["idGame"])
-                .get();
-        posts.add(Post.fromMap(
-            dataPost, dataPost.data()!, dataUser.data()!, dataGame.data()!));
-      }
-
-      lastPost = posts.last;
-
-      if (!dataIsThere && mounted) {
+      if (!_loadingPosts && mounted) {
         setState(() {
-          dataIsThere = true;
+          _loadingPosts = true;
         });
       }
     } catch (e) {
@@ -475,64 +389,41 @@ class PostsByHashtagsState extends State<PostsByHashtags>
   }
 
   loadMorePostsHashtag(Hashtag hashtag) async {
-    bool add;
+    List<Post> newPosts = [];
+    Post lastPost = posts.last;
 
-    if (newPosts.length != 0) {
-      newPosts.clear();
-    }
     setState(() {
-      isLoadingMorePosts = true;
+      _loadingMorePosts = true;
     });
 
-    QuerySnapshot<Map<String, dynamic>> data = await hashtag.reference!
-        .collection('posts')
-        .orderBy('date', descending: true)
-        .startAfterDocument(lastPost.snapshot!)
-        .limit(3)
-        .get();
+    try {
+      newPosts =
+          await DatabaseService.getMorePostsHashtagExplore(hashtag, lastPost);
 
-    for (var item in data.docs) {
-      DocumentSnapshot<Map<String, dynamic>> dataPost = await FirebaseFirestore
-          .instance
-          .collection('posts')
-          .doc(item.id)
-          .get();
-      DocumentSnapshot<Map<String, dynamic>> dataUser = await FirebaseFirestore
-          .instance
-          .collection("users")
-          .doc(dataPost.data()!["uid"])
-          .get();
-      DocumentSnapshot<Map<String, dynamic>> dataGame = await FirebaseFirestore
-          .instance
-          .collection("games")
-          .doc("verified")
-          .collection("games_verified")
-          .doc(dataPost.data()!["idGame"])
-          .get();
-      newPosts.add(Post.fromMap(
-          dataPost, dataPost.data()!, dataUser.data()!, dataGame.data()!));
-    }
-
-    if (newPosts.length != 0) {
-      print(newPosts.length);
-      lastPost = newPosts.last;
-    }
-
-    for (var i = 0; i < newPosts.length; i++) {
-      if (posts.any((element) => element.id == newPosts[i].id)) {
-        add = false;
+      if (newPosts.length != 0) {
+        posts = [...posts, ...newPosts];
       } else {
-        add = true;
+        setState(() {
+          _stopReached = true;
+        });
       }
 
-      if (add) {
-        posts.add(newPosts[i]);
-      }
+      setState(() {
+        _loadingMorePosts = false;
+      });
+    } catch (e) {
+      print(e);
     }
+  }
 
-    setState(() {
-      isLoadingMorePosts = false;
-    });
+  void scrollListener() {
+    if (posts.length != 0 &&
+        _postsScrollController.offset >=
+            (_postsScrollController.position.maxScrollExtent + 10.0) &&
+        !_loadingMorePosts &&
+        !_stopReached) {
+      loadMorePostsHashtag(hashtag);
+    }
   }
 
   @override
@@ -546,27 +437,13 @@ class PostsByHashtagsState extends State<PostsByHashtags>
 
     getPostsHashtag(hashtag);
 
-    _postsScrollController.addListener(() {
-      if (_postsScrollController.offset >=
-              _postsScrollController.position.maxScrollExtent &&
-          !_postsScrollController.position.outOfRange &&
-          !isLoadingMorePosts) {
-        loadMorePostsHashtag(hashtag);
-      }
-    });
+    _postsScrollController.addListener(scrollListener);
   }
 
   @override
   void dispose() {
     posts.clear();
-    _postsScrollController.removeListener(() {
-      if (_postsScrollController.offset >=
-              _postsScrollController.position.maxScrollExtent &&
-          !_postsScrollController.position.outOfRange &&
-          !isLoadingMorePosts) {
-        loadMorePostsHashtag(hashtag);
-      }
-    });
+    _postsScrollController.removeListener(scrollListener);
     super.dispose();
   }
 
@@ -575,7 +452,7 @@ class PostsByHashtagsState extends State<PostsByHashtags>
     super.build(context);
     return Container(
       height: 170,
-      child: dataIsThere
+      child: _loadingPosts
           ? SingleChildScrollView(
               controller: _postsScrollController,
               physics: AlwaysScrollableScrollPhysics(
@@ -596,9 +473,9 @@ class PostsByHashtagsState extends State<PostsByHashtags>
                             : video(hashtag, index, post, posts);
                       }),
                   Padding(
-                    padding: EdgeInsets.only(left: 10.0, right: 50.0),
+                    padding: EdgeInsets.only(left: 10.0, right: 25.0),
                     child: Container(
-                      width: isLoadingMorePosts ? 50.0 : 0.0,
+                      width: _loadingMorePosts ? 50.0 : 0.0,
                       child: Center(
                         child: SizedBox(
                           height: 30.0,
@@ -630,36 +507,67 @@ class PostsByHashtagsState extends State<PostsByHashtags>
     List<Post> posts,
   ) {
     return Padding(
-      padding: EdgeInsets.all(2.5),
+      padding: const EdgeInsets.symmetric(horizontal: 6.0),
       child: Material(
         borderRadius: BorderRadius.circular(5.0),
-        color: Theme.of(context).canvasColor,
         child: Ink(
           height: 220,
           width: 110,
           decoration: BoxDecoration(
-              color: Theme.of(context).canvasColor,
+              color: Theme.of(context).shadowColor,
               borderRadius: BorderRadius.circular(5.0),
               image: DecorationImage(
-                  image: CachedNetworkImageProvider(post.postUrl),
+                  image: CachedNetworkImageProvider(post.previewPictureUrl),
                   fit: BoxFit.cover)),
-          child: Stack(
-            children: [
-              Container(color: Colors.black.withOpacity(0.2)),
-              InkWell(
-                borderRadius: BorderRadius.circular(5.0),
-                splashColor:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.5),
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PostsFeedScreen(
-                            title: "#${widget.hashtag.name}",
-                            navKey: navExploreAuthKey!,
-                            index: indexPost,
-                            posts: posts))),
-              ),
-            ],
+          child: InkWell(
+            borderRadius: BorderRadius.circular(5.0),
+            splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+            onTap: () => navExploreAuthKey!.currentState!.pushNamed(PostsFeed,
+                arguments: [
+                  "#${widget.hashtag.name}",
+                  navExploreAuthKey!,
+                  indexPost,
+                  posts
+                ]),
+            child: Stack(
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(5.0))),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 5.0, right: 5.0, bottom: 5.0),
+                    child: Row(
+                      children: [
+                        post.userPost!["imageUrl"] != null
+                            ? CircleAvatar(
+                                backgroundImage: CachedNetworkImageProvider(
+                                    post.userPost!["imageUrl"]!),
+                              )
+                            : CircleAvatar(
+                                backgroundColor: Theme.of(context).shadowColor,
+                                child: Icon(
+                                  Icons.person,
+                                  color: Colors.black,
+                                ),
+                              ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        Text(
+                          post.userPost!["username"],
+                          style: textStyleCustomRegular(Colors.white, 12),
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -667,40 +575,74 @@ class PostsByHashtagsState extends State<PostsByHashtags>
   }
 
   Widget video(Hashtag hashtag, int indexPost, Post post, List<Post> posts) {
-    return Padding(
-      padding: EdgeInsets.all(2.5),
-      child: Material(
-        color: Theme.of(context).canvasColor,
-        borderRadius: BorderRadius.circular(5.0),
-        child: Ink(
-          width: 110,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              image: DecorationImage(
-                  image: CachedNetworkImageProvider(post.previewPictureUrl),
-                  fit: BoxFit.cover)),
+    return Material(
+      borderRadius: BorderRadius.circular(5.0),
+      child: Ink(
+        height: 220,
+        width: 110,
+        decoration: BoxDecoration(
+            color: Theme.of(context).shadowColor,
+            borderRadius: BorderRadius.circular(5.0),
+            image: DecorationImage(
+                image: CachedNetworkImageProvider(post.previewPictureUrl),
+                fit: BoxFit.cover)),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(5.0),
+          splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+          onTap: () => navExploreAuthKey!.currentState!.pushNamed(PostsFeed,
+              arguments: [
+                "#${widget.hashtag.name}",
+                navExploreAuthKey!,
+                indexPost,
+                posts
+              ]),
           child: Stack(
             children: [
               Container(
-                color: Colors.black.withOpacity(0.2),
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(5.0))),
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
+                  child: Icon(
+                    Icons.play_arrow,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-              InkWell(
-                borderRadius: BorderRadius.circular(5.0),
-                splashColor:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.5),
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PostsFeedScreen(
-                            title: "#${widget.hashtag.name}",
-                            navKey: navExploreAuthKey!,
-                            index: indexPost,
-                            posts: posts))),
-              ),
-              Positioned(
-                top: 5.0,
-                left: 5.0,
-                child: Icon(Icons.play_arrow, color: Colors.white),
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
+                  child: Row(
+                    children: [
+                      post.userPost!["imageUrl"] != null
+                          ? CircleAvatar(
+                              backgroundImage: CachedNetworkImageProvider(
+                                  post.userPost!["imageUrl"]!),
+                            )
+                          : CircleAvatar(
+                              backgroundColor: Theme.of(context).shadowColor,
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.black,
+                              ),
+                            ),
+                      const SizedBox(
+                        width: 5.0,
+                      ),
+                      Text(
+                        post.userPost!["username"],
+                        style: textStyleCustomRegular(Colors.white, 12),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

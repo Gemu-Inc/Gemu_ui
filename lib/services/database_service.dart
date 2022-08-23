@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
+import 'package:gemu/models/hashtag.dart';
 import 'package:gemu/models/post.dart';
 
 import 'package:gemu/models/user.dart';
@@ -489,6 +490,7 @@ class DatabaseService {
     QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
         .where('idGame', isEqualTo: game.documentId)
+        .where('privacy', isEqualTo: 'Public')
         .orderBy('date', descending: true)
         .limit(20)
         .get();
@@ -523,6 +525,7 @@ class DatabaseService {
     QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('posts')
         .where('idGame', isEqualTo: game.documentId)
+        .where('privacy', isEqualTo: 'Public')
         .orderBy('date', descending: true)
         .startAfterDocument(lastPost.snapshot!)
         .limit(20)
@@ -544,6 +547,177 @@ class DatabaseService {
                 .get();
         posts.add(Post.fromMap(
             item, item.data(), dataUser.data()!, dataGame.data()!));
+      }
+    }
+
+    return posts;
+  }
+
+//Partie Explorer
+
+  //get hashtags explore screen
+  static Future<List<Hashtag>> getHashtagsExplore() async {
+    List<Hashtag> hashtags = [];
+
+    QuerySnapshot<Map<String, dynamic>> dataHashtags = await FirebaseFirestore
+        .instance
+        .collection('hashtags')
+        .orderBy('postsCount', descending: true)
+        .orderBy("name", descending: false)
+        .limit(12)
+        .get();
+
+    for (var item in dataHashtags.docs) {
+      QuerySnapshot<Map<String, dynamic>> hashtagValid = await FirebaseFirestore
+          .instance
+          .collection("hashtags")
+          .doc(item.id)
+          .collection("posts")
+          .where("uid", isNotEqualTo: me!.uid)
+          .limit(20)
+          .get();
+      if (hashtagValid.docs.length != 0) {
+        hashtags.add(Hashtag.fromMap(item, item.data()));
+      }
+    }
+
+    return hashtags;
+  }
+
+  //get more hashtags explore screen
+  static Future<List<Hashtag>> getMoreHashtagsExplore(
+      Hashtag lastHashtag) async {
+    List<Hashtag> hashtags = [];
+
+    QuerySnapshot<Map<String, dynamic>> dataHashtags = await FirebaseFirestore
+        .instance
+        .collection('hashtags')
+        .orderBy('postsCount', descending: true)
+        .orderBy("name", descending: false)
+        .startAfterDocument(lastHashtag.snapshot!)
+        .limit(12)
+        .get();
+
+    for (var item in dataHashtags.docs) {
+      QuerySnapshot<Map<String, dynamic>> hashtagsValid =
+          await FirebaseFirestore.instance
+              .collection("hashtags")
+              .doc(item.id)
+              .collection("posts")
+              .where("uid", isNotEqualTo: me!.uid)
+              .limit(20)
+              .get();
+      if (hashtagsValid.docs.length != 0) {
+        hashtags.add(Hashtag.fromMap(item, item.data()));
+      }
+    }
+
+    return hashtags;
+  }
+
+  //reload hashtags explore screen
+  static Future<List<Hashtag>> reloadHashtagsExplore() async {
+    List<Hashtag> hashtags = [];
+
+    QuerySnapshot<Map<String, dynamic>> dataHashtags = await FirebaseFirestore
+        .instance
+        .collection('hashtags')
+        .orderBy('postsCount', descending: true)
+        .orderBy('name', descending: false)
+        .limit(12)
+        .get();
+
+    for (var item in dataHashtags.docs) {
+      QuerySnapshot<Map<String, dynamic>> hashtagsValid =
+          await FirebaseFirestore.instance
+              .collection("hashtags")
+              .doc(item.id)
+              .collection("posts")
+              .where("uid", isNotEqualTo: me!.uid)
+              .limit(20)
+              .get();
+      if (hashtagsValid.docs.length != 0) {
+        hashtags.add(Hashtag.fromMap(item, item.data()));
+      }
+    }
+
+    return hashtags;
+  }
+
+  //get some posts for specific hashtag on explore screen
+  static Future<List<Post>> getPostsHashtagExplore(Hashtag hashtag) async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> data = await hashtag.reference!
+        .collection('posts')
+        .orderBy('date', descending: true)
+        .limit(6)
+        .get();
+
+    for (var item in data.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        DocumentSnapshot<Map<String, dynamic>> dataPost =
+            await FirebaseFirestore.instance
+                .collection('posts')
+                .doc(item.id)
+                .get();
+        if (dataPost.data()!["privacy"] == "Public") {
+          DocumentSnapshot<Map<String, dynamic>> dataUser =
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(dataPost.data()!['uid'])
+                  .get();
+          DocumentSnapshot<Map<String, dynamic>> dataGame =
+              await FirebaseFirestore.instance
+                  .collection("games")
+                  .doc("verified")
+                  .collection("games_verified")
+                  .doc(dataPost.data()!["idGame"])
+                  .get();
+          posts.add(Post.fromMap(
+              dataPost, dataPost.data()!, dataUser.data()!, dataGame.data()!));
+        }
+      }
+    }
+
+    return posts;
+  }
+
+  //get more posts for specific hashtag on explore screen
+  static Future<List<Post>> getMorePostsHashtagExplore(
+      Hashtag hashtag, Post lastPost) async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> data = await hashtag.reference!
+        .collection('posts')
+        .orderBy('date', descending: true)
+        .startAfterDocument(lastPost.snapshot!)
+        .limit(6)
+        .get();
+
+    for (var item in data.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        DocumentSnapshot<Map<String, dynamic>> dataPost =
+            await FirebaseFirestore.instance
+                .collection('posts')
+                .doc(item.id)
+                .get();
+        if (dataPost.data()!["privacy"] == "Public") {
+          DocumentSnapshot<Map<String, dynamic>> dataUser =
+              await FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(dataPost.data()!["uid"])
+                  .get();
+          DocumentSnapshot<Map<String, dynamic>> dataGame =
+              await FirebaseFirestore.instance
+                  .collection("games")
+                  .doc("verified")
+                  .collection("games_verified")
+                  .doc(dataPost.data()!["idGame"])
+                  .get();
+          posts.add(Post.fromMap(
+              dataPost, dataPost.data()!, dataUser.data()!, dataGame.data()!));
+        }
       }
     }
 
@@ -577,8 +751,6 @@ class DatabaseService {
   static Future updateUserEmail(String? email, String? uid) async {
     return await usersCollectionReference.doc(uid).update({'email': email});
   }
-
-  //Partie Community
 
   //Partie messagerie
 

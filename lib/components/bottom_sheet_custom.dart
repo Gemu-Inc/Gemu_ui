@@ -2,6 +2,9 @@ import 'dart:io' show File, Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 import 'package:gemu/components/loader_overlay_custom.dart';
 import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/constants/constants.dart';
@@ -10,11 +13,8 @@ import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/translations/app_localizations.dart';
 import 'package:gemu/views/Home/add_screen.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
-import 'package:gemu/views/Share/Post/Picture/picture_editor_screen.dart';
-import 'package:gemu/views/Share/Post/Video/video_editor_screen.dart';
-import 'package:loader_overlay/loader_overlay.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:gemu/views/Create/Picture/picture_editor_screen.dart';
+import 'package:gemu/views/Create/Video/video_editor_screen.dart';
 
 Future inscriptionBottomSheet(
     BuildContext context, bool isDayMood, WidgetRef ref) {

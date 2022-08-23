@@ -183,7 +183,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                 .doc(hashtagsSelected[i])
                 .collection('posts')
                 .doc(postName)
-                .set({'date': date});
+                .set({'date': date, 'uid': me!.uid});
           } else {
             FirebaseFirestore.instance
                 .collection('hashtags')
@@ -194,7 +194,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
                 .doc(id)
                 .collection('posts')
                 .doc(postName)
-                .set({'date': date});
+                .set({'date': date, 'uid': me!.uid});
           }
         }
       }
@@ -206,7 +206,7 @@ class Videoviewstate extends State<VideoScreen> with TickerProviderStateMixin {
           .doc(game.name)
           .collection('posts')
           .doc(postName)
-          .set({'date': date});
+          .set({'date': date, 'uid': me!.uid});
       FirebaseFirestore.instance
           .collection('users')
           .doc(me!.uid)

@@ -36,6 +36,8 @@ const String VideoEditor = "VideoEditor";
 const String PostNewVideo = "PostNewVideo";
 const String Reglages = "Reglages";
 const String PostsFeed = "PostsFeed";
+const String Search = "Search";
+const String HashtagProfile = "HashtagProfile";
 
 //Themes
 const appTheme = "Theme";

@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/views/Activities/activities_screen.dart';
+import 'package:gemu/views/Explore/search_screen.dart';
 import 'package:gemu/views/Games/profile_game_screen.dart';
 import 'package:gemu/views/GetStarted/get_started_screen.dart';
 import 'package:gemu/views/Explore/explore_screen.dart';
+import 'package:gemu/views/Hashtags/hashtags_screen.dart';
 import 'package:gemu/views/Home/add_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
 import 'package:gemu/views/Posts/posts_feed_screen.dart';
 import 'package:gemu/views/Profile/myself_profile_screen.dart';
 import 'package:gemu/views/Reglages/reglages_screen.dart';
-import 'package:gemu/views/Share/Post/Picture/picture_editor_screen.dart';
-import 'package:gemu/views/Share/Post/Picture/picture_screen.dart';
-import 'package:gemu/views/Share/Post/Video/video_editor_screen.dart';
-import 'package:gemu/views/Share/Post/Video/video_screen.dart';
+import 'package:gemu/views/Create/Picture/picture_editor_screen.dart';
+import 'package:gemu/views/Create/Picture/picture_screen.dart';
+import 'package:gemu/views/Create/Video/video_editor_screen.dart';
+import 'package:gemu/views/Create/Video/video_screen.dart';
 import 'package:gemu/views/Welcome/welcome_screen.dart';
 import 'package:gemu/views/Login/login_screen.dart';
 import 'package:gemu/views/Register/register_screen.dart';
@@ -122,12 +124,24 @@ Route<dynamic> generateRouteHomeAuth(
 }
 
 //router auth selection part
-Route<dynamic> generateRouteCommunityAuth(
+Route<dynamic> generateRouteExploreAuth(
     RouteSettings settings, BuildContext context) {
   final List<dynamic>? args = settings.arguments as List<dynamic>?;
   switch (settings.name) {
     case Explore:
       return MaterialPageRoute(builder: (_) => ExploreScreen());
+    case PostsFeed:
+      return MaterialPageRoute(
+          builder: (_) => PostsFeedScreen(
+              title: args![0],
+              navKey: args[1],
+              index: args[2],
+              posts: args[3]));
+    case Search:
+      return MaterialPageRoute(builder: (_) => SearchScreen());
+    case HashtagProfile:
+      return MaterialPageRoute(
+          builder: (_) => HashtagsScreen(hashtag: args![0]));
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(
