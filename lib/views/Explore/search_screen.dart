@@ -446,9 +446,11 @@ class Searchviewstate extends State<SearchScreen>
                                           context,
                                           MaterialPageRoute(
                                               builder: (_) => HashtagsScreen(
-                                                  hashtag: Hashtag.fromMap(
-                                                      recentSearch,
-                                                      recentSearch.data()!))));
+                                                    hashtag: Hashtag.fromMap(
+                                                        recentSearch,
+                                                        recentSearch.data()!),
+                                                    navKey: navExploreAuthKey!,
+                                                  )));
                                     },
                                     leading: Container(
                                       height: 45,
@@ -866,7 +868,8 @@ class Searchviewstate extends State<SearchScreen>
                                           builder: (_) => HashtagsScreen(
                                               hashtag: Hashtag.fromMap(
                                                   recentSearch,
-                                                  recentSearch.data()!))));
+                                                  recentSearch.data()!),
+                                              navKey: navExploreAuthKey!)));
                                 },
                                 leading: Container(
                                   height: 45,
@@ -962,7 +965,8 @@ class Searchviewstate extends State<SearchScreen>
                                       MaterialPageRoute(
                                           builder: (_) => HashtagsScreen(
                                               hashtag: Hashtag.fromMapAlgolia(
-                                                  snap, snap.data))));
+                                                  snap, snap.data),
+                                              navKey: navExploreAuthKey!)));
                                 },
                                 leading: Container(
                                   height: 45,
@@ -1291,7 +1295,8 @@ class Searchviewstate extends State<SearchScreen>
                                 MaterialPageRoute(
                                     builder: (_) => HashtagsScreen(
                                         hashtag: Hashtag.fromMapAlgolia(
-                                            snap, snap.data))));
+                                            snap, snap.data),
+                                        navKey: navExploreAuthKey!)));
                           },
                           leading: Container(
                             height: 45,

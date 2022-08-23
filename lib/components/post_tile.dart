@@ -742,8 +742,10 @@ class PictureItemState extends State<PictureItem>
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) =>
-                                        HashtagsScreen(hashtag: tag)));
+                                    builder: (_) => HashtagsScreen(
+                                          hashtag: tag,
+                                          navKey: navHomeAuthKey!,
+                                        )));
                           },
                           // hashtagStyle:  mystyle(12, Theme.of(context).primaryColor),
                         ),
@@ -1772,8 +1774,10 @@ class VideoItemState extends State<VideoItem> with TickerProviderStateMixin {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) =>
-                                          HashtagsScreen(hashtag: tag)));
+                                      builder: (_) => HashtagsScreen(
+                                            hashtag: tag,
+                                            navKey: navHomeAuthKey!,
+                                          )));
                             },
                             // hashtagStyle:
                             //     mystyle(12, Theme.of(context).colorScheme.primary),

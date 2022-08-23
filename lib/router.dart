@@ -141,7 +141,7 @@ Route<dynamic> generateRouteExploreAuth(
       return MaterialPageRoute(builder: (_) => SearchScreen());
     case HashtagProfile:
       return MaterialPageRoute(
-          builder: (_) => HashtagsScreen(hashtag: args![0]));
+          builder: (_) => HashtagsScreen(hashtag: args![0], navKey: args[1]));
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

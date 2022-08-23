@@ -32,8 +32,8 @@ class ProfileGameScreen extends ConsumerStatefulWidget {
 class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
     with TickerProviderStateMixin {
   late ScrollController _scrollController;
-  late TabController _tabController;
   late StreamSubscription gameListener;
+  // late TabController _tabController;
 
   bool _loadingPosts = false;
   bool _isFollowByUser = false;
@@ -203,8 +203,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
     _scrollController = ScrollController();
     _scrollController.addListener(() {
       if (_scrollController.offset >=
-              _scrollController.position.maxScrollExtent &&
-          !_scrollController.position.outOfRange &&
+              (_scrollController.position.maxScrollExtent + 10.0) &&
           !_stopReached) {
         loadMorePostsGame();
       }
@@ -222,15 +221,14 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
       }
     });
 
-    _tabController = TabController(length: 1, vsync: this);
+    // _tabController = TabController(length: 1, vsync: this);
   }
 
   @override
   void deactivate() {
     _scrollController.removeListener(() {
       if (_scrollController.offset >=
-              _scrollController.position.maxScrollExtent &&
-          !_scrollController.position.outOfRange &&
+              (_scrollController.position.maxScrollExtent + 10.0) &&
           !_stopReached) {
         loadMorePostsGame();
       }
@@ -254,7 +252,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
   void dispose() {
     gameListener.cancel();
     _scrollController.dispose();
-    _tabController.dispose();
+    // _tabController.dispose();
     super.dispose();
   }
 
@@ -326,13 +324,16 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
                   )),
             ),
             preferredSize: Size(MediaQuery.of(context).size.width, 60)),
-        body: bodyView());
+        body: Column(
+          children: [Expanded(child: bodyView())],
+        ));
   }
 
   Widget bodyView() {
     return ListView(
       shrinkWrap: true,
-      physics: const BouncingScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(
+          parent: const BouncingScrollPhysics()),
       controller: _scrollController,
       children: [
         topBody(),

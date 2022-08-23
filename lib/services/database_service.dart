@@ -724,6 +724,92 @@ class DatabaseService {
     return posts;
   }
 
+  //get posts for specific hashtag on hashtag profile screen
+  static Future<List<Post>> getPostsSpecificHashtag(Hashtag hashtag) async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> dataPosts = await FirebaseFirestore
+        .instance
+        .collection('hashtags')
+        .doc(hashtag.name)
+        .collection('posts')
+        .orderBy("date", descending: true)
+        .limit(20)
+        .get();
+
+    for (var item in dataPosts.docs) {
+      if (item.data()["uid"] != me!.uid) {
+        DocumentSnapshot<Map<String, dynamic>> dataPost =
+            await FirebaseFirestore.instance
+                .collection('posts')
+                .doc(item.id)
+                .get();
+        if (dataPost.data()!["privacy"] == "Public") {
+          DocumentSnapshot<Map<String, dynamic>> dataUser =
+              await FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(dataPost.data()!["uid"])
+                  .get();
+          DocumentSnapshot<Map<String, dynamic>> dataGame =
+              await FirebaseFirestore.instance
+                  .collection("games")
+                  .doc("verified")
+                  .collection("games_verified")
+                  .doc(dataPost.data()!["idGame"])
+                  .get();
+          posts.add(Post.fromMap(
+              dataPost, dataPost.data()!, dataUser.data()!, dataGame.data()!));
+        }
+      }
+    }
+
+    return posts;
+  }
+
+  //get posts for specific hashtag on hashtag profile screen
+  static Future<List<Post>> getMorePostsSpecificHashtag(
+      Hashtag hashtag, Post lastPost) async {
+    List<Post> posts = [];
+
+    QuerySnapshot<Map<String, dynamic>> dataPosts = await FirebaseFirestore
+        .instance
+        .collection('hashtags')
+        .doc(hashtag.name)
+        .collection('posts')
+        .orderBy("date", descending: true)
+        .startAfterDocument(lastPost.snapshot!)
+        .limit(20)
+        .get();
+
+    for (var item in dataPosts.docs) {
+      if (item.data()['uid'] != me!.uid) {
+        DocumentSnapshot<Map<String, dynamic>> dataPost =
+            await FirebaseFirestore.instance
+                .collection('posts')
+                .doc(item.id)
+                .get();
+        if (dataPost.data()!["privacy"] == "Public") {
+          DocumentSnapshot<Map<String, dynamic>> dataUser =
+              await FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(dataPost.data()!["uid"])
+                  .get();
+          DocumentSnapshot<Map<String, dynamic>> dataGame =
+              await FirebaseFirestore.instance
+                  .collection("games")
+                  .doc("verified")
+                  .collection("games_verified")
+                  .doc(dataPost.data()!["idGame"])
+                  .get();
+          posts.add(Post.fromMap(
+              dataPost, dataPost.data()!, dataUser.data()!, dataGame.data()!));
+        }
+      }
+    }
+
+    return posts;
+  }
+
 //Others parties
 
   //partie réglages "Mon compte"

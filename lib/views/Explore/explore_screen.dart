@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -247,7 +246,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                                           onTap: () => navExploreAuthKey!
                                               .currentState!
                                               .pushNamed(HashtagProfile,
-                                                  arguments: [hashtag]),
+                                                  arguments: [
+                                                hashtag,
+                                                navExploreAuthKey
+                                              ]),
                                           child: Container(
                                             height: 55,
                                             width: 55,
