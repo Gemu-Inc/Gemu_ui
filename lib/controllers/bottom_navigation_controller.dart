@@ -105,17 +105,6 @@ class _BottomNavigationControllerState
         length: 4,
         animationDuration: Duration.zero,
         vsync: this);
-    _navController.addListener(() {
-      setState(() {});
-    });
-  }
-
-  @override
-  void deactivate() {
-    _navController.removeListener(() {
-      setState(() {});
-    });
-    super.deactivate();
   }
 
   @override
