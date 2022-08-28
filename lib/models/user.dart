@@ -15,19 +15,20 @@ class UserModel {
   Timestamp? dateBirthday;
   bool? verifiedAccount;
 
-  UserModel(
-      {this.ref,
-      this.refAlgolia,
-      this.documentId,
-      required this.uid,
-      required this.username,
-      this.email,
-      this.imageUrl,
-      this.type,
-      this.verifiedAccount,
-      this.country,
-      this.dateBirthday,
-      required this.privacy});
+  UserModel({
+    this.ref,
+    this.refAlgolia,
+    this.documentId,
+    required this.uid,
+    required this.username,
+    this.email,
+    this.imageUrl,
+    this.type,
+    this.verifiedAccount,
+    this.country,
+    this.dateBirthday,
+    required this.privacy,
+  });
 
   factory UserModel.fromMap(
       DocumentSnapshot snapshot, Map<String, dynamic> data) {
@@ -41,18 +42,23 @@ class UserModel {
         privacy: data['privacy'],
         dateBirthday: data["dateBirthday"],
         country: data["country"],
-        verifiedAccount: data["verified_account"]);
+        verifiedAccount: data["verified_account"],
+        type: data["type"] ?? "user");
   }
 
   factory UserModel.fromMapAlgolia(
       AlgoliaObjectSnapshot snapshot, Map<String, dynamic> data) {
     return UserModel(
         refAlgolia: snapshot.ref,
-        uid: data["objectID"],
-        username: data["username"],
-        imageUrl: data["imageUrl"],
-        type: data["type"],
-        privacy: data["privacy"]);
+        documentId: data["objectID"],
+        uid: data['objectID'],
+        username: data['username'],
+        email: data['email'],
+        imageUrl: data['imageUrl'],
+        privacy: data['privacy'],
+        country: data["country"],
+        verifiedAccount: data["verified_account"],
+        type: data["type"] ?? "user");
   }
 
   Map<String, dynamic> toMap() {

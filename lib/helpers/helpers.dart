@@ -5,7 +5,7 @@ import 'package:timeago/timeago.dart' as time;
 
 class Helpers {
   static hideKeyboard(BuildContext context) {
-    FocusScope.of(context).requestFocus(FocusNode());
+    FocusScope.of(context).unfocus();
   }
 
   static String datePostView(int timestamp) {

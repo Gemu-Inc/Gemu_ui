@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/providers/Explore/search_provider.dart';
 import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 
@@ -29,6 +30,9 @@ class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
     await prefs.remove("token");
     await AuthService.signOut().then((value) {
       ref.read(myselfNotifierProvider.notifier).cleanUser();
+      ref
+          .read(loadedRecentSearchesNotifierProvider.notifier)
+          .cleanLoadedRecentSearches();
     });
   }
 

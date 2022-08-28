@@ -29,7 +29,8 @@ class Game {
         documentId: snapshot.id,
         name: data['name'],
         imageUrl: data['imageUrl'],
-        categories: data['categories']);
+        categories: data['categories'],
+        type: data["type"] ?? "game");
   }
 
   factory Game.fromMapAlgolia(

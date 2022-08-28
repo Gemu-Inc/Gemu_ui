@@ -92,7 +92,7 @@ class FollowersState extends State<Followers> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    ProfilUser(userPostID: user.uid))),
+                                    ProfileUser(userPostID: user.uid))),
                         leading: user.imageUrl == null
                             ? Container(
                                 height: 50,

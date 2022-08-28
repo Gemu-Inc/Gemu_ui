@@ -38,6 +38,7 @@ const String Reglages = "Reglages";
 const String PostsFeed = "PostsFeed";
 const String Search = "Search";
 const String HashtagProfile = "HashtagProfile";
+const String UserProfile = "UserProfile";
 
 //Themes
 const appTheme = "Theme";

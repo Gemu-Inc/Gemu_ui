@@ -11,6 +11,7 @@ import 'package:gemu/views/Home/add_screen.dart';
 import 'package:gemu/views/Home/home_screen.dart';
 import 'package:gemu/views/Posts/posts_feed_screen.dart';
 import 'package:gemu/views/Profile/myself_profile_screen.dart';
+import 'package:gemu/views/Profile/profile_user_screen.dart';
 import 'package:gemu/views/Reglages/reglages_screen.dart';
 import 'package:gemu/views/Create/Picture/picture_editor_screen.dart';
 import 'package:gemu/views/Create/Picture/picture_screen.dart';
@@ -142,6 +143,15 @@ Route<dynamic> generateRouteExploreAuth(
     case HashtagProfile:
       return MaterialPageRoute(
           builder: (_) => HashtagsScreen(hashtag: args![0], navKey: args[1]));
+    case GameProfile:
+      return MaterialPageRoute(
+          builder: (_) => ProfileGameScreen(
+                game: args![0],
+                navKey: args[1],
+              ));
+    case UserProfile:
+      return MaterialPageRoute(
+          builder: (_) => ProfileUser(userPostID: args![0]));
     default:
       return MaterialPageRoute(
           builder: (_) => Scaffold(

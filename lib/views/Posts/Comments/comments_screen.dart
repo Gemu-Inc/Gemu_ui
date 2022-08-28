@@ -837,7 +837,7 @@ class CommentTileState extends State<CommentTile> {
                       context,
                       MaterialPageRoute(
                           builder: (_) =>
-                              ProfilUser(userPostID: userComment.uid))),
+                              ProfileUser(userPostID: userComment.uid))),
                   child: userComment.imageUrl != null
                       ? Container(
                           height: 40,
@@ -875,8 +875,8 @@ class CommentTileState extends State<CommentTile> {
                           onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) =>
-                                      ProfilUser(userPostID: userComment.uid))),
+                                  builder: (_) => ProfileUser(
+                                      userPostID: userComment.uid))),
                           child: Text(
                             userComment.username,
                             style: Theme.of(context).textTheme.bodySmall,

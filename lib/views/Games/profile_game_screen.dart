@@ -194,7 +194,7 @@ class _ProfileGameScreenState extends ConsumerState<ProfileGameScreen>
     getPostsGame();
 
     List<Game> gamesFollowsByUser = ref.read(myGamesNotifierProvider);
-    if (gamesFollowsByUser.contains(widget.game)) {
+    if (gamesFollowsByUser.any((element) => element.name == widget.game.name)) {
       setState(() {
         _isFollowByUser = true;
       });

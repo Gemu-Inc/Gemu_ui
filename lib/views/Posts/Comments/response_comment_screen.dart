@@ -231,7 +231,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (_) =>
-                                  ProfilUser(userPostID: userComment.uid))),
+                                  ProfileUser(userPostID: userComment.uid))),
                       child: userComment.imageUrl != null
                           ? Container(
                               height: 40,
@@ -269,7 +269,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                               onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => ProfilUser(
+                                      builder: (_) => ProfileUser(
                                           userPostID: userComment.uid))),
                               child: Text(
                                 userComment.username,
@@ -359,7 +359,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (_) =>
-                                  ProfilUser(userPostID: userComment.uid))),
+                                  ProfileUser(userPostID: userComment.uid))),
                       child: userComment.imageUrl != null
                           ? Container(
                               height: 40,
@@ -397,7 +397,7 @@ class ResponseCommentviewstate extends State<ResponseCommentScreen> {
                               onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => ProfilUser(
+                                      builder: (_) => ProfileUser(
                                           userPostID: userComment.uid))),
                               child: Text(
                                 userComment.username,
@@ -579,7 +579,7 @@ class ResponseTileState extends State<ResponseTile> {
                       context,
                       MaterialPageRoute(
                           builder: (_) =>
-                              ProfilUser(userPostID: userComment.uid))),
+                              ProfileUser(userPostID: userComment.uid))),
                   child: userComment.imageUrl != null
                       ? Container(
                           height: 35,
@@ -617,8 +617,8 @@ class ResponseTileState extends State<ResponseTile> {
                           onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) =>
-                                      ProfilUser(userPostID: userComment.uid))),
+                                  builder: (_) => ProfileUser(
+                                      userPostID: userComment.uid))),
                           child: Text(
                             userComment.username,
                             style: Theme.of(context).textTheme.bodySmall,

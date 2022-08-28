@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/providers/Keyboard/keyboard_visible_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 
 import 'package:gemu/components/bottom_share.dart';
@@ -21,6 +22,7 @@ class _BottomNavigationControllerState
     with TickerProviderStateMixin {
   late TabController _navController;
   User? activeUser;
+  bool _keyboardVisible = false;
 
   List<Widget> _buildScreens() {
     return [
@@ -116,6 +118,7 @@ class _BottomNavigationControllerState
   @override
   Widget build(BuildContext context) {
     me = ref.watch(myselfNotifierProvider);
+    _keyboardVisible = ref.watch(keyboardVisibilityNotifierProvider);
 
     return Scaffold(
       backgroundColor: _navController.index == 0
@@ -135,45 +138,52 @@ class _BottomNavigationControllerState
                       controller: _navController,
                       children: _buildScreens()),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: CustomNavBar(
-                    items: _navBarsItems(),
-                    selectedIndex: _navController.index,
-                    onItemSelected: (index) {
-                      if (_navController.index == 0 && index == 0) {
-                        navHomeAuthKey!.currentState!
-                            .popUntil((route) => route.isFirst);
-                      } else if (_navController.index == 1 && index == 1) {
-                        navExploreAuthKey!.currentState!
-                            .popUntil((route) => route.isFirst);
-                      } else if (_navController.index == 2 && index == 2) {
-                        navActivitiesAuthKey!.currentState!
-                            .popUntil((route) => route.isFirst);
-                      } else if (_navController.index == 3 && index == 3) {
-                        navProfileAuthKey!.currentState!
-                            .popUntil((route) => route.isFirst);
-                      } else {
-                        setState(() {
-                          _navController.index = index;
-                        });
-                      }
-                    },
-                  ),
-                )
+                _keyboardVisible
+                    ? const SizedBox()
+                    : Align(
+                        alignment: Alignment.bottomCenter,
+                        child: CustomNavBar(
+                          items: _navBarsItems(),
+                          selectedIndex: _navController.index,
+                          onItemSelected: (index) {
+                            if (_navController.index == 0 && index == 0) {
+                              navHomeAuthKey!.currentState!
+                                  .popUntil((route) => route.isFirst);
+                            } else if (_navController.index == 1 &&
+                                index == 1) {
+                              navExploreAuthKey!.currentState!
+                                  .popUntil((route) => route.isFirst);
+                            } else if (_navController.index == 2 &&
+                                index == 2) {
+                              navActivitiesAuthKey!.currentState!
+                                  .popUntil((route) => route.isFirst);
+                            } else if (_navController.index == 3 &&
+                                index == 3) {
+                              navProfileAuthKey!.currentState!
+                                  .popUntil((route) => route.isFirst);
+                            } else {
+                              setState(() {
+                                _navController.index = index;
+                              });
+                            }
+                          },
+                        ),
+                      )
               ],
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 10),
-                child: Container(
-                  width: double.infinity,
-                  height: 150,
-                  child: BottomShare(),
-                ),
-              ),
-            )
+            _keyboardVisible
+                ? const SizedBox()
+                : Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        width: double.infinity,
+                        height: 150,
+                        child: BottomShare(),
+                      ),
+                    ),
+                  )
           ],
         ),
       ),

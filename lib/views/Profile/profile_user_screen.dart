@@ -12,16 +12,16 @@ import 'followers.dart';
 import 'follows.dart';
 import 'posts_profil.dart';
 
-class ProfilUser extends StatefulWidget {
+class ProfileUser extends StatefulWidget {
   final String userPostID;
 
-  ProfilUser({required this.userPostID});
+  ProfileUser({required this.userPostID});
 
   @override
-  ProfilUserState createState() => ProfilUserState();
+  _ProfileUserState createState() => _ProfileUserState();
 }
 
-class ProfilUserState extends State<ProfilUser>
+class _ProfileUserState extends State<ProfileUser>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
