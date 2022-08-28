@@ -19,6 +19,7 @@ import 'package:gemu/models/hashtag.dart';
 //TODO
 //calmer le listener de recherche pcq ça pompe sur Algolia niveau requests
 //logique appels firebase => dans DatabaseService
+//voir le soucis de foutre toutes les datas dans la collec "recentSearches" => notamment les imageUrl (pb si le user ou le game change d'imageUrl)
 
 class SearchScreen extends ConsumerStatefulWidget {
   @override
