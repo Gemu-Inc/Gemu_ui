@@ -1,24 +1,19 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:algolia/algolia.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/helpers/helpers.dart';
-import 'package:gemu/models/user.dart';
 import 'package:gemu/providers/Explore/search_provider.dart';
 import 'package:gemu/providers/Keyboard/keyboard_visible_provider.dart';
 import 'package:gemu/services/algolia_service.dart';
 import 'package:gemu/models/game.dart';
 import 'package:gemu/models/hashtag.dart';
-
-//TODO
-//logique appels firebase => dans DatabaseService
+import 'package:gemu/services/database_service.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   @override
@@ -75,84 +70,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     }
   }
 
-  Future<void> getRecentSearches() async {
-    List recentSearches = [];
-
-    try {
-      QuerySnapshot<Map<String, dynamic>> dataSearches = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(me!.uid)
-          .collection('recentSearches')
-          .orderBy('dateSearch', descending: true)
-          .get();
-
-      for (var item in dataSearches.docs) {
-        if (item.data()["type"] == "user") {
-          DocumentSnapshot<Map<String, dynamic>> dataUser =
-              await FirebaseFirestore.instance
-                  .collection("users")
-                  .doc(item.data()["id"])
-                  .get();
-          UserModel user = UserModel(
-              ref: item.reference,
-              documentId: item.id,
-              uid: item.data()['id'],
-              username: dataUser.data()!['username'],
-              email: dataUser.data()!['email'],
-              imageUrl: dataUser.data()!['imageUrl'],
-              privacy: dataUser.data()!['privacy'],
-              dateBirthday: dataUser.data()!["dateBirthday"],
-              country: dataUser.data()!["country"],
-              verifiedAccount: dataUser.data()!["verified_account"],
-              type: item.data()["type"] ?? "user");
-          recentSearches.add(user);
-        } else if (item.data()["type"] == "game") {
-          DocumentSnapshot<Map<String, dynamic>> dataGame =
-              await FirebaseFirestore.instance
-                  .collection("games")
-                  .doc("verified")
-                  .collection("games_verified")
-                  .doc(item.data()["id"])
-                  .get();
-          Game game = Game(
-              snapshot: item,
-              reference: item.reference,
-              documentId: item.id,
-              name: dataGame.data()!['name'],
-              imageUrl: dataGame.data()!['imageUrl'],
-              categories: dataGame.data()!['categories'],
-              type: item.data()["type"] ?? "game");
-          recentSearches.add(game);
-        } else {
-          DocumentSnapshot<Map<String, dynamic>> dataHashtag =
-              await FirebaseFirestore.instance
-                  .collection("hashtags")
-                  .doc(item.data()["id"])
-                  .get();
-          Hashtag hashtag = Hashtag(
-              snapshot: item,
-              reference: item.reference,
-              documentId: item.id,
-              name: dataHashtag.data()!['name'],
-              postsCount: dataHashtag.data()!['postsCount'],
-              type: item.data()["type"] ?? "hashtag");
-          recentSearches.add(hashtag);
-        }
-      }
-
-      ref
-          .read(recentSearchesNotifierProvider.notifier)
-          .initRecentSearches(recentSearches);
-      ref
-          .read(loadedRecentSearchesNotifierProvider.notifier)
-          .recentSearchesLoaded();
-    } catch (e) {
-      print(e);
-      messageUser(context, "Oups, un problème est survenu");
-    }
-  }
-
   _searchAll() async {
     if (mounted) {
       setState(() {
@@ -181,90 +98,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     }
   }
 
-  addInRecentSearches(AlgoliaObjectSnapshot recentSearch) async {
-    try {
-      int dateSearch = DateTime.now().millisecondsSinceEpoch.toInt();
-
-      if (recentSearch.data["type"] == "user" &&
-          !listRecentSearches.any((element) =>
-              element.documentId == recentSearch.data["objectID"])) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(me!.uid)
-            .collection('recentSearches')
-            .doc(recentSearch.data["objectID"])
-            .set({
-          'id': recentSearch.data["objectID"],
-          'type': recentSearch.data["type"],
-          'dateSearch': dateSearch,
-        });
-        ref
-            .read(recentSearchesNotifierProvider.notifier)
-            .addRecentSearches(recentSearch);
-      } else if (recentSearch.data["type"] == "game" &&
-          !listRecentSearches.any((element) =>
-              element.documentId == recentSearch.data["objectID"])) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(me!.uid)
-            .collection('recentSearches')
-            .doc(recentSearch.data["objectID"])
-            .set({
-          'id': recentSearch.data["objectID"],
-          'type': recentSearch.data["type"],
-          'dateSearch': dateSearch
-        });
-        ref
-            .read(recentSearchesNotifierProvider.notifier)
-            .addRecentSearches(recentSearch);
-      } else if (recentSearch.data["type"] == "hashtag" &&
-          !listRecentSearches.any((element) =>
-              element.documentId == recentSearch.data["objectID"])) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(me!.uid)
-            .collection('recentSearches')
-            .doc(recentSearch.data["objectID"])
-            .set({
-          'id': recentSearch.data["objectID"],
-          'type': recentSearch.data["type"],
-          'dateSearch': dateSearch
-        });
-        ref
-            .read(recentSearchesNotifierProvider.notifier)
-            .addRecentSearches(recentSearch);
-      }
-    } catch (e) {
-      print(e);
-      messageUser(context, "Oups, un problème est survenu");
-    }
-  }
-
-  deleteInRecentSearches(var recentSearch) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(me!.uid)
-          .collection('recentSearches')
-          .doc(recentSearch.documentId)
-          .delete();
-
-      ref
-          .read(recentSearchesNotifierProvider.notifier)
-          .deleteRecentSearches(recentSearch);
-    } catch (e) {
-      print(e);
-      messageUser(context, "Oups, un problème est survenu");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
     if (!ref.read(loadedRecentSearchesNotifierProvider)) {
-      getRecentSearches();
+      DatabaseService.getRecentSearches(ref);
     }
 
     _tabController = TabController(length: 4, vsync: this);
@@ -596,8 +436,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                                           .titleSmall,
                                     ),
                                     trailing: IconButton(
-                                        onPressed: () => deleteInRecentSearches(
-                                            recentSearch),
+                                        onPressed: () => DatabaseService
+                                            .deleteInRecentSearches(
+                                                recentSearch, ref),
                                         icon: Icon(Icons.clear)),
                                   ),
                                 );
@@ -660,8 +501,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                                           .titleSmall,
                                     ),
                                     trailing: IconButton(
-                                        onPressed: () => deleteInRecentSearches(
-                                            recentSearch),
+                                        onPressed: () => DatabaseService
+                                            .deleteInRecentSearches(
+                                                recentSearch, ref),
                                         icon: Icon(Icons.clear)),
                                   ),
                                 );
@@ -705,8 +547,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                                           .titleSmall,
                                     ),
                                     trailing: IconButton(
-                                        onPressed: () => deleteInRecentSearches(
-                                            recentSearch),
+                                        onPressed: () => DatabaseService
+                                            .deleteInRecentSearches(
+                                                recentSearch, ref),
                                         icon: Icon(
                                           Icons.clear,
                                         )),
@@ -806,7 +649,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                       padding: EdgeInsets.symmetric(vertical: 10.0),
                       child: ListTile(
                         onTap: () {
-                          addInRecentSearches(recentSearch);
+                          DatabaseService.addInRecentSearches(
+                              recentSearch, ref, listRecentSearches);
                           navExploreAuthKey!.currentState!.pushNamed(
                               UserProfile,
                               arguments: [recentSearch.data["objectID"]]);
@@ -844,7 +688,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                     padding: EdgeInsets.symmetric(vertical: 10.0),
                     child: ListTile(
                       onTap: () {
-                        addInRecentSearches(recentSearch);
+                        DatabaseService.addInRecentSearches(
+                            recentSearch, ref, listRecentSearches);
                         navExploreAuthKey!.currentState!
                             .pushNamed(GameProfile, arguments: [
                           Game.fromMapAlgolia(recentSearch, recentSearch.data),
@@ -893,7 +738,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                     padding: EdgeInsets.symmetric(vertical: 10.0),
                     child: ListTile(
                       onTap: () {
-                        addInRecentSearches(recentSearch);
+                        DatabaseService.addInRecentSearches(
+                            recentSearch, ref, listRecentSearches);
                         navExploreAuthKey!.currentState!
                             .pushNamed(HashtagProfile, arguments: [
                           Hashtag.fromMapAlgolia(
@@ -954,7 +800,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: ListTile(
                     onTap: () {
-                      addInRecentSearches(recentSearch);
+                      DatabaseService.addInRecentSearches(
+                          recentSearch, ref, listRecentSearches);
                       navExploreAuthKey!.currentState!.pushNamed(UserProfile,
                           arguments: [recentSearch.data["objectID"]]);
                     },
@@ -1012,7 +859,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                 padding: EdgeInsets.symmetric(vertical: 10.0),
                 child: ListTile(
                   onTap: () {
-                    addInRecentSearches(recentSearch);
+                    DatabaseService.addInRecentSearches(
+                        recentSearch, ref, listRecentSearches);
                     navExploreAuthKey!.currentState!.pushNamed(GameProfile,
                         arguments: [
                           Game.fromMapAlgolia(recentSearch, recentSearch.data),
@@ -1082,7 +930,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                 padding: EdgeInsets.symmetric(vertical: 10.0),
                 child: ListTile(
                   onTap: () {
-                    addInRecentSearches(recentSearch);
+                    DatabaseService.addInRecentSearches(
+                        recentSearch, ref, listRecentSearches);
                     navExploreAuthKey!.currentState!
                         .pushNamed(HashtagProfile, arguments: [
                       Hashtag.fromMapAlgolia(recentSearch, recentSearch.data),

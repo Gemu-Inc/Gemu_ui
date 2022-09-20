@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/providers/Explore/search_provider.dart';
-import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Users/myself_provider.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/Reglages/Design/design_screen.dart';
 import 'package:gemu/views/Reglages/Compte/edit_profile_screen.dart';
 import 'package:gemu/views/Reglages/Privacy/privacy_screen.dart';
-import 'package:gemu/components/app_bar_custom.dart';
 import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:gemu/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';

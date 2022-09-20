@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/post.dart';
-import 'package:gemu/components/post_tile.dart';
 import 'package:gemu/views/Posts/posts_feed_screen.dart';
 
 class PostsPublicProfile extends StatefulWidget {

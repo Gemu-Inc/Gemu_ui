@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:algolia/algolia.dart';
 import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +12,7 @@ import 'package:gemu/models/post.dart';
 import 'package:gemu/models/user.dart';
 import 'package:gemu/models/convo.dart';
 import 'package:gemu/models/game.dart';
+import 'package:gemu/providers/Explore/search_provider.dart';
 import 'package:gemu/providers/Games/games_discover_provider.dart';
 import 'package:gemu/providers/Home/home_provider.dart';
 import 'package:gemu/providers/Register/register_provider.dart';
@@ -808,6 +810,170 @@ class DatabaseService {
     }
 
     return posts;
+  }
+
+//Partie Search
+
+  //get recent searches for current user
+  static Future<void> getRecentSearches(WidgetRef ref) async {
+    List recentSearches = [];
+
+    try {
+      QuerySnapshot<Map<String, dynamic>> dataSearches = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .doc(me!.uid)
+          .collection('recentSearches')
+          .orderBy('dateSearch', descending: true)
+          .get();
+
+      for (var item in dataSearches.docs) {
+        if (item.data()["type"] == "user") {
+          DocumentSnapshot<Map<String, dynamic>> dataUser =
+              await FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(item.data()["id"])
+                  .get();
+          UserModel user = UserModel(
+              ref: item.reference,
+              documentId: item.id,
+              uid: item.data()['id'],
+              username: dataUser.data()!['username'],
+              email: dataUser.data()!['email'],
+              imageUrl: dataUser.data()!['imageUrl'],
+              privacy: dataUser.data()!['privacy'],
+              dateBirthday: dataUser.data()!["dateBirthday"],
+              country: dataUser.data()!["country"],
+              verifiedAccount: dataUser.data()!["verified_account"],
+              type: item.data()["type"] ?? "user");
+          recentSearches.add(user);
+        } else if (item.data()["type"] == "game") {
+          DocumentSnapshot<Map<String, dynamic>> dataGame =
+              await FirebaseFirestore.instance
+                  .collection("games")
+                  .doc("verified")
+                  .collection("games_verified")
+                  .doc(item.data()["id"])
+                  .get();
+          Game game = Game(
+              snapshot: item,
+              reference: item.reference,
+              documentId: item.id,
+              name: dataGame.data()!['name'],
+              imageUrl: dataGame.data()!['imageUrl'],
+              categories: dataGame.data()!['categories'],
+              type: item.data()["type"] ?? "game");
+          recentSearches.add(game);
+        } else {
+          DocumentSnapshot<Map<String, dynamic>> dataHashtag =
+              await FirebaseFirestore.instance
+                  .collection("hashtags")
+                  .doc(item.data()["id"])
+                  .get();
+          Hashtag hashtag = Hashtag(
+              snapshot: item,
+              reference: item.reference,
+              documentId: item.id,
+              name: dataHashtag.data()!['name'],
+              postsCount: dataHashtag.data()!['postsCount'],
+              type: item.data()["type"] ?? "hashtag");
+          recentSearches.add(hashtag);
+        }
+      }
+
+      ref
+          .read(recentSearchesNotifierProvider.notifier)
+          .initRecentSearches(recentSearches);
+      ref
+          .read(loadedRecentSearchesNotifierProvider.notifier)
+          .recentSearchesLoaded();
+    } catch (e) {
+      print(e);
+      messageUser(
+          navMainAuthKey.currentContext!, "Oups, un problème est survenu");
+    }
+  }
+
+  //add search in recent searches for current user
+  static addInRecentSearches(AlgoliaObjectSnapshot recentSearch, WidgetRef ref,
+      List listRecentSearches) async {
+    try {
+      int dateSearch = DateTime.now().millisecondsSinceEpoch.toInt();
+
+      if (recentSearch.data["type"] == "user" &&
+          !listRecentSearches.any((element) =>
+              element.documentId == recentSearch.data["objectID"])) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(me!.uid)
+            .collection('recentSearches')
+            .doc(recentSearch.data["objectID"])
+            .set({
+          'id': recentSearch.data["objectID"],
+          'type': recentSearch.data["type"],
+          'dateSearch': dateSearch,
+        });
+        ref
+            .read(recentSearchesNotifierProvider.notifier)
+            .addRecentSearches(recentSearch);
+      } else if (recentSearch.data["type"] == "game" &&
+          !listRecentSearches.any((element) =>
+              element.documentId == recentSearch.data["objectID"])) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(me!.uid)
+            .collection('recentSearches')
+            .doc(recentSearch.data["objectID"])
+            .set({
+          'id': recentSearch.data["objectID"],
+          'type': recentSearch.data["type"],
+          'dateSearch': dateSearch
+        });
+        ref
+            .read(recentSearchesNotifierProvider.notifier)
+            .addRecentSearches(recentSearch);
+      } else if (recentSearch.data["type"] == "hashtag" &&
+          !listRecentSearches.any((element) =>
+              element.documentId == recentSearch.data["objectID"])) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(me!.uid)
+            .collection('recentSearches')
+            .doc(recentSearch.data["objectID"])
+            .set({
+          'id': recentSearch.data["objectID"],
+          'type': recentSearch.data["type"],
+          'dateSearch': dateSearch
+        });
+        ref
+            .read(recentSearchesNotifierProvider.notifier)
+            .addRecentSearches(recentSearch);
+      }
+    } catch (e) {
+      print(e);
+      messageUser(
+          navMainAuthKey.currentContext!, "Oups, un problème est survenu");
+    }
+  }
+
+  //delete search in recent searches for current user
+  static deleteInRecentSearches(var recentSearch, WidgetRef ref) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(me!.uid)
+          .collection('recentSearches')
+          .doc(recentSearch.documentId)
+          .delete();
+
+      ref
+          .read(recentSearchesNotifierProvider.notifier)
+          .deleteRecentSearches(recentSearch);
+    } catch (e) {
+      print(e);
+      messageUser(
+          navMainAuthKey.currentContext!, "Oups, un problème est survenu");
+    }
   }
 
 //Others parties
