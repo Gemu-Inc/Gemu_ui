@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,7 +18,6 @@ import 'package:gemu/models/game.dart';
 import 'package:gemu/models/hashtag.dart';
 
 //TODO
-//calmer le listener de recherche pcq ça pompe sur Algolia niveau requests
 //logique appels firebase => dans DatabaseService
 
 class SearchScreen extends ConsumerStatefulWidget {
@@ -44,6 +44,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
   List<AlgoliaObjectSnapshot> _users = [];
   List<AlgoliaObjectSnapshot> _games = [];
   List<AlgoliaObjectSnapshot> _hashtags = [];
+  Timer? _timer;
+  int _timerTime = 1;
 
   void _scrollListener() {
     if (_scrollController.offset != 0.0 && _searchFocusNode.hasFocus) {
@@ -54,10 +56,22 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
   }
 
   void _searchListener() {
-    if (_searchController.text.isNotEmpty &&
-        currentSearch != _searchController.text) {
-      currentSearch = _searchController.text;
-      _searchAll();
+    if (!_searching) {
+      if (_timer != null && _timer!.isActive) _timer!.cancel();
+      _timer = Timer(Duration(seconds: _timerTime), () async {
+        if (_searchController.text.isNotEmpty &&
+            currentSearch != _searchController.text) {
+          await _searchAll();
+          currentSearch = _searchController.text;
+        }
+      });
+    }
+
+    if (_searchController.text.isEmpty) {
+      _all.clear();
+      _users.clear();
+      _games.clear();
+      _hashtags.clear();
     }
   }
 
@@ -396,6 +410,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                                       value = _searchController.text;
                                     });
                                   },
+                                  onEditingComplete: () async {
+                                    if (_timer != null && _timer!.isActive)
+                                      _timer?.cancel();
+                                    Helpers.hideKeyboard(context);
+                                    if (_searchController.text.isNotEmpty &&
+                                        !_searching &&
+                                        currentSearch !=
+                                            _searchController.text) {
+                                      await _searchAll();
+                                      currentSearch = _searchController.text;
+                                    }
+                                  },
                                 ),
                               ),
                             )),
@@ -705,7 +731,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
   }
 
   Widget searches() {
-    return _searching
+    return currentSearch != _searchController.text
         ? Column(
             children: [
               Expanded(
