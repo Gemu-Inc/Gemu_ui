@@ -54,6 +54,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
 
       setState(() {
         _loadingHashtags = true;
+        if (hashtags.length < 12) {
+          _stopReached = true;
+        }
       });
     } catch (e) {
       print(e);
@@ -383,6 +386,9 @@ class PostsByHashtagsState extends State<PostsByHashtags>
       if (!_loadingPosts && mounted) {
         setState(() {
           _loadingPosts = true;
+          if (posts.length < 6) {
+            _stopReached = true;
+          }
         });
       }
     } catch (e) {

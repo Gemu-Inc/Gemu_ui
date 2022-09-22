@@ -49,6 +49,9 @@ class _HashtagsScreenState extends ConsumerState<HashtagsScreen> {
 
       setState(() {
         _loadingPosts = true;
+        if (posts.length < 20) {
+          _stopReached = true;
+        }
       });
     } catch (e) {
       print(e);
