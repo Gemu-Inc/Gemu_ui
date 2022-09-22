@@ -17,16 +17,21 @@ class CustomNavBar extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 60,
-      decoration: BoxDecoration(
-          color: selectedIndex == 0
-              ? cBGDarkTheme
-              : Theme.of(context).scaffoldBackgroundColor,
-          boxShadow: [
-            BoxShadow(
-                color: Theme.of(context).colorScheme.primary,
-                blurRadius: 1,
-                spreadRadius: 1)
-          ]),
+      decoration: selectedIndex == 0
+          ? BoxDecoration(
+              color: cBGDarkTheme,
+              border: Border(top: BorderSide(color: Colors.grey)))
+          : BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              boxShadow: [
+                  BoxShadow(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.15),
+                      blurRadius: 25.0,
+                      offset: Offset(0.0, -10.0))
+                ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: items.map((item) {
