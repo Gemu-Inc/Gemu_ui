@@ -437,9 +437,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       child: Scaffold(
           resizeToAvoidBottomInset: true,
           body: GestureDetector(
-            onHorizontalDragUpdate: (details) {
-              if (Platform.isIOS && details.delta.dx > 0) {
-                showDialog(
+            onHorizontalDragStart: (details) async {
+              if (Platform.isIOS && details.globalPosition.dx <= 75 && details.globalPosition.distance > 100.0) {
+                await showDialog(
                     context: navNonAuthKey.currentContext!,
                     barrierDismissible: false,
                     barrierColor:
@@ -472,7 +472,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                   style: textStyleCustomBold(cGreenConfirm, 12),
                                 )),
                             TextButton(
-                                onPressed: () => Navigator.pop(context),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                                 child: Text(
                                   AppLocalization.of(context).translate(
                                       "register_screen",

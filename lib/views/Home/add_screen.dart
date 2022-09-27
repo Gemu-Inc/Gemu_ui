@@ -178,8 +178,8 @@ class _AddScreenState extends ConsumerState<AddScreen>
         return false;
       },
       child: GestureDetector(
-        onHorizontalDragUpdate: (details) {
-          if (Platform.isIOS && details.delta.dx > 0) {
+        onHorizontalDragStart: (details) {
+          if (details.globalPosition.dx <= 75 && details.globalPosition.distance > 15.0) {
             navMainAuthKey.currentState!.pop();
           }
         },
