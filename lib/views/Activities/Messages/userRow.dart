@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gemu/models/user.dart';
-import 'package:gemu/constants/constants.dart';
 
 import 'messages_view.dart';
 
@@ -39,7 +38,7 @@ class UserRow extends StatelessWidget {
                   ),
             title: Text(
               contact.username,
-              style: mystyle(12),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             trailing: Icon(Icons.message)));
   }

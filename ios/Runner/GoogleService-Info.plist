@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>231323160206-huahd72p6hnkn6ng786aid009h9drt2g.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.231323160206-huahd72p6hnkn6ng786aid009h9drt2g</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCvaOEekLfCDrPqUztW0KMCMDSFvW5VJRY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>231323160206</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ios.gemu</string>
+	<key>PROJECT_ID</key>
+	<string>gemu-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>gemu-app.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:231323160206:ios:40c6ee00f9ef22dfa743df</string>
+	<key>DATABASE_URL</key>
+	<string>https://gemu-app.firebaseio.com</string>
+</dict>
+</plist>

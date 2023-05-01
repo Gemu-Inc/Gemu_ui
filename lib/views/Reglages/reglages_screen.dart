@@ -1,31 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/constants/constants.dart';
+import 'package:gemu/providers/Explore/search_provider.dart';
+import 'package:gemu/providers/Users/myself_provider.dart';
 
 import 'package:gemu/services/auth_service.dart';
 import 'package:gemu/views/Reglages/Design/design_screen.dart';
 import 'package:gemu/views/Reglages/Compte/edit_profile_screen.dart';
 import 'package:gemu/views/Reglages/Privacy/privacy_screen.dart';
-import 'package:gemu/views/Welcome/welcome_screen.dart';
-import 'package:gemu/widgets/app_bar_custom.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 import 'package:gemu/models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ReglagesScreen extends StatelessWidget {
+class ReglagesScreen extends ConsumerStatefulWidget {
   final UserModel user;
 
   const ReglagesScreen({Key? key, required this.user}) : super(key: key);
 
-  _signOut(BuildContext context) async {
-    await AuthService.signOut();
-    await Future.delayed(Duration(seconds: 1));
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
-        (route) => false);
+  @override
+  _ReglagesScreenState createState() => _ReglagesScreenState();
+}
+
+class _ReglagesScreenState extends ConsumerState<ReglagesScreen> {
+  _signOut(BuildContext context, WidgetRef ref) async {
+    Navigator.pop(context);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("token");
+    await AuthService.signOut().then((value) {
+      ref.read(myselfNotifierProvider.notifier).cleanUser();
+      ref
+          .read(loadedRecentSearchesNotifierProvider.notifier)
+          .cleanLoadedRecentSearches();
+    });
   }
 
   Future confirmDisconnect(BuildContext context) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(
               context,
@@ -37,10 +52,12 @@ class ReglagesScreen extends StatelessWidget {
 
   TextButton disconnectBtn(BuildContext context) {
     return TextButton(
-        onPressed: () => _signOut(context),
+        onPressed: () {
+          _signOut(context, ref);
+        },
         child: Text(
           'Oui',
-          style: TextStyle(color: Colors.blue[200]),
+          style: TextStyle(color: cGreenConfirm),
         ));
   }
 
@@ -51,7 +68,7 @@ class ReglagesScreen extends StatelessWidget {
         },
         child: Text(
           'Non',
-          style: TextStyle(color: Colors.red[200]),
+          style: TextStyle(color: cRedCancel),
         ));
   }
 
@@ -59,11 +76,29 @@ class ReglagesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBarCustom(context: context, title: 'Réglages', actions: [
-        IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () => confirmDisconnect(context))
-      ]),
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 6,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary
+                ])),
+          ),
+          leading: IconButton(
+              onPressed: () => navProfileAuthKey!.currentState!.pop(),
+              icon: Icon(Icons.arrow_back_ios)),
+          title: Text('Réglages'),
+          centerTitle: false,
+          actions: [
+            IconButton(
+                icon: Icon(Icons.logout),
+                onPressed: () => confirmDisconnect(context))
+          ]),
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -79,7 +114,7 @@ class ReglagesScreen extends StatelessWidget {
                 MaterialPageRoute(
                     settings: RouteSettings(name: ('/EditProfile')),
                     builder: (BuildContext context) =>
-                        EditProfileScreen(user: user))),
+                        EditProfileScreen(user: widget.user))),
           ),
           ListTile(
             leading: Icon(Icons.lock),

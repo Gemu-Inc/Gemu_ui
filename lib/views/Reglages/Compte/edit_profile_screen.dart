@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gemu/constants/constants.dart';
 
 import 'package:gemu/models/user.dart';
 import 'package:gemu/services/cloud_storage_service.dart';
@@ -10,7 +11,7 @@ import 'package:gemu/services/database_service.dart';
 import 'package:gemu/views/Reglages/Compte/edit_email_screen.dart';
 import 'package:gemu/views/Reglages/Compte/edit_password_screen.dart';
 import 'package:gemu/views/Reglages/Compte/edit_user_name_screen.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 // ignore: must_be_immutable
 class EditProfileScreen extends StatefulWidget {
@@ -98,6 +99,10 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
   Future alertSaveBeforeLeave() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Sauvegarder',
               'Voulez-vous sauvegarder vos changements?', [
@@ -109,7 +114,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -117,7 +122,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });
@@ -126,6 +131,10 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
   Future alertUpdateProfile(String title, String content) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -134,7 +143,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -143,6 +152,10 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
   Future alertNotUpdateProfile(String title, String content) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -151,7 +164,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -160,6 +173,10 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
   Future alreadyImgDelete() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Youhou',
               'Tu es au courant que ton icône est déjà supprimé?', [
@@ -169,7 +186,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Message reçu',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -177,7 +194,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 },
                 child: Text(
                   'Chut d\'abord',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });
@@ -249,7 +266,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 children: [
                   Text(
                     'Nom d\'utilisateur',
-                    style: TextStyle(color: Colors.blue[200]),
+                    style: TextStyle(color: Colors.green),
                   ),
                   Text(
                     widget.user.username,
@@ -259,7 +276,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 12,
-                    color: Colors.blue[200],
+                    color: Colors.green,
                   ),
                 ],
               )),
@@ -273,7 +290,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('E-mail', style: TextStyle(color: Colors.blue[200])),
+                  Text('E-mail', style: TextStyle(color: Colors.green)),
                   Text(
                     widget.user.email!,
                     style: TextStyle(
@@ -282,7 +299,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 12,
-                    color: Colors.blue[200],
+                    color: Colors.green,
                   )
                 ],
               )),
@@ -294,7 +311,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Password', style: TextStyle(color: Colors.blue[200])),
+                  Text('Password', style: TextStyle(color: Colors.green)),
                   Text(
                     '**********',
                     style: TextStyle(
@@ -303,7 +320,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 12,
-                    color: Colors.blue[200],
+                    color: Colors.green,
                   ),
                 ],
               )),
@@ -317,7 +334,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Supprimer le compte',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: Colors.red),
                 ),
               )),
         ],
@@ -388,7 +405,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                       onPressed: () => selectImage(),
                       child: Text(
                         'Modifier l\'icône',
-                        style: TextStyle(color: Colors.blue[200]),
+                        style: TextStyle(color: Colors.green),
                       )),
                   TextButton(
                       onPressed: () {
@@ -407,7 +424,7 @@ class _EditProfileviewstate extends State<EditProfileScreen> {
                       },
                       child: Text(
                         'Supprimer l\'icône',
-                        style: TextStyle(color: Colors.red[200]),
+                        style: TextStyle(color: Colors.red),
                       ))
                 ],
               )

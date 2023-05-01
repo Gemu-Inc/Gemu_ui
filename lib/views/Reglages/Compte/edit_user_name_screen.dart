@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gemu/constants/constants.dart';
 
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/user.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 class EditUserNameScreen extends StatefulWidget {
   final UserModel user;
@@ -44,6 +45,10 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
   Future alertUpdateUsername(String title, String content) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -53,7 +58,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -62,6 +67,10 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
   Future alertSaveBeforeLeave() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Sauvegarder',
               'Voulez-vous sauvegarder vos changements?', [
@@ -72,7 +81,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -81,7 +90,7 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });
@@ -134,11 +143,11 @@ class _EditUserNameviewstate extends State<EditUserNameScreen> {
                   color: Colors.transparent,
                   child: TextFormField(
                     initialValue: widget.user.username,
-                    cursorColor: Theme.of(context).primaryColor,
+                    cursorColor: Theme.of(context).colorScheme.primary,
                     decoration: InputDecoration(
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor))),
+                                color: Theme.of(context).colorScheme.primary))),
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter a name' : null,
                     onChanged: (value) => setState(() => _currentName = value),

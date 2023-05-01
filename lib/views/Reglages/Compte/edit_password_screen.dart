@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
+import 'package:gemu/constants/constants.dart';
 
 class EditPasswordScreen extends StatefulWidget {
   EditPasswordScreen({Key? key}) : super(key: key);
@@ -35,6 +36,10 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
   Future alertUpdatePassword(String title, String content) {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -44,7 +49,7 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -53,6 +58,10 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
   Future alertSaveBeforeLeave() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Sauvegarder',
               'Voulez-vous sauvegarder vos changements?', [
@@ -65,7 +74,7 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -74,7 +83,7 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });
@@ -130,14 +139,14 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 color: Colors.transparent,
                 width: MediaQuery.of(context).size.width - 130,
                 child: TextFormField(
-                  cursorColor: Theme.of(context).primaryColor,
+                  cursorColor: Theme.of(context).colorScheme.primary,
                   decoration: InputDecoration(
                       labelText: "Current Password",
-                      labelStyle:
-                          TextStyle(color: Theme.of(context).primaryColor),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor))),
+                              color: Theme.of(context).colorScheme.primary))),
                   obscureText: true,
                   validator: (value) =>
                       value!.isEmpty ? 'Please enter a password' : null,
@@ -153,14 +162,14 @@ class _EditPasswordviewstate extends State<EditPasswordScreen> {
                 color: Colors.transparent,
                 width: MediaQuery.of(context).size.width - 130,
                 child: TextFormField(
-                  cursorColor: Theme.of(context).primaryColor,
+                  cursorColor: Theme.of(context).colorScheme.primary,
                   decoration: InputDecoration(
                       labelText: "New Password",
-                      labelStyle:
-                          TextStyle(color: Theme.of(context).primaryColor),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor))),
+                              color: Theme.of(context).colorScheme.primary))),
                   obscureText: true,
                   validator: (value) =>
                       value!.isEmpty ? 'Please enter a password' : null,

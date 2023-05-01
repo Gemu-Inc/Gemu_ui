@@ -14,7 +14,7 @@ class VideoMessage extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
       decoration: BoxDecoration(
           color: message.isSender
-              ? Theme.of(context).primaryColor
+              ? Theme.of(context).colorScheme.primary
               : Theme.of(context).canvasColor,
           borderRadius: BorderRadiusDirectional.circular(20)),
       child: AspectRatio(
@@ -30,7 +30,7 @@ class VideoMessage extends StatelessWidget {
               height: 25,
               width: 25,
               decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   shape: BoxShape.circle),
               child: Icon(Icons.play_arrow, size: 16, color: Colors.white),
             ),

@@ -3,25 +3,23 @@ import 'package:algolia/algolia.dart';
 
 class Game {
   final DocumentSnapshot<Map<String, dynamic>>? snapshot;
+  final String documentId;
   final String name;
   final String imageUrl;
-  final List? categories;
-  final String? documentId;
+  final List categories;
   final DocumentReference? reference;
   final AlgoliaObjectReference? referenceAlgolia;
   final String? type;
-  final String? idDemandeur;
 
   Game(
       {this.snapshot,
       this.reference,
       this.referenceAlgolia,
+      required this.documentId,
       required this.name,
       required this.imageUrl,
-      this.categories,
-      this.documentId,
-      this.type,
-      this.idDemandeur});
+      required this.categories,
+      this.type});
 
   factory Game.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot,
       Map<String, dynamic> data) {
@@ -32,7 +30,7 @@ class Game {
         name: data['name'],
         imageUrl: data['imageUrl'],
         categories: data['categories'],
-        idDemandeur: data['idDemandeur']);
+        type: data["type"] ?? "game");
   }
 
   factory Game.fromMapAlgolia(
@@ -42,10 +40,16 @@ class Game {
         documentId: data['objectID'],
         name: data['name'],
         imageUrl: data['imageUrl'],
+        categories: data['categories'],
         type: data["type"]);
   }
 
   Map<String, dynamic> toMap() {
-    return {'name': name, 'imageUrl': imageUrl};
+    return {
+      'id': documentId,
+      'name': name,
+      'imageUrl': imageUrl,
+      'categories': categories
+    };
   }
 }

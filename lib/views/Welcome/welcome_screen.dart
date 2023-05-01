@@ -1,160 +1,154 @@
+import 'dart:io' show Platform;
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:gemu/constants/constants.dart';
+import 'package:gemu/providers/Theme/dayMood_provider.dart';
+import 'package:gemu/components/bottom_sheet_custom.dart';
+import 'package:gemu/components/clip_shadow_path.dart';
+import 'package:gemu/components/custom_clipper.dart';
+import 'package:gemu/translations/app_localizations.dart';
 
-import 'package:gemu/views/Login/login_screen.dart';
-import 'package:gemu/views/Register/register_screen.dart';
-
-class WelcomeScreen extends StatefulWidget {
+class WelcomeScreen extends ConsumerStatefulWidget {
+  const WelcomeScreen({Key? key}) : super(key: key);
   @override
   WelcomeviewState createState() => WelcomeviewState();
 }
 
-class WelcomeviewState extends State<WelcomeScreen> {
-  Duration _duration = Duration(seconds: 1);
-  bool isDayMood = false;
-
-  void timeMood() {
-    int hour = DateTime.now().hour;
-
-    if (hour >= 8 && hour <= 18) {
-      setState(() {
-        isDayMood = true;
-      });
-    } else {
-      setState(() {
-        isDayMood = false;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    timeMood();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
+class WelcomeviewState extends ConsumerState<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
-    List<Color> lightBgColors = [
-      Color(0xFF947B8F),
-      Color(0xFFB27D75),
-      Color(0xFFE38048),
-    ];
-    var darkBgColors = [
-      Color(0xFF4075DA),
-      Color(0xFF6E78B1),
-      Color(0xFF947B8F),
-    ];
+    bool isDayMood = ref.watch(dayMoodNotifierProvider);
+
     return Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark),
-      child: AnimatedContainer(
-        duration: _duration,
-        curve: Curves.easeInOut,
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDayMood ? lightBgColors : darkBgColors,
-          ),
-        ),
-        child: SafeArea(
+            value: Platform.isIOS
+                ? Theme.of(context).brightness == Brightness.dark
+                    ? SystemUiOverlayStyle.light
+                    : SystemUiOverlayStyle.dark
+                : SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    systemNavigationBarColor:
+                        Theme.of(context).scaffoldBackgroundColor,
+                    statusBarIconBrightness:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Brightness.light
+                            : Brightness.dark,
+                    systemNavigationBarIconBrightness:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Brightness.light
+                            : Brightness.dark),
+            child: SafeArea(
+              left: false,
+              right: false,
+              child: Stack(
+                children: [
+                  bodyWelcome(lightBgColors, darkBgColors, isDayMood),
+                ],
+              ),
+            )));
+  }
+
+  Widget bodyWelcome(
+      List<Color> lightBgColors, List<Color> darkBgColors, bool isDayMood) {
+    return Stack(
+      children: [
+        ClipShadowPath(
+          shadow: BoxShadow(
+              color: Theme.of(context).shadowColor,
+              offset: Offset(4, 4),
+              blurRadius: 4,
+              spreadRadius: 1),
+          clipper: BigClipper(),
           child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1),
-                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8)
-                  ]),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                      icon: Icon(
-                        Icons.info_outline,
-                        color: Colors.white,
-                        size: 26,
-                      ),
-                      onPressed: () =>
-                          Navigator.pushNamed(context, GetStarted)),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15.0),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isDayMood ? lightBgColors : darkBgColors)),
+          ),
+        ),
+        ClipShadowPath(
+          shadow: BoxShadow(
+              color: Theme.of(context).shadowColor,
+              offset: Offset(4, 4),
+              blurRadius: 4,
+              spreadRadius: 1),
+          clipper: SmallClipper(),
+          child: Container(
+            decoration:
+                BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Image.asset(
+            "assets/images/get_started.png",
+            height: MediaQuery.of(context).size.height / 3,
+          ),
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 25.0, top: 15.0),
+            child: GestureDetector(
+                onTap: () {
+                  getStartedBottomSheet(navNonAuthKey.currentContext!);
+                },
+                child: Icon(Icons.info_outline,
+                    size: 28, color: Theme.of(context).iconTheme.color)),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+              height: MediaQuery.of(context).size.height / 1.75,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.25,
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Welcome to",
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline3!
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                          AppLocalization.of(context)
+                              .translate("welcome_screen", "welcome"),
+                          style: textStyleCustomBold(
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? cTextDarkTheme
+                                  : cTextLightTheme,
+                              30,
+                              FontWeight.w500),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              "Gemu",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline3!
-                                  .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                height: 60,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Colors.black),
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                        image: AssetImage(
-                                            "assets/icons/icon_round.png"),
-                                        fit: BoxFit.cover)),
-                              ),
-                            ),
-                          ],
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          AppLocalization.of(context)
+                              .translate("welcome_screen", "rejoign"),
+                          style: textStyleCustomBold(
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
+                              14),
+                          textAlign: TextAlign.center,
                         )
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Expanded(
-                    child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 35.0),
-                        child: Row(
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
+                    child: Column(
+                      children: [
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
@@ -163,8 +157,14 @@ class WelcomeviewState extends State<WelcomeScreen> {
                               color: Theme.of(context).canvasColor,
                             ),
                             Text(
-                              'Start the adventure',
-                              style: mystyle(12),
+                              AppLocalization.of(context)
+                                  .translate("welcome_screen", "start"),
+                              style: textStyleCustomBold(
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black,
+                                  14),
                             ),
                             Container(
                               height: 2,
@@ -173,36 +173,39 @@ class WelcomeviewState extends State<WelcomeScreen> {
                             )
                           ],
                         ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.height / 14,
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
-                        child: ElevatedButton(
-                            onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        RegisterScreen())),
-                            style: TextButton.styleFrom(
-                                backgroundColor: Theme.of(context).canvasColor,
-                                elevation: 6,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0))),
-                            child: Text(
-                              'Sign up',
-                              style: TextStyle(
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700),
-                            )),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 35.0),
-                        child: Row(
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width - 70,
+                          height: MediaQuery.of(context).size.height / 14,
+                          child: ElevatedButton(
+                              onPressed: () => inscriptionBottomSheet(
+                                  context, isDayMood, ref),
+                              style: ElevatedButton.styleFrom(
+                                  elevation: 6,
+                                  shadowColor: Theme.of(context).shadowColor,
+                                  primary:
+                                      isDayMood ? cPrimaryPink : cPrimaryPurple,
+                                  onPrimary: Theme.of(context).canvasColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  )),
+                              child: Text(
+                                AppLocalization.of(context)
+                                    .translate("welcome_screen", "register"),
+                                style: textStyleCustomBold(Colors.white, 14),
+                              )),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
+                    child: Column(
+                      children: [
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
@@ -211,8 +214,14 @@ class WelcomeviewState extends State<WelcomeScreen> {
                               color: Theme.of(context).canvasColor,
                             ),
                             Text(
-                              'Already an account?',
-                              style: mystyle(12),
+                              AppLocalization.of(context).translate(
+                                  "welcome_screen", "already_account"),
+                              style: textStyleCustomBold(
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black,
+                                  14),
                             ),
                             Container(
                               height: 2,
@@ -221,70 +230,79 @@ class WelcomeviewState extends State<WelcomeScreen> {
                             )
                           ],
                         ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.height / 14,
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
-                        child: ElevatedButton(
-                            onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        LoginScreen())),
-                            style: TextButton.styleFrom(
-                                backgroundColor: Theme.of(context).canvasColor,
-                                elevation: 6,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0))),
-                            child: Text(
-                              'Sign in',
-                              style: TextStyle(
-                                  color: Theme.of(context).brightness ==
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width - 70,
+                          height: MediaQuery.of(context).size.height / 14,
+                          child: ElevatedButton(
+                              onPressed: () =>
+                                  connexionBottomSheet(context, isDayMood, ref),
+                              style: ElevatedButton.styleFrom(
+                                  elevation: 6,
+                                  shadowColor: Theme.of(context).shadowColor,
+                                  primary:
+                                      isDayMood ? cPrimaryPurple : cPrimaryPink,
+                                  onPrimary: Theme.of(context).canvasColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  )),
+                              child: Text(
+                                AppLocalization.of(context)
+                                    .translate("welcome_screen", "login"),
+                                style: textStyleCustomBold(Colors.white, 14),
+                              )),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10.0),
+                      child: RichText(
+                          text: TextSpan(
+                              text: AppLocalization.of(context)
+                                  .translate("welcome_screen", "accord"),
+                              style: textStyleCustomRegular(
+                                  Theme.of(context).brightness ==
                                           Brightness.dark
                                       ? Colors.white
                                       : Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700),
-                            )),
-                      ),
-                    ],
-                  ),
-                )),
-                Container(
-                  height: MediaQuery.of(context).size.height / 15,
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 5,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(colors: [
-                          Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.secondary
-                        ])),
-                      ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      Expanded(
-                          child: Container(
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        child: InkWell(
-                          onTap: () => print('Terms and Conditions'),
-                          child: Text(
-                            'Terms and Conditions',
-                          ),
-                        ),
-                      )),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+                                  12),
+                              children: [
+                                TextSpan(
+                                    text: AppLocalization.of(context)
+                                        .translate("welcome_screen", "cgu"),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap =
+                                          () => print("terms and conditions"),
+                                    style: textStyleCustomBold(
+                                        isDayMood
+                                            ? cPrimaryPink
+                                            : cPrimaryPurple,
+                                        12)),
+                                TextSpan(
+                                    text: AppLocalization.of(context).translate(
+                                        "welcome_screen", "accord_bis"),
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
+                                TextSpan(
+                                    text: AppLocalization.of(context).translate(
+                                        "welcome_screen", "confidentiality"),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () => print("privacy policy"),
+                                    style: textStyleCustomBold(
+                                        isDayMood
+                                            ? cPrimaryPink
+                                            : cPrimaryPurple,
+                                        12))
+                              ]),
+                          textAlign: TextAlign.center)),
+                ],
+              )),
         ),
-      ),
-    ));
+      ],
+    );
   }
 }

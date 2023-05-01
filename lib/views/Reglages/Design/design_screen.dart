@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gemu/widgets/app_bar_custom.dart';
+import 'package:gemu/components/app_bar_custom.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart';
 
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/providers/theme_provider.dart';
+import 'package:gemu/providers/Theme/theme_provider.dart';
 
 class DesignScreen extends StatefulWidget {
   @override
@@ -16,11 +15,6 @@ class _Designviewstate extends State<DesignScreen> {
   late SharedPreferences prefs;
 
   bool isSwitched = false;
-
-  Color darkApp = Color(0xFF1A1C25);
-  Color lightApp = Color(0xFFDEE4E7);
-  Color orangeApp = Color(0xFFB27D75);
-  Color purpleApp = Color(0xFF6E78B1);
 
   @override
   void initState() {
@@ -83,8 +77,8 @@ class _Designviewstate extends State<DesignScreen> {
                     children: [
                       RawMaterialButton(
                         onPressed: () {
-                          colorChangedPrimary(orangeApp.value, ref);
-                          colorChangedAccent(purpleApp.value, ref);
+                          colorChangedPrimary(cPrimaryPink.value, ref);
+                          colorChangedAccent(cPrimaryPurple.value, ref);
                           onThemeChanged('ThemeSystem', ref);
                         },
                         child: AnimatedSwitcher(
@@ -92,16 +86,20 @@ class _Designviewstate extends State<DesignScreen> {
                             transitionBuilder: (Widget child,
                                     Animation<double> animation) =>
                                 ScaleTransition(child: child, scale: animation),
-                            child: _getIconSystem(orangeApp, purpleApp, theme,
-                                primaryColor, accentColor)),
+                            child: _getIconSystem(cPrimaryPink, cPrimaryPurple,
+                                theme, primaryColor, accentColor)),
                         shape: CircleBorder(),
                         elevation: 6.0,
+                        fillColor: MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? cBGDarkTheme
+                            : cBGLightTheme,
                         padding: EdgeInsets.all(5.0),
                       ),
                       SizedBox(
                         height: 5,
                       ),
-                      Text('Orange/Purple'),
+                      Text('Pink/Purple'),
                     ],
                   ),
                 ),
@@ -110,8 +108,8 @@ class _Designviewstate extends State<DesignScreen> {
                     children: [
                       RawMaterialButton(
                         onPressed: () {
-                          colorChangedPrimary(purpleApp.value, ref);
-                          colorChangedAccent(orangeApp.value, ref);
+                          colorChangedPrimary(cPrimaryPurple.value, ref);
+                          colorChangedAccent(cPrimaryPink.value, ref);
                           onThemeChanged('ThemeSystem', ref);
                         },
                         child: AnimatedSwitcher(
@@ -119,16 +117,20 @@ class _Designviewstate extends State<DesignScreen> {
                             transitionBuilder: (Widget child,
                                     Animation<double> animation) =>
                                 ScaleTransition(child: child, scale: animation),
-                            child: _getIconSystem(purpleApp, orangeApp, theme,
-                                primaryColor, accentColor)),
+                            child: _getIconSystem(cPrimaryPurple, cPrimaryPink,
+                                theme, primaryColor, accentColor)),
                         shape: CircleBorder(),
                         elevation: 6.0,
+                        fillColor: MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? cBGDarkTheme
+                            : cBGLightTheme,
                         padding: EdgeInsets.all(5.0),
                       ),
                       SizedBox(
                         height: 5,
                       ),
-                      Text('Purple/Orange'),
+                      Text('Purple/Pink'),
                     ],
                   ),
                 ),
@@ -162,22 +164,22 @@ class _Designviewstate extends State<DesignScreen> {
                   child: Column(
                     children: [
                       RawMaterialButton(
-                        onPressed: () => onThemeChanged('LightOrange', ref),
+                        onPressed: () => onThemeChanged(themeLightPink, ref),
                         child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 400),
                             transitionBuilder: (Widget child,
                                     Animation<double> animation) =>
                                 ScaleTransition(child: child, scale: animation),
-                            child: _getIcon(theme, lightThemeOrange)),
+                            child: _getIcon(theme, lightThemePink)),
                         shape: CircleBorder(),
                         elevation: 6.0,
-                        fillColor: lightThemeOrange.scaffoldBackgroundColor,
+                        fillColor: lightThemePink.scaffoldBackgroundColor,
                         padding: EdgeInsets.all(5.0),
                       ),
                       SizedBox(
                         height: 5,
                       ),
-                      Text('Orange/Purple'),
+                      Text('Pink/Purple'),
                     ],
                   ),
                 ),
@@ -185,7 +187,7 @@ class _Designviewstate extends State<DesignScreen> {
                   child: Column(
                     children: [
                       RawMaterialButton(
-                        onPressed: () => onThemeChanged('LightPurple', ref),
+                        onPressed: () => onThemeChanged(themeLightPurple, ref),
                         child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 400),
                             transitionBuilder: (Widget child,
@@ -200,7 +202,7 @@ class _Designviewstate extends State<DesignScreen> {
                       SizedBox(
                         height: 5,
                       ),
-                      Text('Purple/Orange'),
+                      Text('Purple/Pink'),
                     ],
                   ),
                 ),
@@ -234,23 +236,23 @@ class _Designviewstate extends State<DesignScreen> {
                 child: Column(
                   children: [
                     RawMaterialButton(
-                      onPressed: () => onThemeChanged('DarkOrange', ref),
+                      onPressed: () => onThemeChanged(themeDarkPink, ref),
                       child: AnimatedSwitcher(
                         duration: Duration(milliseconds: 400),
                         transitionBuilder:
                             (Widget child, Animation<double> animation) =>
                                 ScaleTransition(child: child, scale: animation),
-                        child: _getIcon(theme, darkThemeOrange),
+                        child: _getIcon(theme, darkThemePink),
                       ),
                       shape: CircleBorder(),
                       elevation: 6.0,
-                      fillColor: darkThemeOrange.scaffoldBackgroundColor,
+                      fillColor: darkThemePink.scaffoldBackgroundColor,
                       padding: EdgeInsets.all(5.0),
                     ),
                     SizedBox(
                       height: 5,
                     ),
-                    Text('Orange/Purple'),
+                    Text('Pink/Purple'),
                   ],
                 ),
               ),
@@ -258,7 +260,7 @@ class _Designviewstate extends State<DesignScreen> {
                 child: Column(
                   children: [
                     RawMaterialButton(
-                      onPressed: () => onThemeChanged('DarkPurple', ref),
+                      onPressed: () => onThemeChanged(themeDarkPurple, ref),
                       child: AnimatedSwitcher(
                           duration: Duration(milliseconds: 400),
                           transitionBuilder: (Widget child,
@@ -273,7 +275,7 @@ class _Designviewstate extends State<DesignScreen> {
                     SizedBox(
                       height: 5,
                     ),
-                    Text('Purple/Orange'),
+                    Text('Purple/Pink'),
                   ],
                 ),
               ),
@@ -339,13 +341,13 @@ class _Designviewstate extends State<DesignScreen> {
 
   void onThemeChanged(String value, WidgetRef ref) async {
     var prefs = await SharedPreferences.getInstance();
-    if (value == 'LightOrange') {
-      ref.read(themeProviderNotifier.notifier).updateTheme(lightThemeOrange);
-    } else if (value == 'LightPurple') {
+    if (value == themeLightPink) {
+      ref.read(themeProviderNotifier.notifier).updateTheme(lightThemePink);
+    } else if (value == themeLightPurple) {
       ref.read(themeProviderNotifier.notifier).updateTheme(lightThemePurple);
-    } else if (value == 'DarkOrange') {
-      ref.read(themeProviderNotifier.notifier).updateTheme(darkThemeOrange);
-    } else if (value == 'DarkPurple') {
+    } else if (value == themeDarkPink) {
+      ref.read(themeProviderNotifier.notifier).updateTheme(darkThemePink);
+    } else if (value == themeDarkPurple) {
       ref.read(themeProviderNotifier.notifier).updateTheme(darkThemePurple);
     } else {
       ref.read(themeProviderNotifier.notifier).updateTheme(ThemeData());
@@ -355,20 +357,26 @@ class _Designviewstate extends State<DesignScreen> {
 
   void colorChangedPrimary(int value, WidgetRef ref) async {
     var prefs = await SharedPreferences.getInstance();
-    if (value == orangeApp.value) {
-      ref.read(primaryProviderNotifier.notifier).updatePrimaryColor(orangeApp);
-    } else if (value == purpleApp.value) {
-      ref.read(primaryProviderNotifier.notifier).updatePrimaryColor(purpleApp);
+    if (value == cPrimaryPink.value) {
+      ref
+          .read(primaryProviderNotifier.notifier)
+          .updatePrimaryColor(cPrimaryPink);
+    } else if (value == cPrimaryPurple.value) {
+      ref
+          .read(primaryProviderNotifier.notifier)
+          .updatePrimaryColor(cPrimaryPurple);
     }
     prefs.setInt('color_primary', value);
   }
 
   void colorChangedAccent(int value, WidgetRef ref) async {
     var prefs = await SharedPreferences.getInstance();
-    if (value == orangeApp.value) {
-      ref.read(accentProviderNotifier.notifier).updateAccentColor(orangeApp);
-    } else if (value == purpleApp.value) {
-      ref.read(accentProviderNotifier.notifier).updateAccentColor(purpleApp);
+    if (value == cPrimaryPink.value) {
+      ref.read(accentProviderNotifier.notifier).updateAccentColor(cPrimaryPink);
+    } else if (value == cPrimaryPurple.value) {
+      ref
+          .read(accentProviderNotifier.notifier)
+          .updateAccentColor(cPrimaryPurple);
     }
     prefs.setInt('color_accent', value);
   }

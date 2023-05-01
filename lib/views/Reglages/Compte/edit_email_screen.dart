@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gemu/constants/constants.dart';
 
 import 'package:gemu/services/database_service.dart';
 import 'package:gemu/models/user.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 class EditEmailScreen extends StatefulWidget {
   final UserModel user;
@@ -42,6 +43,10 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
   Future alertReAuthentification() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (context) => AlertDialog(
                 backgroundColor: Theme.of(context).canvasColor,
                 shape: RoundedRectangleBorder(
@@ -68,7 +73,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                       },
                       child: Text(
                         'OK',
-                        style: TextStyle(color: Colors.blue[200]),
+                        style: TextStyle(color: cGreenConfirm),
                       )),
                   TextButton(
                       onPressed: () {
@@ -77,7 +82,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                       },
                       child: Text(
                         'Cancel',
-                        style: TextStyle(color: Colors.red[200]),
+                        style: TextStyle(color: cRedCancel),
                       )),
                 ]));
   }
@@ -85,6 +90,10 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
   Future alertUpdateMail(String title, String content) {
     return showDialog(
         context: context,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, title, content, [
             TextButton(
@@ -94,7 +103,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 ))
           ]);
         });
@@ -103,6 +112,10 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
   Future alertSaveBeforeLeave() {
     return showDialog(
         context: context,
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
         builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Sauvegarder',
               'Voulez-vous sauvegarder vos changements?', [
@@ -113,7 +126,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () {
@@ -122,7 +135,7 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                 },
                 child: Text(
                   'Leave',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });
@@ -179,11 +192,11 @@ class _EditEmailviewstate extends State<EditEmailScreen> {
                   color: Colors.transparent,
                   child: TextFormField(
                     initialValue: widget.user.email,
-                    cursorColor: Theme.of(context).primaryColor,
+                    cursorColor: Theme.of(context).colorScheme.primary,
                     decoration: InputDecoration(
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor))),
+                                color: Theme.of(context).colorScheme.primary))),
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter a mail' : null,
                     onChanged: (value) => setState(() => _currentEmail = value),

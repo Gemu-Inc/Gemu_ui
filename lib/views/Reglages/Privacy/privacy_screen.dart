@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gemu/constants/constants.dart';
-import 'package:gemu/widgets/alert_dialog_custom.dart';
+import 'package:gemu/components/alert_dialog_custom.dart';
 
 class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({Key? key}) : super(key: key);
@@ -26,7 +26,11 @@ class Privacyviewstate extends State<PrivacyScreen> {
   Future alertPrivacy(bool newValue) {
     return showDialog(
         context: context,
-        builder: (_) {
+        barrierDismissible: false,
+        barrierColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white24
+            : Colors.black54,
+        builder: (BuildContext context) {
           return AlertDialogCustom(context, 'Change privacy',
               'Voulez-vous modifier la confidentialité de votre compte?', [
             TextButton(
@@ -36,13 +40,13 @@ class Privacyviewstate extends State<PrivacyScreen> {
                 },
                 child: Text(
                   'Oui',
-                  style: TextStyle(color: Colors.blue[200]),
+                  style: TextStyle(color: cGreenConfirm),
                 )),
             TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'Non',
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: cRedCancel),
                 ))
           ]);
         });
@@ -93,7 +97,6 @@ class Privacyviewstate extends State<PrivacyScreen> {
             children: [
               Text(
                 'Private account',
-                style: mystyle(14),
               ),
               Switch(
                   value: isAccountPrivate,

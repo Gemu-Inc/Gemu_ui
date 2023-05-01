@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:gemu/constants/constants.dart';
 import 'package:gemu/models/user.dart';
 
 import 'userRow.dart';
@@ -37,7 +36,7 @@ class Contactsviewstate extends State<ContactsScreen> {
                     onPressed: () => Navigator.pop(context)),
                 title: Text(
                   'Contacts',
-                  style: mystyle(15),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
             ),

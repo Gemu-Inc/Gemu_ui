@@ -233,7 +233,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
         return Center(
             child: Text(
           'Pas de notifications actuellement',
-          style: mystyle(12),
+          style: Theme.of(context).textTheme.bodySmall,
         ));
     }
   }
@@ -241,7 +241,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
   Widget loadNotifications() {
     return Center(
       child: CircularProgressIndicator(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).colorScheme.primary,
         strokeWidth: 1.5,
       ),
     );
@@ -262,7 +262,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                 height: 30.0,
                 width: 30.0,
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   strokeWidth: 1.5,
                 ),
               )),
@@ -274,7 +274,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                   child: Center(
                     child: Text(
                       'Pas de notifications',
-                      style: mystyle(12),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 )
@@ -298,7 +298,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                       height: 30.0,
                       width: 30.0,
                       child: CircularProgressIndicator(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                         strokeWidth: 1.5,
                       ),
                     ),
@@ -312,7 +312,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                   child: Center(
                     child: Text(
                       'C\'est tout pour le moment',
-                      style: mystyle(11),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 ),
@@ -339,7 +339,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                 height: 30.0,
                 width: 30.0,
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   strokeWidth: 1.5,
                 ),
               )),
@@ -351,7 +351,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                   child: Center(
                     child: Text(
                       'Pas de notifications',
-                      style: mystyle(12),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 )
@@ -376,7 +376,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                       height: 30.0,
                       width: 30.0,
                       child: CircularProgressIndicator(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                         strokeWidth: 1.5,
                       ),
                     ),
@@ -390,7 +390,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                   child: Center(
                     child: Text(
                       'C\'est tout pour le moment',
-                      style: mystyle(11),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 ),
@@ -417,7 +417,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                 height: 30.0,
                 width: 30.0,
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   strokeWidth: 1.5,
                 ),
               )),
@@ -429,7 +429,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                   child: Center(
                     child: Text(
                       'Pas de notifications',
-                      style: mystyle(12),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 )
@@ -454,7 +454,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                       height: 30.0,
                       width: 30.0,
                       child: CircularProgressIndicator(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                         strokeWidth: 1.5,
                       ),
                     ),
@@ -468,7 +468,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                   child: Center(
                     child: Text(
                       'C\'est tout pour le moment',
-                      style: mystyle(11),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 ),
@@ -495,7 +495,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                 height: 30.0,
                 width: 30.0,
                 child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   strokeWidth: 1.5,
                 ),
               )),
@@ -507,7 +507,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                   child: Center(
                     child: Text(
                       'Pas de notifications',
-                      style: mystyle(12),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 )
@@ -532,7 +532,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                       height: 30.0,
                       width: 30.0,
                       child: CircularProgressIndicator(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                         strokeWidth: 1.5,
                       ),
                     ),
@@ -546,7 +546,7 @@ class Notificationsviewstate extends State<NotificationsScreen>
                   child: Center(
                     child: Text(
                       'C\'est tout pour le moment',
-                      style: mystyle(11),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 ),

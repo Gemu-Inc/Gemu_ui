@@ -1,51 +1,137 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:gemu/models/user.dart';
 
 //User global
 UserModel? me;
 
-//Style texte
-mystyle(double size, [Color? color, FontWeight fw = FontWeight.w700]) {
-  return GoogleFonts.montserrat(fontSize: size, color: color, fontWeight: fw);
-}
+//Navigator global keys
+final GlobalKey<NavigatorState> navNonAuthKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navMainAuthKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState>? navHomeAuthKey;
+GlobalKey<NavigatorState>? navExploreAuthKey;
+GlobalKey<NavigatorState>? navActivitiesAuthKey;
+GlobalKey<NavigatorState>? navProfileAuthKey;
 
-//colors app
-const cOrange = Color(0xFFB27D75);
-const cMauve = Color(0xFF6E78B1);
+//route names for generated routes non auth
+const String GetStartedBefore = "GetStartedBefore";
+const String GetStarted = "GetStarted";
+const String Welcome = "Welcome";
+const String Register = "Register";
+const String Login = "Login";
+
+//route names for generated routes auth
+const String BottomTabNav = "BottomTabNav";
+const String Home = "Home";
+const String Add = "Add";
+const String Explore = "Explore";
+const String Activities = "Activities";
+const String Profile = "Profile";
+const String Games = "Games";
+const String GameProfile = "GameProfile";
+const String MyProfil = "Profil";
+const String PictureEditor = "PictureEditor";
+const String PostNewPicture = "PostNewPicture";
+const String VideoEditor = "VideoEditor";
+const String PostNewVideo = "PostNewVideo";
+const String Reglages = "Reglages";
+const String PostsFeed = "PostsFeed";
+const String Search = "Search";
+const String HashtagProfile = "HashtagProfile";
+const String UserProfile = "UserProfile";
 
 //Themes
-final String appTheme = "Theme";
+const appTheme = "Theme";
+const themeSystem = "ThemeSystem";
+const themeDarkPink = "ThemeDarkPink";
+const themeDarkPurple = "ThemeDarkPurple";
+const themeLightPink = "ThemeLightPink";
+const themeLightPurple = "ThemeLightPurple";
 
-/// --- Dark theme system orange ---
-final darkThemeSystemOrange = ThemeData(
+//Theme text
+textStyleCustomBold(Color color, double fontSize,
+    [FontWeight? fontWeight, FontStyle? fontStyle]) {
+  return TextStyle(
+      fontFamily: 'FredokaBold',
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight ?? FontWeight.bold,
+      fontStyle: fontStyle ?? FontStyle.normal);
+}
+
+textStyleCustomRegular(Color color, double fontSize,
+    [FontWeight? fontWeight, FontStyle? fontStyle]) {
+  return TextStyle(
+      fontFamily: 'FredokaRegular',
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight ?? FontWeight.w500,
+      fontStyle: fontStyle ?? FontStyle.normal);
+}
+
+// --- Colors palette ---
+const cPrimaryPurple = Color(0xFF6957E7);
+const cSecondaryPurple = Color(0xFF593C98);
+const cPrimaryPink = Color(0xFFAD4B81);
+const cSecondaryPink = Color(0xFFAF4259);
+const cBGDarkTheme = Color(0xFF22213C);
+const cBGLightTheme = Color(0xFFE0EFFF);
+const cShadowDarkTheme = Color(0xFF1C1E2B);
+const cShadowLightTheme = Color(0xFFD0E7FF);
+const cContainerDarkTheme = Color(0xFF1E1F31);
+const cContainerLightTheme = Color(0xFFD0E7FF);
+const cIconDarkTheme = Colors.white;
+const cIconLightTheme = Colors.black;
+const cTextDarkTheme = Colors.white;
+const cTextLightTheme = Colors.black;
+const cInactiveIconPurpleLightTheme = Color(0xFFC3BCF5);
+const cInactiveIconPinkLightTheme = Color(0xFFD6A5C0);
+final cInactiveIconPurpleDarkTheme = Color(0xFFC3BCF5).withOpacity(0.7);
+final cInactiveIconPinkDarkTheme = Color(0xFFD6A5C0).withOpacity(0.7);
+final cRedCancel = Color(0xFF8A1111);
+final cGreenConfirm = Color(0xFF78A86B);
+
+//Lists colors dayMood
+List<Color> lightBgColors = [
+  cSecondaryPink,
+  cPrimaryPink,
+  cPrimaryPurple,
+  cSecondaryPurple,
+];
+List<Color> darkBgColors = [
+  cSecondaryPurple,
+  cPrimaryPurple,
+  cPrimaryPink,
+  cSecondaryPink,
+];
+
+/// --- Dark theme system pink ---
+final darkThemeSystemPink = ThemeData(
     colorScheme: ColorScheme.dark(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cPrimaryPink,
+      secondary: cPrimaryPurple,
     ),
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: Color(0xFF1A1C25),
-    primaryColor: cOrange,
-    canvasColor: Color(0xFF222831),
-    shadowColor: Color(0xFF121212),
+    scaffoldBackgroundColor: cBGDarkTheme,
+    canvasColor: cContainerDarkTheme,
+    shadowColor: cShadowDarkTheme,
     iconTheme: IconThemeData(
-      color: Colors.white60,
+      color: cIconDarkTheme,
     ),
+    textTheme: TextTheme(
+        titleLarge: textStyleCustomBold(cTextDarkTheme, 20),
+        titleSmall: textStyleCustomBold(cTextDarkTheme, 14),
+        bodyLarge: textStyleCustomRegular(cTextDarkTheme, 14),
+        bodySmall: textStyleCustomRegular(cTextDarkTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      titleTextStyle: TextStyle(
-          color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: cOrange,
+        selectedItemColor: cPrimaryPink,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.white60));
@@ -53,63 +139,61 @@ final darkThemeSystemOrange = ThemeData(
 /// --- Dark theme system purple
 final darkThemeSystemPurple = ThemeData(
     colorScheme: ColorScheme.dark(
-      primary: cMauve,
-      secondary: cOrange,
+      primary: cPrimaryPurple,
+      secondary: cPrimaryPink,
     ),
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: Color(0xFF1A1C25),
-    primaryColor: cMauve,
-    canvasColor: Color(0xFF222831),
-    shadowColor: Color(0xFF121212),
+    scaffoldBackgroundColor: cBGDarkTheme,
+    canvasColor: cContainerDarkTheme,
+    shadowColor: cShadowDarkTheme,
     iconTheme: IconThemeData(
-      color: Colors.white60,
+      color: cIconDarkTheme,
     ),
+    textTheme: TextTheme(
+        titleLarge: textStyleCustomBold(cTextDarkTheme, 20),
+        titleSmall: textStyleCustomBold(cTextDarkTheme, 14),
+        bodyLarge: textStyleCustomRegular(cTextDarkTheme, 14),
+        bodySmall: textStyleCustomRegular(cTextDarkTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      titleTextStyle: TextStyle(
-          color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: cOrange,
+        selectedItemColor: cPrimaryPurple,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.white60));
 
-/// --- Dark Orange Theme ---
-final darkThemeOrange = ThemeData(
+/// --- Dark Pink Theme ---
+final darkThemePink = ThemeData(
     colorScheme: ColorScheme.dark(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cPrimaryPink,
+      secondary: cPrimaryPurple,
     ),
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: Color(0xFF1A1C25),
-    primaryColor: cOrange,
-    canvasColor: Color(0xFF222831),
-    shadowColor: Color(0xFF121212),
+    scaffoldBackgroundColor: cBGDarkTheme,
+    canvasColor: cContainerDarkTheme,
+    shadowColor: cShadowDarkTheme,
     iconTheme: IconThemeData(
-      color: Colors.white60,
+      color: cIconDarkTheme,
     ),
+    textTheme: TextTheme(
+        titleLarge: textStyleCustomBold(cTextDarkTheme, 20),
+        titleSmall: textStyleCustomBold(cTextDarkTheme, 14),
+        bodyLarge: textStyleCustomRegular(cTextDarkTheme, 14),
+        bodySmall: textStyleCustomRegular(cTextDarkTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      titleTextStyle: TextStyle(
-          color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: Color(0xFFB27D75),
+        selectedItemColor: cPrimaryPink,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.white60));
@@ -117,63 +201,61 @@ final darkThemeOrange = ThemeData(
 /// --- Dark Purple Theme ---
 final darkThemePurple = ThemeData(
     colorScheme: ColorScheme.dark(
-      primary: cMauve,
-      secondary: cOrange,
+      primary: cPrimaryPurple,
+      secondary: cPrimaryPink,
     ),
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: Color(0xFF1A1C25),
-    primaryColor: cMauve,
-    canvasColor: Color(0xFF222831),
-    shadowColor: Color(0xFF121212),
+    scaffoldBackgroundColor: cBGDarkTheme,
+    canvasColor: cContainerDarkTheme,
+    shadowColor: cShadowDarkTheme,
     iconTheme: IconThemeData(
-      color: Colors.white60,
+      color: cIconDarkTheme,
     ),
+    textTheme: TextTheme(
+        titleLarge: textStyleCustomBold(cTextDarkTheme, 20),
+        titleSmall: textStyleCustomBold(cTextDarkTheme, 14),
+        bodyLarge: textStyleCustomRegular(cTextDarkTheme, 14),
+        bodySmall: textStyleCustomRegular(cTextDarkTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      titleTextStyle: TextStyle(
-          color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: Color(0xFF6E78B1),
+        selectedItemColor: cPrimaryPurple,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.white60));
 
-/// --- Light theme system orange ---
-final lightThemeSystemOrange = ThemeData(
+/// --- Light theme system pink ---
+final lightThemeSystemPink = ThemeData(
     colorScheme: ColorScheme.light(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cPrimaryPink,
+      secondary: cPrimaryPurple,
     ),
     brightness: Brightness.light,
-    scaffoldBackgroundColor: Color(0xFFDEE4E7),
-    primaryColor: cOrange,
-    canvasColor: Color(0xFFD3D3D3),
-    shadowColor: Color(0xFFBDBDBD),
+    scaffoldBackgroundColor: cBGLightTheme,
+    canvasColor: cContainerLightTheme,
+    shadowColor: cShadowLightTheme,
     iconTheme: IconThemeData(
-      color: Colors.black45,
+      color: cIconLightTheme,
     ),
+    textTheme: TextTheme(
+        titleLarge: textStyleCustomBold(cTextLightTheme, 20),
+        titleSmall: textStyleCustomBold(cTextLightTheme, 14),
+        bodyLarge: textStyleCustomRegular(cTextLightTheme, 14),
+        bodySmall: textStyleCustomRegular(cTextLightTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      titleTextStyle: TextStyle(
-          color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-      iconTheme: IconThemeData(
-        color: Colors.black,
-      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: cOrange,
+        selectedItemColor: cPrimaryPink,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.black45));
@@ -181,63 +263,61 @@ final lightThemeSystemOrange = ThemeData(
 /// --- Light theme system purple ---
 final lightThemeSystemPurple = ThemeData(
     colorScheme: ColorScheme.light(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cPrimaryPurple,
+      secondary: cPrimaryPink,
     ),
     brightness: Brightness.light,
-    scaffoldBackgroundColor: Color(0xFFDEE4E7),
-    primaryColor: cMauve,
-    canvasColor: Color(0xFFD3D3D3),
-    shadowColor: Color(0xFFBDBDBD),
+    scaffoldBackgroundColor: cBGLightTheme,
+    canvasColor: cContainerLightTheme,
+    shadowColor: cShadowLightTheme,
     iconTheme: IconThemeData(
-      color: Colors.black45,
+      color: cIconLightTheme,
     ),
+    textTheme: TextTheme(
+        titleLarge: textStyleCustomBold(cTextLightTheme, 20),
+        titleSmall: textStyleCustomBold(cTextLightTheme, 14),
+        bodyLarge: textStyleCustomRegular(cTextLightTheme, 14),
+        bodySmall: textStyleCustomRegular(cTextLightTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      titleTextStyle: TextStyle(
-          color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-      iconTheme: IconThemeData(
-        color: Colors.black,
-      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: cOrange,
+        selectedItemColor: cPrimaryPurple,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.black45));
 
-/// --- Light Orange Theme ---
-final lightThemeOrange = ThemeData(
+/// --- Light Pink Theme ---
+final lightThemePink = ThemeData(
     colorScheme: ColorScheme.light(
-      primary: cOrange,
-      secondary: cMauve,
+      primary: cPrimaryPink,
+      secondary: cPrimaryPurple,
     ),
     brightness: Brightness.light,
-    scaffoldBackgroundColor: Color(0xFFDEE4E7),
-    primaryColor: cOrange,
-    canvasColor: Color(0xFFD3D3D3),
-    shadowColor: Color(0xFFEEEEEE),
+    scaffoldBackgroundColor: cBGLightTheme,
+    canvasColor: cContainerLightTheme,
+    shadowColor: cShadowLightTheme,
     iconTheme: IconThemeData(
-      color: Colors.black45,
+      color: cIconLightTheme,
     ),
+    textTheme: TextTheme(
+        titleLarge: textStyleCustomBold(cTextLightTheme, 20),
+        titleSmall: textStyleCustomBold(cTextLightTheme, 14),
+        bodyLarge: textStyleCustomRegular(cTextLightTheme, 14),
+        bodySmall: textStyleCustomRegular(cTextLightTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      titleTextStyle: TextStyle(
-          color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-      iconTheme: IconThemeData(
-        color: Colors.black45,
-      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: Color(0xFFB27D75),
+        selectedItemColor: cPrimaryPink,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.black45));
@@ -245,43 +325,30 @@ final lightThemeOrange = ThemeData(
 /// --- Light Purple Theme ---
 final lightThemePurple = ThemeData(
     colorScheme: ColorScheme.light(
-      primary: cMauve,
-      secondary: cOrange,
+      primary: cPrimaryPurple,
+      secondary: cPrimaryPink,
     ),
     brightness: Brightness.light,
-    scaffoldBackgroundColor: Color(0xFFDEE4E7),
-    primaryColor: cMauve,
-    canvasColor: Color(0xFFD3D3D3),
-    shadowColor: Color(0xFFBDBDBD),
+    scaffoldBackgroundColor: cBGLightTheme,
+    canvasColor: cContainerLightTheme,
+    shadowColor: cShadowLightTheme,
     iconTheme: IconThemeData(
-      color: Colors.black45,
+      color: cIconLightTheme,
     ),
+    textTheme: TextTheme(
+        titleLarge: textStyleCustomBold(cTextLightTheme, 20),
+        titleSmall: textStyleCustomBold(cTextLightTheme, 14),
+        bodyLarge: textStyleCustomRegular(cTextLightTheme, 14),
+        bodySmall: textStyleCustomRegular(cTextLightTheme, 12)),
     appBarTheme: AppBarTheme(
       color: Colors.transparent,
-      titleTextStyle: TextStyle(
-          color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-      iconTheme: IconThemeData(
-        color: Colors.black,
-      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         selectedIconTheme: IconThemeData(size: 26),
         selectedLabelStyle: TextStyle(fontSize: 14.0),
-        selectedItemColor: Color(0xFF6E78B1),
+        selectedItemColor: cPrimaryPurple,
         unselectedIconTheme: IconThemeData(size: 23),
         unselectedLabelStyle: TextStyle(fontSize: 12.0),
         unselectedItemColor: Colors.black45));
-
-//routes names for generated routes
-const String Welcome = "WelcomeScreen";
-const String GetStarted = "GetStartedScreen";
-const String Register = "RegisterScreen";
-const String Login = "LoginScreen";
-const String Navigation = "NavScreen";
-const String Home = "HomeScreen";
-const String Highlights = "HighlightsScreen";
-const String Games = "GamesScreen";
-const String MyProfil = "ProfilScreen";
-const String AddPost = "AddPostScreen";

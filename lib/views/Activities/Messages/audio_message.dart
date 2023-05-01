@@ -15,7 +15,7 @@ class AudioMessage extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           color: message!.isSender
-              ? Theme.of(context).primaryColor
+              ? Theme.of(context).colorScheme.primary
               : Theme.of(context).canvasColor),
       child: Row(
         children: [

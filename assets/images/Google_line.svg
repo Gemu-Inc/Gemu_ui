@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Google_line</title>
+    <g id="Guidelines" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="#2-copy" transform="translate(-274.000000, -357.000000)" fill="#000000" fill-rule="nonzero">
+            <path d="M291.6,371.4 L291.6,375.4 L301.04,375.4 C300.08,381 295.6,385 290,385 C283.44,385 278,379.56 278,373 C278,366.44 283.44,361 290,361 C293.36,361 296.24,362.44 298.32,364.68 L301.2,361.8 C298.32,358.92 294.48,357 290,357 C281.2,357 274,364.2 274,373 C274,381.8 281.2,389 290,389 C298.8,389 305.2,381.8 305.2,373 L305.2,371.4 L291.6,371.4 Z" id="Google_line"></path>
+        </g>
+    </g>
+</svg>

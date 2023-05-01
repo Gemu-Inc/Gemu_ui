@@ -1,11 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemu/constants/constants.dart';
+import 'package:gemu/providers/Register/register_provider.dart';
 
 import 'package:gemu/services/database_service.dart';
-import 'package:gemu/views/Navigation/navigation_screen.dart';
-import 'package:gemu/widgets/snack_bar_custom.dart';
+import 'package:gemu/components/snack_bar_custom.dart';
 import 'package:gemu/models/game.dart';
+import 'package:gemu/translations/app_localizations.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -13,129 +18,247 @@ class AuthService {
   //Voir les changements au niveau de la connexion de l'utilisateur sur le device
   static Stream<User?> authStateChange() => _auth.authStateChanges();
 
-  //Se connecter
-  static Future<void> signIn(
+  //get current user
+  static Future<User?> getUser() async {
+    User? user = _auth.currentUser;
+    return user;
+  }
+
+  static Future<void> setUserToken(User user) async {
+    user.getIdToken().then((token) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      if (token != prefs.getString("token")) {
+        prefs.setString("token", token);
+      }
+    });
+  }
+
+  //Check pour la connexion d'un compte
+  static Future<User?> signIn(
       {required BuildContext context,
       required String email,
       required String password}) async {
+    User? user;
+
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-        await Future.delayed(Duration(seconds: 1));
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    NavigationScreen(uid: _auth.currentUser!.uid)),
-            (route) => false);
+        user = await AuthService.getUser();
       } on FirebaseAuthException catch (e) {
-        if (e.code == 'invalid-email') {
-          print('Invalid email');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again, invalid email',
-            padddingVertical: 40.0,
-          ));
-        } else if (e.code == 'user-disabled') {
-          print('user disabled');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again, user disabled',
-            padddingVertical: 40.0,
-          ));
+        if (e.code == 'user-disabled') {
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "user_disabled"));
         } else if (e.code == 'user-not-found') {
-          print('No user found for that email.');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again, user not found for that email',
-            padddingVertical: 40.0,
-          ));
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "wrong_mail"));
         } else if (e.code == 'wrong-password') {
-          print('Wrong password provided for that user.');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again, wrong password for that user',
-            padddingVertical: 40.0,
-          ));
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "wrong_password"));
         } else {
-          print('Try again');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-            context: context,
-            error: 'Try again',
-            padddingVertical: 40.0,
-          ));
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "try_again"));
+        }
+      }
+    }
+    return user;
+  }
+
+  //Check pour la connexion/inscription d'un compte via Google
+  static Future<void> signWithGoogle(WidgetRef ref) async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.disconnect().catchError((e, stack) {
+      print(e);
+    });
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+      final AuthCredential authCredential = GoogleAuthProvider.credential(
+          idToken: googleSignInAuthentication.idToken,
+          accessToken: googleSignInAuthentication.accessToken);
+
+      // Getting users credential
+      UserCredential result = await _auth.signInWithCredential(authCredential);
+      User? user = result.user;
+
+      if (user != null) {
+        bool exist = await DatabaseService.userAlreadyExist(user.uid);
+        if (exist) {
+          await AuthService.setUserToken(user);
+          await DatabaseService.getUserData(user, ref);
+        } else {
+          navNonAuthKey.currentState!
+              .pushNamed(Register, arguments: [true, user]);
         }
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-        context: context,
-        error: 'Try again, no email or password',
-        padddingVertical: 40.0,
-      ));
+      return null;
     }
   }
 
   //Créer un utilisateur
-  static Future<void> registerUser(
+  static Future<User?> registerUser(
       BuildContext context,
-      List<Game> gamesFollow,
-      String username,
       String email,
       String password,
-      String confirmPassword,
-      String country) async {
+      String username,
+      DateTime dateBirthday,
+      String country,
+      List<Game> gamesFollow,
+      WidgetRef ref) async {
+    User? user;
     try {
-      final UserCredential user = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      String uid = user.user!.uid;
-      Map<String, dynamic> map = {
-        'id': uid,
-        'email': email,
-        'username': username,
-        'imageUrl': null,
-        'country': country,
-        'privacy': 'public'
-      };
-      await DatabaseService.addUser(uid, gamesFollow, map);
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => NavigationScreen(uid: uid)),
-          (route) => false);
+      await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) async {
+        String uid = value.user!.uid;
+        Map<String, dynamic> map = {
+          'id': uid,
+          'imageUrl': null,
+          'privacy': 'public',
+          'verified_account': false,
+          'email': email,
+          'username': username,
+          'dateBirthday': dateBirthday,
+          'country': country,
+        };
+        try {
+          await DatabaseService.addUser(uid, gamesFollow, map);
+          ref.read(successRegisterNotifierProvider.notifier).updateSuccess();
+          messageUser(
+              context,
+              AppLocalization.of(context)
+                  .translate("message_user", "create_account_success"));
+          user = await AuthService.getUser();
+        } catch (e) {
+          messageUser(context,
+              AppLocalization.of(context).translate("message_user", "problem"));
+        }
+      });
+      return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Email already use, try again',
-          padddingVertical: 40.0,
-        ));
-      } else if (e.code == 'invalid-email') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Invalid email, try again',
-          padddingVertical: 40.0,
-        ));
+        messageUser(
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "already_use_mail"));
       } else if (e.code == 'operation-not-allowed') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Operation not allowed',
-          padddingVertical: 40.0,
-        ));
+        messageUser(
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "operation_not_allowed"));
       } else if (e.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBarCustom(
-          context: context,
-          error: 'Weak password, try again',
-          padddingVertical: 40.0,
-        ));
+        messageUser(
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "weak_password"));
+      } else {
+        messageUser(context,
+            AppLocalization.of(context).translate("message_user", "problem"));
       }
+      return null;
     }
+  }
+
+  //Register user with credentials google/apple
+  static Future<User?> registerUserSocials(
+      BuildContext context,
+      String email,
+      String username,
+      DateTime dateBirthday,
+      String country,
+      List<Game> gamesFollow,
+      WidgetRef ref,
+      String uid) async {
+    User? user;
+    Map<String, dynamic> map = {
+      'id': uid,
+      'imageUrl': null,
+      'privacy': 'public',
+      'verified_account': false,
+      'email': email,
+      'username': username,
+      'dateBirthday': dateBirthday,
+      'country': country,
+    };
+    try {
+      await DatabaseService.addUser(uid, gamesFollow, map);
+      ref.read(successRegisterNotifierProvider.notifier).updateSuccess();
+      messageUser(
+          context,
+          AppLocalization.of(context)
+              .translate("message_user", "create_account_success"));
+      user = await AuthService.getUser();
+    } catch (e) {
+      messageUser(context,
+          AppLocalization.of(context).translate("message_user", "problem"));
+    }
+    return user;
+  }
+
+  //Delete account firebase auth
+  static Future<void> deleteAccount(BuildContext context, User user) async {
+    try {
+      await user.delete();
+    } catch (e) {
+      messageUser(
+          context,
+          AppLocalization.of(context)
+              .translate("message_user", "oups_problem"));
+    }
+  }
+
+  //Send mail reset password
+  static Future<void> sendMailResetPassword(
+      String email, BuildContext context) async {
+    await _auth
+        .sendPasswordResetEmail(email: email)
+        .then((value) => messageUser(
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "forgot_password_success")))
+        .catchError((e) {
+      print(e);
+      messageUser(
+          context,
+          AppLocalization.of(context)
+              .translate("message_user", "oups_error_mail"));
+    });
+  }
+
+  //Send mail verify email
+  static Future<void> sendMailVerifyEmail(BuildContext context) async {
+    await _auth.currentUser!
+        .sendEmailVerification()
+        .then((value) => messageUser(
+            context,
+            AppLocalization.of(context)
+                .translate("message_user", "send_verif_mail_success")))
+        .catchError((e) {
+      print(e);
+      messageUser(
+          context,
+          AppLocalization.of(context)
+              .translate("message_user", "oups_error_mail"));
+    });
   }
 
   //Fonction de déconnexion de l'application
   static Future signOut() => _auth.signOut();
 
-  //Update
+  //Update email utilisateur
   static Future updateEmail(
       {required String password, required String newEmail}) async {
     try {
@@ -150,6 +273,7 @@ class AuthService {
     }
   }
 
+  //Update password utilisateur
   static Future updatePassword(
       {required String currentPassword, required String newPassword}) async {
     var user = _auth.currentUser!;
