@@ -84,7 +84,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   bool isComplete = false;
   bool isKeyboard = false;
 
-  String deviceLanguage = "en";
+  late Locale deviceLanguage;
 
   loadMoreData() async {
     Game game = allGames.last;
@@ -438,7 +438,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           resizeToAvoidBottomInset: true,
           body: GestureDetector(
             onHorizontalDragStart: (details) async {
-              if (Platform.isIOS && details.globalPosition.dx <= 75 && details.globalPosition.distance > 100.0) {
+              if (Platform.isIOS &&
+                  details.globalPosition.dx <= 75 &&
+                  details.globalPosition.distance > 100.0) {
                 await showDialog(
                     context: navNonAuthKey.currentContext!,
                     barrierDismissible: false,
@@ -993,7 +995,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               }
             },
                 currentTime: _dateBirthday ?? DateTime.now(),
-                locale: deviceLanguage == "fr" ? LocaleType.fr : LocaleType.en);
+                locale: deviceLanguage.languageCode == "fr"
+                    ? LocaleType.fr
+                    : LocaleType.en);
           },
           child: Container(
             height: 45,
@@ -1600,7 +1604,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               }
             },
                 currentTime: _dateBirthday ?? DateTime.now(),
-                locale: deviceLanguage == "fr" ? LocaleType.fr : LocaleType.en);
+                locale: deviceLanguage.languageCode == "fr"
+                    ? LocaleType.fr
+                    : LocaleType.en);
           },
           child: Container(
             height: 45,

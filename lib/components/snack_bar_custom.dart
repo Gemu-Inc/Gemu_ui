@@ -4,17 +4,15 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 void messageUser(BuildContext context, String message) {
   return showTopSnackBar(
-      context,
+      Overlay.of(context),
       CustomSnackBar.info(
         message: message,
         backgroundColor: Theme.of(context).colorScheme.primary,
         icon: Container(),
         textStyle: Theme.of(context).textTheme.bodyLarge!,
       ),
-      leftPadding: 15,
-      rightPadding: 15,
-      showOutAnimationDuration: const Duration(milliseconds: 500),
-      hideOutAnimationDuration: const Duration(milliseconds: 500),
+      animationDuration: const Duration(milliseconds: 500),
+      reverseAnimationDuration: const Duration(milliseconds: 500),
       displayDuration: const Duration(seconds: 6));
 }
 

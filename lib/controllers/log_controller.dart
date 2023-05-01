@@ -21,8 +21,7 @@ import 'package:gemu/router.dart';
 import 'package:gemu/constants/constants.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:country_code_picker/country_localizations.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 
 class LogController extends ConsumerStatefulWidget {
   const LogController({Key? key}) : super(key: key);
@@ -37,6 +36,8 @@ class _LogControllerState extends ConsumerState<LogController> {
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   final Connectivity _connectivity = Connectivity();
+
+  late Locale localeLanguage;
 
   Future<void> initApp() async {
     final prefs = await SharedPreferences.getInstance();
@@ -64,6 +65,9 @@ class _LogControllerState extends ConsumerState<LogController> {
       ref.read(accentProviderNotifier.notifier).createAccentColor(accentColor);
     }
     ref.read(themeProviderNotifier.notifier).createTheme(theme, context);
+
+    //logic langue device or choice user
+    await ref.read(deviceLanguageProvider.notifier).setLocaleLanguage();
 
     ref.read(dayMoodNotifierProvider.notifier).timeMood();
     await ref.read(connectivityNotifierProvider.notifier).initConnectivity();
@@ -106,25 +110,13 @@ class _LogControllerState extends ConsumerState<LogController> {
     final seenGetStarted = ref.watch(getStartedNotifierProvider);
     final connectivityStatus = ref.watch(connectivityNotifierProvider);
     final activeUser = ref.watch(myselfNotifierProvider);
+    localeLanguage = ref.watch(deviceLanguageProvider);
 
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Gemu',
         supportedLocales: [Locale("en", ""), Locale("fr", "")],
-        localeResolutionCallback: (deviceLocale, supportedLocales) {
-          for (var locale in supportedLocales) {
-            if (locale.languageCode == deviceLocale!.languageCode) {
-              ref
-                  .read(deviceLanguageProvider.notifier)
-                  .setLanguage(deviceLocale.languageCode);
-              return deviceLocale;
-            }
-          }
-          ref
-              .read(deviceLanguageProvider.notifier)
-              .setLanguage(supportedLocales.first.languageCode);
-          return supportedLocales.first;
-        },
+        locale: localeLanguage,
         localizationsDelegates: [
           CountryLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
